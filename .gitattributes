@@ -1,0 +1,38 @@
+* text=auto eol=lf
+
+# Skrypty Windows
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binaria
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.7z binary
+*.wav binary
+*.ogg binary
+*.mp3 binary
+*.flac binary
+*.opus binary
+*.wem binary
+*.bnk binary
+*.pck binary
+*.bytes binary
+*.assets binary
+*.bundle binary
+*.unity3d binary
+*.dll binary
+*.dylib binary
+*.so binary
+*.exe binary
+*.safetensors binary
+*.pt binary
+*.pth binary
+*.onnx binary
+*.npy binary
+*.npz binary

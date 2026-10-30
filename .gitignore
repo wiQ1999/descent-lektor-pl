@@ -1,0 +1,78 @@
+# --- Kopie plików gry, cache, wyniki z pełnymi tekstami, dekompilacja, depot macOS, audio ---
+analysis/work/
+
+# --- Python ---
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# --- Audio i dane gry (w dowolnym miejscu) ---
+*.wav
+*.ogg
+*.mp3
+*.flac
+*.opus
+*.wem
+*.bnk
+*.pck
+*.bytes
+*.assets
+*.bundle
+*.unity3d
+*.resS
+*.resource
+*.qlog
+# binaria gry / narzędzi
+*.dll
+*.dylib
+*.so
+*.exe
+*.pdb
+
+# --- Modele i cache ML ---
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.gguf
+.cache/
+hf_cache/
+models/
+
+# --- DepotDownloader / SteamCMD (manifesty, staging, dane sesji) ---
+.DepotDownloader/
+depots/
+steamcmd/
+account.config
+depot.config
+config.vdf
+loginusers.vdf
+ssfn*
+
+# --- Sekrety, logi, śmieci systemowe ---
+*.log
+.env
+.env.*
+!.env.example
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# --- IDE: ustawienia lokalne (ścieżki interpretera różnią się między Windows i macOS);
+#     wspólne mogą być tylko rekomendacje rozszerzeń ---
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# --- Claude Code: ustawienia lokalne i worktree ---
+.claude/settings.local.json
+.claude/worktrees/
