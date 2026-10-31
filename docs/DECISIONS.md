@@ -56,51 +56,178 @@ Plan etapów: [PLAN.md](PLAN.md).
 **Decyzja:** Wzorce `build/`, `dist/` i `models/` są zakotwiczone do katalogu głównego (`/build/`, `/dist/`, `/models/`). Wagi modeli nadal wyklucza ignorowanie rozszerzeń (`*.safetensors`, `*.pt` itd.) i katalogu `hf_cache/`.
 **Uzasadnienie:** Wcześniejsze wzorce ukrywały też katalogi z kodem, np. `src/<pakiet>/models/`, co sprawdziłem przez `git check-ignore`.
 
+### D10 · 2026-10-31 · Odtwarzanie przez companiona (n)
+**Decyzja:**
+- Plugin w grze tylko wysyła zdarzenia przez localhost: typ okna, otwarcie i zamknięcie, klucz, argumenty, wyrenderowany tekst, mówców, rozwiązany slot `VARIABLE_HERO` i czas.
+- Zewnętrzny proces companion (Python) odtwarza audio, przerywa je, obsługuje cache, sklejanie i fallback oraz loguje pokrycie.
+
+**Uzasadnienie:**
+- Unity Audio jest wyłączone w obu buildach, a wstrzykiwanie do Wwise byłoby bardzo złożone.
+- Mały plugin jest wspólny dla Windows i Maca.
+
+### D11 · 2026-10-31 · Loader na Windows (o)
+**Decyzja:** Na Windows używamy BepInEx 5 x86. Dodaje on `winhttp.dll`, `doorstop_config.ini` i `BepInEx/` obok exe gry; istniejących plików gry nie zmieniamy. Rdzeń pluginu działa bez Harmony i bez zależności od BepInEx (delegaty + polling, `MAC_REPORT.md`). BepInEx jest tylko cienkim adapterem.
+**Uzasadnienie:**
+- Aktualizacja i weryfikacja plików w Steam nie usuwają tych plików, a odinstalowanie to usunięcie trzech pozycji.
+- `RuntimeInitializeOnLoads.json` odpada, bo Steam go nadpisuje.
+
+### D12 · 2026-10-31 · Osobny Python dla projektu (q)
+**Decyzja:**
+- Projekt dostaje własny interpreter, instalowany przez uv (jest już w systemie). Na nim przebudowujemy `.venv`.
+- Dla tego interpretera ustawiasz w panelu NVIDIA „CUDA – Sysmem Fallback Policy: Prefer No Sysmem Fallback”.
+- Wsad generowania i tak pilnuje RTF i VRAM.
+
+**Uzasadnienie:**
+- `.venv\Scripts\python.exe` to tylko launcher. CUDA działa w bazowym `Python313\python.exe` (sprawdzone przez `Win32_Process`), więc profil dla `.venv` nie działa, a profil dla bazowego Pythona objąłby inne projekty.
+- Bez fallbacku przekroczenie VRAM kończy się błędem OOM zamiast cichego spowolnienia (RTF ok. 13).
+
+### D13 · 2026-10-31 · Kryteria zaliczenia testu (r)
+**Decyzja:**
+- Co najmniej 98% okien M1 ma audio.
+- Pregenerowana kwestia startuje poniżej 0,5 s od wyświetlenia okna.
+- Przerwanie po „Kontynuuj” zajmuje poniżej 0,3 s.
+- Fallback na żywo nie wlicza się do opóźnienia.
+
+**Uzasadnienie:** Rzadkie braki są akceptowalne. Opóźnienie ma być niezauważalne, z zapasem względem limitu 2–3 s z D03.
+
+### D14 · 2026-10-31 · Przerywniki z dubbingiem bez TTS (j)
+**Decyzja:** Napisy wszystkich 20 przerywników (115 kluczy, w tym CUTSCENE_01) nie dostają TTS. Companion je ignoruje, ale loguje do raportu pokrycia jako „oryginalne audio”.
+**Uzasadnienie:** 17 polskich nagrań gry pokrywa wszystkie przerywniki, więc lektor zagłuszałby dubbing.
+
+### D15 · 2026-10-31 · Zakres milestone 1 (k)
+**Decyzja:**
+- M1 = prolog + Q1 + scena „Welcome Home” po Q1.
+- Losowych wrogów ustalamy z logu sesji testowej E1.
+- SQ1 robimy później.
+
+**Uzasadnienie:** Pierwsza sesja przy stole nie powinna się urywać zaraz po Q1, a pełna lista wrogów wynika dopiero z gry.
+
+### D16 · 2026-10-31 · Kwestie z `{n}`: sklejanie fragmentów (h)
+**Decyzja:**
+- Tekst wokół luk i wartości luk (nazwy wrogów, bohaterów, liczby, wstawiane teksty innych kluczy) generujemy jako osobne fragmenty.
+- Companion skleja je w chwili odtwarzania.
+
+**Uzasadnienie:**
+- Zawsze działa natychmiast i bez eksplozji wariantów.
+- Wybrane świadomie mimo słyszalnych szwów na łączeniach.
+
+### D17 · 2026-10-31 · Sloty `VARIABLE_HERO` (i)
+**Decyzja:** Na razie kwestie slotów `VARIABLE_HERO1–4` czytamy głosem narratora. Później dodamy wersje w głosie każdego bohatera, a plugin wybierze tę właściwą.
+**Uzasadnienie:**
+- W M1 takich kwestii nie ma (w całej grze jest ich 261).
+- Gra podstawia bohatera N-tego gracza (`ActivePlayers[N]`), więc pełna obsługa wymaga wariantu na bohatera.
+
+### D18 · 2026-10-31 · Narrator i Galaden (d)
+**Decyzja:** Zostawiamy bez zmian.
+**Uzasadnienie:**
+- Referencja Galadena pochodzi z oryginalnych nagrań gry (`Galaden_QuestWon_1`, `Galaden_QuestSelect_2`, `Galaden_QuestLost_2`), a narratora z przerywnika `3_Wings Of War`.
+- Podobieństwo 0,96 wynika z samego dubbingu, a nie z naszego wyboru.
+
+### D19 · 2026-10-31 · Złoczyńcy (l)
+**Decyzja:**
+- Ne’Krula klonujemy już w M1.
+- Pozostałych złoczyńców robimy przy ich misjach. Przy słabym klonie z krótkiej referencji (2,8–11,1 s) dostają gotowy głos o podobnym charakterze.
+
+**Uzasadnienie:** W M1 mówi tylko Ne’Krul.
+
+### D20 · 2026-10-31 · Okna wyboru (f)
+**Decyzja:**
+- Po otwarciu okna wyboru czytamy jego treść według kategorii, na start głosem systemowym. Samych opcji nie czytamy.
+- Po kliknięciu czytamy wybraną odpowiedź:
+  - część cytowaną (po myślniku lub w cudzysłowie) głosem bohatera, np. „Jestem wojowniczką” głosem Brynn;
+  - opis (np. „deklaruje Brynn”) i opcje bez cytatu głosem narratora.
+
+**Uzasadnienie:** Gracze widzą opcje na ekranie. Wybrana odpowiedź brzmi jak w słuchowisku, a przed wyborem nie ma długiego wyliczania.
+
+### D21 · 2026-10-31 · Przełączniki kategorii (g)
+**Decyzja:** Companion ma przełączniki kategorii: narracja, dialogi, komunikaty questu, walka i teren, UI i samouczek, okna wyboru, nagrody. Domyślnie wszystkie są włączone.
+**Uzasadnienie:** Zgodnie z D02 lektor czyta wszystko, ale przy stole może się okazać, że część komunikatów męczy.
+
+### D22 · 2026-10-31 · Gotowe głosy NPC (m)
+**Decyzja:**
+- Referencje bierzemy wyłącznie z nagrań z wyraźną zgodą lub licencją na syntezę (np. polskie zbiory mowy CC0/CC-BY, w których mówcy zgodzili się na takie użycie).
+- Do tego mieszamy embeddingi kilku mówców w nowe, nieidentyfikowalne głosy.
+- Konkretne głosy wybieramy odsłuchem przed E7. Dotyczy też docelowego głosu systemowego.
+
+**Uzasadnienie:** Nie klonujemy głosów osób bez ich zgody. Mieszanie daje wiele różnych NPC z małej liczby źródeł.
+
+### D23 · 2026-10-31 · Muzyka pod lektorem (p)
+**Decyzja:**
+- W M1 nie wyciszamy muzyki; ustawiacie jej głośność w opcjach gry.
+- Później dodamy przyciszanie przez Wwise: plugin zmienia głośność szyny muzyki.
+
+**Uzasadnienie:** Rozwiązanie w Wwise działa tak samo na Windows i Macu, ale nie jest potrzebne do pierwszego testu.
+
+### D24 · 2026-10-31 · Porządki w `analysis/REPORT.md` (v, w)
+**Decyzja:**
+- Cytaty z gry zastępujemy kluczami i opisem.
+- Szacunki długości audio poprawiamy według tempa z `VOICES.md` i `BENCH.md`: lektor 9–10 znaków/s z pauzami, synteza 12,5–13,4.
+
+**Uzasadnienie:** Repozytorium ma być wolne od treści gry, a stare liczby zakładały 15 znaków/s.
+
+### D25 · 2026-10-31 · Mac: oryginał + BepInEx (s)
+**Decyzja:**
+- Na Macu BepInEx (z Doorstop) instalujemy w oryginalnym pakiecie w folderze Steam.
+- Plik wykonywalny przepodpisujemy lokalnie (ad-hoc, wbudowane `codesign`) z uprawnieniem do zmiennych `DYLD_*`.
+- Gra startuje ze Steam z opcją uruchamiania `"…/run_bepinex.sh" %command%`.
+- Skrypt instalacji i cofania uruchamiamy ponownie po każdej aktualizacji gry.
+- Terminal potrzebuje zgody „Zarządzanie aplikacjami”.
+- Wymagana jest zgoda właściciela Maca.
+
+**Uzasadnienie:** Zwykły start ze Steam bez dodatkowej kopii 3 GB. Koszt: ponowne uruchomienie skryptu po aktualizacjach.
+
+### D26 · 2026-10-31 · Mac: companion na Pythonie z Homebrew (t)
+**Decyzja:**
+- Na Macu znajomego instalujemy Homebrew i Pythona (`brew install python`), a companion działa we własnym środowisku w folderze projektu.
+- Instrukcja instalacji i odinstalowania jest częścią E6.
+
+**Uzasadnienie:** Standardowe narzędzia, łatwe aktualizacje zależności. Koszt: Homebrew, Command Line Tools i Python zostają w systemie znajomego.
+
+### D27 · 2026-10-31 · Porównanie modeli TTS przed generowaniem
+**Decyzja:**
+- Przed generowaniem M1 robimy porównanie (bake-off) na tych samych fragmentach tekstu. Kandydaci:
+  - Chatterbox v2 dostrojony (fp32, referencje emocjonalne, parametry do kwestii, kilka podejść i wybór przez ASR);
+  - Chatterbox v3 (nowsze wagi `t3_mtl23ls_v3`, `s3gen_v3`);
+  - XTTS-v2;
+  - OmniVoice, po sprawdzeniu polskiego i licencji wag.
+- Ocena jest jawna: pliki podpisane nazwą modelu, odsłuch obok siebie.
+
+**Uzasadnienie:**
+- Odsłuch próbek z benchmarku: jakość „dostateczna”.
+- Problemy:
+  - wspólne dla wariantów: angielskie nazwy (np. „Frostgate”) są spolszczane, a odczyt jest jednolity, bez zmian tempa i barwy w dialogach;
+  - fp32 brzmi wstępnie lepiej od fp16.
+
+### D28 · 2026-10-31 · Reżyseria: adnotacja kwestii + referencje emocjonalne
+**Decyzja:**
+- Każda kwestia dostaje adnotację emocji i tempa (np. spokojnie, napięcie, okrzyk, szept) na podstawie treści i kontekstu.
+- Emocja wybiera fragment polskiego dubbingu jako referencję oraz parametry syntezy.
+- Zatwierdzasz słownik emocji i odsłuchujesz próbki.
+
+**Uzasadnienie:** Same parametry kategorii nie dają zmian tempa i barwy w obrębie dialogu.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
-- Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`), a dźwięk gra obsługuje przez Wwise. Odtwarzanie przez `AudioSource` w grze nie zadziała bez obejść.
-- RTF na GTX 1650 Ti wynosi ok. 2,2 (`analysis/BENCH.md`). Generowanie na żywo nie zmieści się w 2–3 s, więc kwestie trzeba pregenerować albo brać z cache.
-- Build macOS ma identyczne teksty, audio i klasy hooka jak Windows. Doorstop przez `DYLD_INSERT_LIBRARIES` wymaga przepodpisania pakietu (`analysis/MAC_REPORT.md`).
-- Milestone 1 nie potrzebuje głosów NPC (mówi tylko Ne’Krul), ale potrzebuje głosu systemowego od razu: 255 kluczy (`analysis/M1_SCOPE.md`).
+- Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
+- RTF na GTX 1650 Ti wynosi ok. 2,2 (`analysis/BENCH.md`), więc generowanie na żywo nie zmieści się w 2–3 s.
+- Build macOS ma identyczne teksty, audio i klasy hooka jak Windows (`analysis/MAC_REPORT.md`).
+- Milestone 1 nie potrzebuje głosów NPC (mówi tylko Ne’Krul), ale głos systemowy jest potrzebny od razu: 255 kluczy (`analysis/M1_SCOPE.md`).
+- Argumenty `{n}` mają typy `RawText`, `VariableString`, `EntityName`, `VariableInt`, `ListOfKeys` (`MessageArgument`). Wartości to nazwy wrogów i bohaterów, liczby i teksty innych kluczy.
+- Słoty `VARIABLE_HERO1–4` to bohaterowie kolejnych aktywnych graczy (`StoryCharacterModel.GetVariableCharacterIndex`, `ActivePlayers[N]`).
+- Próbki stylu (`analysis/tools/style_samples.py`, `analysis/work/qa_samples/`) pokazały, czego wymaga normalizacja:
+  - cyfry trzeba zamieniać na słowa z odmianą („na 1 karcie” → „na jednej karcie”);
+  - ikony (glify PUA) na słowa;
+  - każdy fragment trzeba kontrolować przez ASR, bo przy dzieleniu na zdania jedno zdanie potrafi zniknąć.
+- Jest .NET SDK 8 i 10, a uv 0.11.11 jest już zainstalowany.
 
 ## Otwarte kwestie
 
-W nawiasie podana jest wstępna rekomendacja. Rozstrzygnięte kwestie przenosimy wyżej jako decyzje D…
+Rozstrzygamy je w porównaniu modeli (D27). W nawiasie podana jest wstępna rekomendacja.
 
-### Głos i styl
-
-| # | Kwestia | Wstępna rekomendacja | Odsłuch |
-|---|---|---|---|
-| a | Wariant TTS | fp16, cfg_weight 0,3 | tak |
-| b | Tempo: synteza jest ok. 30% szybsza od lektora | u narratora dłuższe pauzy między zdaniami (0,35–0,5 s) i test time-stretch 0,9 na ok. 10 próbkach; bohaterowie bez zmian | tak |
-| c | Exaggeration według kategorii | narracja 0,4, dialog 0,5, okrzyki i walka 0,7, systemowy 0,3; korekta po odsłuchu | tak |
-| d | Narrator i Galaden brzmią prawie tak samo | zostawić, prawdopodobnie to ten sam aktor; ewentualna korekta po teście przy stole | – |
-| e | Głos systemowy | na M1 tymczasowo narrator w neutralnym stylu; równolegle szukamy gotowego głosu z licencją pozwalającą na klonowanie | tak |
-| f | Opcje wyboru z cytowanymi wypowiedziami | głos systemowy | – |
-| g | Przełączniki kategorii w companionie (np. wyłączanie podpowiedzi samouczka albo reguł) | tak, domyślnie wszystko włączone | – |
-| u | Wymowa nazw własnych | słownik wymowy (zapis fonetyczny) uzupełniany po odsłuchu i kontroli ASR | – |
-
-### Treść i zakres
-
-| # | Kwestia | Wstępna rekomendacja |
+| # | Kwestia | Stan |
 |---|---|---|
-| h | Kwestie z `{n}` | pregenerować wartości, które da się wyliczyć (bohaterowie, wrogowie Q1, liczby 0–20); do tego cache i generowanie na żywo jako fallback |
-| i | Sloty `VARIABLE_HERO*` | 6 wariantów audio na kwestię |
-| j | CUTSCENE_01 i pozostałe przerywniki z oryginalnym dubbingiem (115 kluczy napisów, 17 nagrań) | bez TTS |
-| k | Poszerzenie M1 | dodać scenę „Welcome Home” po Q1; losowych wrogów ustalić z logu sesji testowej; SQ1 później |
-| l | Złoczyńcy | Ne’Krul już w M1, pozostali później; przy słabym klonie gotowy głos o podobnym charakterze |
-| m | Źródło gotowych głosów NPC | decyzja przed skalowaniem; nie klonujemy głosów osób bez ich zgody |
-| v | Krótkie cytaty z gry w `analysis/REPORT.md` | do decyzji: zostawić albo zastąpić kluczami i opisem |
-| w | Szacunki czasu w `analysis/REPORT.md` zakładają tempo 15 znaków/s | do decyzji: poprawić według `VOICES.md` i `BENCH.md` |
-
-### Technika
-
-| # | Kwestia | Wstępna rekomendacja |
-|---|---|---|
-| n | Odtwarzanie: zewnętrzny companion czy w grze | companion; Unity Audio jest wyłączone |
-| o | Loader na Windows | BepInEx 5 x86, bez zmian w plikach gry; nie `RuntimeInitializeOnLoads.json`, bo Steam go nadpisze |
-| p | Wyciszanie muzyki gry pod lektorem | później; w M1 bez |
-| q | NVIDIA „CUDA – Sysmem Fallback Policy” | „Prefer No Sysmem Fallback” tylko dla `python.exe` z `.venv`, nie globalnie |
-| r | Kryteria zaliczenia testu | co najmniej 98% okien M1 ma audio; start pregenerowanej kwestii poniżej 0,5 s od wyświetlenia okna |
-| s | Mac: Doorstop wymaga przepodpisania pakietu | do decyzji: przepodpisana kopia `.app` poza folderem Steam albo zmiana oryginału |
-| t | Mac: uruchamianie companiona (Python i zależności na cudzym Macu) | do decyzji: przenośna paczka w jednym folderze bez instalacji systemowej albo instalacja Pythona |
+| a | Model i wariant TTS (precyzja, cfg_weight) | po porównaniu; wstępnie fp32 brzmi lepiej od fp16 |
+| b | Tempo: synteza jest ok. 30% szybsza od lektora | po porównaniu; próbki pauz i time-stretch w `analysis/work/qa_samples/tempo/` |
+| c | Ekspresja według kategorii i emocji | po porównaniu, w ramach D28; próbki w `analysis/work/qa_samples/exag/` |
+| e | Głos systemowy na start | po porównaniu (narrator w neutralnym stylu); docelowo gotowy głos według D22 |
+| u | Nazwy własne i angielska wymowa (np. „Frostgate”) | po porównaniu: czy wydzielać nazwy z treści (fragment po angielsku, słownik albo zapis fonetyczny) |
