@@ -81,6 +81,8 @@ E1 ──────────────────> E4 companion (z repla
 
 ## E1 · Test hooka na Windows (tylko logowanie)
 
+**Status:** zakończony 2026-10-31 ([analysis/E1_HOOK.md](../analysis/E1_HOOK.md)). Okna pokryte w 100%. Otwarte kwestie x, y, z w DECISIONS.md.
+
 **Cel:**
 - potwierdzić, że plugin widzi wszystkie okna;
 - zebrać log realnie wyświetlanych kluczy, argumentów i wrogów;

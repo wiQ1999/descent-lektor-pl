@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Cienki adapter BepInEx 5: konfiguracja i start rdzenia. -->
+  <PropertyGroup>
+    <AssemblyName>LektorPL.BepInEx</AssemblyName>
+    <RootNamespace>LektorPL.BepInEx</RootNamespace>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\LektorPL.Core.csproj" />
+    <Reference Include="BepInEx"><HintPath>$(BepInExCore)BepInEx.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

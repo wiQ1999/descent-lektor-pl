@@ -1,0 +1,33 @@
+<Project>
+  <!--
+    Wspólne ustawienia pluginu. Kompilujemy wobec bibliotek samej gry (Mono, profil .NET 4.x),
+    więc nie pobieramy pakietów NuGet z referencjami. DLL gry nie trafiają do repozytorium:
+    domyślnie bierzemy je z kopii w analysis/work/game, ścieżkę można nadpisać -p:GameManaged=...
+  -->
+  <PropertyGroup>
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))</RepoRoot>
+    <GameManaged Condition="'$(GameManaged)' == ''">$(RepoRoot)analysis\work\game\Legends of the Dark_Data\Managed\</GameManaged>
+    <BepInExCore Condition="'$(BepInExCore)' == ''">$(RepoRoot)analysis\work\bin\BepInEx-5.4.23.5\win_x86\BepInEx\core\</BepInExCore>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <AutomaticallyUseReferenceAssemblyPackages>false</AutomaticallyUseReferenceAssemblyPackages>
+    <NoStdLib>true</NoStdLib>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <DebugType>portable</DebugType>
+    <Deterministic>true</Deterministic>
+    <BaseOutputPath>$(RepoRoot)build\plugin\$(MSBuildProjectName)\bin\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(RepoRoot)build\plugin\$(MSBuildProjectName)\obj\</BaseIntermediateOutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib"><HintPath>$(GameManaged)mscorlib.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="System"><HintPath>$(GameManaged)System.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="System.Core"><HintPath>$(GameManaged)System.Core.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="netstandard"><HintPath>$(GameManaged)netstandard.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(GameManaged)UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(GameManaged)UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

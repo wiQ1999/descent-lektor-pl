@@ -14,9 +14,11 @@ analysis/          analizy plików gry
   VOICES.md        próbki głosu z polskiego dubbingu, referencje do klonowania, płeć mówców
   M1_SCOPE.md      zakres milestone 1 (prolog + Q1)
   BENCH.md         benchmark generowania TTS
+  E1_HOOK.md       test hooka w grze (pokrycie okien, luki, wydajność)
   tools/           skrypty analityczne (Python, UnityPy)
   work/            kopie plików gry, cache, wyniki pośrednie, audio — NIE jest śledzony w Git
-src/               przyszły projekt docelowy
+src/
+  plugin/          plugin do gry: rdzeń C# + adapter BepInEx + skrypt instalacji (docs/E1_PLAYTEST.md)
 ```
 
 ## Zasady

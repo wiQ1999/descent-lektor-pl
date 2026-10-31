@@ -32,6 +32,7 @@ docs/        PLAN.md (etapy), DECISIONS.md (decyzje i otwarte kwestie)
 analysis/    raporty z analiz + tools/ (skrypty Python/UnityPy)
   work/      kopie gry, depot macOS, dekompilacja, audio, próbki: nieśledzone
 src/         kod docelowy (plugin, pipeline, companion)
+  plugin/    Core (C#, net472, bez Harmony i BepInEx), BepInEx (adapter), install/lektor-hook.ps1
 ```
 
 ## Komendy
@@ -43,7 +44,17 @@ src/         kod docelowy (plugin, pipeline, companion)
 .venv/Scripts/python -I analysis/tools/tts_bench.py --asr-only
 ```
 
+Plugin (referencje do DLL z kopii gry w `analysis/work/game`, wynik w `build/plugin/`):
+
+```bash
+dotnet build src/plugin/BepInEx -c Release
+.venv/Scripts/python -I analysis/tools/hook_coverage.py [dziennik.jsonl ...]
+```
+
+Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install|-Uninstall|-Status`) uruchamia użytkownik według `docs/E1_PLAYTEST.md`. Dzienniki pluginu: `%LOCALAPPDATA%\LektorPL\logs`.
+
 - Python uruchamiamy z `-I`.
+- Plugin nie woła getterów gry z leniwą inicjalizacją (np. `I2.Loc.LocalizationManager.CurrentLanguage`). Czyta pola przez refleksję, bo wcześniejsze wywołanie psuje start gry (E1_HOOK.md).
 - Na GPU 4 GB po kondycjonowaniu Chatterboxa zdejmujemy z GPU tokenizer S3, CAMPPlus i VoiceEncoder (`offload_conditioning` w `tts_bench.py`). Bez tego model wychodzi poza VRAM i RTF rośnie do ok. 13.
 
 ## Raporty
@@ -55,3 +66,4 @@ src/         kod docelowy (plugin, pipeline, companion)
 | [analysis/VOICES.md](analysis/VOICES.md) | polski dubbing, referencje głosów, płeć mówców, tempo lektora |
 | [analysis/M1_SCOPE.md](analysis/M1_SCOPE.md) | zakres milestone 1 (prolog + Q1) |
 | [analysis/BENCH.md](analysis/BENCH.md) | Chatterbox na GTX 1650 Ti: VRAM, RTF, błędy, ekstrapolacja |
+| [analysis/E1_HOOK.md](analysis/E1_HOOK.md) | test hooka w grze: pokrycie okien, argumenty, luki, wydajność, crashe |

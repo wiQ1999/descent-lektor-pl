@@ -206,6 +206,11 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Same parametry kategorii nie dają zmian tempa i barwy w obrębie dialogu.
 
+### D29 · 2026-10-31 · XTTS-v2: akceptacja licencji CPML
+**Decyzja:** Akceptujesz Coqui Public Model License dla wag XTTS-v2, więc XTTS bierze udział w porównaniu (D27).
+
+**Uzasadnienie:** Projekt jest prywatny i niekomercyjny, a CPML dopuszcza taki użytek.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -219,10 +224,14 @@ Plan etapów: [PLAN.md](PLAN.md).
   - ikony (glify PUA) na słowa;
   - każdy fragment trzeba kontrolować przez ASR, bo przy dzieleniu na zdania jedno zdanie potrafi zniknąć.
 - Jest .NET SDK 8 i 10, a uv 0.11.11 jest już zainstalowany.
+- E1 (`analysis/E1_HOOK.md`):
+  - hook bez Harmony widzi 100% okien `MessageController` i `StoryMessageController`; tekst pluginu zgadza się z ekranem;
+  - plugin nie może wołać getterów gry z leniwą inicjalizacją. Wywołanie `I2.Loc.LocalizationManager.CurrentLanguage` przed załadowaniem bundli powodowało crash Wwise przy starcie;
+  - cel misji (HUD) i tekst aktywacji wroga (`UIEnemyActivationDialog`) gra pokazuje poza oknami wiadomości.
 
 ## Otwarte kwestie
 
-Rozstrzygamy je w porównaniu modeli (D27). W nawiasie podana jest wstępna rekomendacja.
+Kwestie a–u rozstrzygamy w porównaniu modeli (D27), x–z po E1. W nawiasie podana jest wstępna rekomendacja.
 
 | # | Kwestia | Stan |
 |---|---|---|
@@ -231,3 +240,6 @@ Rozstrzygamy je w porównaniu modeli (D27). W nawiasie podana jest wstępna reko
 | c | Ekspresja według kategorii i emocji | po porównaniu, w ramach D28; próbki w `analysis/work/qa_samples/exag/` |
 | e | Głos systemowy na start | po porównaniu (narrator w neutralnym stylu); docelowo gotowy głos według D22 |
 | u | Nazwy własne i angielska wymowa (np. „Frostgate”) | po porównaniu: czy wydzielać nazwy z treści (fragment po angielsku, słownik albo zapis fonetyczny) |
+| x | Czytanie zmian celu misji (HUD, 8 kluczy M1, bez okna) | do QA; obserwacja możliwa przez `UIGame._lastObjectiveKey` |
+| y | Czytanie aktywacji wroga (`ENEMY_ACTIVATION_*`, osobne okno) | do QA; obserwacja możliwa przez bieżącą aktywację w `GameController` |
+| z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | do sprawdzenia, czy występuje bez loadera |
