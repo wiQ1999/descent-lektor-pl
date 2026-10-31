@@ -7,10 +7,12 @@ Docelowo: baza kwestii z plików gry + pregenerowane audio, odtwarzane w chwili 
 ## Układ folderów
 
 ```
+docs/              PLAN.md (etapy), DECISIONS.md (decyzje i otwarte kwestie)
 analysis/          analizy plików gry
   REPORT.md        lokalizacja tekstów, struktura kwestii, mówcy, statystyki, rekomendacja
   MAC_REPORT.md    build macOS (backend, podpis, różnice względem Windows)
   VOICES.md        próbki głosu z polskiego dubbingu, referencje do klonowania, płeć mówców
+  M1_SCOPE.md      zakres milestone 1 (prolog + Q1)
   BENCH.md         benchmark generowania TTS
   tools/           skrypty analityczne (Python, UnityPy)
   work/            kopie plików gry, cache, wyniki pośrednie, audio — NIE jest śledzony w Git

@@ -11,8 +11,8 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 *.egg-info/
-build/
-dist/
+/build/
+/dist/
 
 # --- Audio i dane gry (w dowolnym miejscu) ---
 *.wav
@@ -46,7 +46,7 @@ dist/
 *.gguf
 .cache/
 hf_cache/
-models/
+/models/
 
 # --- DepotDownloader / SteamCMD (manifesty, staging, dane sesji) ---
 .DepotDownloader/
