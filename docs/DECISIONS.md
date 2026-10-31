@@ -211,6 +211,28 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Projekt jest prywatny i niekomercyjny, a CPML dopuszcza taki użytek.
 
+### D30 · 2026-10-31 · Aktywacje wrogów czytane głosem systemowym (y)
+**Decyzja:**
+- Lektor czyta tekst aktywacji wroga z `UIEnemyActivationDialog` (`ENEMY_ACTIVATION_*` i taktyki) głosem systemowym.
+- Aktywacje mają osobny przełącznik kategorii (D21).
+- Do zakresu M1 dochodzą aktywacje wrogów z losowania widzianych w E1: bandyty, fanatyka i fae.
+
+**Uzasadnienie:** To instrukcja ruchu wroga, którą przy stole i tak ktoś czyta. Przełącznik pozwala wyłączyć ją, gdy się powtarza.
+
+### D31 · 2026-10-31 · Cel misji czytany przy zmianie (x)
+**Decyzja:**
+- Lektor czyta nowy cel misji, gdy gra podmienia go w HUD.
+- Czyta też zmiany samego licznika (np. 1/4 → 2/4).
+- Głos systemowy, osobny przełącznik kategorii (D21).
+- Źródło: `UIGame._lastObjectiveKey` i `_LastObjectiveArguments`.
+
+**Uzasadnienie:** Cele są krótkie, a przy stole wszyscy od razu wiedzą, co dalej.
+
+### D32 · 2026-10-31 · Nowe źródła tekstu w pluginie: E4, test w E5
+**Decyzja:** Obserwację źródeł spoza okien wiadomości (aktywacja wroga, ewentualnie cel misji) dodajemy w E4 i sprawdzamy w sesji E5. Nie robimy dodatkowej sesji E1.
+
+**Uzasadnienie:** Miejsca odczytu są znane z dekompilacji (`GameController` i `UIGame`), a osobna sesja tylko po to opóźniłaby E2.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -231,7 +253,7 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 ## Otwarte kwestie
 
-Kwestie a–u rozstrzygamy w porównaniu modeli (D27), x–z po E1. W nawiasie podana jest wstępna rekomendacja.
+Kwestie a–u rozstrzygamy w porównaniu modeli (D27), z po teście gry bez moda (x: D31, y: D30). W nawiasie podana jest wstępna rekomendacja.
 
 | # | Kwestia | Stan |
 |---|---|---|
@@ -240,6 +262,4 @@ Kwestie a–u rozstrzygamy w porównaniu modeli (D27), x–z po E1. W nawiasie p
 | c | Ekspresja według kategorii i emocji | po porównaniu, w ramach D28; próbki w `analysis/work/qa_samples/exag/` |
 | e | Głos systemowy na start | po porównaniu (narrator w neutralnym stylu); docelowo gotowy głos według D22 |
 | u | Nazwy własne i angielska wymowa (np. „Frostgate”) | po porównaniu: czy wydzielać nazwy z treści (fragment po angielsku, słownik albo zapis fonetyczny) |
-| x | Czytanie zmian celu misji (HUD, 8 kluczy M1, bez okna) | do QA; obserwacja możliwa przez `UIGame._lastObjectiveKey` |
-| y | Czytanie aktywacji wroga (`ENEMY_ACTIVATION_*`, osobne okno) | do QA; obserwacja możliwa przez bieżącą aktywację w `GameController` |
-| z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | do sprawdzenia, czy występuje bez loadera |
+| z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | test gry bez moda (wyjście z menu do pulpitu) |
