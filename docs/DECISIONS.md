@@ -151,6 +151,8 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Nie klonujemy głosów osób bez ich zgody. Mieszanie daje wiele różnych NPC z małej liczby źródeł.
 
+**Zmiana 2026-11-01:** zastąpione przez D41 (projekt głosu dla każdej postaci, bez zbiorów mowy).
+
 ### D23 · 2026-10-31 · Muzyka pod lektorem (p)
 **Decyzja:**
 - W M1 nie wyciszamy muzyki; ustawiacie jej głośność w opcjach gry.
@@ -295,12 +297,26 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Bez moda gra zamyka się czysto, więc przyczyną jest loader albo plugin. Crash występuje tylko przy wyjściu, a zapisy gry są kompletne, więc nie blokuje E2 i E3.
 
+### D41 · 2026-11-01 · Głosy postaci NPC: projekt głosu
+**Decyzja:**
+- Każda postać w grze dostaje własny głos. Postacie bez głosu z dubbingu (D06) dostają głos zaprojektowany w OmniVoice, bez klonowania nagrań osób.
+- Projekt zaczyna się od portretu postaci z plików gry (`d3/storymessagecharacters`, tekstura `*_Dialogue`) i opisu charakteru. Z nich wynika opis głosu (płeć, wiek, wysokość), własne zdanie referencji w stylu postaci (nie tekst gry) i tempo referencji.
+- Do QA trafiają 4 kandydaci na postać, wybrani z większej puli tak, żeby różnili się barwą. Odpadają kandydaci z błędami ASR i z wysokością głosu spoza płci postaci.
+- Wybrany kandydat zostaje stałą referencją postaci. Wybory zapisujemy w [CASTING.md](CASTING.md).
+- W M1 projektujemy Adelynn i Ronana („Welcome Home”). Pozostałe postacie projektujemy po rozegraniu M1 z lektorem.
+- Kwestie NPC mają tempo dialogów z D34, jak bohaterowie.
+- Obsada M1 (runda 2): Adelynn: starsza kobieta, niski głos; Ronan: starszy mężczyzna, bardzo niski głos (szczegóły w CASTING.md).
+
+**Uzasadnienie:**
+- Projekt głosu nie wymaga pobierania danych ani zgody mówców, a każdą postać da się dopasować do wyglądu.
+- Pierwsza runda bez portretu i z neutralnym tekstem dała głosy niepasujące do postaci.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
 - RTF na GTX 1650 Ti wynosi ok. 2,2 (`analysis/BENCH.md`), więc generowanie na żywo nie zmieści się w 2–3 s.
 - Build macOS ma identyczne teksty, audio i klasy hooka jak Windows (`analysis/MAC_REPORT.md`).
-- Milestone 1 nie potrzebuje głosów NPC (mówi tylko Ne’Krul), ale głos systemowy jest potrzebny od razu: 255 kluczy (`analysis/M1_SCOPE.md`).
+- Prolog i Q1 nie potrzebują głosów NPC (mówi tylko Ne’Krul), ale głos systemowy jest potrzebny od razu: 255 kluczy (`analysis/M1_SCOPE.md`). Scena „Welcome Home” dołączona w D15 ma dwie postacie NPC: Adelynn (12 kwestii) i Ronan (4) (`analysis/E2_DATA.md`).
 - Argumenty `{n}` mają typy `RawText`, `VariableString`, `EntityName`, `VariableInt`, `ListOfKeys` (`MessageArgument`). Wartości to nazwy wrogów i bohaterów, liczby i teksty innych kluczy.
 - Słoty `VARIABLE_HERO1–4` to bohaterowie kolejnych aktywnych graczy (`StoryCharacterModel.GetVariableCharacterIndex`, `ActivePlayers[N]`).
 - Próbki stylu (`analysis/tools/style_samples.py`, `analysis/work/qa_samples/`) pokazały, czego wymaga normalizacja:
@@ -317,6 +333,15 @@ Plan etapów: [PLAN.md](PLAN.md).
   - OmniVoice z góry ustala długość wyniku: domyślnie według tempa referencji (z pauzami, stąd „za wolno”), a `speed` ją skraca;
   - koszt wywołania OmniVoice rośnie z długością całego ciągu (tekst, referencja, wynik), liczonego co krok dwa razy (CFG);
   - modele z transkrypcją referencji potrzebują wycinków ciętych na granicach słów.
+- E2 (`analysis/E2_DATA.md`):
+  - baza M1: 649 kluczy, 635 do syntezy, 965 unikalnych fragmentów; szacunek E3 ok. 38 h GPU bez retake;
+  - wilk wystąpił w losowaniu sesji E1 (`DEFAULT_SPAWN_ENEMY`), więc według D15/D30 jego aktywacje i taktyki są w zakresie;
+  - w argumentach `EntityName` gra podaje tylko formę pojedynczą nazwy wroga, u bossa z aliasem w nawiasie;
+  - zmienne tekstowe (`VariableString`, część `LocalizationKey`) dostają klucze ustawiane w grafach (`SetStringKey`) albo imiona bohaterów; inwentarz wartości liczymy dla każdej zmiennej osobno;
+  - `{n}` w `DEFAULT_SPAWN_ENEMY_MULTI` to lista wszystkich argumentów;
+  - wartości luk mają jedno tempo 1,2 (krótki fragment według D34), więc te same nazwy i liczby nie mnożą się przez tempo kwestii;
+  - 13 kwestii ma luki znane dopiero w grze (łup `RawText`, listy kluczy, teksty spoza grafów); companion obsłuży je syntezą na żywo albo pominie lukę (E4);
+  - zwykły rzeczownik po luce liczbowej zostaje w formie z szablonu; odmieniają się liczebnik i ikony.
 
 ## Otwarte kwestie
 

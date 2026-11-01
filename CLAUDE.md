@@ -12,6 +12,7 @@ Gramy na MacBooku Air M5 (arm64). Development robimy na Windows 11 z GTX 1650 Ti
 
 - Plan etapów ustalamy w [docs/PLAN.md](docs/PLAN.md). Żaden etap nie startuje bez akceptacji użytkownika.
 - Decyzje zapisujemy w [docs/DECISIONS.md](docs/DECISIONS.md) (data, decyzja, uzasadnienie).
+- Obsadę głosów zapisujemy w [docs/CASTING.md](docs/CASTING.md). Głos NPC projektujemy od portretu postaci z plików gry (D41), a kandydaci do QA mają się wyraźnie różnić.
 - Kwestie do decyzji rozstrzygamy przez QA w `AskUserQuestion`:
   - 3–4 pytania na rundę;
   - rekomendacja jako pierwsza opcja, z krótkim uzasadnieniem;
@@ -28,20 +29,31 @@ Gramy na MacBooku Air M5 (arm64). Development robimy na Windows 11 z GTX 1650 Ti
 
 ```
 CLAUDE.md, README.md
-docs/        PLAN.md (etapy), DECISIONS.md (decyzje i otwarte kwestie)
+docs/        PLAN.md (etapy), DECISIONS.md (decyzje i otwarte kwestie), CASTING.md (obsada głosów)
 analysis/    raporty z analiz + tools/ (skrypty Python/UnityPy)
   work/      kopie gry, depot macOS, dekompilacja, audio, próbki: nieśledzone
 src/         kod docelowy (plugin, pipeline, companion)
+  lektor/    pakiet Python: baza kwestii M1 (build), referencje głosów (refs), raport (report)
   plugin/    Core (C#, net472, bez Harmony i BepInEx), BepInEx (adapter), install/lektor-hook.ps1
+tests/       pytest dla src/lektor (zdania testowe własne, bez tekstów gry)
 ```
 
 ## Komendy
 
-Środowisko: `.venv` w katalogu głównym (Python 3.13, torch 2.6.0+cu124, chatterbox-tts 0.1.7).
+Środowisko: `.venv` w katalogu głównym (Python 3.12, torch 2.6.0+cu124, chatterbox-tts 0.1.7, pakiet `lektor` zainstalowany w trybie edytowalnym).
 
 ```bash
 .venv/Scripts/python -I analysis/tools/<skrypt>.py
 .venv/Scripts/python -I analysis/tools/tts_bench.py --asr-only
+```
+
+Pipeline danych (E2). Baza i referencje lądują w `analysis/work/lektor/` (prywatne):
+
+```bash
+.venv/Scripts/python -I -m lektor build      # baza kwestii M1 z kopii gry (m1.sqlite)
+.venv/Scripts/python -I -m lektor refs       # referencje głosów do 10 s z transkrypcją (Whisper, GPU)
+.venv/Scripts/python -I -m lektor report     # raport liczności analysis/E2_DATA.md
+.venv/Scripts/python -I -m pytest -q
 ```
 
 Modele z porównania E0 mają własne środowiska w `%LOCALAPPDATA%\LektorPL\envs\<model>` (tworzy je `analysis/envs/create_envs.sh`). Wybrany model to OmniVoice (D33):
@@ -61,6 +73,8 @@ dotnet build src/plugin/BepInEx -c Release
 Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install|-Uninstall|-Status`) uruchamia użytkownik według `docs/E1_PLAYTEST.md`. Dzienniki pluginu: `%LOCALAPPDATA%\LektorPL\logs`.
 
 - Python uruchamiamy z `-I`.
+- `analysis/tools/normalize_pl.py` to nakładka na `lektor.normalize`; skrypty E0 wymagają pakietu `lektor` w `.venv`.
+- Wypisywanie tekstów gry (np. `normalize_pl.py --m1`) zostawiamy na pliki w `analysis/work/`, nie na konsolę.
 - Plugin nie woła getterów gry z leniwą inicjalizacją (np. `I2.Loc.LocalizationManager.CurrentLanguage`). Czyta pola przez refleksję, bo wcześniejsze wywołanie psuje start gry (E1_HOOK.md).
 - OmniVoice potrzebuje referencji ciętych na granicach słów i transkrypcji z tego samego wycinka. Ucięta referencja sprawia, że model dopowiada jej końcówkę (BAKEOFF.md).
 - Na GPU 4 GB po kondycjonowaniu Chatterboxa zdejmujemy z GPU tokenizer S3, CAMPPlus i VoiceEncoder (`offload_conditioning` w `tts_bench.py`). Bez tego model wychodzi poza VRAM i RTF rośnie do ok. 13.
@@ -76,3 +90,4 @@ Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install|-Uninstal
 | [analysis/BENCH.md](analysis/BENCH.md) | Chatterbox na GTX 1650 Ti: VRAM, RTF, błędy, ekstrapolacja |
 | [analysis/E1_HOOK.md](analysis/E1_HOOK.md) | test hooka w grze: pokrycie okien, argumenty, luki, wydajność, crashe |
 | [analysis/BAKEOFF.md](analysis/BAKEOFF.md) | porównanie modeli TTS (E0): wydajność, CER, podobieństwo, odsłuch, tempo i akcent OmniVoice |
+| [analysis/E2_DATA.md](analysis/E2_DATA.md) | baza kwestii M1 (E2): liczności, luki `{n}` i ich wartości, pokrycie wartości z E1, szacunek E3 |

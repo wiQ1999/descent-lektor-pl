@@ -2,7 +2,7 @@
 
 ## Kontekst
 
-Analizy są zamknięte (raporty w `analysis/`, commit 765145f), a rejestr decyzji jest w `docs/DECISIONS.md` (D01–D28 po rundach QA, D29–D40 po E0 i E1).
+Analizy są zamknięte (raporty w `analysis/`, commit 765145f), a rejestr decyzji jest w `docs/DECISIONS.md` (D01–D28 po rundach QA, D29–D40 po E0 i E1, D41 w E2).
 
 Odsłuch próbek Chatterboxa dał jakość „dostateczną”:
 - angielskie nazwy są spolszczane;
@@ -127,6 +127,8 @@ E1 ──────────────────> E4 companion (z repla
 
 **Cel:** gotowa baza kwestii M1 do generowania.
 
+**Status:** zakończony 2026-11-01 ([analysis/E2_DATA.md](../analysis/E2_DATA.md)). Baza M1: 649 kluczy, 965 fragmentów, szacunek E3 ok. 39 h GPU. Raport liczności zaakceptowany. Głosy NPC ze sceny „Welcome Home” zaprojektowane od portretów (D41, [CASTING.md](CASTING.md)).
+
 **Zakres:** pakiet `src/lektor/` (pyproject w katalogu głównym, testy pytest w `tests/`):
 - **ekstrakcja z kopii gry:** wykorzystuję logikę `extract_lines.py`, `m1_scope.py` i `speaker_gender.py`. Wynik to SQLite z kluczem, tekstem, kategorią, mówcą i głosem, kontekstem (graf, `seq`), argumentami i wariantami.
 - **normalizacja:**
@@ -140,7 +142,7 @@ E1 ──────────────────> E4 companion (z repla
   - `VARIABLE_HERO` głosem narratora (D17);
   - przerywniki wykluczone (D14).
 - **kategoria i tempo** każdej kwestii według D34: narracja w scenach fabularnych w tempie naturalnym, reszta 1,2–1,4 według długości (D35 zastępuje adnotację emocji z D28).
-- **referencje:** jedna neutralna na głos, cięta na granicach słów, z transkrypcją z tego samego wycinka (D33).
+- **referencje:** jedna neutralna na głos, cięta na granicach słów, z transkrypcją z tego samego wycinka (D33). NPC bez dubbingu: projekt głosu od portretu postaci (D41).
 - **klucz cache:** hash znormalizowanego tekstu + głos + styl + wersja modelu.
 - **zakres:** policzenie zakresu „Welcome Home” (D15).
 
@@ -241,7 +243,7 @@ E1 ──────────────────> E4 companion (z repla
 
 - przed startem: decyzja o modelu dla całej gry według czasu z E3 (D39);
 - SQ1 i kolejne misje;
-- głosy NPC i docelowy głos systemowy (D22);
+- głosy pozostałych postaci projektowane od portretu (D41) po rozegraniu M1 z lektorem; docelowy głos systemowy;
 - wersje `VARIABLE_HERO` w głosach bohaterów (D17);
 - złoczyńcy (D19);
 - procedura po aktualizacji gry: porównanie manifestu, diff kluczy, regeneracja zmienionych.
