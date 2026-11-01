@@ -10,7 +10,7 @@ Raport powstał przez `analysis/tools/hook_coverage.py` i dodatkowe porównania 
 |---|---|---|
 | ≥ 98% okien z kluczem, tekstem i mówcą | 285/285 okien (100%) | spełnione |
 | Zamknięcia okien | 285/285, w tym 12 cofnięć i 32 wybory z kluczem opcji | spełnione |
-| Brak crashy i spadków płynności | crash przy starcie w 0.1.0 (naprawiony); crash przy wyjściu do pulpitu (otwarte) | częściowo |
+| Brak crashy i spadków płynności | crash przy starcie w 0.1.0 (naprawiony); crash przy wyjściu do pulpitu, tylko z loaderem (otwarte) | częściowo |
 | Odinstalowanie przywraca folder gry | identyczny poza zapisami gry | spełnione |
 
 Okna `MessageController` i `StoryMessageController` są pokryte w całości. Dwa rodzaje treści z zakresu M1 gra pokazuje jednak poza tymi oknami (sekcja „Luki”).
@@ -104,7 +104,9 @@ Pozostałe teksty widoczne tylko w UI to opcje wyboru jako przyciski (pokryte pr
 - **Stan pluginu:** zdążył zapisać `stop` (`OnApplicationQuit`).
 - **Zapisy gry:** kompletne.
 
-Nie wiadomo jeszcze, czy gra robi to samo bez loadera. Test: uruchomić grę bez moda i wyjść do pulpitu z menu.
+Test bez moda (2026-11-01): wyjście z menu do pulpitu przebiegło bez crasha. W `Crashes` nie przybył nowy folder, a `Player.log` kończy się normalnym zamknięciem. Crash wywołuje więc loader (BepInEx 5 z Doorstopem) albo nasz plugin. Plugin nie ma własnych wątków ani timerów; przy wyjściu zostają tylko subskrypcje zdarzeń gry i `SceneManager.activeSceneChanged`.
+
+Do rozdzielenia przyczyn trzeba sesji z BepInEx bez pluginu, a potem z pluginem, który przy wyjściu odpina subskrypcje.
 
 ## Odinstalowanie
 
@@ -118,8 +120,8 @@ Nie wiadomo jeszcze, czy gra robi to samo bez loadera. Test: uruchomić grę bez
   - argumenty `RawText` (łup) wymagają osobnej ścieżki.
 - **E4:**
   - format zdarzeń JSONL i wykrywanie pokazania okna fabularnego (zmiana tekstu, maks. 23 ms) można przenieść bez zmian;
-  - do dodania obserwacja celu misji i aktywacji wroga, jeśli wejdą do zakresu;
+  - do dodania obserwacja celu misji (D31) i aktywacji wroga (D30);
   - `EntityName` mapujemy po wartości, gdy `as_key` zwraca znacznik.
 - **Otwarte:**
-  - crash przy wyjściu;
+  - crash przy wyjściu z loaderem (bez moda go nie ma);
   - `VARIABLE_HERO` bez testu w grze.

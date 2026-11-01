@@ -2,7 +2,7 @@
 
 ## Kontekst
 
-Analizy są zamknięte (raporty w `analysis/`, commit 765145f), a rejestr decyzji jest w `docs/DECISIONS.md` (D01–D28 po rundach QA).
+Analizy są zamknięte (raporty w `analysis/`, commit 765145f), a rejestr decyzji jest w `docs/DECISIONS.md` (D01–D28 po rundach QA, D29–D40 po E0 i E1).
 
 Odsłuch próbek Chatterboxa dał jakość „dostateczną”:
 - angielskie nazwy są spolszczane;
@@ -27,6 +27,8 @@ E1 ──────────────────> E4 companion (z repla
 - W `analysis/` nie ma treści gry; audio, logi i próbki leżą w `analysis/work/` (ignorowane).
 
 ## E0 · Porządki i porównanie modeli TTS
+
+**Status:** zakończony 2026-11-01 ([analysis/BAKEOFF.md](../analysis/BAKEOFF.md)). Wybrany OmniVoice, 32 kroki (D33). Tempo, ekspresja, głos systemowy, nazwy i podejścia: D34–D38. Model dla całej gry: po E3 (D39).
 
 **Cel:** wybrać model, ustawienia i sposób reżyserii przed generowaniem M1 oraz rozstrzygnąć otwarte kwestie a, b, c, e i u.
 
@@ -81,7 +83,7 @@ E1 ──────────────────> E4 companion (z repla
 
 ## E1 · Test hooka na Windows (tylko logowanie)
 
-**Status:** zakończony 2026-10-31 ([analysis/E1_HOOK.md](../analysis/E1_HOOK.md)). Okna pokryte w 100%. Otwarte kwestie x, y, z w DECISIONS.md.
+**Status:** zakończony 2026-10-31 ([analysis/E1_HOOK.md](../analysis/E1_HOOK.md)). Okna pokryte w 100%. Kwestie x i y rozstrzygnięte (D31, D30), crash przy wyjściu (z) diagnozujemy w E4 (D40).
 
 **Cel:**
 - potwierdzić, że plugin widzi wszystkie okna;
@@ -131,13 +133,14 @@ E1 ──────────────────> E4 companion (z repla
   - tagi;
   - glify PUA według mapy ikon;
   - liczby na słowa z odmianą według wzorców z gry;
-  - słownik wymowy i nazw w formacie z decyzji u.
+  - nazwy jak zapisane, słownik zapisów fonetycznych tylko dla wyjątków z E3 (D37).
 - **dzielenie:** długie kwestie na zdania; szablony `{n}` na fragmenty i inwentarz wartości: wrogowie z E1, bohaterowie, liczby (D16).
 - **reguły z decyzji:**
   - okna wyboru: podział na cytat i opis (D20);
   - `VARIABLE_HERO` głosem narratora (D17);
   - przerywniki wykluczone (D14).
-- **adnotacja emocji i tempa** dla M1 według słownika z E0 (D28). Przygotowuję ją ja, Ty przeglądasz próbkę.
+- **kategoria i tempo** każdej kwestii według D34: narracja w scenach fabularnych w tempie naturalnym, reszta 1,2–1,4 według długości (D35 zastępuje adnotację emocji z D28).
+- **referencje:** jedna neutralna na głos, cięta na granicach słów, z transkrypcją z tego samego wycinka (D33).
 - **klucz cache:** hash znormalizowanego tekstu + głos + styl + wersja modelu.
 - **zakres:** policzenie zakresu „Welcome Home” (D15).
 
@@ -146,9 +149,9 @@ E1 ──────────────────> E4 companion (z repla
 - testy normalizacji, podziału i fragmentów przechodzą;
 - raport liczności.
 
-**Zależności:** E0 (model, nazwy, słownik emocji) i E1 (wrogowie, wartości `{n}`, format zdarzeń).
+**Zależności:** E0 (model, tempo, nazwy) i E1 (wrogowie, wartości `{n}`, format zdarzeń).
 
-**Co wymaga Ciebie:** przegląd próbki adnotacji i listy nazw.
+**Co wymaga Ciebie:** przegląd raportu liczności.
 
 ## E3 · Generowanie audio M1
 
@@ -157,17 +160,21 @@ E1 ──────────────────> E4 companion (z repla
 **Zakres:**
 - wsad z wznawianiem, ze stanem zapisywanym dla każdej kwestii;
 - strażnik RTF i VRAM (D12);
-- kilka podejść na kwestię i wybór najlepszego według CER i podobieństwa głosu;
+- przyspieszenia OmniVoice bez zmiany brzmienia (krótsze referencje, gałąź bez warunku CFG bez dopełniania), sprawdzone na próbce przed wsadem;
+- podejścia według D38: bohaterowie 3, reszta 1 i ponowne dla odrzuconych; wybór najlepszego według CER, uciętej końcówki, podobieństwa głosu i długości;
 - wykrywanie zgubionych fragmentów;
 - normalizacja głośności według kategorii (D04);
 - manifest i pliki w `analysis/work/audio/` (ignorowane);
-- lista do odsłuchu: odrzucone kwestie + losowa próbka.
+- lista do odsłuchu: kwestie odrzucone po ponownym podejściu + losowe 5% (D38).
 
-**Kryteria ukończenia:** co najmniej 98% kluczy M1 z zaakceptowanym audio; lista odsłuchu przejrzana, poprawki wygenerowane.
+**Kryteria ukończenia:**
+- co najmniej 98% kluczy M1 z zaakceptowanym audio;
+- lista odsłuchu przejrzana, poprawki wygenerowane;
+- zmierzony czas generowania na znak, potrzebny do decyzji o całej grze (D39).
 
 **Zależności:** E0 i E2.
 
-**Co wymaga Ciebie:** odsłuch listy i decyzje o poprawkach. GPU zajmie ok. 3–4 h, zależnie od modelu z E0.
+**Co wymaga Ciebie:** odsłuch listy (ok. 10 min) i decyzje o poprawkach. GPU zajmie ok. 35–38 h (OmniVoice, D33), mniej po przyspieszeniach.
 
 ## E4 · Companion i integracja
 
@@ -183,7 +190,9 @@ E1 ──────────────────> E4 companion (z repla
   - opcjonalny fallback na żywo;
   - log pokrycia i opóźnień;
   - plik konfiguracyjny;
-- tryb replay logu JSONL z E1, do testów bez gry.
+- tryb replay logu JSONL z E1, do testów bez gry;
+- obserwacja celu misji i aktywacji wroga (D30–D32);
+- odpinanie subskrypcji przy wyjściu z gry i instrukcja dwóch krótkich testów wyjścia przed E5: sam BepInEx i plugin (D40).
 
 **Kryteria ukończenia:** replay logu E1 daje audio dla co najmniej 98% okien, start poniżej 0,5 s i przerwanie poniżej 0,3 s według logu (D13); testy jednostkowe przechodzą.
 
@@ -230,6 +239,7 @@ E1 ──────────────────> E4 companion (z repla
 
 ## E7 · Kolejne misje przyrostowo
 
+- przed startem: decyzja o modelu dla całej gry według czasu z E3 (D39);
 - SQ1 i kolejne misje;
 - głosy NPC i docelowy głos systemowy (D22);
 - wersje `VARIABLE_HERO` w głosach bohaterów (D17);

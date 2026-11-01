@@ -44,6 +44,13 @@ src/         kod docelowy (plugin, pipeline, companion)
 .venv/Scripts/python -I analysis/tools/tts_bench.py --asr-only
 ```
 
+Modele z porównania E0 mają własne środowiska w `%LOCALAPPDATA%\LektorPL\envs\<model>` (tworzy je `analysis/envs/create_envs.sh`). Wybrany model to OmniVoice (D33):
+
+```bash
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/bakeoff_gen.py omnivoice [--only F01_A] [--force]
+.venv/Scripts/python -I analysis/tools/bakeoff_eval.py [--page r2 --models omnivoice --variants A P1]
+```
+
 Plugin (referencje do DLL z kopii gry w `analysis/work/game`, wynik w `build/plugin/`):
 
 ```bash
@@ -55,6 +62,7 @@ Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install|-Uninstal
 
 - Python uruchamiamy z `-I`.
 - Plugin nie woła getterów gry z leniwą inicjalizacją (np. `I2.Loc.LocalizationManager.CurrentLanguage`). Czyta pola przez refleksję, bo wcześniejsze wywołanie psuje start gry (E1_HOOK.md).
+- OmniVoice potrzebuje referencji ciętych na granicach słów i transkrypcji z tego samego wycinka. Ucięta referencja sprawia, że model dopowiada jej końcówkę (BAKEOFF.md).
 - Na GPU 4 GB po kondycjonowaniu Chatterboxa zdejmujemy z GPU tokenizer S3, CAMPPlus i VoiceEncoder (`offload_conditioning` w `tts_bench.py`). Bez tego model wychodzi poza VRAM i RTF rośnie do ok. 13.
 
 ## Raporty
@@ -67,3 +75,4 @@ Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install|-Uninstal
 | [analysis/M1_SCOPE.md](analysis/M1_SCOPE.md) | zakres milestone 1 (prolog + Q1) |
 | [analysis/BENCH.md](analysis/BENCH.md) | Chatterbox na GTX 1650 Ti: VRAM, RTF, błędy, ekstrapolacja |
 | [analysis/E1_HOOK.md](analysis/E1_HOOK.md) | test hooka w grze: pokrycie okien, argumenty, luki, wydajność, crashe |
+| [analysis/BAKEOFF.md](analysis/BAKEOFF.md) | porównanie modeli TTS (E0): wydajność, CER, podobieństwo, odsłuch, tempo i akcent OmniVoice |

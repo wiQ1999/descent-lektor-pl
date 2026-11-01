@@ -206,6 +206,8 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Same parametry kategorii nie dają zmian tempa i barwy w obrębie dialogu.
 
+**Zmiana 2026-11-01:** po porównaniu modeli zastąpione przez D35 (neutralna referencja, adnotacja tylko kategorii i tempa).
+
 ### D29 · 2026-10-31 · XTTS-v2: akceptacja licencji CPML
 **Decyzja:** Akceptujesz Coqui Public Model License dla wag XTTS-v2, więc XTTS bierze udział w porównaniu (D27).
 
@@ -233,6 +235,66 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Miejsca odczytu są znane z dekompilacji (`GameController` i `UIGame`), a osobna sesja tylko po to opóźniłaby E2.
 
+### D33 · 2026-11-01 · Model TTS: OmniVoice, 32 kroki (a)
+**Decyzja:**
+- M1 generujemy OmniVoice (`k2-fsa/OmniVoice`): fp16, 32 kroki, domyślne CFG 2,0.
+- Akceptujesz licencje wag do prywatnego użytku: model CC-BY-NC, tokenizer audio Boson Higgs Audio 2 Community License. Wag ani wygenerowanego audio nie rozpowszechniamy.
+- Referencje dla OmniVoice tniemy na granicach słów (do 10 s), a transkrypcja pochodzi z tego samego wycinka.
+
+**Uzasadnienie:**
+- Najlepsze oceny w obu rundach odsłuchu (`analysis/BAKEOFF.md`), CER bliski zera i najwyższe podobieństwo głosu.
+- 16 kroków skraca czas o połowę, ale brzmi gorzej i ma więcej błędów.
+- Koszt: na GTX 1650 Ti ok. 30 h na jedno podejście M1.
+
+### D34 · 2026-11-01 · Tempo czytania (b)
+**Decyzja:**
+- Narracja w scenach fabularnych (kategoria `narracja_fabularna`, np. intro i outro misji): tempo naturalne, przejęte z referencji, pauza między zdaniami 0,35 s.
+- Dialogi bohaterów oraz narrator i system w trakcie rozgrywki: tempo bazowe 1,2, rosnące z długością kwestii do 1,4. Wstępnie: 1,2 do 80 znaków, potem liniowo do 1,4 przy 300 znakach. Progi korygujemy po odsłuchu E3.
+- Pauza między zdaniami poza scenami fabularnymi: 0,25 s.
+- Gdy automat wykryje uciętą końcówkę, ponowne podejście dostaje niższe tempo.
+
+**Uzasadnienie:** Szybsze tempo brzmiało lepiej, zwłaszcza w długich tekstach. Najszybsze tempo psuło krótkie kwestie, a krótki okrzyk przy 1,2 urwał się na końcu. Mocny akcent i naturalne tempo pasują do narratora w scenach między rozgrywkami.
+
+### D35 · 2026-11-01 · Ekspresja: neutralna referencja (c, zmienia D28)
+**Decyzja:**
+- Jedna neutralna referencja na głos i domyślne CFG 2,0. Emocję model bierze z tekstu.
+- Adnotacja kwestii w E2 obejmuje tylko kategorię i tempo (D34). Referencji emocjonalnych w M1 nie używamy.
+
+**Uzasadnienie:** Referencje emocjonalne nie poprawiły ocen w żadnym modelu, a niższe CFG obniżyło ocenę emocji. Mniej pracy w E2.
+
+### D36 · 2026-11-01 · Głos systemowy na M1: narrator (e)
+**Decyzja:** Głos systemowy to narrator z neutralną referencją i tempem według D34. Docelowy osobny głos wybieramy w E7 (D22).
+
+**Uzasadnienie:** Komunikaty systemowe czytane narratorem dostały w odsłuchu 4/4/4 i 4/4/5.
+
+### D37 · 2026-11-01 · Nazwy własne: jak zapisane, z wyjątkami (u)
+**Decyzja:**
+- Angielskie nazwy zostają w tekście tak, jak są zapisane.
+- Zapis fonetyczny w słowniku dostają tylko nazwy, które w E3 wyjdą źle (ASR i lista odsłuchu).
+- Nie wklejamy nazw generowanych po angielsku.
+
+**Uzasadnienie:** OmniVoice czytał nazwy w zwykłym tekście dobrze. Wklejanie po angielsku wypadło źle we wszystkich modelach, a zapis fonetyczny dał błąd wymowy.
+
+### D38 · 2026-11-01 · Podejścia i odsłuch w E3
+**Decyzja:**
+- Kwestie bohaterów: 3 podejścia. Pozostałe: 1 podejście i ponowne, gdy automat odrzuci wynik.
+- Automat (ASR: CER i ucięta końcówka, podobieństwo głosu, długość) wybiera najlepsze podejście.
+- Przed E5 odsłuchujesz kwestie odrzucone po ponownym podejściu i losowe 5% reszty (ok. 10 min).
+
+**Uzasadnienie:** Kwestie bohaterów to 7% znaków M1, a automat nie wykrywa zmiany głosu w trakcie kwestii (F01 w rundzie 2). M1 to ok. 35–38 h pracy GPU.
+
+### D39 · 2026-11-01 · Koszt całej gry: decyzja po E3
+**Decyzja:** M1 generujemy OmniVoice. O modelu dla całej gry decydujemy po E3, przed E7, na podstawie czasu zmierzonego po przyspieszeniach i uwag z odsłuchu. Opcje to OmniVoice dla całej gry albo hybryda (np. szybszy model dla komunikatów, reguł i UI).
+
+**Uzasadnienie:** Cała gra (D02, ok. 1,43 mln znaków) to na tej karcie ok. 610 h pracy GPU na jedno podejście, czyli ok. 25 dób. Przyspieszenia z E3 mogą to istotnie zmienić.
+
+### D40 · 2026-11-01 · Crash przy wyjściu: diagnoza w E4 (z)
+**Decyzja:**
+- W E4 plugin dostaje odpinanie subskrypcji przy wyjściu z gry.
+- Przed sesją E5 robisz dwa krótkie testy wyjścia (start, menu, wyjście): z samym BepInEx i z pluginem.
+
+**Uzasadnienie:** Bez moda gra zamyka się czysto, więc przyczyną jest loader albo plugin. Crash występuje tylko przy wyjściu, a zapisy gry są kompletne, więc nie blokuje E2 i E3.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -249,17 +311,19 @@ Plan etapów: [PLAN.md](PLAN.md).
 - E1 (`analysis/E1_HOOK.md`):
   - hook bez Harmony widzi 100% okien `MessageController` i `StoryMessageController`; tekst pluginu zgadza się z ekranem;
   - plugin nie może wołać getterów gry z leniwą inicjalizacją. Wywołanie `I2.Loc.LocalizationManager.CurrentLanguage` przed załadowaniem bundli powodowało crash Wwise przy starcie;
-  - cel misji (HUD) i tekst aktywacji wroga (`UIEnemyActivationDialog`) gra pokazuje poza oknami wiadomości.
+  - cel misji (HUD) i tekst aktywacji wroga (`UIEnemyActivationDialog`) gra pokazuje poza oknami wiadomości;
+  - crash przy wyjściu do pulpitu (`mono_jit_cleanup`) występuje tylko z loaderem. Bez moda gra zamyka się czysto (test 2026-11-01).
+- E0 (`analysis/BAKEOFF.md`):
+  - OmniVoice z góry ustala długość wyniku: domyślnie według tempa referencji (z pauzami, stąd „za wolno”), a `speed` ją skraca;
+  - koszt wywołania OmniVoice rośnie z długością całego ciągu (tekst, referencja, wynik), liczonego co krok dwa razy (CFG);
+  - modele z transkrypcją referencji potrzebują wycinków ciętych na granicach słów.
 
 ## Otwarte kwestie
 
-Kwestie a–u rozstrzygamy w porównaniu modeli (D27), z po teście gry bez moda (x: D31, y: D30). W nawiasie podana jest wstępna rekomendacja.
+Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30 i D31.
 
 | # | Kwestia | Stan |
 |---|---|---|
-| a | Model i wariant TTS (precyzja, cfg_weight) | po porównaniu; wstępnie fp32 brzmi lepiej od fp16 |
-| b | Tempo: synteza jest ok. 30% szybsza od lektora | po porównaniu; próbki pauz i time-stretch w `analysis/work/qa_samples/tempo/` |
-| c | Ekspresja według kategorii i emocji | po porównaniu, w ramach D28; próbki w `analysis/work/qa_samples/exag/` |
-| e | Głos systemowy na start | po porównaniu (narrator w neutralnym stylu); docelowo gotowy głos według D22 |
-| u | Nazwy własne i angielska wymowa (np. „Frostgate”) | po porównaniu: czy wydzielać nazwy z treści (fragment po angielsku, słownik albo zapis fonetyczny) |
-| z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | test gry bez moda (wyjście z menu do pulpitu) |
+| z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | diagnoza w E4, testy wyjścia przed E5 (D40) |
+| – | Model dla całej gry | po E3, przed E7 (D39) |
+| – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |

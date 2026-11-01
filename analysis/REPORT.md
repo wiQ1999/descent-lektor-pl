@@ -95,7 +95,7 @@ Placeholderów `{n}` jest 1466 wystąpień w ok. 890 kluczach. Rozkład kluczy: 
 
 **Warianty zależne od bohatera** to osobne klucze, a nie parametry. Przykładowo `…_05K` (Kehli) stoi za `CheckHeroIsInPlay(HERO_KEHLI)`. Za jawnym warunkiem na bohatera stoją 224 klucze. Sufiksy w `_name` (K, S, G, V, C, B…) zwykle odpowiadają bohaterowi albo gałęzi. Dochodzą do tego sloty `STORY_CHARACTER_VARIABLE_HERO1–4` (261 kwestii), które dopiero w runtime wskazują konkretnego bohatera z drużyny.
 
-**Płeć:** w tekstach nie ma mechanizmu wariantów płci (brak parametrów I2, praktycznie brak form „(a)”). Formy rodzajowe są wpisane na sztywno, bo adresat jest znany: w dialogach „-łeś” pojawia się 93 razy, a „-łaś” 79 razy. Komunikaty zwracają się do gracza w 2. osobie, np. „Przypuszczasz”, „Wejdźcie”.
+**Płeć:** w tekstach nie ma mechanizmu wariantów płci (brak parametrów I2, praktycznie brak form „(a)”). Formy rodzajowe są wpisane na sztywno, bo adresat jest znany: w dialogach „-łeś” pojawia się 93 razy, a „-łaś” 79 razy. Komunikaty zwracają się do gracza w 2. osobie, w liczbie pojedynczej albo mnogiej.
 
 **Kolejność w scenariuszu:**
 - kampania `d3/coreset/data` (`Campaign 1.asset`, `QuestModel`);
@@ -103,15 +103,15 @@ Placeholderów `{n}` jest 1466 wystąpień w ok. 890 kluczach. Rozkład kluczy: 
 - Akt 2 (DLE04): A2Q01–A2Q11;
 - sceny fabularne `TANGERINE Qn Intro/Outro/Travel Story`, `A2 SSnn`, `Event nX …` wokół questów i na mapie świata.
 
-**Przykładowe rekordy** (z wyjścia ekstraktora, teksty skrócone):
+**Przykładowe rekordy** (z wyjścia ekstraktora; zamiast tekstu opis, bo repozytorium nie zawiera treści gry):
 
-| Typ | Rekord | PL |
+| Typ | Rekord | Tekst PL (opis) |
 |---|---|---|
-| dialog | `d3/act1` · „TANGERINE Q9 Outro Win” · `StoryMessageNode` `04` · mówca `GALADEN` · tło Forest | „Chyba po wszystkim.” |
-| wariant | to samo, `05K` · warunek `HERO:HERO_KEHLI` · mówca `KEHLI` | „Ha! Wygraliśmy!” |
-| narracja | „TANGERINE Q10 Intro” `01` · brak mówcy · tło House | „Salę tronową zamku Highmont wypełniają szlachcice…” |
-| komunikat questu | scena Q10 · „DT Fire End of Round” · `MessageNode` · arg `VariableInt` | „`<i>`Płomienie robią się jaśniejsze i gorętsze.`</i>`⏎Zwiększa się ryzyko…” |
-| napis cutscenki | `CutsceneModel` `CUTSCENE_01` · `displayAt: 0.5` · bank `Voice_Cutscenes_Act1` | „Uthuk Y'llan.” |
+| dialog | `d3/act1` · „TANGERINE Q9 Outro Win” · `StoryMessageNode` `04` · mówca `GALADEN` · tło Forest | krótka kwestia po walce, jedno zdanie |
+| wariant | to samo, `05K` · warunek `HERO:HERO_KEHLI` · mówca `KEHLI` | okrzyk radości, dwa krótkie zdania |
+| narracja | „TANGERINE Q10 Intro” `01` · brak mówcy · tło House | opis sali tronowej, kilka zdań |
+| komunikat questu | scena Q10 · „DT Fire End of Round” · `MessageNode` · arg `VariableInt` | zdanie fabularne kursywą `<i>…</i>`, nowa linia, potem reguła z liczbą `{0}` |
+| napis cutscenki | `CutsceneModel` `CUTSCENE_01` · `displayAt: 0.5` · bank `Voice_Cutscenes_Act1` | nazwa własna, dwa słowa |
 
 ## 5. Mówcy
 
@@ -195,16 +195,18 @@ Znaki liczyłem po usunięciu tagów i glifów, z `{n}` liczonym jako 6 znaków.
 | Nieużywane (stare rewizje `TANGERINE_*`, nieodwołane klucze questów) | 1 351 | 100 420 | — |
 | **Razem** | **17 156** | **1 900 051** | — |
 
-**Szacunek długości audio**, przy tempie 13 / 15 / 17 znaków/s:
+**Szacunek długości audio** (poprawiony według [VOICES.md](VOICES.md) i [BENCH.md](BENCH.md); pierwsza wersja zakładała 15 znaków/s):
+- polski lektor z przerywników czyta 9–10 znaków/s razem z pauzami;
+- synteza Chatterboxa czyta 12,5–13,4 znaku/s.
 
-| Zakres lektora | Klucze | Znaki | Audio |
-|---|---:|---:|---|
-| A. Okna fabularne: dialog + narracja + zdarzenia | 5 974 | 567 128 | 12,1 / **10,5** / 9,3 h |
-| B. A + warstwa fabularna komunikatów (`<i>`) z questów i walki | — | 1 195 323 | 25,5 / **22,1** / 19,5 h |
-| C. A + pełne komunikaty (z regułami) + wybory + cele | 11 036 | 1 430 154 | 30,6 / **26,5** / 23,4 h |
-| D. C + opisy questów, dziennik, ciekawostki | 11 602 | 1 516 072 | 32,4 / **28,1** / 24,8 h |
+| Zakres lektora | Klucze | Znaki | Audio przy tempie lektora (9 / 10 zn./s) | Audio z syntezy (13,4–12,5 zn./s) |
+|---|---:|---:|---|---|
+| A. Okna fabularne: dialog + narracja + zdarzenia | 5 974 | 567 128 | 17,5 / 15,8 h | 11,8–12,6 h |
+| B. A + warstwa fabularna komunikatów (`<i>`) z questów i walki | — | 1 195 323 | 36,9 / 33,2 h | 24,8–26,6 h |
+| C. A + pełne komunikaty (z regułami) + wybory + cele | 11 036 | 1 430 154 | 44,1 / 39,7 h | 29,6–31,8 h |
+| D. C + opisy questów, dziennik, ciekawostki | 11 602 | 1 516 072 | 46,8 / 42,1 h | 31,4–33,7 h |
 
-Czas generowania ≈ długość audio × RTF silnika. Dla zakresu A przy 15 znakach/s wychodzi ok. 1 h przy RTF 0,1, 5 h przy RTF 0,5 i 10,5 h przy RTF 1,0. Zakres C jest około 2,5 razy dłuższy.
+Czas generowania ≈ długość audio z syntezy × RTF silnika. Przy zmierzonym RTF Chatterboxa 2,1–2,5 na GTX 1650 Ti zakres A to ok. 25–30 h pracy GPU, a C ok. 64–75 h (BENCH.md). Spowolnienie syntezy do tempa lektora (np. time-stretch) wydłuża audio, ale nie czas generowania.
 
 ## 7. Czy da się odróżnić kategorie
 
@@ -227,7 +229,7 @@ Ograniczenia:
 
 **Rekomenduję hybrydę.** Uzasadnienie:
 
-1. **Pełny, czysty tekst z metadanymi.** 100% tekstów PL jest dostępnych lokalnie, razem z kluczem, mówcą, tłem, kolejnością i wariantami. Pozwala to przypisać głos do postaci (51 mówców plus narrator), oczyścić tagi i glify oraz wygenerować audio offline w najlepszej jakości i z ręczną kontrolą. Zakres A to tylko ok. 10,5 h audio.
+1. **Pełny, czysty tekst z metadanymi.** 100% tekstów PL jest dostępnych lokalnie, razem z kluczem, mówcą, tłem, kolejnością i wariantami. Pozwala to przypisać głos do postaci (51 mówców plus narrator), oczyścić tagi i glify oraz wygenerować audio offline w najlepszej jakości i z ręczną kontrolą. Zakres A to ok. 12–13 h audio z syntezy (16–17,5 h w tempie lektora).
 2. **Wyzwalanie na żywo** (szczegóły w pkt 9):
    - **`.qlog` się do tego nie nadaje.** Gra zapisuje go tylko przy zapisie stanu, czyli z opóźnieniem do całej rundy, i pomija okna fabularne.
    - **Hook Mono** (BepInEx x86) daje klucz, argumenty i mówcę w chwili wyświetlenia, dla 100% okien:
@@ -293,7 +295,7 @@ Sprawdziłem to na dwa sposoby:
 - `@` oddziela argumenty aktywacji;
 - `{BR}` oznacza nową linię.
 
-Istniejący plik z Q1 ma 12 wpisów. Po odwróceniu kolejność zgadza się z przebiegiem questu: wybór wartownika → Brynn na warcie → „noc mija…” → powitanie samouczka → rozstawienie → cel misji → faza 1.
+Istniejący plik z Q1 ma 12 wpisów. Po odwróceniu kolejność zgadza się z przebiegiem questu: wybór wartownika → Brynn na warcie → narracja o upływie nocy → powitanie samouczka → rozstawienie → cel misji → faza 1.
 
 **Wniosek:** `.qlog` **nie nadaje się do wyzwalania lektora na żywo**: opóźnienie sięga całej rundy, a okna fabularne są pominięte. Przydaje się natomiast do:
 - ustalenia kontekstu po wczytaniu gry (quest, runda, które komunikaty już padły);
