@@ -12,7 +12,8 @@ from . import normalize as N
 
 LONG = 260          # dłuższe kwestie dzielimy na zdania
 SLOT = re.compile(r'\{(\d|n)\}')   # {n}: lista wszystkich argumentów (DEFAULT_SPAWN_ENEMY_MULTI)
-PUNCT_ONLY = re.compile(r'^[\s.,;:!?…–-]*$')
+PUNCT_ONLY = re.compile(r'^[\s.,;:!?…–\-„”"«»()]*$')
+COUNT = re.compile(r'^/(\d+)')     # „({0}/4)”: licznik postępu, czytany „… z czterech”
 LEAD_PUNCT = re.compile(r'^[.,;:!?…]+\s*')
 NUMBER_VALUES = range(0, 21)
 
@@ -47,6 +48,9 @@ def template_pieces(raw, arg_types=()):
             if fm and (fm.group(1) or N.noun_gender(fm.group(2))):
                 out[-1]['noun'] = fm.group(0).strip()
                 text = text[fm.end():]
+        cm = COUNT.match(text) if out and out[-1]['kind'] == 'slot' else None
+        if cm:
+            text = 'z %s%s' % (N.cardinal(int(cm.group(1)), 'gen'), text[cm.end():])
         norm = N.normalize(text)
         lead = LEAD_PUNCT.match(norm)
         if lead and out and out[-1]['kind'] == 'slot' and not PUNCT_ONLY.match(norm):
@@ -101,6 +105,8 @@ def choice_parts(text):
         if quote and quote[-1] not in '.!?…':
             quote += '.'
         desc = m.group('d').strip()
+        if PUNCT_ONLY.match(desc):
+            desc = ''
         if desc:
             desc = desc[0].upper() + desc[1:]
         # Mówca stoi w mianowniku („odpowiada Galadenowi Vaerix” → Vaerix); bez mianownika bierzemy pierwsze imię.

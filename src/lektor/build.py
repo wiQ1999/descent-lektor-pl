@@ -104,8 +104,10 @@ def build(path=paths.DB):
                 for value, text in texts.items():
                     slot_values[r['key'], data['arg'], value] = \
                         None if text is None else frag(voice, text, value_speed, 'value')
-            else:
+            elif re.search(r'\w', data):
                 seg.update(text=data, fragment=frag(voice, data, r['speed'], kind))
+            else:
+                seg.update(text=data)   # sama interpunkcja: bez audio, companion robi tylko pauzę
             segments.append(seg)
 
     meta = {'version': __version__, 'model': D.MODEL, 'model_id': D.MODEL_ID, 'manifest': game.manifest_hash(),

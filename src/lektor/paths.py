@@ -9,6 +9,7 @@ OUT = os.path.join(WORK, 'lektor')
 DB = os.path.join(OUT, 'm1.sqlite')
 REFS = os.path.join(OUT, 'refs')
 HF_HOME = os.path.join(WORK, 'hf_cache')
+AUDIO = os.path.join(WORK, 'audio', 'm1')       # podejścia, wybrane pliki i manifest (E3)
 
 
 def rel(path):

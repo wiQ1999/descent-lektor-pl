@@ -28,8 +28,8 @@ def test_toggle(category, key, toggle):
 
 def test_fragment_id_is_stable():
     # Zmiana formatu klucza unieważnia wygenerowane audio: ta wartość może się zmienić tylko świadomie.
-    assert D.fragment_id('narrator@abcdef12', 'Dzień dobry.', 1.2) == '0d54849ee9f32833'
-    assert D.fragment_id('syrus', 'Tak.', None) == '8b60964a8ead542b'
+    assert D.fragment_id('narrator@abcdef12', 'Dzień dobry.', 1.2) == '91af2045a54f5200'
+    assert D.fragment_id('syrus', 'Tak.', None) == '0cc8efafd428b18c'
 
 
 def test_fragment_id_depends_on_every_field():

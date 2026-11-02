@@ -178,6 +178,8 @@ E1 ──────────────────> E4 companion (z repla
 
 **Co wymaga Ciebie:** odsłuch listy (ok. 10 min) i decyzje o poprawkach. GPU zajmie ok. 35–38 h (OmniVoice, D33), mniej po przyspieszeniach.
 
+**Status:** zakończony 2026-11-02 ([analysis/E3_AUDIO.md](../analysis/E3_AUDIO.md)). Przyspieszenia: fp32, tokenizer na CPU, CFG bez dopełniania (D42), 7,6× szybciej. Wsad 5,0 h GPU (0,19 s na znak), 978 fragmentów, 98,4% kluczy przyjętych automatycznie. Odsłuch 61 fragmentów: ocena bardzo dobra, M1 bez poprawek; ucięte końcówki, wymowa i tempo Ne’Krul na kolejne generowania (D43). Cała gra ok. 93 h GPU (D39).
+
 ## E4 · Companion i integracja
 
 **Cel:** lektor działający na Windows.

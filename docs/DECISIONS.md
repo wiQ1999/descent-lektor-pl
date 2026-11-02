@@ -239,7 +239,7 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 ### D33 · 2026-11-01 · Model TTS: OmniVoice, 32 kroki (a)
 **Decyzja:**
-- M1 generujemy OmniVoice (`k2-fsa/OmniVoice`): fp16, 32 kroki, domyślne CFG 2,0.
+- M1 generujemy OmniVoice (`k2-fsa/OmniVoice`): fp16, 32 kroki, domyślne CFG 2,0. *Zmiana 2026-11-01: fp32 z przyspieszeniami (D42).*
 - Akceptujesz licencje wag do prywatnego użytku: model CC-BY-NC, tokenizer audio Boson Higgs Audio 2 Community License. Wag ani wygenerowanego audio nie rozpowszechniamy.
 - Referencje dla OmniVoice tniemy na granicach słów (do 10 s), a transkrypcja pochodzi z tego samego wycinka.
 
@@ -310,6 +310,39 @@ Plan etapów: [PLAN.md](PLAN.md).
 **Uzasadnienie:**
 - Projekt głosu nie wymaga pobierania danych ani zgody mówców, a każdą postać da się dopasować do wyglądu.
 - Pierwsza runda bez portretu i z neutralnym tekstem dała głosy niepasujące do postaci.
+
+### D42 · 2026-11-01 · OmniVoice w fp32 z przyspieszeniami (E3)
+**Decyzja:**
+- OmniVoice liczymy w fp32 zamiast fp16 (zmiana D33). Kroki i CFG bez zmian.
+- Tokenizer audio po zakodowaniu referencji przenosimy na CPU, żeby model w fp32 mieścił się w 4 GB VRAM.
+- Gałąź bez warunku (CFG) liczymy osobno, bez dopełniania do długości gałęzi z warunkiem (`lektor.synth`).
+- Zmiana typu zmienia identyfikator modelu w kluczu cache: `omnivoice-08be0b4-fp32-s32-cfg2.0`.
+
+**Uzasadnienie:**
+- GTX 1650 Ti nie ma rdzeni tensorowych: mnożenie macierzy w fp16 osiąga 0,38 TFLOPS, w fp32 2,1 TFLOPS.
+- Sam fp32 z tokenizerem na GPU spadał do pamięci systemowej (173 s na zdanie); po przeniesieniu tokenizera: 23 s; bez dopełniania: 17 s (tokeny identyczne w 100%).
+- Próbka 11 fragmentów M1 (8 głosów, 19–230 znaków, te same ziarna): CER średnio 0,007 w obu ustawieniach, podobieństwo barwy 0,931 wobec 0,933, tempo identyczne. Czas 0,142 s na znak wobec 1,075 s (7,6× szybciej), szczyt VRAM 2,5 GB.
+- Koszt wywołania: ok. 7,8 s stałe + 0,085 s na znak. M1 z podejściami bohaterów to ok. 5 h zamiast ok. 39 h.
+- Odsłuch próbki w obu wersjach (2026-11-01): bez istotnej różnicy. Szybszy wariant obowiązuje też w kolejnych generowaniach.
+
+### D43 · 2026-11-02 · Odsłuch E3: M1 bez poprawek, końcówki pod kontrolą w kolejnych generowaniach
+**Decyzja:**
+- Audio M1 przyjmujemy bez poprawek. Uwagi z odsłuchu zostają na kolejne generowania.
+- W każdym kolejnym generowaniu pilnujemy uciętych końcówek wypowiedzi i je poprawiamy. Automat sprawdza też krótkie ostatnie słowo i urwanie mowy przy końcu pliku. Fragment z uciętą końcówką generujemy ponownie wolniej.
+- Kandydaci do słownika wymowy (D37) przy następnym generowaniu:
+  - imię Kehli czytane jako „Keli”;
+  - wyraz z „rz” wymówiony z przeciągniętym „r”.
+- Głos Ne’Krul (`nekrul`) w tempie dialogów brzmi za wolno. Tempo sprawdzamy przy następnym generowaniu jego kwestii.
+
+**Uzasadnienie:**
+- Ocena ogólna bardzo dobra: 54 z 61 fragmentów na liście bez uwag.
+- Uwagi do 7 fragmentów:
+  - 2 ucięte końcówki, obie w losowej próbce i niewykryte przez automat (zgubione końcowe „i” i urwane zakończenie);
+  - 2 błędy wymowy;
+  - 1 za wolne tempo;
+  - 1 za słaba intonacja wykrzyknika;
+  - 1 błąd w tekście gry, który głos przeczytał poprawnie.
+- Imiona, które ASR zapisuje inaczej („Fuks”, „Vaerix”), brzmią dobrze.
 
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 

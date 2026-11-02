@@ -1,9 +1,9 @@
 """Reżyseria kwestii: tempo i pauzy (D34), przełącznik kategorii (D21, D30, D31), klucz cache fragmentu."""
 import hashlib
 
-# Ustawienia syntezy (D33). Zmiana któregokolwiek pola zmienia klucze cache wszystkich fragmentów.
-MODEL = {'name': 'omnivoice', 'rev': '08be0b4', 'dtype': 'fp16', 'num_step': 32, 'guidance_scale': 2.0}
-MODEL_ID = 'omnivoice-08be0b4-fp16-s32-cfg2.0'
+# Ustawienia syntezy (D33, D42). Zmiana któregokolwiek pola zmienia klucze cache wszystkich fragmentów.
+MODEL = {'name': 'omnivoice', 'rev': '08be0b4', 'dtype': 'fp32', 'num_step': 32, 'guidance_scale': 2.0}
+MODEL_ID = 'omnivoice-08be0b4-fp32-s32-cfg2.0'
 
 SCENE_CATEGORIES = {'narracja_fabularna'}   # narracja w scenach fabularnych: tempo naturalne
 SCENE_PAUSE = 0.35

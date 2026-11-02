@@ -15,6 +15,7 @@ CALL_S, PER_AUDIO_S = 60.0, 10.0
 CPS = 10.1              # znaki na sekundę audio przy tempie 1,0
 HERO_TAKES = 3          # D38
 HEROES = ('brynn', 'syrus', 'galaden', 'vaerix', 'kehli', 'chance')
+GAME_CHARS = 1_430_000  # cała gra (D02)
 
 
 def table(head, rows):
@@ -147,5 +148,85 @@ def report(path=paths.DB):
               total / 3600, CALL_S, PER_AUDIO_S, CPS,
               ', '.join('%s %.1f h' % (k, v / 3600) for k, v in by_kind_gpu.most_common())), '']
     out = paths.ROOT + '/analysis/E2_DATA.md'
+    open(out, 'w', encoding='utf-8', newline='\n').write('\n'.join(s))
+    return out
+
+
+def load_ratings():
+    """Oceny z odsłuchu (listen/odsluch_e3.csv, eksport strony odsłuchu): fragment -> ocena."""
+    import csv
+    p = os.path.join(paths.AUDIO, 'listen', 'odsluch_e3.csv')
+    if not os.path.exists(p):
+        return {}
+    return {r['fragment']: r['ocena'] for r in csv.DictReader(open(p, encoding='utf-8-sig'), delimiter=';') if r['ocena']}
+
+
+def audio_report(path=paths.DB):
+    """analysis/E3_AUDIO.md: czasy generowania, wyniki automatu i pokrycie kluczy M1. Bez tekstów gry."""
+    import statistics
+    from .evaluate import load_evals
+    from .synth import load_state
+    con = db.connect(path)
+    takes = list(load_state().values())
+    evals = load_evals()
+    choice = json.load(open(os.path.join(paths.AUDIO, 'choice.json'), encoding='utf-8'))
+    ratings = load_ratings()
+    gen = sum(t['gen_s'] for t in takes)
+    chars = sum(t['chars'] for t in takes)
+    audio = sum(t['seconds'] for t in takes)
+    s = ['# E3: audio M1', '',
+         'Wygenerowano przez `python -I -m lektor audio-report`. Model `%s`, GTX 1650 Ti. Raport zawiera tylko liczby '
+         'i klucze techniczne.' % D.MODEL_ID, '', '## Czas generowania', '',
+         'Podejść: **%d** (%d znaków, %.1f min audio). Czas GPU: **%.1f h**, czyli **%.3f s na znak** i RTF %.2f '
+         '(mediana RTF podejść %.2f). Szczyt VRAM: %.2f GB.' % (
+             len(takes), chars, audio / 60, gen / 3600, gen / max(chars, 1), gen / max(audio, 1),
+             statistics.median(t['gen_s'] / max(t['seconds'], 0.1) for t in takes), max(t['vram_gb'] for t in takes)), '']
+    rows = []
+    for lo, hi in ((0, 30), (30, 80), (80, 160), (160, 10 ** 6)):
+        ts = [t for t in takes if lo <= t['chars'] < hi]
+        if ts:
+            rows.append(('%d–%s' % (lo, hi - 1 if hi < 10 ** 6 else ''), len(ts), '%.1f' % statistics.mean(t['gen_s'] for t in ts),
+                         '%.3f' % (sum(t['gen_s'] for t in ts) / sum(t['chars'] for t in ts))))
+    s += [table(('znaki fragmentu', 'podejścia', 'średnio s', 's na znak'), rows), '']
+    m1_chars = con.execute('SELECT SUM(chars) FROM fragments').fetchone()[0]
+    per_char = gen / m1_chars
+    s += ['Na znak tekstu M1 (z podejściami bohaterów i ponownymi): %.3f s. Cała gra (D02, ok. %.2f mln znaków) w tych '
+          'samych proporcjach: ok. **%.0f h** GPU (D39; przed przyspieszeniami ok. 610 h na jedno podejście).' % (
+              per_char, GAME_CHARS / 1e6, GAME_CHARS * per_char / 3600), '']
+    s += ['## Automat (D38)', '']
+    first = Counter()
+    for e in evals.values():
+        first[e['voice']] += 1
+    reasons = Counter(p for c in choice.values() for p in c['problems'])
+    retaken = sum(1 for c in choice.values() if c['takes'] > (HERO_TAKES if c['voice'] in HEROES else 1))
+    s += ['Fragmentów: **%d**. Z ponownym podejściem: %d. Bez zaakceptowanego podejścia po ponownym: **%d** (%s).' % (
+        len(choice), retaken, sum(1 for c in choice.values() if c['problems']),
+        ', '.join('%s %d' % kv for kv in reasons.most_common()) or 'brak'), '']
+    rows = []
+    for v in sorted({c['voice'] for c in choice.values()}):
+        cs = [c for c in choice.values() if c['voice'] == v]
+        sims = [c['sim'] for c in cs if c['sim'] is not None]
+        rows.append((v, len(cs), first[v], '%.3f' % statistics.median(c['cer'] for c in cs),
+                     '%.3f' % statistics.median(sims) if sims else '–', sum(1 for c in cs if c['problems'])))
+    s += [table(('głos', 'fragmenty', 'podejścia ocenione', 'CER wybranych (mediana)', 'barwa (mediana)', 'odrzucone'), rows), '']
+    if ratings:
+        s += ['## Odsłuch', '', 'Ocenionych fragmentów: %d (%s). Fragmenty z uwagami liczą się niżej jako '
+              'niezaakceptowane; decyzje i uwagi na kolejne generowania: D43.' % (
+            len(ratings), ', '.join('%s %d' % kv for kv in Counter(ratings.values()).most_common())), '']
+
+    def accepted(fid):
+        c = choice.get(fid)
+        return bool(c) and (ratings.get(fid, 'ok' if not c['problems'] else '') == 'ok')
+    lines = con.execute('SELECT key FROM lines WHERE tts = 1').fetchall()
+    frag_of = {}
+    for r in con.execute('SELECT key, fragment FROM segments WHERE fragment IS NOT NULL'):
+        frag_of.setdefault(r['key'], []).append(r['fragment'])
+    ok = sum(1 for r in lines if all(accepted(f) for f in frag_of.get(r['key'], [])))
+    vals = con.execute('SELECT fragment FROM slot_values WHERE fragment IS NOT NULL').fetchall()
+    s += ['## Pokrycie M1', '',
+          'Klucze do syntezy z zaakceptowanym audio wszystkich fragmentów: **%d / %d (%.1f%%)**. Wartości luk z '
+          'zaakceptowanym audio: %d / %d.' % (ok, len(lines), 100 * ok / max(len(lines), 1),
+                                              sum(1 for r in vals if accepted(r['fragment'])), len(vals)), '']
+    out = paths.ROOT + '/analysis/E3_AUDIO.md'
     open(out, 'w', encoding='utf-8', newline='\n').write('\n'.join(s))
     return out

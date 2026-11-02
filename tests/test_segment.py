@@ -73,3 +73,11 @@ def test_number_value_text(value, prev, noun, expected):
 ])
 def test_choice_parts(text, expected):
     assert S.choice_parts(text) == expected
+
+
+def test_progress_counter_and_punctuation_tail():
+    out = S.template_pieces('Zbierz klucze. ({0}/4)', ['VariableInt'])
+    assert out[-1] == {'kind': 'text', 'text': 'z czterech)'}
+    out = S.template_pieces('{0} ma „{1}”.', ['VariableString', 'VariableString'])
+    assert out[-1]['kind'] == 'slot' and out[-1]['tail'] == '”.'
+    assert S.choice_parts('„Idziemy dalej”.')[1] == ''

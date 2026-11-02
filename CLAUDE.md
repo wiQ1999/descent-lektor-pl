@@ -33,7 +33,7 @@ docs/        PLAN.md (etapy), DECISIONS.md (decyzje i otwarte kwestie), CASTING.
 analysis/    raporty z analiz + tools/ (skrypty Python/UnityPy)
   work/      kopie gry, depot macOS, dekompilacja, audio, próbki: nieśledzone
 src/         kod docelowy (plugin, pipeline, companion)
-  lektor/    pakiet Python: baza kwestii M1 (build), referencje głosów (refs), raport (report)
+  lektor/    pakiet Python: baza kwestii M1 (build), referencje (refs), raporty (report), audio E3 (synth, evaluate, finalize)
   plugin/    Core (C#, net472, bez Harmony i BepInEx), BepInEx (adapter), install/lektor-hook.ps1
 tests/       pytest dla src/lektor (zdania testowe własne, bez tekstów gry)
 ```
@@ -63,6 +63,16 @@ Modele z porównania E0 mają własne środowiska w `%LOCALAPPDATA%\LektorPL\env
 .venv/Scripts/python -I analysis/tools/bakeoff_eval.py [--page r2 --models omnivoice --variants A P1]
 ```
 
+Audio M1 (E3). Generowanie w środowisku OmniVoice (pakiet `lektor` zainstalowany tam w trybie edytowalnym), ocena w `.venv`. Wyniki w `analysis/work/audio/m1/` (prywatne); każdy krok jest wznawialny:
+
+```bash
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I -m lektor generate [--limit N] [--voices narrator] [--retake]
+.venv/Scripts/python -I -m lektor evaluate     # ASR, barwa, tempo -> evals.jsonl
+.venv/Scripts/python -I -m lektor select       # choice.json, retake.json
+.venv/Scripts/python -I -m lektor finalize     # final/*.wav, manifest.json, listen/index.html
+.venv/Scripts/python -I -m lektor audio-report # analysis/E3_AUDIO.md
+```
+
 Plugin (referencje do DLL z kopii gry w `analysis/work/game`, wynik w `build/plugin/`):
 
 ```bash
@@ -77,6 +87,7 @@ Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install|-Uninstal
 - Wypisywanie tekstów gry (np. `normalize_pl.py --m1`) zostawiamy na pliki w `analysis/work/`, nie na konsolę.
 - Plugin nie woła getterów gry z leniwą inicjalizacją (np. `I2.Loc.LocalizationManager.CurrentLanguage`). Czyta pola przez refleksję, bo wcześniejsze wywołanie psuje start gry (E1_HOOK.md).
 - OmniVoice potrzebuje referencji ciętych na granicach słów i transkrypcji z tego samego wycinka. Ucięta referencja sprawia, że model dopowiada jej końcówkę (BAKEOFF.md).
+- OmniVoice na GTX 1650 Ti liczymy w fp32 (karta bez rdzeni tensorowych: fp16 jest ok. 5,5× wolniejsze), z tokenizerem audio przeniesionym na CPU po zakodowaniu referencji i gałęzią CFG bez dopełniania (`lektor.synth`).
 - Na GPU 4 GB po kondycjonowaniu Chatterboxa zdejmujemy z GPU tokenizer S3, CAMPPlus i VoiceEncoder (`offload_conditioning` w `tts_bench.py`). Bez tego model wychodzi poza VRAM i RTF rośnie do ok. 13.
 
 ## Raporty
@@ -91,3 +102,4 @@ Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install|-Uninstal
 | [analysis/E1_HOOK.md](analysis/E1_HOOK.md) | test hooka w grze: pokrycie okien, argumenty, luki, wydajność, crashe |
 | [analysis/BAKEOFF.md](analysis/BAKEOFF.md) | porównanie modeli TTS (E0): wydajność, CER, podobieństwo, odsłuch, tempo i akcent OmniVoice |
 | [analysis/E2_DATA.md](analysis/E2_DATA.md) | baza kwestii M1 (E2): liczności, luki `{n}` i ich wartości, pokrycie wartości z E1, szacunek E3 |
+| [analysis/E3_AUDIO.md](analysis/E3_AUDIO.md) | audio M1 (E3): czas generowania na znak, wyniki automatu, odsłuch, pokrycie kluczy, koszt całej gry |
