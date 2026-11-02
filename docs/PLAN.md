@@ -231,7 +231,11 @@ E1 ──────────────────> E4 companion (z repla
   - A i B wskazywały na plugin, więc zawęziliśmy to testem C (plugin 0.2.1 z etapami).
 - Test C: crash już na etapie 0, gdy plugin nic nie robi. Przyczyną jest błąd MonoMod #329 w BepInEx, nie kod pluginu (D54).
 - Test D: `MonoMod.Utils.dll` z poprawką, plugin na etapie 4 z companionem (D54): bez crasha. `-Install` nakłada poprawkę domyślnie.
-- Dalej: sesja M1 według [E5_PLAYTEST.md](E5_PLAYTEST.md).
+- Sesja M1 2026-11-02, ok. 30 min ([analysis/E5_TEST.md](../analysis/E5_TEST.md)):
+  - start p95 0,128 s, przerwanie p95 0,126 s;
+  - pokrycie 96,98%: braki to klucze pominięte w M1 (D49). Gdy łup wielokrotny liczymy jak w D50, wychodzi 99,6%;
+  - wyjście bez crasha;
+  - uwagi z gry trafiają do E7 (D55).
 
 ## E6 · MacBook Air M5
 
@@ -267,6 +271,12 @@ E1 ──────────────────> E4 companion (z repla
 - głosy pozostałych postaci projektowane od portretu (D41) po rozegraniu M1 z lektorem; docelowy głos systemowy;
 - wersje `VARIABLE_HERO` w głosach bohaterów (D17);
 - złoczyńcy (D19);
+- uwagi z sesji E5 (D55):
+  - odczyt aktualizacji celu z licznikiem (QA) i nagrania liczników;
+  - łup i zdobyte przedmioty czytane przez narratora;
+  - ujednolicona modulacja Kehli;
+  - ponowny dobór głosów Ronana i Adelynn;
+  - opis misji przy wyborze na mapie: hook w pluginie i nagrania;
 - procedura po aktualizacji gry: porównanie manifestu, diff kluczy, regeneracja zmienionych.
 
 Każda misja przechodzi cykl E2 → E3 → test.

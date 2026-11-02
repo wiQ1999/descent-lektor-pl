@@ -438,7 +438,19 @@ Plan etapów: [PLAN.md](PLAN.md).
 - `HarmonyBackend = dynamicmethod` nic by nie zmienił. `mscorlib` gry ma `DynamicMethod.il_info`, więc MonoMod już domyślnie używa tego generatora.
 - Ten sam wzór pomija pole także na x64, więc sprawdzimy to na Macu w E6.
 
-**Wynik (2026-11-02):** test D bez crasha: plugin na etapie 4, połączenie z companionem, w `Crashes` brak nowego folderu. Od teraz `-Install` nakłada poprawkę domyślnie. Drugim sprawdzeniem będzie wyjście po sesji E5.
+**Wynik (2026-11-02):** test D bez crasha: plugin na etapie 4, połączenie z companionem, w `Crashes` brak nowego folderu. Od teraz `-Install` nakłada poprawkę domyślnie. Wyjście po 30-minutowej sesji E5 też było bez crasha.
+
+### D55 · 2026-11-02 · Uwagi z sesji E5: M1 bez poprawek, zmiany w kolejnych scenariuszach
+**Decyzja:** Audio i plugin M1 zostają bez zmian. Uwagi z sesji uwzględniamy w kolejnych generowanych scenariuszach (E7):
+1. **Aktualizacje celu z licznikiem** (klucze do bramy X/4, mieszkańcy X/2; `Q1_OBJECTIVE_5`, `Q1_OBJECTIVE_6`) powtarzały się przy każdej zmianie licznika.
+   - Licznik nie miał nagrania (luka `VariableInt` w celu), więc brzmiał sam tekst.
+   - Sposób odczytu (za każdym razem, tylko licznik, tylko pierwszy raz) ustalimy w QA przed E7.
+2. **Łup i zdobyte przedmioty** czyta narrator. To wykonanie D49 i D51 (nagrania wszystkich kwestii, łup z fragmentów).
+3. **Kehli:** modulacja głosu zmienia się między kwestiami dialogów. Barwę i wysokość ujednolicamy przez referencję i wybór podejść.
+4. **Ronan i Baronessa Adelynn:** głosy nie do końca pasują. Przed scenariuszem, w którym mówią, robimy ponowny dobór według D41.
+5. **Opis misji przy wyborze na mapie** czyta narrator. To nowe źródło tekstu w pluginie: plugin go teraz nie widzi, a w dzienniku ze sceny mapy nie ma takich zdarzeń. Do tego nagrania opisów misji.
+
+**Uzasadnienie:** Prośba użytkownika po sesji E5: nie poprawiać teraz, uwzględnić przy kolejnych scenariuszach.
 
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
@@ -478,6 +490,9 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 
 | # | Kwestia | Stan |
 |---|---|---|
-| z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | usunięty poprawką MonoMod (D54, test D); drugie sprawdzenie po sesji E5, na Macu w E6 |
+| z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | usunięty poprawką MonoMod (D54): test D i wyjście po sesji E5 bez crasha; na Macu sprawdzimy w E6 |
+| – | Odczyt aktualizacji celu z licznikiem i nagrania liczników | QA przed E7 (D55) |
+| – | Ponowny dobór głosów Ronana i Adelynn, ujednolicenie Kehli | przed scenariuszem, w którym mówią (D55, D41) |
+| – | Opis misji na mapie: nowe źródło w pluginie | E7 (D55) |
 | – | Model dla całej gry | po E3, przed E7 (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |

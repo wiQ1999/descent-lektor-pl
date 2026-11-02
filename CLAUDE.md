@@ -122,3 +122,4 @@ Companion (E4). Konfiguracja w `%LOCALAPPDATA%\LektorPL\companion.toml` (tworzon
 | [analysis/E2_DATA.md](analysis/E2_DATA.md) | baza kwestii M1 (E2): liczności, luki `{n}` i ich wartości, pokrycie wartości z E1, szacunek E3 |
 | [analysis/E3_AUDIO.md](analysis/E3_AUDIO.md) | audio M1 (E3): czas generowania na znak, wyniki automatu, odsłuch, pokrycie kluczy, koszt całej gry |
 | [analysis/E4_COMPANION.md](analysis/E4_COMPANION.md) | companion i plugin 0.2.0 (E4): budowa, zasady odtwarzania, pokrycie i opóźnienia z replayu E1, braki bazy M1 |
+| [analysis/E5_TEST.md](analysis/E5_TEST.md) | sesja M1 z lektorem (E5): D13 w grze, okna i odczyty, braki, wydajność, uwagi z gry (D55) |
