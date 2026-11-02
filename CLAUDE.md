@@ -33,8 +33,9 @@ docs/        PLAN.md (etapy), DECISIONS.md (decyzje i otwarte kwestie), CASTING.
 analysis/    raporty z analiz + tools/ (skrypty Python/UnityPy)
   work/      kopie gry, depot macOS, dekompilacja, audio, próbki: nieśledzone
 src/         kod docelowy (plugin, pipeline, companion)
-  lektor/    pakiet Python: baza kwestii M1 (build), referencje (refs), raporty (report), audio E3 (synth, evaluate, finalize)
-  plugin/    Core (C#, net472, bez Harmony i BepInEx), BepInEx (adapter), install/lektor-hook.ps1
+  lektor/    pakiet Python: baza kwestii M1 (build), referencje (refs), raporty (report), audio E3 (synth, evaluate, finalize),
+             companion/ (E4: library, director, player, app)
+  plugin/    Core (C#, net472, bez Harmony i BepInEx), BepInEx (adapter), install/ (lektor-hook.ps1, lektor-companion.ps1)
 tests/       pytest dla src/lektor (zdania testowe własne, bez tekstów gry)
 ```
 
@@ -80,7 +81,16 @@ dotnet build src/plugin/BepInEx -c Release
 .venv/Scripts/python -I analysis/tools/hook_coverage.py [dziennik.jsonl ...]
 ```
 
-Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install|-Uninstall|-Status`) uruchamia użytkownik według `docs/E1_PLAYTEST.md`. Dzienniki pluginu: `%LOCALAPPDATA%\LektorPL\logs`.
+Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install [-LoaderOnly]|-Uninstall|-Status`) uruchamia użytkownik według `docs/E1_PLAYTEST.md` i `docs/E4_EXIT_TEST.md`. Dzienniki pluginu i companiona: `%LOCALAPPDATA%\LektorPL\logs`.
+
+Companion (E4). Konfiguracja w `%LOCALAPPDATA%\LektorPL\companion.toml` (tworzona przy pierwszym starcie). W grze użytkownik uruchamia go skryptem `src/plugin/install/lektor-companion.ps1`:
+
+```bash
+.venv/Scripts/python -I -m lektor companion                      # serwer TCP 127.0.0.1:47810 dla pluginu
+.venv/Scripts/python -I -m lektor companion --replay <hook.jsonl ...> [--tcp] [--speed 0] [--no-audio] [--config plik.toml] [--out wynik.json]
+```
+
+- Replay z `--speed 0 --no-audio` sprawdza samo pokrycie. Opóźnienia mierzymy w czasie rzeczywistym (`--tcp`, wyjście audio wyciszone w configu `volume = 0.0`).
 
 - Python uruchamiamy z `-I`.
 - `analysis/tools/normalize_pl.py` to nakładka na `lektor.normalize`; skrypty E0 wymagają pakietu `lektor` w `.venv`.
@@ -103,3 +113,4 @@ Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install|-Uninstal
 | [analysis/BAKEOFF.md](analysis/BAKEOFF.md) | porównanie modeli TTS (E0): wydajność, CER, podobieństwo, odsłuch, tempo i akcent OmniVoice |
 | [analysis/E2_DATA.md](analysis/E2_DATA.md) | baza kwestii M1 (E2): liczności, luki `{n}` i ich wartości, pokrycie wartości z E1, szacunek E3 |
 | [analysis/E3_AUDIO.md](analysis/E3_AUDIO.md) | audio M1 (E3): czas generowania na znak, wyniki automatu, odsłuch, pokrycie kluczy, koszt całej gry |
+| [analysis/E4_COMPANION.md](analysis/E4_COMPANION.md) | companion i plugin 0.2.0 (E4): budowa, zasady odtwarzania, pokrycie i opóźnienia z replayu E1, braki bazy M1 |

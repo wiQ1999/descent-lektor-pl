@@ -5,6 +5,7 @@
 .DESCRIPTION
   -Install    sprawdza SHA-256 paczki BepInEx, zapisuje listę plików gry (przed), kopiuje loader i plugin,
               zapisuje listę po instalacji i pokazuje różnice (powinny być tylko dodane pliki).
+              Z -LoaderOnly kopiuje sam BepInEx, bez pluginu (test wyjścia, D40).
   -Uninstall  kopiuje BepInEx\LogOutput.log do analysis\work\install\logs, usuwa tylko pliki dodane przez -Install,
               porównuje folder gry z listą sprzed instalacji.
   -Status     pokazuje, czy loader jest zainstalowany, i najnowszy dziennik pluginu.
@@ -16,6 +17,7 @@
 [CmdletBinding(DefaultParameterSetName = 'Status')]
 param(
     [Parameter(ParameterSetName = 'Install', Mandatory)] [switch] $Install,
+    [Parameter(ParameterSetName = 'Install')] [switch] $LoaderOnly,
     [Parameter(ParameterSetName = 'Uninstall', Mandatory)] [switch] $Uninstall,
     [Parameter(ParameterSetName = 'Status')] [switch] $Status,
     [string] $GameDir = 'E:\SteamLibrary\steamapps\common\Legends of the Dark'
@@ -84,7 +86,7 @@ function Install-Hook {
     if ($present) { throw "W folderze gry już są pliki loadera: $($present -join ', '). Najpierw -Uninstall albo usuń je ręcznie." }
     $hash = (Get-FileHash -LiteralPath $Zip -Algorithm SHA256).Hash
     if ($hash -ne $ZipSha256) { throw "Zła suma SHA-256 paczki BepInEx: $hash" }
-    foreach ($f in $PluginFiles | Where-Object { $_ -like '*.dll' }) {
+    foreach ($f in $PluginFiles | Where-Object { $_ -like '*.dll' -and -not $LoaderOnly }) {
         if (-not (Test-Path -LiteralPath (Join-Path $PluginBin $f))) { throw "Brak $f w $PluginBin. Zbuduj plugin: dotnet build src\plugin\BepInEx -c Release" }
     }
 
@@ -103,11 +105,13 @@ function Install-Hook {
     }
     Copy-Item -LiteralPath (Join-Path $staging 'BepInEx') -Destination (Join-Path $GameDir 'BepInEx') -Recurse
     $created.Add('BepInEx\')
-    $pluginDir = Join-Path $GameDir 'BepInEx\plugins\LektorPL'
-    New-Item -ItemType Directory -Force -Path $pluginDir | Out-Null
-    foreach ($f in $PluginFiles) {
-        $src = Join-Path $PluginBin $f
-        if (Test-Path -LiteralPath $src) { Copy-Item -LiteralPath $src -Destination $pluginDir }
+    if (-not $LoaderOnly) {
+        $pluginDir = Join-Path $GameDir 'BepInEx\plugins\LektorPL'
+        New-Item -ItemType Directory -Force -Path $pluginDir | Out-Null
+        foreach ($f in $PluginFiles) {
+            $src = Join-Path $PluginBin $f
+            if (Test-Path -LiteralPath $src) { Copy-Item -LiteralPath $src -Destination $pluginDir }
+        }
     }
     $winhttp = (Get-FileHash -LiteralPath (Join-Path $GameDir 'winhttp.dll') -Algorithm SHA256).Hash
     @("# Pliki dodane przez lektor-hook.ps1 -Install, $(Get-Date -Format s)", "winhttp.sha256=$winhttp") + $created |
@@ -117,7 +121,8 @@ function Install-Hook {
     $after = Save-Snapshot 'snapshot-after-install.csv'
     Show-Diff $before $after 'Zmiany po instalacji (oczekiwane: tylko dodane pliki loadera i pluginu)'
     Write-Host ''
-    Write-Host 'Zainstalowano. Uruchom grę normalnie ze Steama.' -ForegroundColor Green
+    $what = if ($LoaderOnly) { 'Zainstalowano sam BepInEx, bez pluginu.' } else { 'Zainstalowano BepInEx i plugin.' }
+    Write-Host "$what Uruchom grę normalnie ze Steama." -ForegroundColor Green
     Write-Host "Dziennik pluginu: $PluginLogs\hook-*.jsonl; log loadera: $GameDir\BepInEx\LogOutput.log"
 }
 
@@ -158,6 +163,8 @@ function Uninstall-Hook {
 function Show-Status {
     $present = @($LoaderFiles + 'BepInEx' | Where-Object { Test-Path -LiteralPath (Join-Path $GameDir $_) })
     if ($present) { Write-Host "Loader w folderze gry: $($present -join ', ')" } else { Write-Host 'Loader nie jest zainstalowany.' }
+    $plugin = Join-Path $GameDir 'BepInEx\plugins\LektorPL\LektorPL.BepInEx.dll'
+    if (Test-Path -LiteralPath $plugin) { Write-Host "Plugin: $((Get-Item -LiteralPath $plugin).VersionInfo.FileVersion)" } elseif ($present) { Write-Host 'Plugin nie jest zainstalowany (sam loader).' }
     $last = Get-ChildItem -LiteralPath $PluginLogs -Filter 'hook-*.jsonl' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime | Select-Object -Last 1
     if ($last) { Write-Host "Najnowszy dziennik pluginu: $($last.FullName) ($([math]::Round($last.Length / 1KB)) KB)" }
 }

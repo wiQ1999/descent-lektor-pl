@@ -1,4 +1,4 @@
-"""python -I -m lektor build | refs | report | generate | evaluate | select | finalize | audio-report"""
+"""python -I -m lektor build | refs | report | generate | evaluate | select | finalize | audio-report | companion"""
 import argparse
 import sys
 
@@ -26,6 +26,14 @@ def main(argv=None):
     sub.add_parser('finalize', help='pliki końcowe, manifest i strona odsłuchu (.venv)')
     q = sub.add_parser('audio-report', help='raport analysis/E3_AUDIO.md')
     q.add_argument('--db', default=paths.DB)
+    c = sub.add_parser('companion', help='companion lektora (serwer TCP dla pluginu) albo replay dziennika E1')
+    c.add_argument('--config', help='plik konfiguracji (domyślnie %%LOCALAPPDATA%%/LektorPL/companion.toml)')
+    c.add_argument('--replay', nargs='+', metavar='JSONL', help='dzienniki pluginu do odtworzenia zamiast serwera')
+    c.add_argument('--speed', type=float, default=1.0, help='tempo replayu (0: bez odstępów)')
+    c.add_argument('--max-gap', type=float, help='najdłuższy odstęp między zdarzeniami w replayu (s)')
+    c.add_argument('--tcp', action='store_true', help='replay przez TCP na localhost (jak z pluginu)')
+    c.add_argument('--no-audio', action='store_true', help='bez dźwięku (czas trwania z długości audio)')
+    c.add_argument('--out', help='podsumowanie replayu jako JSON')
     a = ap.parse_args(argv)
     if a.cmd == 'build':
         from .build import build
@@ -51,6 +59,9 @@ def main(argv=None):
     elif a.cmd == 'audio-report':
         from .report import audio_report
         print(paths.rel(audio_report(a.db)))
+    elif a.cmd == 'companion':
+        from .companion import app
+        app.main(a)
     else:
         from .report import report
         print(paths.rel(report(a.db)))

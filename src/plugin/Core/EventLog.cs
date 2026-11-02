@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace LektorPL.Core
 {
-    /// <summary>Dziennik zdarzeń JSONL. Każda linia ma ev, t (s od startu gry), frame i utc.</summary>
+    /// <summary>Dziennik zdarzeń JSONL. Każda linia ma ev, t (s od startu gry), frame i utc. Linie trafiają też do <see cref="Sink"/>.</summary>
     public sealed class EventLog : IDisposable
     {
         private const int MaxErrorsPerPlace = 20;
@@ -15,6 +15,9 @@ namespace LektorPL.Core
         private readonly Dictionary<string, int> _errors = new Dictionary<string, int>();
 
         public string FilePath { get; }
+
+        /// <summary>Odbiorca każdej zapisanej linii (wysyłka do companiona).</summary>
+        public Action<string> Sink;
 
         public EventLog(string directory)
         {
@@ -35,8 +38,11 @@ namespace LektorPL.Core
 
         public void Write(JsonLine line)
         {
-            try { _writer.WriteLine(line.ToString()); }
+            string s = line.ToString();
+            try { _writer.WriteLine(s); }
             catch (Exception) { /* dysk pełny lub plik zamknięty: lektor nie może przerywać gry */ }
+            try { Sink?.Invoke(s); }
+            catch (Exception) { }
         }
 
         /// <summary>Zapisuje wyjątek, najwyżej <see cref="MaxErrorsPerPlace"/> razy dla jednego miejsca.</summary>

@@ -19,6 +19,8 @@ namespace LektorPL.BepInEx
                     "Zapisuj nowe teksty widocznych pól TextMeshPro (pomiar pokrycia).").Value;
                 options.SniffInterval = Config.Bind("Log", "SniffInterval", options.SniffInterval,
                     "Co ile sekund przeglądać pola TextMeshPro.").Value;
+                options.CompanionPort = Config.Bind("Companion", "Port", options.CompanionPort,
+                    "Port companiona na localhost; 0 wyłącza wysyłkę zdarzeń.").Value;
                 options.Info = s => Logger.LogInfo(s);
                 Bootstrap.Start(options);
             }

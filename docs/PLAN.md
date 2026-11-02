@@ -202,6 +202,12 @@ E1 ──────────────────> E4 companion (z repla
 
 **Zależności:** E1 i E2. Do pełnego testu potrzebne jest E3, ale pracę można zacząć wcześniej.
 
+**Status:** zakończony 2026-11-02 ([analysis/E4_COMPANION.md](../analysis/E4_COMPANION.md)).
+- Plugin 0.2.0 wysyła zdarzenia przez TCP oraz obserwuje cel misji i aktywację wroga.
+- Companion odtwarza audio M1 przez sounddevice.
+- Replay E1: audio w 98,5% okien z treścią (D50). Start 0,15 s, przerwanie 0,13 s (p95).
+- Zasady odtwarzania: D48. Braki bazy M1 pominięte (D49). Łup od E7 składany z fragmentów (D51).
+
 ## E5 · Test na Windows
 
 **Cel:** spełnić D13 w prawdziwej grze.
@@ -216,6 +222,8 @@ E1 ──────────────────> E4 companion (z repla
 **Zależności:** E3 i E4.
 
 **Co wymaga Ciebie:** sesja gry i uwagi.
+
+**Status:** rozpoczęty 2026-11-02. Najpierw dwa testy wyjścia ([E4_EXIT_TEST.md](E4_EXIT_TEST.md), D40), potem sesja według [E5_PLAYTEST.md](E5_PLAYTEST.md).
 
 ## E6 · MacBook Air M5
 
@@ -245,6 +253,8 @@ E1 ──────────────────> E4 companion (z repla
 
 - przed startem: decyzja o modelu dla całej gry według czasu z E3 (D39);
 - SQ1 i kolejne misje;
+- nagrania wszystkich kwestii: inwentarz czyta też parametry węzłów łupu i testów (D49);
+- łup składany z fragmentów: nagłówki i nazwy z puli łupu misji (D51);
 - głosy pozostałych postaci projektowane od portretu (D41) po rozegraniu M1 z lektorem; docelowy głos systemowy;
 - wersje `VARIABLE_HERO` w głosach bohaterów (D17);
 - złoczyńcy (D19);

@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 namespace LektorPL.Core
 {
     /// <summary>
-    /// Śledzi okna wiadomości gry i zapisuje je do dziennika (etap E1: tylko logowanie).
+    /// Śledzi okna wiadomości gry, cel misji i aktywacje wrogów; zapisuje je do dziennika, który trafia też do companiona.
     ///
     /// Zwykłe okna: delegaty MessageController.MessageDisplayBegin/End. Begin przychodzi, zanim gra
     /// rozwiąże tekst (losuje warianty ListOfKeys), więc tekst renderujemy dopiero w LateUpdate,
@@ -20,6 +20,9 @@ namespace LektorPL.Core
     /// okna, które ominęły delegaty.
     /// Okna fabularne: StoryMessageController nie ma zdarzeń, więc odpytujemy _curProcessingMessage,
     /// a moment pokazania tekstu (po załadowaniu bundli) rozpoznajemy po zmianie UIStoryMessageDialog.
+    /// Cel misji (D31): odpytujemy UIGame._lastObjectiveKey i _LastObjectiveArguments; zmiana klucza albo tekstu
+    /// (także samego licznika) daje zdarzenie objective. Aktywacja wroga (D30): GameController._curEnemyActivation,
+    /// ustawiane w UIGame.ShowEnemyActivation i zerowane po zamknięciu okna aktywacji.
     /// </summary>
     internal sealed class Tracker
     {
@@ -30,6 +33,9 @@ namespace LektorPL.Core
         private static readonly FieldInfo SmCurrent = typeof(StoryMessageController).GetField("_curProcessingMessage", Private);
         private static readonly FieldInfo SmBack = typeof(StoryMessageController).GetField("_pendingBack", Private);
         private static readonly FieldInfo SmData = typeof(StoryMessageController).GetField("_pendingAdditionalData", Private);
+        private static readonly FieldInfo UgObjectiveKey = typeof(UIGame).GetField("_lastObjectiveKey", Private);
+        private static readonly FieldInfo UgObjectiveArgs = typeof(UIGame).GetField("_LastObjectiveArguments", Private);
+        private static readonly FieldInfo GcActivation = typeof(GameController).GetField("_curEnemyActivation", Private);
         private static readonly FieldInfo I2LanguageField =
             typeof(I2.Loc.LocalizationManager).GetField("mCurrentLanguage", BindingFlags.NonPublic | BindingFlags.Static);
 
@@ -56,6 +62,12 @@ namespace LektorPL.Core
         private string _storyBaselineText;
         private StoryMessageSettings _storyBaselineSettings;
 
+        // Cel misji i aktywacja wroga.
+        private string _objectiveKey, _objectiveText;
+        private float _nextObjectiveCheck;
+        private EnemyActivationRequest _activation;
+        private int _activationId;
+
         // Wydajność.
         private float _perfWindowStart;
         private int _perfFrames;
@@ -77,6 +89,7 @@ namespace LektorPL.Core
                 .Str("unity", Application.unityVersion).Str("platform", Application.platform.ToString())
                 .Bool("fields_ok", McCurrent != null && McBack != null && McData != null && SmCurrent != null && SmBack != null && SmData != null
                     && I2LanguageField != null)
+                .Bool("sources_ok", UgObjectiveKey != null && UgObjectiveArgs != null && GcActivation != null)
                 .Bool("sniffer", options.SniffText));
         }
 
@@ -94,6 +107,8 @@ namespace LektorPL.Core
             try { EnsureHooked(); } catch (Exception e) { _log.Error("hook", e); }
             try { FlushPending(); PollMessages(); } catch (Exception e) { _log.Error("messages", e); }
             try { PollStory(); } catch (Exception e) { _log.Error("story", e); }
+            try { PollObjective(); } catch (Exception e) { _log.Error("objective", e); }
+            try { PollActivation(); } catch (Exception e) { _log.Error("activation", e); }
             try { if (_options.SniffText) Sniff(); } catch (Exception e) { _log.Error("sniff", e); }
             _work.Stop();
             Perf(_work.Elapsed.TotalMilliseconds);
@@ -287,6 +302,48 @@ namespace LektorPL.Core
                 list.Add(item.Str("name_key", resolved));
             }
             catch (Exception e) { _log.Error("speaker", e); }
+        }
+
+        // ---------- cel misji i aktywacja wroga ----------
+
+        private void PollObjective()
+        {
+            if (UgObjectiveKey == null || Time.unscaledTime < _nextObjectiveCheck || !SingletonBehaviour<UIGame>.IsInitialized) return;
+            _nextObjectiveCheck = Time.unscaledTime + _options.ObjectiveInterval;
+            var ui = SingletonBehaviour<UIGame>.Instance;
+            string key = UgObjectiveKey.GetValue(ui) as string;
+            bool visible = ui.LabelCurrentObjective != null && ui.LabelCurrentObjective.gameObject.activeSelf;
+            if (key == null || !visible)
+            {
+                _objectiveKey = _objectiveText = null;
+                return;
+            }
+            var args = UgObjectiveArgs?.GetValue(ui) as List<MessageArgument>;
+            string text;
+            try { text = MessageRequestUtils.ResolveTerm(key, args, colorArgs: false, performRNG: false); }
+            catch (Exception e) { _log.Error("objective_render", e); return; }
+            if (key == _objectiveKey && text == _objectiveText) return;
+            _log.Write(_log.New("objective").Str("key", key).Str("prev_key", _objectiveKey).Raw("args", Arguments(args)).Str("text", text));
+            _objectiveKey = key;
+            _objectiveText = text;
+        }
+
+        private void PollActivation()
+        {
+            if (GcActivation == null || !SingletonBehaviour<GameController>.IsInitialized) return;
+            var cur = GcActivation.GetValue(SingletonBehaviour<GameController>.Instance) as EnemyActivationRequest;
+            if (cur == _activation) return;
+            if (_activation != null)
+                _log.Write(_log.New("close").Str("kind", "activation").Int("id", _activationId).Str("via", "poll")
+                    .Str("key", _activation.Message?.Key));
+            _activation = cur;
+            if (cur == null) return;
+            _activationId = ++_nextId;
+            var line = _log.New("open").Str("kind", "activation").Int("id", _activationId).Str("via", "poll");
+            try { line.Str("enemy", cur.Enemy?.ModelId); }
+            catch (Exception) { line.Str("enemy", "<error>"); }
+            if (cur.Message != null) Describe(line, cur.Message);
+            _log.Write(line);
         }
 
         // ---------- opis wiadomości ----------

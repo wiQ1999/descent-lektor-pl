@@ -344,6 +344,65 @@ Plan etapów: [PLAN.md](PLAN.md).
   - 1 błąd w tekście gry, który głos przeczytał poprawnie.
 - Imiona, które ASR zapisuje inaczej („Fuks”, „Vaerix”), brzmią dobrze.
 
+### D44 · 2026-11-02 · Treść bez nagrania w E4: pominięcie i log
+**Decyzja:**
+- Companion pomija wartość luki albo kwestię bez nagrania i czyta resztę kwestii, a log zbiera braki. Dotyczy to np. łupu (`RawText`) i kluczy znanych dopiero w grze.
+- Syntezę na żywo dodajemy po pomiarze na MacBooku M5 (E6).
+
+**Uzasadnienie:** Na GTX 1650 Ti OmniVoice ma RTF ok. 2,4. Pięć sekund łupu to ok. 12 s czekania, czyli ponad limit 2–3 s z D03.
+
+### D45 · 2026-11-02 · Kolejność: okno przerywa, cel i aktywacja czekają
+**Decyzja:**
+- Nowe okno przerywa audio poprzedniego okna (D03).
+- Cel misji (D31) i aktywacja wroga (D30) czekają w kolejce, aż skończy się bieżąca kwestia.
+
+**Uzasadnienie:** Cel i aktywacja zwykle pojawiają się razem z oknem questu i nie powinny go ucinać.
+
+### D46 · 2026-11-02 · Start companiona: skrypt przed grą
+**Decyzja:**
+- W E4 i E5 companion uruchamiasz skryptem przed grą.
+- Plugin sam łączy się z companionem i ponawia połączenie.
+- Autostart przez plugin rozważamy w E6.
+
+**Uzasadnienie:** Prostsze i bez uruchamiania zewnętrznego programu z gry, co nie miesza się z diagnozą crasha przy wyjściu (D40).
+
+### D47 · 2026-11-02 · Odtwarzanie: sounddevice
+**Decyzja:** Companion odtwarza audio przez pakiet `sounddevice` (PortAudio), zainstalowany tylko w środowisku projektu.
+**Uzasadnienie:** Ta sama ścieżka na Windows i macOS. Pozwala zatrzymać dźwięk w kilkadziesiąt ms (D13: przerwanie poniżej 0,3 s).
+
+### D48 · 2026-11-02 · Szczegóły odtwarzania w companionie (doprecyzowanie D03, D20, D45)
+**Decyzja:**
+- Odpowiedź bohatera po wyborze opcji (D20) gra do końca. Okno otwarte w jej trakcie czeka i gra od początku po niej.
+- Kolejka (cel, aktywacja) rusza po 0,35 s bez zdarzeń okien. Zamknięcie okna i otwarcie następnego przychodzą razem, więc cel nie wcina się między okna.
+- Cel lub aktywacja przerwane przez nowe okno wracają raz na początek kolejki.
+- Zamknięta aktywacja wypada z kolejki. Nowszy cel zastępuje starszy.
+- Cel odczytany w ciągu 30 s jako wartość luki w oknie (okno questu z kluczem celu w `{n}`) nie gra drugi raz.
+- Okno z wyłączoną kategorią (D21) nie gra, ale zatrzymuje audio poprzedniego okna, bo tamto zniknęło z ekranu.
+- Pokrycie liczymy dla okien z lektorem, bez przerywników z dubbingiem gry (D14). Okna złożone tylko z treści znanej dopiero w grze (łup) liczymy osobno (D44).
+
+**Uzasadnienie:** Bez tego odpowiedź z wyboru byłaby od razu ucinana przez następne okno, a cel czytany dwa razy albo w pół okna. Te reguły nie zmieniają zakresu ani obsady, tylko doprecyzowują kolejność.
+
+### D49 · 2026-11-02 · Braki bazy M1: pominięte; w kolejnych misjach nagrania wszystkich kwestii
+**Decyzja:**
+- W M1 companion pomija i loguje (D44) klucze, których nie ma w bazie E2:
+  - `TRAVEL_57` i `DEFAULT_GET_TREASURE_MULTI` z sesji E1;
+  - do 87 kluczy zakresu M1, które gra wstawia w węzłach łupu i testów.
+- Od kolejnych scenariuszy (E7) baza obejmuje nagrania wszystkich kwestii. Inwentarz E2 czyta też parametry węzłów łupu i testów, a nie tylko przypisania w grafach (`SetStringKey`).
+
+**Uzasadnienie:** M1 jest poziomem testowym. Inwentarz poprawiamy raz, przed kolejnymi misjami (E4_COMPANION.md).
+
+### D50 · 2026-11-02 · Kryterium pokrycia E4 bez okien samego łupu
+**Decyzja:** Do kryterium „audio dla ≥ 98% okien” nie wliczamy okien, których cała treść to lista łupu składana przez grę. Wynik E4: 332 z 337 okien (98,5%).
+**Uzasadnienie:** Zgodnie z D44 companion w E4 nie czyta treści znanej dopiero w grze.
+
+### D51 · 2026-11-02 · Łup składany z fragmentów
+**Decyzja:**
+- Listę łupu (`RawText`: nagłówek, potem nazwy przedmiotów albo kart z liczbami) companion czyta z pregenerowanych fragmentów: nagłówków i nazw z puli łupu misji.
+- Listę rozpoznaje po tekście.
+- Wprowadzamy to razem z pełnym inwentarzem (D49), w E7. Synteza na żywo zostaje zapasem po pomiarze na M5 (D44).
+
+**Uzasadnienie:** Działa bez GPU przy stole i na Macu, a pula nazw w misji jest skończona.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
