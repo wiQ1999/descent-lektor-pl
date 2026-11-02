@@ -225,7 +225,10 @@ E1 ──────────────────> E4 companion (z repla
 
 **Status:** rozpoczęty 2026-11-02. Najpierw dwa testy wyjścia ([E4_EXIT_TEST.md](E4_EXIT_TEST.md), D40), potem sesja według [E5_PLAYTEST.md](E5_PLAYTEST.md).
 - Test A (sam BepInEx, 0 pluginów): wyjście bez crasha.
-- Test B: start companiona przerwał brak bazowego Pythona poza aplikacją Claude. Naprawione w D52; test do powtórzenia.
+- Test B: start companiona przerwał brak bazowego Pythona poza aplikacją Claude (naprawione w D52).
+  - W powtórce plugin 0.2.0 połączył się z companionem i zapisał `stop`.
+  - Przy wyjściu był crash w `mono_domain_free`, jak w E1.
+  - Przyczyną jest więc plugin. Zawężamy ją testem C (plugin 0.2.1 z etapami).
 
 ## E6 · MacBook Air M5
 

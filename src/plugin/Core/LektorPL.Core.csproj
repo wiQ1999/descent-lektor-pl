@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>LektorPL.Core</AssemblyName>
     <RootNamespace>LektorPL.Core</RootNamespace>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp"><HintPath>$(GameManaged)Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>

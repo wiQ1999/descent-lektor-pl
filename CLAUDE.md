@@ -86,7 +86,7 @@ dotnet build src/plugin/BepInEx -c Release
 .venv/Scripts/python -I analysis/tools/hook_coverage.py [dziennik.jsonl ...]
 ```
 
-Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install [-LoaderOnly]|-Uninstall|-Status`) uruchamia użytkownik według `docs/E1_PLAYTEST.md` i `docs/E4_EXIT_TEST.md`. Dzienniki pluginu i companiona: `%LOCALAPPDATA%\LektorPL\logs`.
+Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install [-LoaderOnly] [-Stage N]|-Uninstall|-Status|-Stage N`) uruchamia użytkownik według `docs/E1_PLAYTEST.md` i `docs/E4_EXIT_TEST.md`. Dzienniki pluginu i companiona: `%LOCALAPPDATA%\LektorPL\logs`.
 
 Companion (E4). Konfiguracja w `%LOCALAPPDATA%\LektorPL\companion.toml` (tworzona przy pierwszym starcie). W grze użytkownik uruchamia go skryptem `src/plugin/install/lektor-companion.ps1`:
 

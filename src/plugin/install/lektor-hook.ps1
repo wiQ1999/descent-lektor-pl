@@ -8,7 +8,9 @@
               Z -LoaderOnly kopiuje sam BepInEx, bez pluginu (test wyjścia, D40).
   -Uninstall  kopiuje BepInEx\LogOutput.log do analysis\work\install\logs, usuwa tylko pliki dodane przez -Install,
               porównuje folder gry z listą sprzed instalacji.
-  -Status     pokazuje, czy loader jest zainstalowany, i najnowszy dziennik pluginu.
+  -Status     pokazuje, czy loader jest zainstalowany, wersję i etap pluginu oraz najnowszy dziennik pluginu.
+  -Stage N    ustawia etap diagnostyczny pluginu w BepInEx\config\pl.lektor.descent.cfg (D40): 0 nic, 1 pusty Runner,
+              2 + dziennik, 3 + Tracker, 4 całość (domyślnie). Także razem z -Install.
   Gra nie może być uruchomiona. Listy plików i kopie logów trafiają do analysis\work\install (poza repozytorium).
 
 .EXAMPLE
@@ -18,6 +20,7 @@
 param(
     [Parameter(ParameterSetName = 'Install', Mandatory)] [switch] $Install,
     [Parameter(ParameterSetName = 'Install')] [switch] $LoaderOnly,
+    [Parameter(ParameterSetName = 'Install')] [Parameter(ParameterSetName = 'Stage', Mandatory)] [ValidateRange(0, 4)] [int] $Stage,
     [Parameter(ParameterSetName = 'Uninstall', Mandatory)] [switch] $Uninstall,
     [Parameter(ParameterSetName = 'Status')] [switch] $Status,
     [string] $GameDir = 'E:\SteamLibrary\steamapps\common\Legends of the Dark'
@@ -34,6 +37,7 @@ $LoaderFiles = 'winhttp.dll', 'doorstop_config.ini', '.doorstop_version'
 $Baseline = Join-Path $Work 'snapshot-before-install.csv'
 $Installed = Join-Path $Work 'installed-files.txt'
 $PluginLogs = Join-Path $env:LOCALAPPDATA 'LektorPL\logs'
+$PluginCfg = Join-Path $GameDir 'BepInEx\config\pl.lektor.descent.cfg'
 
 function Assert-GameClosed {
     if (Get-Process -Name 'Legends of the Dark' -ErrorAction SilentlyContinue) {
@@ -165,10 +169,28 @@ function Show-Status {
     if ($present) { Write-Host "Loader w folderze gry: $($present -join ', ')" } else { Write-Host 'Loader nie jest zainstalowany.' }
     $plugin = Join-Path $GameDir 'BepInEx\plugins\LektorPL\LektorPL.BepInEx.dll'
     if (Test-Path -LiteralPath $plugin) { Write-Host "Plugin: $((Get-Item -LiteralPath $plugin).VersionInfo.FileVersion)" } elseif ($present) { Write-Host 'Plugin nie jest zainstalowany (sam loader).' }
+    $stageLine = if (Test-Path -LiteralPath $PluginCfg) { Get-Content -LiteralPath $PluginCfg -Encoding UTF8 | Where-Object { $_ -match '^\s*Stage\s*=' } }
+    if ($stageLine) { Write-Host "Etap diagnostyczny: $(($stageLine -split '=')[1].Trim())" }
     $last = Get-ChildItem -LiteralPath $PluginLogs -Filter 'hook-*.jsonl' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime | Select-Object -Last 1
     if ($last) { Write-Host "Najnowszy dziennik pluginu: $($last.FullName) ($([math]::Round($last.Length / 1KB)) KB)" }
 }
 
-if ($Install) { Install-Hook }
+function Set-Stage([int] $value) {
+    Assert-GameClosed
+    if (-not (Test-Path -LiteralPath (Join-Path $GameDir 'BepInEx\plugins\LektorPL'))) { throw 'Plugin nie jest zainstalowany. Najpierw -Install.' }
+    New-Item -ItemType Directory -Force -Path (Split-Path $PluginCfg) | Out-Null
+    $lines = @(if (Test-Path -LiteralPath $PluginCfg) { Get-Content -LiteralPath $PluginCfg -Encoding UTF8 })
+    $found = $false
+    $lines = @($lines | ForEach-Object { if ($_ -match '^\s*Stage\s*=') { $found = $true; "Stage = $value" } else { $_ } })
+    if (-not $found) { $lines += @('', '[Diagnostics]', '', "Stage = $value") }
+    [System.IO.File]::WriteAllLines($PluginCfg, [string[]] $lines, (New-Object System.Text.UTF8Encoding $false))
+    Write-Host "Etap diagnostyczny pluginu: $value. Uruchom grę ze Steama." -ForegroundColor Green
+}
+
+if ($Install) {
+    Install-Hook
+    if ($PSBoundParameters.ContainsKey('Stage')) { Set-Stage $Stage }
+}
 elseif ($Uninstall) { Uninstall-Hook }
+elseif ($PSBoundParameters.ContainsKey('Stage')) { Set-Stage $Stage }
 else { Show-Status }

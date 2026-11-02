@@ -90,7 +90,7 @@ namespace LektorPL.Core
                 .Bool("fields_ok", McCurrent != null && McBack != null && McData != null && SmCurrent != null && SmBack != null && SmData != null
                     && I2LanguageField != null)
                 .Bool("sources_ok", UgObjectiveKey != null && UgObjectiveArgs != null && GcActivation != null)
-                .Bool("sniffer", options.SniffText));
+                .Bool("sniffer", options.SniffText).Int("stage", options.DiagnosticStage));
         }
 
         public void Shutdown()

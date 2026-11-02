@@ -49,10 +49,52 @@ Przed testami sprawdź, ile folderów jest w `%TEMP%\Fantasy Flight Games\Descen
 6. Zamknij companion (Ctrl+C).
 7. Plugin możesz zostawić na sesję E5. Odinstalowanie działa tak samo jak w teście A.
 
+## Test C: etapy pluginu 0.2.1 (po crashu w teście B)
+
+Test A (sam BepInEx) przeszedł bez crasha, a test B (plugin 0.2.0) skończył się crashem w `mono_domain_free`. Plugin 0.2.1 ma ustawienie `Stage`, które włącza kolejne części pluginu:
+
+| Etap | Co działa |
+|---|---|
+| 0 | BepInEx wczytuje plugin, plugin nic nie robi |
+| 1 | ukryty obiekt gry z pustym Runnerem |
+| 2 | + dziennik `hook-*.jsonl` |
+| 3 | + Tracker: subskrypcje okien i odczyt pól gry, bez wysyłki do companiona |
+| 4 | całość (domyślnie, jak w teście B) |
+
+Companion nie jest potrzebny.
+
+1. Zainstaluj plugin 0.2.1 z etapem 0 (gra zamknięta):
+
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File src\plugin\install\lektor-hook.ps1 -Uninstall
+   powershell -ExecutionPolicy Bypass -File src\plugin\install\lektor-hook.ps1 -Install -Stage 0
+   ```
+
+2. Uruchom grę ze Steama, poczekaj ok. 30 s w menu i wyjdź do pulpitu. Zanotuj, czy był crash.
+3. Bez crasha ustaw kolejny etap (gra zamknięta) i powtórz krok 2:
+
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File src\plugin\install\lektor-hook.ps1 -Stage 1
+   ```
+
+   Potem tak samo `-Stage 2` i `-Stage 3`. Przerwij na pierwszym etapie z crashem.
+4. Na koniec przywróć całość: `-Stage 4`. `lektor-hook.ps1` bez parametrów pokaże wersję 0.2.1 i etap.
+
+Jak odczytam wynik:
+
+| Pierwszy crash | Wniosek |
+|---|---|
+| etap 0 | crash wywołuje samo wczytanie pluginu przez BepInEx; nasz kod nie ma wpływu |
+| etap 1 | ukryty obiekt (`HideAndDontSave`, `DontDestroyOnLoad`); Runner przeniosę na obiekt pluginu |
+| etap 2 | plik dziennika |
+| etap 3 | Tracker (subskrypcje, odczyt pól); zawężam dalej w Trackerze |
+| brak do etapu 3 | wysyłka do companiona; ale 0.1.0 bez wysyłki też miał crash, więc powtórzymy etap 3 |
+
 ## Co mi podać
 
 - Test A: crash tak/nie.
 - Test B: crash tak/nie.
+- Test C: etapy bez crasha i pierwszy etap z crashem.
 - Czy companion pokazał połączenie albo błąd (wystarczy „było połączenie”).
 
 Pliki odczytam sam:

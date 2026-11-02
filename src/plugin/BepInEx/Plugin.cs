@@ -21,6 +21,8 @@ namespace LektorPL.BepInEx
                     "Co ile sekund przeglądać pola TextMeshPro.").Value;
                 options.CompanionPort = Config.Bind("Companion", "Port", options.CompanionPort,
                     "Port companiona na localhost; 0 wyłącza wysyłkę zdarzeń.").Value;
+                options.DiagnosticStage = Config.Bind("Diagnostics", "Stage", options.DiagnosticStage,
+                    "Diagnoza crasha przy wyjściu (D40): 0 nic, 1 pusty Runner, 2 + dziennik, 3 + Tracker, 4 całość.").Value;
                 options.Info = s => Logger.LogInfo(s);
                 Bootstrap.Start(options);
             }
