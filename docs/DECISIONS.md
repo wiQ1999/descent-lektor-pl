@@ -410,6 +410,12 @@ Plan etapów: [PLAN.md](PLAN.md).
 - Poza aplikacją `.venv` go nie widział: w teście B wystąpił błąd „No Python at …”.
 - Folder projektu na D: nie jest wirtualizowany.
 
+### D53 · 2026-11-02 · Crash przy wyjściu: test C z etapami pluginu przed E5
+**Decyzja:** Przed sesją E5 robimy test C ([E4_EXIT_TEST.md](E4_EXIT_TEST.md)): plugin 0.2.1 z `Diagnostics.Stage` od 0 do 3, do pierwszego crasha. Poprawka trafi do pluginu na sesję E5.
+**Uzasadnienie:**
+- Test A (sam BepInEx) przeszedł bez crasha, a test B (plugin 0.2.0) skończył się crashem w `mono_domain_free`.
+- Przy stole na Macu okno crasha przy każdym wyjściu byłoby uciążliwe, a przyczyna może dotyczyć też Maca.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
