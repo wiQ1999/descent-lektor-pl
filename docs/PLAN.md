@@ -18,7 +18,7 @@ Dlatego przed generowaniem audio jest nowy etap E0: porównanie modeli i reżyse
 ```
 E0 porównanie TTS ─┐
                    ├─> E2 pipeline danych ─> E3 audio M1 ─┐
-E1 test hooka ─────┘                                      ├─> E5 test Windows ─> E6 MacBook ─> E7 kolejne misje
+E1 test hooka ─────┘                                      ├─> E5 test Windows ─> E6 instalacja Win + Mac ─> E7 kolejne misje
 E1 ──────────────────> E4 companion (z replayem logu E1) ─┘                                    E8 opcjonalnie
 ```
 
@@ -236,31 +236,52 @@ E1 ──────────────────> E4 companion (z repla
   - pokrycie 96,98%: braki to klucze pominięte w M1 (D49). Gdy łup wielokrotny liczymy jak w D50, wychodzi 99,6%;
   - wyjście bez crasha;
   - uwagi z gry trafiają do E7 (D55).
+- **Zamknięty 2026-11-02** (D56).
 
-## E6 · MacBook Air M5
+## E6 · Instalacja na Windows i Macu
 
-**Cel:** działanie przy stole.
+**Cel:** lektor instalowany dwuklikiem z jednego folderu na Windows i Macu, gra uruchamiana zwykłym przyciskiem w Steam, instrukcja dla użytkownika (D57).
 
 **Zakres:**
-- zgoda znajomego i lista kontrolna z `MAC_REPORT.md`;
-- ryzyko arm64: paczka BepInEx 5 dla macOS standardowo działa pod Rosettą, a Doorstop 4.5+ ma natywny arm64.
-  - Najpierw testuję Doorstop arm64 z BepInEx albo z naszym punktem wejścia.
-  - Zapas: Rosetta, która działa do macOS 27.
-- crash przy wyjściu: MonoMod w BepInEx dla macOS liczy położenie flagi tym samym błędnym wzorem (D54). Sprawdzamy wyjście z gry i w razie potrzeby nakładamy taką samą poprawkę;
-- przepodpisanie ad-hoc oryginału, opcja uruchamiania w Steam i skrypt instalacji, cofania i ponownego nałożenia po aktualizacji (D25);
-- Homebrew, Python i companion (D26);
-- przeniesienie audio;
-- pomiar generowania na żywo przez MLX lub MPS na M5;
-- test przy stole.
+- własny loader na Doorstop 4.6 na obu systemach, bez BepInEx, Harmony i MonoMod (D58);
+- companion uruchamiany przez plugin i zamykany po wyjściu z gry; osobne pliki do wyłączania i odinstalowania (D59);
+- paczka `Descent-Lektor-PL` dla każdego systemu:
+  - Python 3.12 (python-build-standalone) z bibliotekami;
+  - audio i baza M1;
+  - pliki Zainstaluj, Odinstaluj, Wyłącz lektora, Włącz lektora, Ustawienia, Test dźwięku;
+  - paczka jest kompletna i nie potrzebuje internetu przy instalacji (D60);
+- Mac: przepodpisanie ad-hoc pliku gry z uprawnieniem do `DYLD_*` i opcja uruchamiania w Steam (D25);
+- instrukcja `docs/INSTRUKCJA.md`, kopia w paczce;
+- testy: W1 (loader na Windows), W2 (instalacja z paczki na Windows) i sesja M1 na Macu przy stole;
+- raport `analysis/E6_INSTALL.md`.
+
+**Kolejność prac** (plan zaakceptowany 2026-11-02):
+1. Loader (`src/plugin/Loader`), autostart companiona (`Core/Launcher.cs`) i nowe opcje companiona: `--logs`, `--parent-pid`, zamknięcie po rozłączeniu, pojedyncza instancja, `--test`.
+2. Test W1 na Windows: Doorstop z loaderem zamiast BepInEx, companion uruchamiany przez plugin.
+3. Paczka Windows (`python -m lektor bundle --platform win`), skrypty i instrukcja; skrypty sprawdzone na udawanym folderze gry.
+4. Test W2: instalacja z paczki według instrukcji, wyłączenie i odinstalowanie.
+5. Paczka na Maca. Skrypty bash sprawdzam tu tylko składniowo.
+6. Sesja na Macu przy stole. Folder `logs/` wraca do analizy.
+7. Raport i commit.
+
+**Ryzyka:**
+- punkt wejścia przed startem Unity (czekanie na `UnityEngine.CoreModule` i `sceneLoaded`);
+- zgoda „Zarządzanie aplikacjami” i podpis gry, który znika po aktualizacji;
+- Doorstop arm64 z Mono Unity 2022.3;
+- chronione foldery (TCC) i Gatekeeper.
 
 **Kryteria ukończenia:**
-- pełna sesja M1 bez interwencji;
-- D13 spełnione na Macu;
-- instrukcja odinstalowania sprawdzona.
+- Windows: instalacja, wyłączenie i odinstalowanie z paczki według instrukcji, bez poleceń w terminalu. Po odinstalowaniu folder gry jest jak przed instalacją.
+- Mac: pełna sesja M1 bez interwencji, D13 według dzienników, wyjście bez crasha, odinstalowanie sprawdzone.
+- `INSTRUKCJA.md` przeszła oba systemy.
 
 **Zależności:** E5.
 
-**Co wymaga Ciebie i znajomego:** dostęp do Maca, zgody (Zarządzanie aplikacjami, instalacja Homebrew), sesja przy stole.
+**Co wymaga Ciebie i znajomego:**
+- testy W1 i W2 na Windows;
+- dostęp do Maca i zgoda znajomego;
+- zgoda „Zarządzanie aplikacjami” dla Terminala;
+- sesja przy stole.
 
 ## E7 · Kolejne misje przyrostowo
 
@@ -284,6 +305,7 @@ Każda misja przechodzi cykl E2 → E3 → test.
 ## E8 · Opcjonalnie
 
 - OCR jako zapas;
+- pomiar generowania na żywo przez MLX lub MPS na M5 (przeniesione z E6, D57);
 - przyciszanie muzyki przez Wwise (D23);
 - UI ustawień.
 

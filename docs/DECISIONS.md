@@ -452,6 +452,58 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Prośba użytkownika po sesji E5: nie poprawiać teraz, uwzględnić przy kolejnych scenariuszach.
 
+### D56 · 2026-11-02 · E5 zamknięte
+**Decyzja:** E5 uznajemy za zamknięte. Okna łupu wielokrotnego (`DEFAULT_GET_TREASURE_MULTI`) liczymy w kryterium tak jak łup pojedynczy w D50. Pokrycie wynosi wtedy 99,6%. Plugin zostaje zainstalowany w grze na Windows.
+**Uzasadnienie:**
+- Opóźnienia spełniają D13 z zapasem.
+- Wszystkie braki to klucze, które M1 świadomie pomija (D49). Od E7 i tak je nagrywamy (D49, D51).
+
+### D57 · 2026-11-02 · Zakres E6: instalacja na Windows i Macu z instrukcją
+**Decyzja:**
+- E6 przygotowuje instalację na Macu i na Windows. Ręczne uruchamianie skryptów zastępuje folder `Descent-Lektor-PL` z plikami do dwukliku.
+- Instrukcja `docs/INSTRUKCJA.md` dla użytkownika (kopia w paczce) opisuje instalację, ustawienia, uruchamianie, wyłączanie i odinstalowanie.
+- Pomiar syntezy na żywo na M5 (MLX/MPS) przenosimy do E8.
+
+**Uzasadnienie:**
+- Prośba użytkownika.
+- Nazwa folderu ma mówić, do jakiej gry jest dodatek.
+- Lektor używa pregenerowanego audio, a pomiar wymagałby na Macu znajomego dużych bibliotek.
+
+### D58 · 2026-11-02 · Loader: Doorstop i własny punkt wejścia (zmienia D11 i D25 w części loadera)
+**Decyzja:**
+- Na obu systemach Doorstop 4.6 wczytuje nasz `LektorPL.Loader.dll` z folderu paczki, bez BepInEx, Harmony i MonoMod.
+- Loader czeka, aż gra wczyta `UnityEngine.CoreModule`, a przy pierwszej scenie uruchamia Core.
+- BepInEx z poprawką D54 zostaje w repozytorium jako zapas deweloperski.
+
+**Uzasadnienie:**
+- Doorstop od 4.5 działa natywnie na arm64.
+- BepInEx 5 (MonoMod 22) na Macu ruszyłby tylko pod Rosettą, która znika po macOS 27.
+- Na Windows znika poprawiony plik MonoMod. W folderze gry zostają 3 pliki Doorstop.
+- Rdzeń od początku nie zależy od loadera (D11).
+
+### D59 · 2026-11-02 · Companion uruchamia plugin (zmienia D46)
+**Decyzja:**
+- Gdy port companiona jest wolny, plugin uruchamia go w tle z Pythona w paczce.
+- Companion kończy się po zamknięciu gry (sprawdza proces gry i rozłączenie).
+- Pliki „Wyłącz lektora” i „Włącz lektora” wyłączają cały dodatek bez odinstalowania. „Odinstaluj” usuwa pliki z folderu gry.
+
+**Uzasadnienie:**
+- Gra startuje zwykłym przyciskiem w Steam.
+- Powód D46, czyli diagnoza crasha przy wyjściu, odpadł (D54).
+- Użytkownik chce łatwego wyłączenia i odinstalowania.
+
+### D60 · 2026-11-02 · Python w folderze paczki, paczka kompletna (zmienia D26)
+**Decyzja:**
+- Companion działa na Pythonie 3.12 z python-build-standalone, czyli tych samych buildach, które instaluje uv. Python leży w folderze paczki razem z `numpy`, `sounddevice` i `soundfile`.
+- Biblioteki instaluję przy budowie paczki, a pobrania mają przypięte sumy SHA-256.
+- Instalacja nie potrzebuje internetu, hasła administratora, Homebrew ani Command Line Tools.
+- Na Macu nie instaluję samego uv, bo paczka ma gotowe środowisko.
+
+**Uzasadnienie:**
+- Użytkownik wybrał opcję „wszystko w folderze” i paczkę kompletną.
+- Na Macu znajomego nic nie zostaje poza folderem: odinstalowanie to usunięcie folderu.
+- uv byłby tylko pośrednikiem, który pobiera ten sam Python.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -494,5 +546,6 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 | – | Odczyt aktualizacji celu z licznikiem i nagrania liczników | QA przed E7 (D55) |
 | – | Ponowny dobór głosów Ronana i Adelynn, ujednolicenie Kehli | przed scenariuszem, w którym mówią (D55, D41) |
 | – | Opis misji na mapie: nowe źródło w pluginie | E7 (D55) |
+| – | Własny punkt wejścia Doorstop przed startem Unity | test W1 w E6 (D58) |
 | – | Model dla całej gry | po E3, przed E7 (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |
