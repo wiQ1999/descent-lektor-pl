@@ -2,7 +2,13 @@
 
 W E1 gra z loaderem 2 z 2 razy kończyła się crashem przy wyjściu do pulpitu (`mono_jit_cleanup`). Bez moda zamyka się czysto. Testy A i B pokażą, czy crash wywołuje sam BepInEx, czy nasz plugin. Plugin 0.2.0 przy wyjściu odpina subskrypcje i zamyka połączenie z companionem.
 
-Wyniki: A bez crasha, B crash, C crash już na etapie 0. Teraz test D (poprawka MonoMod, D54).
+Wyniki:
+- A: bez crasha;
+- B: crash;
+- C: crash już na etapie 0;
+- D (poprawka MonoMod, D54): bez crasha.
+
+`-Install` nakłada teraz poprawkę domyślnie.
 
 Każdy test zajmuje ok. 3 minuty: start gry, menu, wyjście. Nie trzeba wczytywać zapisu.
 
@@ -119,6 +125,8 @@ Przygotowałem kopię biblioteki, która pomija ten zapis; poza tym jest identyc
 |---|---|
 | brak crasha | `-Install` nakłada poprawkę domyślnie, potem sesja E5; wyjście po sesji będzie drugim sprawdzeniem |
 | crash | akceptujemy crash przy wyjściu i przechodzimy do sesji E5 |
+
+Wynik 2026-11-02: bez crasha. Plugin pracował na etapie 4 z companionem; w `Crashes` nie przybył folder.
 
 ## Co mi podać
 

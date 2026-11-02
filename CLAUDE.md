@@ -87,7 +87,9 @@ dotnet build src/plugin/BepInEx -c Release
 powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1   # MonoMod.Utils.dll bez zapisu corlib_internal (D54)
 ```
 
-Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install [-LoaderOnly] [-Stage N] [-MonoModFix]|-Uninstall|-Status|-Stage N|-MonoModFix`) uruchamia użytkownik według `docs/E1_PLAYTEST.md` i `docs/E4_EXIT_TEST.md`. Dzienniki pluginu i companiona: `%LOCALAPPDATA%\LektorPL\logs`.
+Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install [-LoaderOnly] [-Stage N]|-Uninstall|-Status|-Stage N|-MonoModFix`) uruchamia użytkownik według `docs/E1_PLAYTEST.md`, `docs/E4_EXIT_TEST.md` i `docs/E5_PLAYTEST.md`. Dzienniki pluginu i companiona: `%LOCALAPPDATA%\LektorPL\logs`.
+
+- `-Install` zawsze podmienia `BepInEx\core\MonoMod.Utils.dll` na kopię z `monomod-fix.ps1` (D54). Z oryginałem BepInEx 5.4.23.5 gra (x86) wysypuje się przy wyjściu: MonoMod #329 psuje strukturę `MonoAssembly`.
 
 Companion (E4). Konfiguracja w `%LOCALAPPDATA%\LektorPL\companion.toml` (tworzona przy pierwszym starcie). W grze użytkownik uruchamia go skryptem `src/plugin/install/lektor-companion.ps1`:
 

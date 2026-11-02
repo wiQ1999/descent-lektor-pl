@@ -1,15 +1,15 @@
 # E5 · Sesja M1 z lektorem (Windows)
 
-Plugin 0.2.0 wysyła okna gry do companiona, a companion czyta je pregenerowanym audio M1 (978 fragmentów, OmniVoice). Ta sesja sprawdza D13 w prawdziwej grze:
+Plugin 0.2.1 wysyła okna gry do companiona, a companion czyta je pregenerowanym audio M1 (978 fragmentów, OmniVoice). Ta sesja sprawdza D13 w prawdziwej grze:
 - audio w co najmniej 98% okien (bez okien samego łupu, D50);
 - start poniżej 0,5 s;
 - przerwanie poniżej 0,3 s.
 
 Liczą się też Twoje wrażenia.
 
-## 0. Najpierw testy wyjścia
+## 0. Testy wyjścia: zakończone
 
-Zrób dwa krótkie testy z [E4_EXIT_TEST.md](E4_EXIT_TEST.md) (D40). Jeśli po teście B plugin został zainstalowany, pomiń krok 1.
+Testy z [E4_EXIT_TEST.md](E4_EXIT_TEST.md) są zakończone. Crash przy wyjściu usuwa poprawka MonoMod (D54). Po teście D plugin z poprawką jest zainstalowany, więc pomiń krok 1.
 
 ## 1. Instalacja (gra zamknięta)
 
@@ -17,7 +17,7 @@ Zrób dwa krótkie testy z [E4_EXIT_TEST.md](E4_EXIT_TEST.md) (D40). Jeśli po t
 powershell -ExecutionPolicy Bypass -File src\plugin\install\lektor-hook.ps1 -Install
 ```
 
-Po instalacji `lektor-hook.ps1` bez parametrów powinien pokazać „Plugin: 0.2.0…”.
+`-Install` sam nakłada poprawkę MonoMod. Po instalacji `lektor-hook.ps1` bez parametrów powinien pokazać „Plugin: 0.2.1…” i „MonoMod.Utils.dll: z poprawką D54”.
 
 ## 2. Companion przed grą
 
@@ -58,7 +58,7 @@ W trakcie Twojej sesji nie uruchamiam obliczeń na GPU.
 
 ## 4. Koniec
 
-1. Zapisz grę, wyjdź do menu i zamknij grę. Daj znać, czy przy wyjściu był crash.
+1. Zapisz grę, wyjdź do menu i zamknij grę. Daj znać, czy przy wyjściu był crash (drugie sprawdzenie poprawki D54, tym razem po pełnej sesji).
 2. W oknie companiona naciśnij Ctrl+C. Companion dopisze podsumowanie do swojego dziennika.
 3. Plugin zostaw zainstalowany do zamknięcia E5, bo po poprawkach może być druga sesja. Odinstalowanie działa jak w [E1_PLAYTEST.md](E1_PLAYTEST.md) (`-Uninstall`).
 

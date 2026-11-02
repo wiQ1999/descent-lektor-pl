@@ -4,15 +4,17 @@
 
 .DESCRIPTION
   -Install    sprawdza SHA-256 paczki BepInEx, zapisuje listę plików gry (przed), kopiuje loader i plugin,
-              zapisuje listę po instalacji i pokazuje różnice (powinny być tylko dodane pliki).
+              nakłada poprawkę MonoMod (D54, jak -MonoModFix), zapisuje listę po instalacji i pokazuje różnice
+              (powinny być tylko dodane pliki).
               Z -LoaderOnly kopiuje sam BepInEx, bez pluginu (test wyjścia, D40).
   -Uninstall  kopiuje BepInEx\LogOutput.log do analysis\work\install\logs, usuwa tylko pliki dodane przez -Install,
               porównuje folder gry z listą sprzed instalacji.
   -Status     pokazuje, czy loader jest zainstalowany, wersję i etap pluginu oraz najnowszy dziennik pluginu.
   -Stage N    ustawia etap diagnostyczny pluginu w BepInEx\config\pl.lektor.descent.cfg (D40): 0 nic, 1 pusty Runner,
               2 + dziennik, 3 + Tracker, 4 całość (domyślnie). Także razem z -Install.
-  -MonoModFix podmienia BepInEx\core\MonoMod.Utils.dll na kopię bez zapisu flagi corlib_internal (crash przy wyjściu,
-              D54). Kopię tworzy monomod-fix.ps1. Także razem z -Install albo -Stage; -Uninstall usuwa ją z całym BepInEx.
+  -MonoModFix podmienia w istniejącej instalacji BepInEx\core\MonoMod.Utils.dll na kopię bez zapisu flagi
+              corlib_internal (crash przy wyjściu, D54). Kopię tworzy monomod-fix.ps1. Także razem z -Stage;
+              -Uninstall usuwa ją z całym BepInEx.
   Gra nie może być uruchomiona. Listy plików i kopie logów trafiają do analysis\work\install (poza repozytorium).
 
 .EXAMPLE
@@ -23,7 +25,7 @@ param(
     [Parameter(ParameterSetName = 'Install', Mandatory)] [switch] $Install,
     [Parameter(ParameterSetName = 'Install')] [switch] $LoaderOnly,
     [Parameter(ParameterSetName = 'Install')] [Parameter(ParameterSetName = 'Stage', Mandatory)] [ValidateRange(0, 4)] [int] $Stage,
-    [Parameter(ParameterSetName = 'Install')] [Parameter(ParameterSetName = 'Stage')] [Parameter(ParameterSetName = 'Fix', Mandatory)] [switch] $MonoModFix,
+    [Parameter(ParameterSetName = 'Stage')] [Parameter(ParameterSetName = 'Fix', Mandatory)] [switch] $MonoModFix,
     [Parameter(ParameterSetName = 'Uninstall', Mandatory)] [switch] $Uninstall,
     [Parameter(ParameterSetName = 'Status')] [switch] $Status,
     [string] $GameDir = 'E:\SteamLibrary\steamapps\common\Legends of the Dark'
@@ -97,7 +99,7 @@ function Install-Hook {
     if ($present) { throw "W folderze gry już są pliki loadera: $($present -join ', '). Najpierw -Uninstall albo usuń je ręcznie." }
     $hash = (Get-FileHash -LiteralPath $Zip -Algorithm SHA256).Hash
     if ($hash -ne $ZipSha256) { throw "Zła suma SHA-256 paczki BepInEx: $hash" }
-    if ($MonoModFix) { Assert-MonoModFixReady }
+    Assert-MonoModFixReady
     foreach ($f in $PluginFiles | Where-Object { $_ -like '*.dll' -and -not $LoaderOnly }) {
         if (-not (Test-Path -LiteralPath (Join-Path $PluginBin $f))) { throw "Brak $f w $PluginBin. Zbuduj plugin: dotnet build src\plugin\BepInEx -c Release" }
     }
@@ -219,7 +221,7 @@ function Set-MonoModFix {
 
 if ($Install) {
     Install-Hook
-    if ($MonoModFix) { Set-MonoModFix }
+    Set-MonoModFix
     if ($PSBoundParameters.ContainsKey('Stage')) { Set-Stage $Stage }
 }
 elseif ($Uninstall) { Uninstall-Hook }

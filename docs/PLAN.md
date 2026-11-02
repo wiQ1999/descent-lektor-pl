@@ -230,7 +230,8 @@ E1 ──────────────────> E4 companion (z repla
   - Przy wyjściu był crash w `mono_domain_free`, jak w E1.
   - A i B wskazywały na plugin, więc zawęziliśmy to testem C (plugin 0.2.1 z etapami).
 - Test C: crash już na etapie 0, gdy plugin nic nie robi. Przyczyną jest błąd MonoMod #329 w BepInEx, nie kod pluginu (D54).
-- Test D: `MonoMod.Utils.dll` z poprawką, plugin na etapie 4 z companionem (D54). Jeśli crash zostanie, akceptujemy go i przechodzimy do sesji E5.
+- Test D: `MonoMod.Utils.dll` z poprawką, plugin na etapie 4 z companionem (D54): bez crasha. `-Install` nakłada poprawkę domyślnie.
+- Dalej: sesja M1 według [E5_PLAYTEST.md](E5_PLAYTEST.md).
 
 ## E6 · MacBook Air M5
 
@@ -241,6 +242,7 @@ E1 ──────────────────> E4 companion (z repla
 - ryzyko arm64: paczka BepInEx 5 dla macOS standardowo działa pod Rosettą, a Doorstop 4.5+ ma natywny arm64.
   - Najpierw testuję Doorstop arm64 z BepInEx albo z naszym punktem wejścia.
   - Zapas: Rosetta, która działa do macOS 27.
+- crash przy wyjściu: MonoMod w BepInEx dla macOS liczy położenie flagi tym samym błędnym wzorem (D54). Sprawdzamy wyjście z gry i w razie potrzeby nakładamy taką samą poprawkę;
 - przepodpisanie ad-hoc oryginału, opcja uruchamiania w Steam i skrypt instalacji, cofania i ponownego nałożenia po aktualizacji (D25);
 - Homebrew, Python i companion (D26);
 - przeniesienie audio;

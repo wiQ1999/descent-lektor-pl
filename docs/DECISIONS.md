@@ -438,6 +438,8 @@ Plan etapów: [PLAN.md](PLAN.md).
 - `HarmonyBackend = dynamicmethod` nic by nie zmienił. `mscorlib` gry ma `DynamicMethod.il_info`, więc MonoMod już domyślnie używa tego generatora.
 - Ten sam wzór pomija pole także na x64, więc sprawdzimy to na Macu w E6.
 
+**Wynik (2026-11-02):** test D bez crasha: plugin na etapie 4, połączenie z companionem, w `Crashes` brak nowego folderu. Od teraz `-Install` nakłada poprawkę domyślnie. Drugim sprawdzeniem będzie wyjście po sesji E5.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -476,6 +478,6 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 
 | # | Kwestia | Stan |
 |---|---|---|
-| z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | przyczyna w MonoMod (D54); test D z poprawką, bez efektu akceptujemy crash |
+| z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | usunięty poprawką MonoMod (D54, test D); drugie sprawdzenie po sesji E5, na Macu w E6 |
 | – | Model dla całej gry | po E3, przed E7 (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |
