@@ -1,4 +1,4 @@
-"""python -I -m lektor build | refs | report | generate | evaluate | select | finalize | audio-report | companion"""
+"""python -I -m lektor build | refs | report | generate | evaluate | select | finalize | audio-report | companion | bundle"""
 import argparse
 import sys
 
@@ -29,6 +29,10 @@ def main(argv=None):
     c = sub.add_parser('companion', help='companion lektora (serwer TCP dla pluginu) albo replay dziennika E1')
     from .companion.app import add_args
     add_args(c)
+    k = sub.add_parser('bundle', help='folder paczki Descent-Lektor-PL (E6) w analysis/work/')
+    k.add_argument('--platform', choices=('win', 'mac'), default='win')
+    k.add_argument('--dev', action='store_true', help='analysis/work/dev-bundle z Pythonem z .venv (test W1)')
+    k.add_argument('--out', help='katalog docelowy')
     a = ap.parse_args(argv)
     if a.cmd == 'build':
         from .build import build
@@ -57,6 +61,9 @@ def main(argv=None):
     elif a.cmd == 'companion':
         from .companion import app
         app.main(a)
+    elif a.cmd == 'bundle':
+        from .bundle import build
+        print(build(a.platform, a.dev, a.out))
     else:
         from .report import report
         print(paths.rel(report(a.db)))

@@ -1,0 +1,14 @@
+# Przypięte pobrania do paczki Descent-Lektor-PL (E6). Cache: analysis/work/bin/<dir>/ (poza Git).
+# Każdy plik jest sprawdzany sumą SHA-256 przed użyciem.
+
+[doorstop.win]      # Doorstop 4.6.0, gra na Windows jest 32-bitowa (x86)
+url = "https://github.com/NeighTools/UnityDoorstop/releases/download/v4.6.0/doorstop_win_release_4.6.0.zip"
+sha256 = "d423e73e4a92cb168565ac53031f04082daa17133057e53c24343d580c260b25"
+dir = "doorstop-4.6.0"
+files = ["x86/winhttp.dll", "x86/.doorstop_version"]
+
+[doorstop.mac]      # Doorstop 4.6.0, biblioteka uniwersalna (x86_64, arm64, arm64e)
+url = "https://github.com/NeighTools/UnityDoorstop/releases/download/v4.6.0/doorstop_macos_release_4.6.0.zip"
+sha256 = "8282e8ec37abc81bbf736d12c315fdb78b0418654fb57be9e40858649953ccb7"
+dir = "doorstop-4.6.0"
+files = ["universal/libdoorstop.dylib", "universal/.doorstop_version"]

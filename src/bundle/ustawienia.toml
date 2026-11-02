@@ -1,0 +1,32 @@
+# Lektor PL: ustawienia. Zmiany działają od następnego uruchomienia gry.
+# Po zmianie uruchom Test dźwięku: sprawdzi głośnik, głośność i poprawność tego pliku.
+# Wartości true/false i liczby piszemy bez cudzysłowów, tekst w cudzysłowach.
+
+# Głośność lektora: od 0.0 (cisza) do 1.0 (pełna).
+volume = 1.0
+
+# Głośnik albo słuchawki. Puste "" to urządzenie domyślne systemu.
+# Można podać fragment nazwy urządzenia, np. "Headphones".
+device = ""
+
+# Dla zaawansowanych, zwykle bez zmian.
+port = 47810                # port na tym komputerze, przez który gra rozmawia z lektorem
+db = "@DB@"                 # baza kwestii (ścieżka względem tego pliku)
+audio = "@AUDIO@"           # nagrania lektora (ścieżka względem tego pliku)
+
+# Co czyta lektor: false wycisza daną kategorię.
+[toggles]
+narracja = true             # opisy narratora
+dialogi = true              # kwestie bohaterów i postaci
+komunikaty_questu = true    # komunikaty zadania
+walka_teren = true          # walka i teren
+ui = true                   # komunikaty interfejsu i samouczek
+okna_wyboru = true          # odpowiedź bohatera po wyborze
+nagrody = true              # nagrody
+aktywacje = true            # aktywacje wrogów
+cele = true                 # cele misji
+
+# Start lektora razem z grą.
+[plugin]
+autostart = true            # false: lektor nie startuje sam (tylko do testów)
+@PYTHON@

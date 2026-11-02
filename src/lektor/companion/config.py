@@ -44,7 +44,7 @@ def load(file=None):
         with open(file, 'w', encoding='utf-8') as fh:
             fh.write(default_text())
     with open(file, 'rb') as fh:
-        cfg = tomllib.load(fh)
+        cfg = tomllib.loads(fh.read().decode('utf-8-sig'))     # Notatnik może dopisać BOM
     defaults = tomllib.loads(default_text())
     out = {**defaults, **cfg}
     out['toggles'] = {**defaults['toggles'], **cfg.get('toggles', {})}

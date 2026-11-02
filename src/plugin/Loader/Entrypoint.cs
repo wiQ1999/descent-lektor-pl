@@ -52,8 +52,14 @@ namespace LektorPL.Loader
                 Settings = Settings.Read(Path.Combine(BundleDir, "ustawienia.toml"));
                 AppDomain.CurrentDomain.AssemblyResolve += Resolve;
                 AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoad;
-                foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
-                    if (IsCoreModule(a)) { Hook(); break; }
+                if (CoreModuleLoaded())
+                {
+                    Hook("już wczytany");
+                    return;
+                }
+                // Zapas na wypadek, gdyby Mono nie zgłosił AssemblyLoad dla bibliotek wczytanych przez Unity.
+                // Wątek kończy się po wykryciu modułu albo po 2 min, na długo przed wyjściem z gry (D40).
+                new System.Threading.Thread(Poll) { IsBackground = true, Name = "LektorPL.Loader" }.Start();
             }
             catch (Exception e)
             {
@@ -66,11 +72,18 @@ namespace LektorPL.Loader
             return a.GetName().Name == "UnityEngine.CoreModule";
         }
 
+        private static bool CoreModuleLoaded()
+        {
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
+                if (IsCoreModule(a)) return true;
+            return false;
+        }
+
         private static void OnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
         {
             try
             {
-                if (IsCoreModule(args.LoadedAssembly)) Hook();
+                if (IsCoreModule(args.LoadedAssembly)) Hook("AssemblyLoad");
             }
             catch (Exception e)
             {
@@ -78,11 +91,28 @@ namespace LektorPL.Loader
             }
         }
 
-        private static void Hook()
+        private static void Poll()
+        {
+            try
+            {
+                for (int i = 0; i < 1200 && s_hooked == 0; i++)
+                {
+                    System.Threading.Thread.Sleep(100);
+                    if (CoreModuleLoaded()) Hook("sprawdzanie co 100 ms");
+                }
+                if (s_hooked == 0) Log("UnityEngine.CoreModule nie wczytał się w 2 min, rdzeń nie wystartuje");
+            }
+            catch (Exception e)
+            {
+                Log("poll: " + e);
+            }
+        }
+
+        private static void Hook(string via)
         {
             if (System.Threading.Interlocked.Exchange(ref s_hooked, 1) != 0) return;
             AppDomain.CurrentDomain.AssemblyLoad -= OnAssemblyLoad;
-            Log("UnityEngine.CoreModule wczytany, czekam na pierwszą scenę");
+            Log("UnityEngine.CoreModule wczytany (" + via + "), czekam na pierwszą scenę");
             SceneHook.Subscribe();
         }
 

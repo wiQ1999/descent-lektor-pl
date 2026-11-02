@@ -34,8 +34,10 @@ analysis/    raporty z analiz + tools/ (skrypty Python/UnityPy)
   work/      kopie gry, depot macOS, dekompilacja, audio, próbki: nieśledzone
 src/         kod docelowy (plugin, pipeline, companion)
   lektor/    pakiet Python: baza kwestii M1 (build), referencje (refs), raporty (report), audio E3 (synth, evaluate, finalize),
-             companion/ (E4: library, director, player, app)
-  plugin/    Core (C#, net472, bez Harmony i BepInEx), BepInEx (adapter), install/ (lektor-hook.ps1, lektor-companion.ps1, monomod-fix.ps1)
+             companion/ (E4: library, director, player, app), bundle (E6: folder paczki)
+  plugin/    Core (C#, net472, bez Harmony i BepInEx), Loader (Doorstop 4.6, D58), BepInEx (adapter, zapas deweloperski),
+             install/ (lektor-hook.ps1, lektor-companion.ps1, monomod-fix.ps1)
+  bundle/    szablony paczki Descent-Lektor-PL (E6): ustawienia.toml, pins.toml, win/ (.cmd + skrypty/lektor.ps1), mac/
 tests/       pytest dla src/lektor (zdania testowe własne, bez tekstów gry)
 ```
 
@@ -82,7 +84,8 @@ Audio M1 (E3). Generowanie w środowisku OmniVoice (pakiet `lektor` zainstalowan
 Plugin (referencje do DLL z kopii gry w `analysis/work/game`, wynik w `build/plugin/`):
 
 ```bash
-dotnet build src/plugin/BepInEx -c Release
+dotnet build src/plugin/Loader -c Release    # LektorPL.Loader.dll + LektorPL.Core.dll (paczka E6)
+dotnet build src/plugin/BepInEx -c Release   # adapter BepInEx (zapas deweloperski)
 .venv/Scripts/python -I analysis/tools/hook_coverage.py [dziennik.jsonl ...]
 powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1   # MonoMod.Utils.dll bez zapisu corlib_internal (D54)
 ```
@@ -90,6 +93,18 @@ powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1   # 
 Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install [-LoaderOnly] [-Stage N]|-Uninstall|-Status|-Stage N|-MonoModFix`) uruchamia użytkownik według `docs/E1_PLAYTEST.md`, `docs/E4_EXIT_TEST.md` i `docs/E5_PLAYTEST.md`. Dzienniki pluginu i companiona: `%LOCALAPPDATA%\LektorPL\logs`.
 
 - `-Install` zawsze podmienia `BepInEx\core\MonoMod.Utils.dll` na kopię z `monomod-fix.ps1` (D54). Z oryginałem BepInEx 5.4.23.5 gra (x86) wysypuje się przy wyjściu: MonoMod #329 psuje strukturę `MonoAssembly`.
+
+Paczka (E6, D57–D60). Doorstop i Python są przypięte sumami w `src/bundle/pins.toml`, cache w `analysis/work/bin/`:
+
+```bash
+.venv/Scripts/python -I -m lektor bundle --dev                 # analysis/work/dev-bundle: plugin z builda, Python z .venv (test W1)
+.venv/Scripts/python -I -m lektor bundle --platform win|mac    # analysis/work/dist/<platform>/Descent-Lektor-PL
+```
+
+- Paczka ma pliki do dwukliku (`Zainstaluj`, `Odinstaluj`, `Wyłącz/Włącz lektora`, `Ustawienia`, `Test dźwięku`). Uruchamia je użytkownik według `docs/E6_W1_TEST.md`.
+- Instalator Windows (`skrypty/lektor.ps1`) zapisuje stan w `stan/` paczki, a dzienniki loadera, pluginu i companiona trafiają do `logs/` paczki.
+- Plugin uruchamia companion (`python -I -m lektor.companion --config ustawienia.toml --logs logs --parent-pid <gra>`), a companion kończy się po zamknięciu gry (D59).
+- Pliki `.ps1` mają BOM: PowerShell 5.1 czyta plik bez BOM jako ANSI, a `ł` (bajt 0x82 w cp1250) staje się wtedy apostrofem.
 
 Companion (E4). Konfiguracja w `%LOCALAPPDATA%\LektorPL\companion.toml` (tworzona przy pierwszym starcie). W grze użytkownik uruchamia go skryptem `src/plugin/install/lektor-companion.ps1`:
 

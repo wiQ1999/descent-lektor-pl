@@ -247,7 +247,7 @@ def sample_key(lib):
     """Pełna kwestia narracji do Testu dźwięku: pierwsza po kluczu, najchętniej średniej długości."""
     medium = lambda k: 40 <= len(lib.lines[k]['text_norm'] or '') <= 160
     keys = sorted((k for k, ln in lib.lines.items()
-                   if ln['tts'] and ln['voice'] == 'narrator' and ln['category'] == 'narracja'),
+                   if ln['tts'] and ln['voice'] == 'narrator' and ln['toggle'] == 'narracja'),
                   key=lambda k: (not medium(k), k))
     for key in keys:
         if lib.resolve(key).complete:
