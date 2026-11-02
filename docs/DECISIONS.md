@@ -403,6 +403,13 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Działa bez GPU przy stole i na Macu, a pula nazw w misji jest skończona.
 
+### D52 · 2026-11-02 · Bazowy Python `.venv` w folderze projektu
+**Decyzja:** Bazowy CPython 3.12.13 dla `.venv` (z uv, D12) leży w `analysis/work/python/` (ignorowane w Git). `home` w `.venv/pyvenv.cfg` wskazuje tę kopię. Skrypt `lektor-companion.ps1` sprawdza ją przed startem.
+**Uzasadnienie:**
+- Aplikacja Claude jest pakietem MSIX, więc Python zainstalowany z niej do `%LOCALAPPDATA%\LektorPL\python` trafił do prywatnego folderu pakietu.
+- Poza aplikacją `.venv` go nie widział: w teście B wystąpił błąd „No Python at …”.
+- Folder projektu na D: nie jest wirtualizowany.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

@@ -41,7 +41,12 @@ tests/       pytest dla src/lektor (zdania testowe własne, bez tekstów gry)
 
 ## Komendy
 
-Środowisko: `.venv` w katalogu głównym (Python 3.12, torch 2.6.0+cu124, chatterbox-tts 0.1.7, pakiet `lektor` zainstalowany w trybie edytowalnym).
+Środowisko: `.venv` w katalogu głównym (Python 3.12, torch 2.6.0+cu124, chatterbox-tts 0.1.7, pakiet `lektor` zainstalowany w trybie edytowalnym). Bazowy Python `.venv` leży w `analysis/work/python` (D52).
+
+- Aplikacja Claude działa jako pakiet MSIX. To, co nasze narzędzia zapisują w `%LOCALAPPDATA%`, trafia do `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Local` i jest niewidoczne poza aplikacją.
+  - Wszystko, czego użytkownik albo gra używa poza aplikacją, trzymamy na D: (w repozytorium).
+  - Pliki tworzone przez grę albo użytkownika (dzienniki pluginu, `companion.toml`) widzimy normalnie.
+  - Środowiska modeli E0 (`%LOCALAPPDATA%\LektorPL\envs`) działają tylko w aplikacji.
 
 ```bash
 .venv/Scripts/python -I analysis/tools/<skrypt>.py

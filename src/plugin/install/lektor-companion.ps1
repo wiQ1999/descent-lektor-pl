@@ -21,6 +21,9 @@ $ErrorActionPreference = 'Stop'
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
 $Python = Join-Path $RepoRoot '.venv\Scripts\python.exe'
 if (-not (Test-Path $Python)) { throw "Brak środowiska projektu: $Python" }
+# .venv uruchamia bazowego Pythona z pyvenv.cfg (home). Musi być poza %LOCALAPPDATA% aplikacji Claude (D52).
+$BaseHome = (Get-Content -LiteralPath (Join-Path $RepoRoot '.venv\pyvenv.cfg') | Where-Object { $_ -like 'home = *' }) -replace '^home = ', ''
+if (-not (Test-Path -LiteralPath (Join-Path $BaseHome 'python.exe'))) { throw "Brak bazowego Pythona środowiska projektu: $BaseHome (pyvenv.cfg)" }
 
 $CompanionArgs = @('-I', '-m', 'lektor', 'companion')
 if ($Config) { $CompanionArgs += @('--config', $Config) }
