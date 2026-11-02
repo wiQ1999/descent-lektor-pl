@@ -48,5 +48,7 @@ def load(file=None):
     defaults = tomllib.loads(default_text())
     out = {**defaults, **cfg}
     out['toggles'] = {**defaults['toggles'], **cfg.get('toggles', {})}
+    for k in ('db', 'audio'):           # ścieżki względne liczymy od pliku ustawień (paczka D60)
+        out[k] = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(file)), out[k]))
     out['file'] = file
     return out

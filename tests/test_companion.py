@@ -1,4 +1,5 @@
 import json
+import os
 import sqlite3
 
 import numpy as np
@@ -6,6 +7,7 @@ import pytest
 import soundfile as sf
 
 from lektor import db
+from lektor.companion import app as A
 from lektor.companion import config as C
 from lektor.companion import director as D
 from lektor.companion.library import LIST_GAP, Library
@@ -290,3 +292,73 @@ def test_config_created_with_defaults_and_merged(tmp_path):
     f.write_text('volume = 0.5\n[toggles]\nui = false\n', encoding='utf-8')
     cfg = C.load(str(f))
     assert cfg['volume'] == 0.5 and cfg['toggles']['ui'] is False and cfg['toggles']['cele'] is True and cfg['port'] == 47810
+
+
+def test_config_paths_relative_to_settings_file(tmp_path):
+    f = tmp_path / 'paczka' / 'ustawienia.toml'
+    f.parent.mkdir()
+    f.write_text('db = "dane/m1.sqlite"\naudio = "dane"\n[plugin]\nautostart = true\n', encoding='utf-8')
+    cfg = C.load(str(f))
+    assert cfg['db'] == str(tmp_path / 'paczka' / 'dane' / 'm1.sqlite') and cfg['audio'] == str(tmp_path / 'paczka' / 'dane')
+
+
+# ---------- tryb paczki: start z pluginu (D59) ----------
+
+def test_exit_reason_follows_game_and_plugin():
+    clock = [0.0]
+    link = A.Link(lambda: clock[0])
+    assert A.exit_reason(link, 100.0, 0.0, None, 15, 120) is None
+    assert A.exit_reason(link, 121.0, 0.0, None, 15, 120) == 'brak_pluginu'
+    assert A.exit_reason(link, 5.0, 0.0, False, 15, 120) == 'gra_zamknieta'
+    clock[0] = 10.0
+    link.set(True)
+    assert A.exit_reason(link, 500.0, 0.0, True, 15, 120) is None
+    clock[0] = 20.0
+    link.set(False)
+    assert A.exit_reason(link, 30.0, 0.0, True, 15, 120) is None
+    assert A.exit_reason(link, 36.0, 0.0, True, 15, 120) == 'rozlaczenie'
+    assert A.exit_reason(link, 10_000.0, 0.0, None, None, None) is None
+
+
+def test_second_server_on_busy_port_returns_none():
+    srv = A.server(0)
+    try:
+        assert A.server(srv.getsockname()[1]) is None
+    finally:
+        srv.close()
+
+
+def test_alive_for_own_and_finished_process():
+    import subprocess
+    import sys
+    assert A.alive(os.getpid())
+    p = subprocess.Popen([sys.executable, '-I', '-c', 'pass'])
+    p.wait()
+    assert not A.alive(p.pid)
+
+
+def test_serve_exits_when_port_busy(lib, tmp_path):
+    srv = A.server(0)
+    try:
+        cfg = {'port': srv.getsockname()[1], 'db': str(tmp_path / 'm1.sqlite'), 'audio': str(tmp_path), 'toggles': {}}
+        assert A.run(cfg, audio=False, quiet=True, logs=str(tmp_path / 'logs')) is None
+        assert not (tmp_path / 'logs').exists()
+    finally:
+        srv.close()
+
+
+def test_serve_exits_without_plugin(lib, tmp_path):
+    cfg = {'port': 0, 'db': str(tmp_path / 'm1.sqlite'), 'audio': str(tmp_path), 'toggles': {t: True for t in C.TOGGLES}}
+    out = A.run(cfg, audio=False, quiet=True, logs=str(tmp_path / 'logs'), exit_if_no_client=0.5)
+    assert out['reason'] == 'brak_pluginu' and os.path.dirname(out['log']) == str(tmp_path / 'logs')
+
+
+def test_sound_test_key_is_complete_narration(lib):
+    assert A.sample_key(lib) == 'HELLO'
+
+
+def test_companion_module_help():
+    import subprocess
+    import sys
+    r = subprocess.run([sys.executable, '-I', '-m', 'lektor.companion', '--help'], capture_output=True, text=True, encoding='utf-8')
+    assert r.returncode == 0 and '--parent-pid' in r.stdout and '--test' in r.stdout

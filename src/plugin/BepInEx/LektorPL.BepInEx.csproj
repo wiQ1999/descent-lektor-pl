@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>LektorPL.BepInEx</AssemblyName>
     <RootNamespace>LektorPL.BepInEx</RootNamespace>
-    <Version>0.2.1</Version>
+    <Version>0.3.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\LektorPL.Core.csproj" />

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Punkt wejścia Doorstop 4 (D58): czeka na pierwszą scenę i uruchamia rdzeń z folderu paczki. Bez BepInEx i Harmony. -->
+  <PropertyGroup>
+    <AssemblyName>LektorPL.Loader</AssemblyName>
+    <RootNamespace>LektorPL.Loader</RootNamespace>
+    <Version>0.3.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\LektorPL.Core.csproj" />
+  </ItemGroup>
+</Project>

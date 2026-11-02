@@ -20,6 +20,11 @@ namespace LektorPL.Core
         /// <summary>Port companiona na localhost; 0 wyłącza wysyłkę (zostaje sam dziennik).</summary>
         public int CompanionPort = 47810;
 
+        /// <summary>Program companiona uruchamiany, gdy nikt nie słucha na porcie (D59); null: bez autostartu.</summary>
+        public string CompanionExe;
+        public string CompanionArgs;
+        public string CompanionWorkDir;
+
         /// <summary>Co ile sekund sprawdzać cel misji w HUD (D31).</summary>
         public float ObjectiveInterval = 0.5f;
 
@@ -36,7 +41,7 @@ namespace LektorPL.Core
     /// <summary>Punkt wejścia rdzenia, niezależny od loadera.</summary>
     public static class Bootstrap
     {
-        public const string Version = "0.2.1";
+        public const string Version = "0.3.0";
         private static GameObject s_host;
 
         /// <summary>Tworzy ukryty obiekt z <see cref="Runner"/>; zwraca ścieżkę dziennika. Kolejne wywołania nic nie robią.</summary>
@@ -66,6 +71,14 @@ namespace LektorPL.Core
             Sender sender = null;
             if (stage >= 4 && options.CompanionPort > 0)
             {
+                if (options.CompanionExe != null)
+                {
+                    string state = Launcher.EnsureRunning(options, out string detail);
+                    var line = log.New("launch").Str("state", state);
+                    if (detail != null) line.Str("detail", detail);
+                    log.Write(line);
+                    options.Info?.Invoke("companion: " + state + (detail != null ? " (" + detail + ")" : ""));
+                }
                 sender = new Sender(options.CompanionPort);
                 log.Sink = sender.Enqueue;
             }
