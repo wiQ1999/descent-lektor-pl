@@ -1,6 +1,8 @@
-# E4 · Dwa testy wyjścia z gry (przed E5, D40)
+# E4 · Testy wyjścia z gry (przed E5, D40, D53, D54)
 
-W E1 gra z loaderem 2 z 2 razy kończyła się crashem przy wyjściu do pulpitu (`mono_jit_cleanup`). Bez moda zamyka się czysto. Te dwa krótkie testy pokażą, czy crash wywołuje sam BepInEx, czy nasz plugin. Plugin 0.2.0 przy wyjściu odpina subskrypcje i zamyka połączenie z companionem.
+W E1 gra z loaderem 2 z 2 razy kończyła się crashem przy wyjściu do pulpitu (`mono_jit_cleanup`). Bez moda zamyka się czysto. Testy A i B pokażą, czy crash wywołuje sam BepInEx, czy nasz plugin. Plugin 0.2.0 przy wyjściu odpina subskrypcje i zamyka połączenie z companionem.
+
+Wyniki: A bez crasha, B crash, C crash już na etapie 0. Teraz test D (poprawka MonoMod, D54).
 
 Każdy test zajmuje ok. 3 minuty: start gry, menu, wyjście. Nie trzeba wczytywać zapisu.
 
@@ -90,11 +92,40 @@ Jak odczytam wynik:
 | etap 3 | Tracker (subskrypcje, odczyt pól); zawężam dalej w Trackerze |
 | brak do etapu 3 | wysyłka do companiona; ale 0.1.0 bez wysyłki też miał crash, więc powtórzymy etap 3 |
 
+Wynik: crash już na etapie 0. Crash wywołuje samo wczytanie pluginu przez BepInEx.
+
+## Test D: poprawka MonoMod, plugin na etapie 4 (D54)
+
+Przyczyną jest błąd w `MonoMod.Utils.dll` z BepInEx 5.4.23.5 (MonoMod #329):
+- w 32-bitowej grze ta biblioteka zapisuje bajt w złe pole struktury Mono;
+- przy wyjściu Mono zwalnia uszkodzony w ten sposób wskaźnik.
+
+Przygotowałem kopię biblioteki, która pomija ten zapis; poza tym jest identyczna z oryginałem. Leży w `analysis/work/bin/BepInEx-5.4.23.5/monomod-fix/` (tworzy ją `monomod-fix.ps1`). Skrypt sprawdza sumę SHA-256 kopii i oryginału przed podmianą. Odinstalowanie usuwa ją razem z całym BepInEx.
+
+1. Podmień bibliotekę i włącz cały plugin (gra zamknięta):
+
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File src\plugin\install\lektor-hook.ps1 -MonoModFix -Stage 4
+   ```
+
+   Oczekiwane: „MonoMod.Utils.dll: podmieniono na kopię z poprawką D54…” i „Etap diagnostyczny pluginu: 4”.
+2. W osobnym oknie uruchom companion (jak w teście B, krok 3).
+3. Uruchom grę ze Steama, poczekaj ok. 30 s w menu i wyjdź do pulpitu. Zanotuj, czy pojawiło się okno crasha i czy w `Crashes` przybył folder.
+4. Zamknij companion (Ctrl+C). Plugin zostaw na sesję E5.
+
+`lektor-hook.ps1` bez parametrów pokaże „MonoMod.Utils.dll: z poprawką D54” i „Etap diagnostyczny: 4”.
+
+| Wynik | Dalej |
+|---|---|
+| brak crasha | `-Install` nakłada poprawkę domyślnie, potem sesja E5; wyjście po sesji będzie drugim sprawdzeniem |
+| crash | akceptujemy crash przy wyjściu i przechodzimy do sesji E5 |
+
 ## Co mi podać
 
 - Test A: crash tak/nie.
 - Test B: crash tak/nie.
 - Test C: etapy bez crasha i pierwszy etap z crashem.
+- Test D: crash tak/nie.
 - Czy companion pokazał połączenie albo błąd (wystarczy „było połączenie”).
 
 Pliki odczytam sam:

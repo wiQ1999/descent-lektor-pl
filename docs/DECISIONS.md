@@ -416,6 +416,28 @@ Plan etapów: [PLAN.md](PLAN.md).
 - Test A (sam BepInEx) przeszedł bez crasha, a test B (plugin 0.2.0) skończył się crashem w `mono_domain_free`.
 - Przy stole na Macu okno crasha przy każdym wyjściu byłoby uciążliwe, a przyczyna może dotyczyć też Maca.
 
+### D54 · 2026-11-02 · Crash przy wyjściu: poprawka MonoMod (test D)
+**Decyzja:**
+- Test D: `BepInEx\core\MonoMod.Utils.dll` zamieniamy na kopię bez zapisu flagi `corlib_internal`.
+  - Kopię tworzy `monomod-fix.ps1`, a podmienia `lektor-hook.ps1 -MonoModFix`.
+  - Plugin od razu na etapie 4, z companionem.
+- Jeśli crash zniknie, `-Install` nakłada poprawkę domyślnie i sprawdza sumy SHA-256 (oryginału i kopii).
+- Jeśli nie zniknie, akceptujemy crash przy wyjściu i przechodzimy do sesji E5.
+
+**Uzasadnienie:**
+- Test C: crash wystąpił już na etapie 0, gdy plugin jest wczytany, ale nic nie robi. Kod pluginu nie ma więc wpływu.
+- MonoMod.Utils 22.1.29.1 z BepInEx 5.4.23.5 liczy położenie flagi w strukturze `MonoAssembly` bez pola `ignores_checks_assembly_names`, które ma Mono z Unity 2022.3.
+  - Na x86 bajt trafia w ten wskaźnik (+0x4F zamiast +0x53).
+  - Przy wyjściu `mono_domain_free` zwalnia uszkodzoną listę. To MonoMod #329, naprawione w MonoMod 25.
+- HarmonyX robi ten zapis przy każdym patchu (proxy `ILGenerator`), a BepInEx patchuje `Assembly.LoadFile` także bez pluginów.
+  - Nie wiemy na pewno, dlaczego test A przeszedł.
+  - Zły wskaźnik ma stałą wartość 0x01000000, więc skutek jego zwolnienia zależy od tego, co leży pod tym adresem.
+- Kopia różni się od oryginału jedną instrukcją: `stind.i1` zamieniam na dwa `pop`.
+  - Flaga i tak nie trafiała w swoje pole, więc Harmony działa jak dotąd.
+  - Porównanie wszystkich metod potwierdza, że zmieniła się tylko ta jedna.
+- `HarmonyBackend = dynamicmethod` nic by nie zmienił. `mscorlib` gry ma `DynamicMethod.il_info`, więc MonoMod już domyślnie używa tego generatora.
+- Ten sam wzór pomija pole także na x64, więc sprawdzimy to na Macu w E6.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -454,6 +476,6 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 
 | # | Kwestia | Stan |
 |---|---|---|
-| z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | diagnoza w E4, testy wyjścia przed E5 (D40) |
+| z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | przyczyna w MonoMod (D54); test D z poprawką, bez efektu akceptujemy crash |
 | – | Model dla całej gry | po E3, przed E7 (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |

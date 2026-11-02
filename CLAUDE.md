@@ -35,7 +35,7 @@ analysis/    raporty z analiz + tools/ (skrypty Python/UnityPy)
 src/         kod docelowy (plugin, pipeline, companion)
   lektor/    pakiet Python: baza kwestii M1 (build), referencje (refs), raporty (report), audio E3 (synth, evaluate, finalize),
              companion/ (E4: library, director, player, app)
-  plugin/    Core (C#, net472, bez Harmony i BepInEx), BepInEx (adapter), install/ (lektor-hook.ps1, lektor-companion.ps1)
+  plugin/    Core (C#, net472, bez Harmony i BepInEx), BepInEx (adapter), install/ (lektor-hook.ps1, lektor-companion.ps1, monomod-fix.ps1)
 tests/       pytest dla src/lektor (zdania testowe własne, bez tekstów gry)
 ```
 
@@ -84,9 +84,10 @@ Plugin (referencje do DLL z kopii gry w `analysis/work/game`, wynik w `build/plu
 ```bash
 dotnet build src/plugin/BepInEx -c Release
 .venv/Scripts/python -I analysis/tools/hook_coverage.py [dziennik.jsonl ...]
+powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1   # MonoMod.Utils.dll bez zapisu corlib_internal (D54)
 ```
 
-Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install [-LoaderOnly] [-Stage N]|-Uninstall|-Status|-Stage N`) uruchamia użytkownik według `docs/E1_PLAYTEST.md` i `docs/E4_EXIT_TEST.md`. Dzienniki pluginu i companiona: `%LOCALAPPDATA%\LektorPL\logs`.
+Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install [-LoaderOnly] [-Stage N] [-MonoModFix]|-Uninstall|-Status|-Stage N|-MonoModFix`) uruchamia użytkownik według `docs/E1_PLAYTEST.md` i `docs/E4_EXIT_TEST.md`. Dzienniki pluginu i companiona: `%LOCALAPPDATA%\LektorPL\logs`.
 
 Companion (E4). Konfiguracja w `%LOCALAPPDATA%\LektorPL\companion.toml` (tworzona przy pierwszym starcie). W grze użytkownik uruchamia go skryptem `src/plugin/install/lektor-companion.ps1`:
 

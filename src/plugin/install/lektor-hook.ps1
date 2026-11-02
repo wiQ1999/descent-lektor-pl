@@ -11,6 +11,8 @@
   -Status     pokazuje, czy loader jest zainstalowany, wersję i etap pluginu oraz najnowszy dziennik pluginu.
   -Stage N    ustawia etap diagnostyczny pluginu w BepInEx\config\pl.lektor.descent.cfg (D40): 0 nic, 1 pusty Runner,
               2 + dziennik, 3 + Tracker, 4 całość (domyślnie). Także razem z -Install.
+  -MonoModFix podmienia BepInEx\core\MonoMod.Utils.dll na kopię bez zapisu flagi corlib_internal (crash przy wyjściu,
+              D54). Kopię tworzy monomod-fix.ps1. Także razem z -Install albo -Stage; -Uninstall usuwa ją z całym BepInEx.
   Gra nie może być uruchomiona. Listy plików i kopie logów trafiają do analysis\work\install (poza repozytorium).
 
 .EXAMPLE
@@ -21,6 +23,7 @@ param(
     [Parameter(ParameterSetName = 'Install', Mandatory)] [switch] $Install,
     [Parameter(ParameterSetName = 'Install')] [switch] $LoaderOnly,
     [Parameter(ParameterSetName = 'Install')] [Parameter(ParameterSetName = 'Stage', Mandatory)] [ValidateRange(0, 4)] [int] $Stage,
+    [Parameter(ParameterSetName = 'Install')] [Parameter(ParameterSetName = 'Stage')] [Parameter(ParameterSetName = 'Fix', Mandatory)] [switch] $MonoModFix,
     [Parameter(ParameterSetName = 'Uninstall', Mandatory)] [switch] $Uninstall,
     [Parameter(ParameterSetName = 'Status')] [switch] $Status,
     [string] $GameDir = 'E:\SteamLibrary\steamapps\common\Legends of the Dark'
@@ -38,6 +41,10 @@ $Baseline = Join-Path $Work 'snapshot-before-install.csv'
 $Installed = Join-Path $Work 'installed-files.txt'
 $PluginLogs = Join-Path $env:LOCALAPPDATA 'LektorPL\logs'
 $PluginCfg = Join-Path $GameDir 'BepInEx\config\pl.lektor.descent.cfg'
+$MonoModDll = Join-Path $GameDir 'BepInEx\core\MonoMod.Utils.dll'
+$MonoModFixDll = Join-Path $RepoRoot 'analysis\work\bin\BepInEx-5.4.23.5\monomod-fix\MonoMod.Utils.dll'
+$MonoModSha256 = '9D1495F147AC93C4F81F84538C1A326E8F8A6AEFC78D6289D798F3CE1162C5E9'
+$MonoModFixSha256 = '92844571CF832B239FBBBE0F0A6DBB81148A3BD1FC42EA1BA7C5AF34B9E46AF8'
 
 function Assert-GameClosed {
     if (Get-Process -Name 'Legends of the Dark' -ErrorAction SilentlyContinue) {
@@ -90,6 +97,7 @@ function Install-Hook {
     if ($present) { throw "W folderze gry już są pliki loadera: $($present -join ', '). Najpierw -Uninstall albo usuń je ręcznie." }
     $hash = (Get-FileHash -LiteralPath $Zip -Algorithm SHA256).Hash
     if ($hash -ne $ZipSha256) { throw "Zła suma SHA-256 paczki BepInEx: $hash" }
+    if ($MonoModFix) { Assert-MonoModFixReady }
     foreach ($f in $PluginFiles | Where-Object { $_ -like '*.dll' -and -not $LoaderOnly }) {
         if (-not (Test-Path -LiteralPath (Join-Path $PluginBin $f))) { throw "Brak $f w $PluginBin. Zbuduj plugin: dotnet build src\plugin\BepInEx -c Release" }
     }
@@ -169,6 +177,11 @@ function Show-Status {
     if ($present) { Write-Host "Loader w folderze gry: $($present -join ', ')" } else { Write-Host 'Loader nie jest zainstalowany.' }
     $plugin = Join-Path $GameDir 'BepInEx\plugins\LektorPL\LektorPL.BepInEx.dll'
     if (Test-Path -LiteralPath $plugin) { Write-Host "Plugin: $((Get-Item -LiteralPath $plugin).VersionInfo.FileVersion)" } elseif ($present) { Write-Host 'Plugin nie jest zainstalowany (sam loader).' }
+    if (Test-Path -LiteralPath $MonoModDll) {
+        $h = (Get-FileHash -LiteralPath $MonoModDll -Algorithm SHA256).Hash
+        $state = if ($h -eq $MonoModFixSha256) { 'z poprawką D54' } elseif ($h -eq $MonoModSha256) { 'oryginał' } else { "nieznana wersja ($h)" }
+        Write-Host "MonoMod.Utils.dll: $state"
+    }
     $stageLine = if (Test-Path -LiteralPath $PluginCfg) { Get-Content -LiteralPath $PluginCfg -Encoding UTF8 | Where-Object { $_ -match '^\s*Stage\s*=' } }
     if ($stageLine) { Write-Host "Etap diagnostyczny: $(($stageLine -split '=')[1].Trim())" }
     $last = Get-ChildItem -LiteralPath $PluginLogs -Filter 'hook-*.jsonl' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime | Select-Object -Last 1
@@ -187,10 +200,31 @@ function Set-Stage([int] $value) {
     Write-Host "Etap diagnostyczny pluginu: $value. Uruchom grę ze Steama." -ForegroundColor Green
 }
 
+function Assert-MonoModFixReady {
+    if (-not (Test-Path -LiteralPath $MonoModFixDll)) { throw "Brak $MonoModFixDll. Najpierw: powershell -ExecutionPolicy Bypass -File src\plugin\install\monomod-fix.ps1" }
+    $h = (Get-FileHash -LiteralPath $MonoModFixDll -Algorithm SHA256).Hash
+    if ($h -ne $MonoModFixSha256) { throw "Zła suma SHA-256 poprawionego MonoMod.Utils.dll: $h" }
+}
+
+function Set-MonoModFix {
+    Assert-GameClosed
+    Assert-MonoModFixReady
+    if (-not (Test-Path -LiteralPath $MonoModDll)) { throw 'BepInEx nie jest zainstalowany. Najpierw -Install.' }
+    $h = (Get-FileHash -LiteralPath $MonoModDll -Algorithm SHA256).Hash
+    if ($h -eq $MonoModFixSha256) { Write-Host 'MonoMod.Utils.dll ma już poprawkę D54.'; return }
+    if ($h -ne $MonoModSha256) { throw "Nieoczekiwana wersja $MonoModDll ($h). Nie podmieniam." }
+    Copy-Item -LiteralPath $MonoModFixDll -Destination $MonoModDll -Force
+    Write-Host 'MonoMod.Utils.dll: podmieniono na kopię z poprawką D54 (bez zapisu flagi corlib_internal).' -ForegroundColor Green
+}
+
 if ($Install) {
     Install-Hook
+    if ($MonoModFix) { Set-MonoModFix }
     if ($PSBoundParameters.ContainsKey('Stage')) { Set-Stage $Stage }
 }
 elseif ($Uninstall) { Uninstall-Hook }
-elseif ($PSBoundParameters.ContainsKey('Stage')) { Set-Stage $Stage }
+elseif ($MonoModFix -or $PSBoundParameters.ContainsKey('Stage')) {
+    if ($MonoModFix) { Set-MonoModFix }
+    if ($PSBoundParameters.ContainsKey('Stage')) { Set-Stage $Stage }
+}
 else { Show-Status }
