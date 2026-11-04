@@ -282,7 +282,7 @@ E1 ──────────────────> E4 companion (z repla
 - Paczka Windows: 363 MB (zip 316 MB), Python 3.12.15 z bibliotekami, 978 nagrań M1. Skrypty sprawdzone na udawanym folderze gry, także z rozpakowanego zipa.
 - Test W2 przeszedł: instalacja z zipa według instrukcji, ustawienia, gra, wyłączenie i odinstalowanie (D59).
 - Paczka Mac: zip 328 MB. Skrypty przeszły `bash -n` i przebieg na udawanym macOS (atrapy `codesign`, `arch`, `pbcopy`): instalacja, wykrycie gry, przepodpisanie, start z lektorem i bez, aktualizacja gry, odmowa zgody, odinstalowanie.
-- Następny krok: sesja na Macu, odłożona (D61). Przy stole przejdzie razem z odbiorem E7, a instrukcję [E6_MAC_TEST.md](E6_MAC_TEST.md) zastąpi `E7_MAC_SESSION.md`.
+- Następny krok: sesja na Macu, odłożona (D61). Przy stole przejdzie razem z odbiorem E7, według instrukcji [E7_MAC_SESSION.md](E7_MAC_SESSION.md).
 
 **Co wymaga Ciebie i znajomego:**
 - testy W1 i W2 na Windows;

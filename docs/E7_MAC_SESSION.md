@@ -1,18 +1,18 @@
-# E6 · Sesja na Macu
+# E7 · Sesja przy stole na Macu
 
-Sesja sprawdza paczkę na MacBooku Air M5. Sprawdzamy:
+Sesja zamyka dwa etapy: E6 (paczka na MacBooku Air M5) i E7 (scenariusze z kampanii, D61, D66). Sprawdzamy:
 - instalację według instrukcji;
-- pełną sesję M1 z lektorem;
+- grę w kampanii z lektorem: scenariusze Q6–Q8 i wydarzenia dostępne na mapie;
 - wyjście z gry;
 - wyłączenie i odinstalowanie.
 
-Instalacja trwa ok. 15 minut, potem gracie M1 przy stole.
+Instalacja trwa ok. 15 minut, potem gracie przy stole.
 
 Skryptów Maca nie dało się tu uruchomić na prawdziwym macOS. Sprawdziłem je na atrapach poleceń systemowych. Pierwsze uruchomienie może więc trafić na błąd, którego atrapy nie pokazały. Wtedy zrób zrzut ekranu okna Terminala (Cmd+Shift+4, spacja, klik w okno) i przerwij. Poprawię paczkę.
 
 ## 1. Przygotowanie na Windows
 
-1. Skopiuj `analysis\work\dist\Descent-Lektor-PL-mac.zip` (328 MB) na pendrive. Wystarczy system plików FAT32 albo exFAT.
+1. Skopiuj `analysis\work\dist\Descent-Lektor-PL-mac.zip` na pendrive. Wystarczy system plików FAT32 albo exFAT.
 2. Zip zawiera audio z gry. Nie wysyłaj go dalej i po sesji usuń go z pendrive'a.
 
 ## 2. Przed instalacją na Macu
@@ -29,16 +29,24 @@ Rozpakuj zip i otwórz `INSTRUKCJA.md` z folderu paczki. W Finderze podgląd otw
 - czy macOS pytał o *Zarządzanie aplikacjami* i czy trzeba było uruchomić skrypt drugi raz;
 - czy *Test dźwięku* zabrzmiał.
 
-## 4. Sesja M1
+## 4. Gra w kampanii
 
-1. Uruchom grę przyciskiem *Graj* w Steam.
-2. Zagrajcie prolog i pierwszy scenariusz (M1), jak w E5. Zapisuj uwagi tak jak w E5:
+1. Uruchom grę przyciskiem *Graj* w Steam i wczytaj zapis kampanii.
+2. Na mapie kliknij kilka celów. Narrator powinien czytać nazwę i opis celu, a zamknięcie panelu powinno uciszyć odczyt.
+3. Grajcie normalnie. Zapisuj uwagi tak jak w E5:
    - okna bez lektora;
    - zły głos;
    - opóźnienia;
-   - przycięcia.
-3. Wyjdź z gry do pulpitu z menu gry.
-4. Otwórz *Monitor aktywności* i wpisz `python` w polu wyszukiwania. Proces powinien zniknąć do 15 s po wyjściu z gry.
+   - ucięte końcówki.
+4. Zwróćcie uwagę na to, co doszło w E7:
+   - cel z licznikiem: najpierw cały cel, potem sam licznik;
+   - lista łupu czytana w całości;
+   - guzik „Kontynuuj” bez odczytu, treść okna jak zawsze;
+   - głosy nowych postaci i poprawione głosy Ronana i Kehli.
+5. Wyjdź z gry do pulpitu z menu gry.
+6. Otwórz *Monitor aktywności* i wpisz `python` w polu wyszukiwania. Proces powinien zniknąć do 15 s po wyjściu z gry.
+
+Losowe elementy (podróże, wrogowie z pul, łup) mogą trafić na tekst spoza nagrań. Lektor wtedy milczy i zapisuje brak w dzienniku, a gra działa dalej. Uzupełnię takie braki po sesji.
 
 ## 5. Wyłączanie
 
@@ -53,11 +61,13 @@ Skopiuj na pendrive:
 2. Folder z dziennikami Unity: `~/Library/Logs/Fantasy Flight Games/Descent - Legends of the Dark`. W Finderze wybierz *Idź → Idź do folderu* i wklej tę ścieżkę.
 3. Jeśli gra się wysypała, dodaj najnowsze pliki z nazwą gry z `~/Library/Logs/DiagnosticReports`.
 
-Na Windows wrzuć je do `analysis\work\e6-mac\`.
+Na Windows wrzuć je do `analysis\work\e7-mac\`.
 - Folder `analysis\work` jest wykluczony z Git.
 - Dzienniki zawierają fragmenty tekstów z gry.
 
 ## 7. Odinstalowanie
+
+Ten krok zrób po ostatniej sesji z tą paczką.
 
 1. Przejdź sekcję **Mac → Odinstalowanie**, kroki 1–4. Folder paczki możesz zostawić.
 2. Uruchom grę ze Steama. Powinna działać normalnie, bez lektora.
@@ -85,6 +95,6 @@ Napisz mi:
   - wyjście z gry i zamknięcie Pythona;
   - wyłączenie;
   - odinstalowanie;
-- uwagi z sesji M1;
+- uwagi z gry;
 - które miejsca instrukcji były niejasne albo czego w niej brakowało;
-- czy dzienniki są już w `analysis\work\e6-mac\`.
+- czy dzienniki są już w `analysis\work\e7-mac\`.

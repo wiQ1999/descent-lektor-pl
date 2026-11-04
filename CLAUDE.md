@@ -103,7 +103,7 @@ Paczka (E6, D57–D60). Doorstop i Python są przypięte sumami w `src/bundle/pi
 
 - Budowa potrzebuje `uv` (koła dla wybranego systemu, `--python-platform`) i `curl` (pobrania; Python z uv na Windows nie widzi magazynu certyfikatów). Na komputerze z grą żadne z nich nie jest potrzebne.
 
-- Paczka ma pliki do dwukliku (`Zainstaluj`, `Odinstaluj`, `Wyłącz/Włącz lektora`, `Ustawienia`, `Test dźwięku`). Uruchamia je użytkownik według `docs/INSTRUKCJA.md` (kopia w paczce) oraz `docs/E6_W1_TEST.md`, `docs/E6_W2_TEST.md` i `docs/E6_MAC_TEST.md`.
+- Paczka ma pliki do dwukliku (`Zainstaluj`, `Odinstaluj`, `Wyłącz/Włącz lektora`, `Ustawienia`, `Test dźwięku`). Uruchamia je użytkownik według `docs/INSTRUKCJA.md` (kopia w paczce) oraz `docs/E6_W1_TEST.md`, `docs/E6_W2_TEST.md` i `docs/E7_MAC_SESSION.md`.
 - Skrypty Maca (`src/bundle/mac/skrypty/lektor.sh`, `start.sh`, bash 3.2) sprawdzamy `bash -n` i w Git Bash z atrapami `codesign`, `arch`, `pbcopy`, `pgrep` i `defaults` na początku `PATH`. Ścieżkę PlistBuddy nadpisuje zmienna `PLISTBUDDY`.
 - Instalator Windows (`skrypty/lektor.ps1`) zapisuje stan w `stan/` paczki, a dzienniki loadera, pluginu i companiona trafiają do `logs/` paczki.
 - Plugin uruchamia companion (`python -I -m lektor.companion --config ustawienia.toml --logs logs --parent-pid <gra>`), a companion kończy się po zamknięciu gry (D59).
