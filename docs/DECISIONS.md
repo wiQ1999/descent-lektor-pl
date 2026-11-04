@@ -576,6 +576,16 @@ Plan etapów: [PLAN.md](PLAN.md).
 - E5B jest najkrótsze i sprawdza jednocześnie nowy głos NPC i głos bohatera z dubbingu.
 - Wybór użytkownika w QA.
 
+### D67 · 2026-11-04 · E7: obsada, runda 1
+**Decyzja:**
+- Astarra dostaje głos kandydata `adelynn_d3_s5` (projekt: starsza kobieta, średnia wysokość).
+- Adelynn zostaje przy obecnym głosie, więc jej kwestie z M1 nie powstają od nowa.
+- Kehli dostaje referencję `kehli_srodek`. Jej kwestie z M1 powstaną od nowa.
+- Ronan: żaden kandydat nie przeszedł. Ma być niski i urywany, z chrypą jak u wikinga, więc powstają nowe warianty (runda 1b).
+- W każdym zestawieniu kandydatów strona odsłuchu pokazuje też głosy już wybrane.
+
+**Uzasadnienie:** Wybór z odsłuchu. Liczby (F0, rozrzut) były tylko podpowiedzią. Sekcja z wybranymi głosami pozwala sprawdzić, czy rodzaj głosu się nie powtarza.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -616,7 +626,7 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 |---|---|---|
 | z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | usunięty poprawką MonoMod (D54): test D i wyjście po sesji E5 bez crasha; na Macu sprawdzimy w E6 |
 | – | Odczyt aktualizacji celu z licznikiem i nagrania liczników | ustalony w D64, wykonanie w E7 |
-| – | Ponowny dobór głosów Ronana i Adelynn, ujednolicenie Kehli | przed scenariuszem, w którym mówią (D55, D41) |
+| – | Głos Ronana | runda 1b w toku (D67); Adelynn i Kehli rozstrzygnięte |
 | – | Opis misji na mapie: nowe źródło w pluginie | E7 (D55) |
 | – | Własny punkt wejścia Doorstop przed startem Unity | działa na Windows (test W1, D58); na Macu sprawdzimy w sesji E6, odłożonej (D61) |
 | – | Model dla całej gry | E7 na OmniVoice (D65); cała gra przy większym zakresie (D39) |

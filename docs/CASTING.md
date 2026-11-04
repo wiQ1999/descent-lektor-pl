@@ -15,7 +15,7 @@ Wycinki do 10 s z neutralnych referencji dubbingu, cięte na granicach słów (D
 | `syrus` | `SYRUS` | dubbing | 9,5 s | `b19b1b16` | D06 |
 | `galaden` | `GALADEN` | dubbing | 7,6 s | `0ea7eacb` | D06, D18 |
 | `vaerix` | `VAERIX` | dubbing | 9,3 s | `b1bec8e9` | D06 |
-| `kehli` | `KEHLI` | dubbing | 7,5 s | `3bc86e98` | D06; po E5 do ujednolicenia modulacji (D55) |
+| `kehli` | `KEHLI` | dubbing, klipy `QuestSelect_3`, `DefeatEnemy_3`, `QuestLost_4` | 9,4 s | `64fd3c8f` | D06, D55, D67; M1 miało referencję `3bc86e98` |
 | `chance` | `CHANCE` (Fuks) | dubbing | 9,4 s | `ec82e7c0` | D06 |
 | `nekrul` | `BLOOD_SISTER` (Ne’Krul) | dubbing | 5,7 s | `c477e56c` | D19 |
 
@@ -28,8 +28,11 @@ Narzędzie: `analysis/tools/npc_voices.py` (portret, pula kandydatów, wybór 4 
 | `adelynn` | `BARONESS_ADELYNN` | starsza kobieta, szlachcianka, bardzo poukładana; mówi zbyt pewnie siebie, szlacheckim tonem | `female, elderly, low pitch` | 11 | wyniosłe zdanie o rodzie, 9,5 zn./s; 9,2 s, SHA `a5b7bc13` | wybrana 2026-11-01 (kandydat 1 z 4, ok. 180 Hz); po E5 do ponownego doboru (D55) |
 | `ronan` | `RONAN` | dojrzały, umięśniony, rosły chłop jak wiking; głos waleczny, w szalonym tonie | `male, elderly, very low pitch` | 37 | bojowy okrzyk, 11,5 zn./s; 7,0 s, SHA `b57b0f1e` | wybrany 2026-11-01 (kandydat 3 z 4, ok. 95 Hz, najbliżej wysokości narratora); po E5 do ponownego doboru (D55) |
 
+| `astarra` | `ASTARRA` | dojrzała czarodziejka z kosturem, surowe spojrzenie; mówi stanowczo i chłodno | `female, elderly, moderate pitch` | 5 | wyniosłe zdanie w stylu Adelynn, 10,5 zn./s; 9,4 s, SHA `ec7dbea1` | wybrany w QA E7 (D67), kandydat `adelynn_d3_s5` |
+
 Kwestie NPC mają tempo dialogów z D34, jak bohaterowie; charakter daje referencja.
 
 Historia:
 - Runda 1 (2026-11-01, bez portretu, neutralny tekst referencji): żaden kandydat nie pasował do postaci.
 - Runda 2 (2026-11-01, portret, zdanie w stylu postaci): 12 kandydatów na postać (4 opisy × 3 ziarna), wszyscy bez błędów ASR; do odsłuchu 4 najbardziej różne barwy.
+- Runda E7/1 (2026-11-04, Astarra, Adelynn, Ronan, Kehli): Astarra dostała głos z puli Adelynn, Adelynn została przy obecnym, Kehli ma referencję `kehli_srodek`, a Ronan idzie do rundy 1b: niski, urywany, z chrypą (D67).

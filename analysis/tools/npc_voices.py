@@ -11,9 +11,13 @@ Kroki dla rundy QA (wyniki prywatne w analysis/work/lektor/voice_design/e7/<rund
   <omnivoice>/Scripts/python -I analysis/tools/npc_voices.py scan r1       # kandydaci: opis × ziarno
   .venv/Scripts/python -I analysis/tools/npc_voices.py mix r1              # referencje z klipów dubbingu
   .venv/Scripts/python -I analysis/tools/npc_voices.py select r1           # ASR, F0, 4 różne barwy, kwestie z gry
+  .venv/Scripts/python -I analysis/tools/npc_voices.py rasp r1b            # warianty z chrypą (runda z polem rasp)
   <omnivoice>/Scripts/python -I analysis/tools/npc_voices.py clone r1      # kwestie z gry na kandydata + index.html
   .venv/Scripts/python -I analysis/tools/npc_voices.py stats r1            # F0 kwestii każdego kandydata
   .venv/Scripts/python -I analysis/tools/npc_voices.py adopt r1 astarra astarra_d1_s5   # wybór z QA → refs.json
+
+Strona odsłuchu pokazuje też głosy już wybrane, żeby rodzaj głosu się nie powtarzał. Po wyborze w innej rundzie
+`clone` odświeża stronę (gotowych plików nie liczy ponownie).
 <omnivoice> = %LOCALAPPDATA%/LektorPL/envs/omnivoice
 """
 import html
@@ -121,7 +125,15 @@ CHARACTERS = {
         'ref_cps': 10.5,
     },
 }
-ROUNDS = {'r1': ('astarra', 'adelynn', 'ronan', 'kehli'), 'r2': ('kathryn', 'ltrand', 'bruli', 'xenith'),
+# Runda 1b (QA 2026-11-04): Ronan niski, z chrypą, mówiący urywanymi frazami.
+ROUND_OVERRIDES = {'ronan': {
+    'brief': 'potężny wojownik jak wiking, jasna broda, krzyczy, na ramieniu pandka; głos niski, urywany, z chrypą',
+    'designs': ['male, elderly, very low pitch', 'male, middle-aged, very low pitch', 'male, elderly, low pitch'],
+    'seeds': (5, 17, 29, 41, 53, 67), 'f0_max': 125, 'rasp': 0.6,
+    'style_text': 'Ha! Krew... i stal! Dawaj ich tu. Wszystkich. Naraz! A potem... piwo. Hej!',
+    'ref_cps': 7.5,
+}}
+ROUNDS = {'r1': ('astarra', 'adelynn', 'ronan', 'kehli'), 'r1b': ('ronan',), 'r2': ('kathryn', 'ltrand', 'bruli', 'xenith'),
           'r3': ('herbie', 'mok', 'outlaw')}
 SEEDS = (5, 17, 29)
 PICK = 4
@@ -196,7 +208,7 @@ def scan(rnd):
     for voice in ROUNDS[rnd]:
         c = CHARACTERS[voice]
         for i, instruct in enumerate(c.get('designs', ()), 1):
-            for seed in SEEDS:
+            for seed in c.get('seeds', SEEDS):
                 name = '%s_d%d_s%d' % (voice, i, seed)
                 path = round_dir(rnd, 'scan', name + '.wav')
                 if not os.path.exists(path):
@@ -304,6 +316,7 @@ def select(rnd):
     for voice in ROUNDS[rnd]:
         spec = CHARACTERS[voice]
         lo, hi = F0_RANGE[spec['gender']]
+        hi = spec.get('f0_max', hi)
         mine = [n for n, c in cands.items() if c['voice'] == voice]
         ok = sorted((n for n in mine if 'mixes' in spec or (cands[n]['cer'] <= MAX_CER and lo <= cands[n]['f0'] <= hi)),
                     key=lambda n: cands[n]['cer'])
@@ -322,7 +335,61 @@ def select(rnd):
               open(round_dir(rnd, 'select.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
 
+def roughen(y, sr, amount, seed=7):
+    """Chrypa: nieregularna modulacja amplitudy (25–70 Hz), szum szczelinowy idący za obwiednią mowy i przesterowanie."""
+    import numpy as np
+    from scipy import signal
+    rng = np.random.default_rng(seed)
+    env = signal.sosfiltfilt(signal.butter(2, 40, 'low', fs=sr, output='sos'), np.abs(y))
+    flutter = signal.sosfiltfilt(signal.butter(2, (25, 70), 'band', fs=sr, output='sos'), rng.standard_normal(len(y)))
+    flutter /= np.abs(flutter).max() + 1e-9
+    hiss = signal.sosfiltfilt(signal.butter(2, (1500, 6000), 'band', fs=sr, output='sos'), rng.standard_normal(len(y)))
+    hiss /= np.abs(hiss).max() + 1e-9
+    out = y * (1 + 0.9 * amount * flutter) + hiss * env * 1.6 * amount
+    drive = 1 + 3 * amount
+    out = np.tanh(drive * out) / np.tanh(drive)
+    return (out * (np.abs(y).max() / (np.abs(out).max() + 1e-9))).astype(np.float32)
+
+
+def rasp(rnd):
+    """Kandydaci z chrypą: referencja przetworzona (klon przejmuje chrypę) i klon przetworzony po wygenerowaniu."""
+    import soundfile as sf
+    path = round_dir(rnd, 'select.json')
+    sel = json.load(open(path, encoding='utf-8'))
+    for voice in ROUNDS[rnd]:
+        spec = CHARACTERS[voice]
+        for name in list(sel['picked'][voice]):
+            c = sel['candidates'][name]
+            y, sr = sf.read(os.path.join(ROOT, c['wav']), dtype='float32')
+            new = name + '_chrypa'
+            wav = round_dir(rnd, 'scan', new + '.wav')
+            sf.write(wav, roughen(y, sr, spec['rasp']), sr, subtype='PCM_16')
+            sel['candidates'][new] = {**c, 'wav': paths.rel(wav), 'instruct': c['instruct'] + ', chrypa w referencji'}
+            sel['picked'][voice].append(new)
+        first = sel['picked'][voice][0]
+        new = first + '_efekt'
+        sel['candidates'][new] = {**sel['candidates'][first], 'instruct': sel['candidates'][first]['instruct'] + ', chrypa dodana po wygenerowaniu',
+                                  'effect': spec['rasp']}
+        sel['picked'][voice].append(new)
+    json.dump(sel, open(path, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+
+
+def chosen_voices(rnd):
+    """Sekcja strony z głosami już wybranymi (uwaga z QA 2026-11-04): referencja każdego głosu spoza tej rundy."""
+    import shutil
+    refs = json.load(open(os.path.join(paths.REFS, 'refs.json'), encoding='utf-8'))
+    os.makedirs(round_dir(rnd, 'wybrane'), exist_ok=True)
+    rows = []
+    for voice, r in sorted(refs.items()):
+        if voice in ROUNDS[rnd]:
+            continue
+        shutil.copyfile(os.path.join(ROOT, r['wav']), round_dir(rnd, 'wybrane', voice + '.wav'))
+        rows.append('<p><code>%s</code> <audio controls src="wybrane/%s.wav"></audio></p>' % (voice, voice))
+    return '<h2 class="who">Głosy już wybrane</h2><p>Referencje do porównania, żeby rodzaj głosu się nie powtarzał.</p>' + ''.join(rows)
+
+
 def clone(rnd):
+    import soundfile as sf
     model = load_omnivoice()
     sel = json.load(open(round_dir(rnd, 'select.json'), encoding='utf-8'))
     refs = json.load(open(os.path.join(paths.REFS, 'refs.json'), encoding='utf-8'))
@@ -335,7 +402,7 @@ def clone(rnd):
             jobs.append((voice, voice + '_obecny', os.path.join(ROOT, refs[voice]['wav']), refs[voice]['text'], 'obecny głos', 0))
         for name in names:
             c = sel['candidates'][name]
-            jobs.append((voice, name, os.path.join(ROOT, c['wav']), c.get('text') or spec['style_text'],
+            jobs.append((voice, name, os.path.join(ROOT, c['wav']), c.get('text') or CHARACTERS[c['voice']]['style_text'],
                          c['instruct'], c['f0']))
     prompts = {job[1]: model.create_voice_clone_prompt(job[2], job[3]) for job in jobs}
     tokenizer_to_cpu(model)
@@ -352,6 +419,10 @@ def clone(rnd):
             path = round_dir(rnd, 'clone', '%s_%s.wav' % (name, 'abc'[i]))
             if not os.path.exists(path):
                 synth(model, path, text, 1234, voice_clone_prompt=prompts[name], speed=D.tempo('dialog', len(text))[0])
+                effect = sel['candidates'].get(name, {}).get('effect')
+                if effect:
+                    y, sr = sf.read(path, dtype='float32')
+                    sf.write(path, roughen(y, sr, effect), sr, subtype='PCM_16')
             audio.append('<p><code>%s</code> <audio controls src="clone/%s"></audio></p>' % (key, os.path.basename(path)))
         rows.append('<section><h3>%s</h3><p>%s · F0 referencji %.0f Hz</p>%s</section>' % (
             name, html.escape(label), f0, ''.join(audio)))
@@ -359,7 +430,7 @@ def clone(rnd):
             'max-width:820px;margin:24px auto;padding:0 16px}section{border:1px solid #ccc;border-radius:8px;'
             'padding:8px 16px;margin:12px 0}audio{vertical-align:middle;width:420px;max-width:100%}'
             'img{width:320px;max-width:100%;display:block}h2.who{margin-top:32px}</style>'
-            '<h1>Obsada E7: runda ' + rnd[1:] + '</h1><p>Kwestie z gry w tempie rozgrywki (D34).</p>' + ''.join(rows))
+            '<h1>Obsada E7: runda ' + rnd[1:] + '</h1><p>Kwestie z gry w tempie rozgrywki (D34).</p>' + ''.join(rows) + chosen_voices(rnd))
     open(round_dir(rnd, 'index.html'), 'w', encoding='utf-8').write(page)
     print(round_dir(rnd, 'index.html'))
 
@@ -389,7 +460,7 @@ def adopt(rnd, voice, name):
     shutil.copyfile(os.path.join(ROOT, c['wav']), wav)
     path = os.path.join(paths.REFS, 'refs.json')
     refs = json.load(open(path, encoding='utf-8')) if os.path.exists(path) else {}
-    refs[voice] = {'wav': paths.rel(wav), 'text': c.get('text') or CHARACTERS[voice]['style_text'],
+    refs[voice] = {'wav': paths.rel(wav), 'text': c.get('text') or CHARACTERS[c['voice']]['style_text'],
                    'seconds': round(sf.info(wav).duration, 2),
                    'source': 'projekt głosu: %s, ziarno %d (%s)' % (c['instruct'], c['seed'], c['wav']),
                    'sha': hashlib.sha1(open(wav, 'rb').read()).hexdigest()}
@@ -398,7 +469,9 @@ def adopt(rnd, voice, name):
 
 
 if __name__ == '__main__':
+    CHARACTERS['ronan'].update(ROUND_OVERRIDES['ronan'] if sys.argv[2] == 'r1b' else {})
     if sys.argv[1] == 'adopt':  # adopt <runda> <głos> <kandydat>, np. adopt r1 astarra astarra_d1_s5
         adopt(*sys.argv[2:5])
     else:
-        {'portrait': portrait, 'scan': scan, 'mix': mix, 'select': select, 'clone': clone, 'stats': stats}[sys.argv[1]](sys.argv[2])
+        {'portrait': portrait, 'scan': scan, 'mix': mix, 'select': select, 'rasp': rasp, 'clone': clone,
+         'stats': stats}[sys.argv[1]](sys.argv[2])
