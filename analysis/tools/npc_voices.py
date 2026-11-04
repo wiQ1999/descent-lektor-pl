@@ -17,7 +17,7 @@ Kroki dla rundy QA (wyniki prywatne w analysis/work/lektor/voice_design/e7/<rund
   .venv/Scripts/python -I analysis/tools/npc_voices.py adopt r1 astarra astarra_d1_s5   # wybór z QA → refs.json
 
 Strona odsłuchu pokazuje też głosy już wybrane, żeby rodzaj głosu się nie powtarzał. Po wyborze w innej rundzie
-`clone` odświeża stronę (gotowych plików nie liczy ponownie).
+stronę odświeża `refresh r2` (bez modelu).
 <omnivoice> = %LOCALAPPDATA%/LektorPL/envs/omnivoice
 """
 import html
@@ -308,7 +308,7 @@ def select(rnd):
         spec = CHARACTERS[c['voice']]
         text = c.get('text') or spec['style_text']
         c['cer'] = round(cer(text, asr({'raw': y, 'sampling_rate': 16000}, generate_kwargs={'language': 'polish'})['text']), 3)
-        f0 = librosa.pyin(y, fmin=60, fmax=500, sr=16000)[0]
+        f0 = librosa.pyin(y, fmin=60, fmax=250 if spec['gender'] == 'male' else 500, sr=16000)[0]   # u mężczyzn z chrypą pyin ucieka w górę
         c['f0'] = round(float(np.nanmedian(f0)), 0)
         e = ve.embeds_from_wavs([y], sample_rate=16000)[0]
         c['emb'] = (e / np.linalg.norm(e)).tolist()
@@ -435,6 +435,13 @@ def clone(rnd):
     print(round_dir(rnd, 'index.html'))
 
 
+def refresh(rnd):
+    """Odświeża sekcję głosów już wybranych na gotowej stronie, bez modelu (GPU może liczyć coś innego)."""
+    path = round_dir(rnd, 'index.html')
+    page = open(path, encoding='utf-8').read().split('<h2 class="who">Głosy już wybrane')[0]
+    open(path, 'w', encoding='utf-8').write(page + chosen_voices(rnd))
+
+
 def stats(rnd):
     """Mediana F0 każdej kwestii kandydata: rozrzut między kwestiami pokazuje niestałą modulację (D55)."""
     import glob
@@ -474,4 +481,4 @@ if __name__ == '__main__':
         adopt(*sys.argv[2:5])
     else:
         {'portrait': portrait, 'scan': scan, 'mix': mix, 'select': select, 'rasp': rasp, 'clone': clone,
-         'stats': stats}[sys.argv[1]](sys.argv[2])
+         'refresh': refresh, 'stats': stats}[sys.argv[1]](sys.argv[2])
