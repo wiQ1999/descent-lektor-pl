@@ -25,6 +25,9 @@ okna_wyboru = true          # odpowiedź bohatera po wyborze
 nagrody = true              # nagrody
 aktywacje = true            # aktywacje wrogów
 cele = true                 # cele misji
+podroze = true              # wydarzenia w podróży
+miasto = true               # teksty w mieście
+opis_misji = true           # nazwa i opis misji po wybraniu jej na mapie
 
 # Start lektora razem z grą.
 [plugin]

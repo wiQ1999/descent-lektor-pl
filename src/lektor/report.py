@@ -73,7 +73,8 @@ def e1_coverage(con):
     return s + ['', 'Wartości spoza inwentarza companion obsłuży syntezą na żywo albo pominie (E4).', '']
 
 
-def report(path=paths.DB):
+def report(path=None):
+    path = path or paths.DB
     con = db.connect(path)
     meta = {r['k']: json.loads(r['v']) for r in con.execute('SELECT * FROM meta')}
     n_lines, n_tts = con.execute('SELECT COUNT(*), SUM(tts) FROM lines').fetchone()
@@ -161,7 +162,8 @@ def load_ratings():
     return {r['fragment']: r['ocena'] for r in csv.DictReader(open(p, encoding='utf-8-sig'), delimiter=';') if r['ocena']}
 
 
-def audio_report(path=paths.DB):
+def audio_report(path=None):
+    path = path or paths.DB
     """analysis/E3_AUDIO.md: czasy generowania, wyniki automatu i pokrycie kluczy M1. Bez tekstów gry."""
     import statistics
     from .evaluate import load_evals

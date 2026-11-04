@@ -10,7 +10,7 @@ from lektor import db
 from lektor.companion import app as A
 from lektor.companion import config as C
 from lektor.companion import director as D
-from lektor.companion.library import LIST_GAP, Library
+from lektor.companion.library import LIST_GAP, LOOT, Library
 from lektor.companion.player import NullPlayer
 
 SR = 24000
@@ -24,6 +24,15 @@ FRAGMENTS = {           # id: (tekst, sekundy)
     'f_found': ('Zdobywasz', 0.5),
     'f_choice': ('Idziemy dalej.', 0.5),
     'f_goal2': ('Wróć do wioski.', 0.5),
+    'f_of4': ('z czterech', 0.25),
+    'f_say': ('Ruszajmy.', 0.5),
+    'f_say_brynn': ('Ruszajmy.', 0.5),
+    'f_loot_head': ('Do ekwipunku trafia:', 0.5),
+    'f_gold': ('złoto', 0.25),
+    'f_fifteen': ('piętnaście', 0.25),
+    'f_potion': ('mikstura zdrowia', 0.25),
+    'f_map_name': ('Cena wiedzy', 0.25),
+    'f_map_desc': ('Stara wieża czeka.', 0.5),
 }
 LINES = [   # klucz, kategoria, przełącznik, tts, tekst
     ('HELLO', 'narracja', 'narracja', 1, 'Witaj w gospodzie.'),
@@ -37,6 +46,13 @@ LINES = [   # klucz, kategoria, przełącznik, tts, tekst
     ('CHOICE_A', 'okna_wyboru', 'okna_wyboru', 1, 'Idziemy dalej.'),
     ('CUTSCENE', 'narracja', 'narracja', 0, 'Przerywnik.'),
     ('ACT', 'aktywacje', 'aktywacje', 1, 'Wróg atakuje {0}'),
+    ('GOAL_COUNT', 'cel_misji', 'cele', 1, 'Znajdź klucz ({0}/4)'),
+    ('UI_CONTINUE', 'opcja_wyboru', 'okna_wyboru', 1, 'Kontynuuj'),
+    ('SAY', 'dialog', 'dialogi', 1, 'Ruszajmy.'),
+    ('SAY#brynn', 'dialog', 'dialogi', 1, 'Ruszajmy.'),
+    ('TREASURE', 'system_nagroda', 'nagrody', 1, '{0} {1}'),
+    ('MAP_NAME', 'opis_misji', 'opis_misji', 1, 'Cena wiedzy'),
+    ('MAP_DESC', 'opis_misji', 'opis_misji', 1, 'Stara wieża czeka.'),
 ]
 SEGMENTS = [    # klucz, idx, rodzaj, luka, typ luki, fragment, pauza po
     ('HELLO', 0, 'text', None, None, 'f_hello', 0.3),
@@ -53,6 +69,14 @@ SEGMENTS = [    # klucz, idx, rodzaj, luka, typ luki, fragment, pauza po
     ('CHOICE_A', 0, 'text', None, None, 'f_choice', 0.0),
     ('ACT', 0, 'text', None, None, 'f_enemy', 0.1),
     ('ACT', 1, 'slot', 0, 'EntityName', None, 0.0),
+    ('GOAL_COUNT', 0, 'text', None, None, 'f_goal', 0.1),
+    ('GOAL_COUNT', 1, 'slot', 0, 'VariableInt', None, 0.06),
+    ('GOAL_COUNT', 2, 'text', None, None, 'f_of4', 0.0),
+    ('SAY', 0, 'text', None, None, 'f_say', 0.0),
+    ('SAY#brynn', 0, 'text', None, None, 'f_say_brynn', 0.0),
+    ('TREASURE', 0, 'slot', 1, 'RawText', None, 0.0),
+    ('MAP_NAME', 0, 'text', None, None, 'f_map_name', 0.0),
+    ('MAP_DESC', 0, 'text', None, None, 'f_map_desc', 0.0),
 ]
 VALUES = [
     ('SPAWN', 0, 'ENEMY_BANDIT', 'f_bandit'), ('SPAWN', 0, 'ENEMY_WITCH', 'f_witch'),
@@ -60,6 +84,9 @@ VALUES = [
     ('COUNT', 0, '3', 'f_three'),
     ('NEW_GOAL', 0, 'GOAL', None),
     ('ACT', 0, 'ENEMY_BANDIT', 'f_bandit'),
+    ('GOAL_COUNT', 0, '3', 'f_three'),
+    (LOOT, 0, 'do ekwipunku trafia', 'f_loot_head'), (LOOT, 0, 'złoto', 'f_gold'), (LOOT, 0, '15', 'f_fifteen'),
+    (LOOT, 0, 'mikstura zdrowia', 'f_potion'),
 ]
 
 
@@ -117,6 +144,30 @@ def test_number_value(lib):
 def test_nested_line_value(lib):
     u = lib.resolve('NEW_GOAL', [{'i': 0, 'type': 'LocalizationKey', 'as_key': 'GOAL', 'value': '...'}])
     assert fids(u) == ['f_goal'] and u.nested == ['GOAL'] and u.complete
+
+
+def test_counter_reads_number_and_total_only(lib):
+    u = lib.counter('GOAL_COUNT', [{'i': 0, 'type': 'VariableInt', 'as_key': '3', 'value': '3'}])
+    assert fids(u) == ['f_three', 'f_of4'] and u.complete
+    assert lib.counter('GOAL', []) is None
+
+
+def test_hero_variant_chosen_by_speaker(lib):
+    assert fids(lib.resolve('SAY', hero='brynn')) == ['f_say_brynn']
+    assert fids(lib.resolve('SAY', hero='syrus')) == ['f_say']
+    assert fids(lib.resolve('SAY')) == ['f_say']
+
+
+def test_loot_list_from_game_text(lib):
+    raw = '\n\nDo ekwipunku trafia: \n  - Złoto (15) i <b>Mikstura zdrowia</b>.'
+    u = lib.resolve('TREASURE', [{'i': 0, 'type': 'LocalizationKey', 'as_key': '', 'value': ''},
+                                 {'i': 1, 'type': 'RawText', 'as_key': raw, 'value': raw}])
+    assert fids(u) == ['f_loot_head', 'f_gold', 'f_fifteen', 'f_potion'] and u.complete
+
+
+def test_loot_with_unknown_name_is_partial(lib):
+    u = lib.resolve('TREASURE', [{}, {'i': 1, 'type': 'RawText', 'value': 'Złoto i Tajemniczy Kielich'}])
+    assert fids(u) == ['f_gold'] and u.missing == ['luka:RawText']
 
 
 def test_list_of_all_args(lib):
@@ -213,6 +264,42 @@ def test_back_does_not_play_choice(run):
     run(msg(1, 'HELLO'))
     d = run(close(1, choice_key='CHOICE_A', back=True))
     assert playing(d) is None
+
+
+def test_generic_button_is_not_read_but_window_is(run):
+    d = run(msg(1, 'HELLO'))
+    assert playing(d) == 'HELLO'
+    d = run(close(1, choice_key='UI_CONTINUE'), 0.3)
+    assert playing(d) is None and d.outcomes['choice', 'pełne'] == 0
+
+
+def test_objective_counter_only_after_first_read(run):
+    args = lambda n: [{'i': 0, 'type': 'VariableInt', 'as_key': str(n), 'value': str(n)}]
+    d = run({'ev': 'objective', 'key': 'GOAL_COUNT', 'prev_key': 'GOAL', 'args': args(3)}, 1.0)
+    assert [p[0] for p in d.current.u.pieces] == ['f_goal', 'f_three', 'f_of4']
+    d = run(dt=2.0)
+    d = run({'ev': 'objective', 'key': 'GOAL_COUNT', 'prev_key': 'GOAL_COUNT', 'args': args(3)}, 1.0)
+    assert [p[0] for p in d.current.u.pieces] == ['f_three', 'f_of4']
+
+
+def test_story_uses_voice_of_speaking_hero(run):
+    run({'ev': 'open', 'kind': 'story', 'id': 5, 'key': 'SAY'})
+    d = run({'ev': 'shown', 'kind': 'story', 'id': 5, 'characters': [
+        {'name_key': 'HERO_SYRUS_NAME', 'speaking': False}, {'name_key': 'HERO_BRYNN_NAME', 'speaking': True}]}, 0.4)
+    assert [p[0] for p in d.current.u.pieces] == ['f_say_brynn']
+
+
+def test_details_reads_name_and_description_and_stops_on_close(run):
+    d = run({'ev': 'details', 'key': 'MAP_DESC', 'name_key': 'MAP_NAME'}, 1.0)
+    assert [p[0] for p in d.current.u.pieces] == ['f_map_name', 'f_map_desc']
+    d = run({'ev': 'close', 'kind': 'details'}, 0.1)
+    assert playing(d) is None
+
+
+def test_details_newest_replaces_older(run):
+    run({'ev': 'details', 'key': 'MAP_DESC', 'name_key': 'MAP_NAME'}, 1.0)
+    d = run({'ev': 'details', 'key': 'GOAL'}, 0.1)
+    assert playing(d) == 'GOAL'
 
 
 def test_objective_waits_and_newest_replaces(run):

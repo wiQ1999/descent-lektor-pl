@@ -29,6 +29,7 @@ import zipfile
 from . import paths
 
 NAME = 'Descent-Lektor-PL'
+SCOPES = {'m1': 'M1 (prolog i Q1)', 'm2': 'M2 (prolog, Q1, Q6–Q8, wydarzenia E5B, EC3, EC1, podróże aktu 1)'}
 SRC = os.path.join(paths.ROOT, 'src', 'bundle')
 PLUGIN_BIN = os.path.join(paths.ROOT, 'build', 'plugin', 'LektorPL.Loader', 'bin', 'Release')
 PLUGIN_FILES = ('LektorPL.Loader.dll', 'LektorPL.Core.dll')
@@ -167,10 +168,10 @@ def copy_lektor(dest):
 
 
 def copy_data(dest):
-    """Baza M1 i audio z manifestu (tylko pliki, które manifest wskazuje)."""
+    """Baza wydania i audio z manifestu (tylko pliki, które manifest wskazuje)."""
     out = os.path.join(dest, 'dane')
     os.makedirs(out, exist_ok=True)
-    shutil.copy2(paths.DB, os.path.join(out, 'm1.sqlite'))
+    shutil.copy2(paths.DB, os.path.join(out, paths.RELEASE + '.sqlite'))
     with open(os.path.join(paths.AUDIO, 'manifest.json'), encoding='utf-8') as fh:
         manifest = json.load(fh)
     for m in manifest['fragments'].values():
@@ -190,7 +191,7 @@ def settings_text(dev):
         values = {'@DB@': slash(paths.DB), '@AUDIO@': slash(paths.AUDIO),
                   '@PYTHON@': "python = '%s'    # tryb deweloperski: Python z .venv" % slash(python)}
     else:
-        values = {'@DB@': 'dane/m1.sqlite', '@AUDIO@': 'dane', '@PYTHON@': ''}
+        values = {'@DB@': 'dane/%s.sqlite' % paths.RELEASE, '@AUDIO@': 'dane', '@PYTHON@': ''}
     for k, v in values.items():
         text = text.replace(k, v)
     return text.rstrip('\n') + '\n'
@@ -202,8 +203,8 @@ def version_text(platform, fragments):
     core = subprocess.run(['git', '-C', paths.ROOT, 'show', 'HEAD:src/plugin/Core/Bootstrap.cs'], capture_output=True, text=True).stdout
     plugin = next((ln.split('"')[1] for ln in core.splitlines() if 'const string Version' in ln), '?')
     return ('Lektor PL dla Descent: Legends of the Dark\n'
-            'system: %s\nplugin: %s\nzakres: M1 (prolog i Q1), %d fragmentów audio\nzbudowano: %s, commit %s\n'
-            % ({'win': 'Windows', 'mac': 'macOS (Apple Silicon)'}[platform], plugin, fragments,
+            'system: %s\nplugin: %s\nzakres: %s, %d fragmentów audio\nzbudowano: %s, commit %s\n'
+            % ({'win': 'Windows', 'mac': 'macOS (Apple Silicon)'}[platform], plugin, SCOPES[paths.RELEASE], fragments,
                time.strftime('%Y-%m-%d %H:%M'), commit))
 
 

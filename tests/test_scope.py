@@ -74,6 +74,22 @@ def test_merged_args_collects_refs_from_all_nodes():
     assert scope.merged_args(main, rs) == [{'type': 'LocalizationKey', 'ref': 'A', 'refs': ['A', 'B']}]
 
 
+def test_all_args_reads_loot_and_objective_nodes():
+    rs = [{'args': [{'type': None, 'ref': None}, {'type': 'RawText', 'ref': None}]},
+          {'args': [{'type': 'LocalizationKey', 'ref': 'CHEST_1'}, {'type': 'RawText', 'ref': None}]},
+          {'args': [], 'objective_args': [{'type': 'LocalizationKey', 'ref': 'CHEST_2'}]}]
+    assert scope.all_args(rs) == [{'type': 'LocalizationKey', 'ref': 'CHEST_1', 'refs': ['CHEST_1', 'CHEST_2']},
+                                  {'type': 'RawText', 'ref': None, 'refs': []}]
+
+
+def test_random_pool_uses_theme_criteria():
+    enemies = {'A': {'theme': 0x100000, 'random': True}, 'B': {'theme': 0x200008, 'random': True},
+               'C': {'theme': 0x100000, 'random': False}, 'D': {'theme': 0x200000, 'random': True}}
+    graphs = [{'graph': {'nodes': [{'_criteria': {'ThemeAny': 'UthukFaction'}}, {'_message': {}},
+                                   {'_criteria': {'ThemeAny': 'DragonFaction', 'ThemeExclude': 'Dragonkind'}}]}}]
+    assert scope.random_pool(graphs, enemies) == {'A', 'D'}
+
+
 def test_string_assignments():
     graph = {'nodes': [
         {'$type': 'FFG.Core.Tasks.SetStringKey', '_valueA': {'_name': 'Quest_BB/Injury'}, '_pendingKey': 'INJURY_2'},

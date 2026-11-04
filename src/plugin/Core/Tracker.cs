@@ -5,6 +5,7 @@ using System.Reflection;
 using FFG.Core;
 using FFG.D3;
 using FFG.D3.UI;
+using FFG.D3.WorldMap;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -68,6 +69,10 @@ namespace LektorPL.Core
         private EnemyActivationRequest _activation;
         private int _activationId;
 
+        // Wybrany cel na mapie (panel DestinationDetails).
+        private DestinationNode _detailsNode;
+        private float _nextDetailsCheck;
+
         // Wydajność.
         private float _perfWindowStart;
         private int _perfFrames;
@@ -109,6 +114,7 @@ namespace LektorPL.Core
             try { PollStory(); } catch (Exception e) { _log.Error("story", e); }
             try { PollObjective(); } catch (Exception e) { _log.Error("objective", e); }
             try { PollActivation(); } catch (Exception e) { _log.Error("activation", e); }
+            try { PollDetails(); } catch (Exception e) { _log.Error("details", e); }
             try { if (_options.SniffText) Sniff(); } catch (Exception e) { _log.Error("sniff", e); }
             _work.Stop();
             Perf(_work.Elapsed.TotalMilliseconds);
@@ -326,6 +332,24 @@ namespace LektorPL.Core
             _log.Write(_log.New("objective").Str("key", key).Str("prev_key", _objectiveKey).Raw("args", Arguments(args)).Str("text", text));
             _objectiveKey = key;
             _objectiveText = text;
+        }
+
+        // Mapa ustawia CurrentNode przy otwarciu panelu celu i czyści przy zamknięciu.
+        private void PollDetails()
+        {
+            if (Time.unscaledTime < _nextDetailsCheck) return;
+            _nextDetailsCheck = Time.unscaledTime + _options.ObjectiveInterval;
+            var node = SingletonBehaviour<WorldMapSceneController>.IsInitialized
+                ? SingletonBehaviour<WorldMapSceneController>.Instance.CurrentNode : null;
+            if (node == _detailsNode) return;
+            if (_detailsNode != null)
+                _log.Write(_log.New("close").Str("kind", "details").Str("via", "poll"));
+            _detailsNode = node;
+            var model = node != null ? node.Model : null;
+            if (model == null) return;
+            var panel = SingletonBehaviour<UIGame>.IsInitialized ? SingletonBehaviour<UIGame>.Instance.DestinationDetails : null;
+            _log.Write(_log.New("details").Str("key", model.DescKey).Str("name_key", model.NameKey)
+                .Str("text", panel != null && panel.TextDescription != null ? panel.TextDescription.text : null));
         }
 
         private void PollActivation()

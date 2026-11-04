@@ -17,6 +17,10 @@ from .. import normalize as N
 SPRITE = re.compile(r'<sprite=\d+>')
 KEY = re.compile(r'\b[A-Z][A-Z0-9_]+\b')
 LIST_GAP = 0.15         # między wartościami listy {n} (np. kilku wrogów)
+LOOT = '@LOOT'          # slot_values: teksty listy łupu (D51)
+LOOT_WORDS = 12         # najdłuższy kawałek łupu w słowach
+LOOT_SKIP = {'i'}       # spójnik między pozycjami listy
+GENERIC_CHOICES = {'kontynuuj'}     # guzik bez treści: bez odczytu (D64)
 MAX_DEPTH = 2           # wartość luki, która jest kwestią z własnymi lukami
 CACHE = 512             # fragmentów audio w pamięci
 # Gra podmienia tę aktywację na wariant bez nazwy, gdy nazwa wroga nie rozwiązuje się (UIGame.ShowEnemyActivation).
@@ -65,6 +69,8 @@ class Library:
             self.values.setdefault((r['key'], r['arg']), {})[r['value']] = r['fragment']
         self.frag_text = {r['id']: r['text'] for r in con.execute('SELECT id, text FROM fragments')}
         con.close()
+        self.loot = self.values.get((LOOT, 0), {})
+        self.generic = {k for k, v in self.lines.items() if v['category'] == 'opcja_wyboru' and squash(v['text_norm']) in GENERIC_CHOICES}
         with open(os.path.join(audio_dir, 'manifest.json'), encoding='utf-8') as fh:
             manifest = json.load(fh)
         self.audio_dir = audio_dir
@@ -75,15 +81,17 @@ class Library:
         # Zapas, gdy klucza okna nie ma w bazie: kwestie bez luk po znormalizowanym tekście.
         self.by_text = {}
         for key, line in self.lines.items():
-            if line['tts'] and not any(s['kind'] == 'slot' for s in self.segments.get(key, [])):
+            if line['tts'] and '#' not in key and not any(s['kind'] == 'slot' for s in self.segments.get(key, [])):
                 self.by_text.setdefault(squash(line['text_norm']), key)
         self._cache = OrderedDict()
 
     # ---------- rozwiązywanie ----------
 
-    def resolve(self, key, args=(), text=None, depth=0):
+    def resolve(self, key, args=(), text=None, depth=0, hero=None):
         if key == CONFUSION[0] and text and '<EntityName>' in text:
             key = CONFUSION[1]
+        if hero and '%s#%s' % (key, hero) in self.lines:    # VARIABLE_HERO: wersja w głosie bohatera (D17)
+            key = '%s#%s' % (key, hero)
         line, via = self.lines.get(key), 'key'
         if line is None and text:
             found = self.by_text.get(squash(N.normalize(N.clean_markup(text))))
@@ -95,6 +103,38 @@ class Library:
         if u.tts:
             self._fill(u, key, list(args or []), depth)
         return u
+
+    def counter(self, key, args):
+        """Sam licznik celu (D64): luka liczbowa i tekst „z czterech” po niej. None, gdy cel nie ma licznika."""
+        segs = self.segments.get(key, [])
+        at = next((i for i, s in enumerate(segs) if s['kind'] == 'slot' and s['arg_type'] == 'VariableInt'), None)
+        if at is None or segs[at]['arg'] >= len(args):
+            return None
+        line = self.lines[key]
+        u = Utterance(key, line['category'], line['toggle'], via='key')
+        self._value(u, key, segs[at], args[segs[at]['arg']] or {}, 0)
+        if at + 1 < len(segs) and segs[at + 1]['fragment']:
+            self._gap(u, segs[at]['pause_after'] or 0.0)
+            self._add(u, segs[at + 1]['fragment'])
+        return u
+
+    def _loot(self, u, raw):
+        """Lista łupu z tekstu gry (D51): najdłuższe znane kawałki po kolei, liczby z fragmentów liczebników."""
+        words = squash(N.clean_markup(SPRITE.sub('', raw or ''))).split()
+        i, unknown = 0, 0
+        while i < len(words):
+            for n in range(min(LOOT_WORDS, len(words) - i), 0, -1):
+                fid = self.loot.get(' '.join(words[i:i + n]))
+                if fid:
+                    self._add(u, fid)
+                    self._gap(u, LIST_GAP)
+                    i += n
+                    break
+            else:
+                unknown += words[i] not in LOOT_SKIP
+                i += 1
+        if unknown:
+            u.missing.append('luka:RawText')
 
     def _fill(self, u, key, args, depth):
         for seg in self.segments.get(key, []):
@@ -114,6 +154,9 @@ class Library:
                 self._gap(u, LIST_GAP if i < len(vals) - 1 else gap)
 
     def _value(self, u, key, seg, arg, depth):
+        if self.loot and (seg['arg_type'] or arg.get('type')) == 'RawText':
+            self._loot(u, arg.get('value'))
+            return
         table = self.values.get((key, seg['arg']), {})
         for cand in value_keys(arg):
             if cand not in table:

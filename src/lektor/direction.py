@@ -21,6 +21,7 @@ TOGGLES = {
     'system_nagroda': 'nagrody',
     'ui_system': 'ui',
 }
+GROUP_TOGGLES = {'travel_act1': 'podroze', 'town': 'miasto', 'map': 'opis_misji'}     # D66, D55 pkt 5
 
 
 def tempo(category, chars):
@@ -31,8 +32,11 @@ def tempo(category, chars):
     return round(SPEED_MIN + x * (SPEED_MAX - SPEED_MIN), 2), PAUSE
 
 
-def toggle(category, key):
-    """Przełącznik companiona (D21). Aktywacje wrogów (D30) i cele (D31) mają własne."""
+def toggle(category, key, group=None):
+    """Przełącznik companiona (D21). Aktywacje wrogów (D30) i cele (D31) mają własne, a podróże, miasto i opisy
+    celów na mapie obejmują całą grupę."""
+    if group in GROUP_TOGGLES:
+        return GROUP_TOGGLES[group]
     if key.startswith('ENEMY_ACTIVATION_') or '_TACTIC_' in key:
         return 'aktywacje'
     return TOGGLES.get(category, 'ui')

@@ -6,10 +6,21 @@ WORK = os.environ.get('LEKTOR_WORK') or os.path.join(ROOT, 'analysis', 'work')
 BUNDLES = os.path.join(WORK, 'game', 'Legends of the Dark_Data', 'StreamingAssets', 'bundles')
 VOICES = os.path.join(WORK, 'voices')          # nagrania dubbingu (analysis/tools/extract_voices.py)
 OUT = os.path.join(WORK, 'lektor')
-DB = os.path.join(OUT, 'm1.sqlite')
 REFS = os.path.join(OUT, 'refs')
 HF_HOME = os.path.join(WORK, 'hf_cache')
-AUDIO = os.path.join(WORK, 'audio', 'm1')       # podejścia, wybrane pliki i manifest (E3)
+RELEASES = ('m1', 'm2')                         # m2: M1 i scenariusze E7 w jednej bazie (D63)
+RELEASE = DB = AUDIO = None
+
+
+def use(release):
+    """Wydanie, na którym pracują komendy: baza kwestii oraz katalog podejść, plików końcowych i manifestu."""
+    global RELEASE, DB, AUDIO
+    RELEASE = release
+    DB = os.path.join(OUT, release + '.sqlite')
+    AUDIO = os.path.join(WORK, 'audio', release)
+
+
+use('m1')
 
 
 def rel(path):

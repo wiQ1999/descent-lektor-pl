@@ -120,7 +120,8 @@ class Game:
             for o, t, cls in self.behaviours(name):
                 if cls == 'EnemyModel' and t.get('_id'):
                     out[t['_id']] = {'bundle': name, 'ref': (o.assets_file.name.lower(), o.path_id),
-                                     'keys': sorted({s for s in walk_strings(t) if s in terms})}
+                                     'keys': sorted({s for s in walk_strings(t) if s in terms}),
+                                     'theme': t.get('ThemeTraits', 0), 'random': bool(t.get('IsRandomEligible'))}
         return out
 
     def cutscene_keys(self, cutscene_id):
@@ -227,6 +228,20 @@ def message_args(msg):
     return out
 
 
+def find_message(v, key):
+    """Komunikat z kluczem w węźle, także w zadaniu węzła akcji (SetObjective trzyma _message w _action)."""
+    if isinstance(v, dict):
+        if v.get('_key') == key:
+            return v
+        v = list(v.values())
+    if isinstance(v, list):
+        for x in v:
+            found = find_message(x, key) if isinstance(x, (dict, list)) else None
+            if found:
+                return found
+    return None
+
+
 def source_kind(bname):
     if bname in ('d3/act1', 'd3/act2'):
         return 'story_event'
@@ -269,7 +284,8 @@ def graph_lines(gr, terms):
             yield {'key': val, 'role': role, 'node_type': ntype, 'kind': kind, 'bundle': gr['bundle'],
                    'owner': gr['owner'], 'graph': gr['hash'], 'seq': seq, 'conds': conds,
                    'speakers': speaker_info(n) if ntype in STORY_NODES else [],
-                   'args': message_args(msg) if role == 'message' else []}
+                   'args': message_args(msg) if role == 'message' else [],
+                   'objective_args': message_args(find_message(n, val) or {}) if role == 'objective' else []}
 
 
 def category(line):

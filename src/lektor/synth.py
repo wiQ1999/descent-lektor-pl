@@ -16,6 +16,7 @@ wskazują na spadanie do pamięci systemowej.
 import json
 import math
 import os
+import shutil
 import sys
 import time
 
@@ -50,6 +51,28 @@ def load_state():
         for line in open(p, encoding='utf-8'):
             r = json.loads(line)
             out[r['fragment'], r['take']] = r
+    return out
+
+
+def inherited():
+    """Fragmenty przejęte z poprzedniego wydania: {id: wpis z choice.json}."""
+    p = os.path.join(paths.AUDIO, 'inherited.json')
+    return json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
+
+
+def inherit(con, source='m1'):
+    """Wybrane podejścia fragmentów o tym samym id (głos z SHA referencji, tekst, tempo) z poprzedniego wydania."""
+    src = os.path.join(paths.WORK, 'audio', source)
+    choice = json.load(open(os.path.join(src, 'choice.json'), encoding='utf-8'))
+    ids = {r['id'] for r in con.execute('SELECT id FROM fragments')}
+    out = {f: c for f, c in choice.items() if f in ids}
+    os.makedirs(os.path.join(paths.AUDIO, 'takes'), exist_ok=True)
+    for fid, c in out.items():
+        dst = take_path(fid, c['take'])
+        if not os.path.exists(dst):
+            shutil.copy2(os.path.join(src, 'takes', os.path.basename(dst)), dst)
+    with open(os.path.join(paths.AUDIO, 'inherited.json'), 'w', encoding='utf-8') as fh:
+        json.dump(out, fh, indent=1)
     return out
 
 
@@ -172,7 +195,8 @@ def generate(limit=None, voices=None, retake_file=None):
     if retake_file:
         retake = {k: tuple(v) for k, v in json.load(open(retake_file, encoding='utf-8')).items()}
     state = load_state()
-    todo = [j for j in jobs(con, voices, retake) if (j[0], j[1]) not in state]
+    done = inherit(con) if paths.RELEASE != 'm1' else {}
+    todo = [j for j in jobs(con, voices, retake) if (j[0], j[1]) not in state and j[0] not in done]
     if limit:
         todo = todo[:limit]
     print('do wygenerowania: %d podejść, %d znaków' % (len(todo), sum(len(j[2]) for j in todo)), file=sys.stderr, flush=True)

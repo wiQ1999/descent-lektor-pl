@@ -16,7 +16,7 @@ import unicodedata
 
 from . import db, paths
 from .normalize import cardinal
-from .synth import load_state, take_path, takes_for
+from .synth import inherited, load_state, take_path, takes_for
 
 ASR_MODEL = 'openai/whisper-large-v3-turbo'
 REF_CPS = 10.3          # naturalne tempo referencji dubbingu (znaki na sekundę), speed 1,2 daje ok. 12,1
@@ -231,6 +231,10 @@ def select():
             if 'koncowka' in best['problems']:
                 speed = round(max(0.9, (speed or 1.0) - RETAKE_SLOWER), 2)
             retake[fid] = [max(e['take'] for e in es) + 1, speed]
+    for fid, c in inherited().items():     # fragmenty z poprzedniego wydania zostają takie, jak je wybrano
+        if fid in texts:
+            choice[fid] = c
+            retake.pop(fid, None)
     json.dump(choice, open(os.path.join(paths.AUDIO, 'choice.json'), 'w', encoding='utf-8'), indent=1)
     json.dump(retake, open(os.path.join(paths.AUDIO, 'retake.json'), 'w', encoding='utf-8'), indent=1)
     reasons = {}

@@ -8,11 +8,13 @@ from . import __version__, db, paths, scope
 from . import direction as D
 from . import game as G
 from . import segment as S
-from .normalize import normalize
+from .companion.library import LOOT, squash
+from .normalize import cardinal, clean_markup, normalize
 
 PIECE_GAP = 0.06    # sklejanie kawałka szablonu z wartością luki (D16)
 QUOTE_GAP = 0.15    # cytat bohatera → opis narratora (D20)
 SPRITE = re.compile(r'<sprite[^>]*>')
+LOOT_NUMBERS = range(0, 100)
 
 
 def load_refs():
@@ -66,10 +68,21 @@ def value_texts(slot, arg, line_key, values, terms, lines):
     return out
 
 
-def build(path=paths.DB):
+def loot_texts(game, terms):
+    """{tekst z okna gry (squash): tekst do syntezy} dla listy łupu (D51). Szablony dzielimy na stałe kawałki."""
+    out = {str(n): cardinal(n) for n in LOOT_NUMBERS}
+    for k in scope.loot_keys(game, terms):
+        for piece in S.SLOT.split(clean_markup(SPRITE.sub('', terms[k]['text']))):
+            if squash(piece) and not piece.isdigit():
+                out.setdefault(squash(piece), normalize(piece).strip())
+    return {k: v for k, v in out.items() if v}
+
+
+def build(path=None, release='m1', only=None):
+    path = path or paths.DB
     game = G.Game()
     terms = game.terms()
-    records, values, info = scope.collect(game, terms)
+    records, values, info = scope.collect(game, terms, release, only)
     lines = {r['key'] for r in records if r['tts']}
     refs = load_refs()
     fragments, segments, slot_values = {}, [], {}
@@ -81,7 +94,7 @@ def build(path=paths.DB):
         return fid
 
     for r in records:
-        r['toggle'] = D.toggle(r['category'], r['key'])
+        r['toggle'] = D.toggle(r['category'], r['key'].split('#')[0], r['group'])
         if not r['tts']:
             continue
         r['text_norm'] = normalize(r['text_raw'])
@@ -99,7 +112,7 @@ def build(path=paths.DB):
                 arg = (r['args'][max(data['arg'], 0):] or [{}])[0]
                 seg.update(arg=data['arg'], arg_type=data['type'], text=data.get('tail'))
                 texts = value_texts(data, arg, r['key'], values, terms, lines)
-                if not texts:
+                if not texts and data['type'] != 'RawText':
                     r['note'] = 'luka bez znanych wartości (%s): fallback' % data['type']
                 for value, text in texts.items():
                     slot_values[r['key'], data['arg'], value] = \
@@ -110,7 +123,11 @@ def build(path=paths.DB):
                 seg.update(text=data)   # sama interpunkcja: bez audio, companion robi tylko pauzę
             segments.append(seg)
 
-    meta = {'version': __version__, 'model': D.MODEL, 'model_id': D.MODEL_ID, 'manifest': game.manifest_hash(),
+    if release != 'm1':
+        for value, text in loot_texts(game, terms).items():
+            slot_values[LOOT, 0, value] = frag('narrator', text, D.SPEED_MIN, 'value')
+
+    meta = {'version': __version__, 'release': release, 'model': D.MODEL, 'model_id': D.MODEL_ID, 'manifest': game.manifest_hash(),
             'built_at': datetime.datetime.now().isoformat(timespec='seconds'), 'scope': info,
             'tempo': {'scene_pause': D.SCENE_PAUSE, 'pause': D.PAUSE, 'speed': [D.SPEED_MIN, D.SPEED_MAX],
                       'chars': [D.SPEED_FROM, D.SPEED_TO]}}

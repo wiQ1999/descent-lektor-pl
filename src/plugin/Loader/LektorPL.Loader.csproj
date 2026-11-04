@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>LektorPL.Loader</AssemblyName>
     <RootNamespace>LektorPL.Loader</RootNamespace>
-    <Version>0.3.0</Version>
+    <Version>0.4.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\LektorPL.Core.csproj" />
