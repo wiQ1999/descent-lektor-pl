@@ -18,7 +18,7 @@ def main(argv=None):
     b.add_argument('--only', nargs='*', help='tylko te grupy spoza M1 (np. event_e5b map)')
     r = sub.add_parser('refs', help='referencje głosów do 10 s z transkrypcją (Whisper, GPU)')
     r.add_argument('voices', nargs='*')
-    p = sub.add_parser('report', parents=[rel], help='raport liczności analysis/E2_DATA.md')
+    p = sub.add_parser('report', parents=[rel], help='raport liczności (analysis/E2_DATA.md, M2: E7_DATA.md)')
     p.add_argument('--db')
     g = sub.add_parser('generate', parents=[rel], help='podejścia fragmentów w OmniVoice (środowisko OmniVoice, GPU; wznawialne)')
     g.add_argument('--limit', type=int)
@@ -27,7 +27,7 @@ def main(argv=None):
     sub.add_parser('evaluate', parents=[rel], help='ocena podejść: ASR, barwa, tempo (.venv, GPU; wznawialne)')
     sub.add_parser('select', parents=[rel], help='wybór podejść i lista ponownych (choice.json, retake.json)')
     sub.add_parser('finalize', parents=[rel], help='pliki końcowe, manifest i strona odsłuchu (.venv)')
-    q = sub.add_parser('audio-report', parents=[rel], help='raport analysis/E3_AUDIO.md')
+    q = sub.add_parser('audio-report', parents=[rel], help='raport audio (analysis/E3_AUDIO.md, M2: E7_AUDIO.md)')
     q.add_argument('--db')
     c = sub.add_parser('companion', help='companion lektora (serwer TCP dla pluginu) albo replay dziennika E1')
     from .companion.app import add_args

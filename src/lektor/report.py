@@ -1,4 +1,4 @@
-"""Raport liczności bazy M1 (analysis/E2_DATA.md). Tylko liczby i klucze techniczne, bez tekstów gry."""
+"""Raporty wydania (analysis/E2_DATA.md, E3_AUDIO.md; M2: E7_DATA.md, E7_AUDIO.md). Tylko liczby i klucze techniczne."""
 import glob
 import json
 import os
@@ -16,6 +16,9 @@ CPS = 10.1              # znaki na sekundę audio przy tempie 1,0
 HERO_TAKES = 3          # D38
 HEROES = ('brynn', 'syrus', 'galaden', 'vaerix', 'kehli', 'chance')
 GAME_CHARS = 1_430_000  # cała gra (D02)
+S_PER_CHAR = 0.235      # zmierzone w E3 (analysis/E3_AUDIO.md), z fp32 i bez dopełniania
+REPORTS = {'m1': ('E2_DATA.md', 'E3_AUDIO.md', 'E2: baza kwestii M1', 'E3: audio M1'),
+           'm2': ('E7_DATA.md', 'E7_AUDIO.md', 'E7: baza kwestii M2', 'E7: audio M2')}
 
 
 def table(head, rows):
@@ -31,6 +34,14 @@ def grouped(con, col, where='1'):
 
 def audio_seconds(chars, speed):
     return chars / CPS / (speed or 1.0)
+
+
+def previous_fragments():
+    """Id fragmentów M1, które M2 przejmuje bez generowania."""
+    if paths.RELEASE == 'm1':
+        return set()
+    p = os.path.join(paths.WORK, 'audio', 'm1', 'choice.json')
+    return set(json.load(open(p, encoding='utf-8'))) if os.path.exists(p) else set()
 
 
 def e1_coverage(con):
@@ -78,9 +89,9 @@ def report(path=None):
     con = db.connect(path)
     meta = {r['k']: json.loads(r['v']) for r in con.execute('SELECT * FROM meta')}
     n_lines, n_tts = con.execute('SELECT COUNT(*), SUM(tts) FROM lines').fetchone()
-    frags = con.execute('SELECT voice, speed, chars, kind FROM fragments').fetchall()
+    frags = con.execute('SELECT id, voice, speed, chars, kind FROM fragments').fetchall()
     refs = {r['voice'] for r in con.execute('SELECT voice FROM refs')}
-    s = ['# E2: baza kwestii M1', '',
+    s = ['# ' + REPORTS[paths.RELEASE][2], '',
          'Wygenerowano przez `python -I -m lektor report` z `%s` (zbudowana %s, pakiet %s, model `%s`, '
          'manifest gry `%s`). Raport zawiera tylko liczby i klucze techniczne.' % (
              paths.rel(path), meta['built_at'], meta['version'], meta['model_id'], meta['manifest'][:12]), '',
@@ -131,6 +142,18 @@ def report(path=None):
     missing = [v for v in voices if v not in refs]
     s += ['Głosy fragmentów bez referencji w bazie: %s.' % (', '.join('`%s`' % v for v in missing) or 'brak'), '']
 
+    old = previous_fragments()
+    if old:
+        new = [f for f in frags if f['id'] not in old]
+        rows = [(v, sum(1 for f in new if f['voice'] == v), sum(f['chars'] for f in new if f['voice'] == v),
+                 HERO_TAKES if v in HEROES else 1) for v in sorted({f['voice'] for f in new})]
+        gpu = sum(chars * takes * S_PER_CHAR for _, _, chars, takes in rows) / 3600
+        s += ['## Szacunek generowania', '',
+              'Z M1 przejęte %d fragmentów. Nowe: **%d** (%d znaków).' % (
+                  len(frags) - len(new), len(new), sum(f['chars'] for f in new)), '',
+              table(('głos', 'fragmenty', 'znaki', 'podejścia'), rows), '',
+              'Razem ok. **%.1f h** GPU bez ponownych podejść, przy %.3f s na znak (E3).' % (gpu, S_PER_CHAR), '']
+        return write(REPORTS[paths.RELEASE][0], s)
     s += ['## Szacunek generowania (E3)', '']
     rows, total = [], 0.0
     for v in voices:
@@ -148,8 +171,12 @@ def report(path=None):
           '+ %.0f s na sekundę audio, %.1f znaku/s przy tempie 1,0). Jedno podejście według rodzaju fragmentu: %s.' % (
               total / 3600, CALL_S, PER_AUDIO_S, CPS,
               ', '.join('%s %.1f h' % (k, v / 3600) for k, v in by_kind_gpu.most_common())), '']
-    out = paths.ROOT + '/analysis/E2_DATA.md'
-    open(out, 'w', encoding='utf-8', newline='\n').write('\n'.join(s))
+    return write(REPORTS[paths.RELEASE][0], s)
+
+
+def write(name, lines):
+    out = paths.ROOT + '/analysis/' + name
+    open(out, 'w', encoding='utf-8', newline='\n').write('\n'.join(lines))
     return out
 
 
@@ -164,7 +191,7 @@ def load_ratings():
 
 def audio_report(path=None):
     path = path or paths.DB
-    """analysis/E3_AUDIO.md: czasy generowania, wyniki automatu i pokrycie kluczy M1. Bez tekstów gry."""
+    """Czasy generowania, wyniki automatu i pokrycie kluczy wydania. Bez tekstów gry."""
     import statistics
     from .evaluate import load_evals
     from .synth import load_state
@@ -176,7 +203,7 @@ def audio_report(path=None):
     gen = sum(t['gen_s'] for t in takes)
     chars = sum(t['chars'] for t in takes)
     audio = sum(t['seconds'] for t in takes)
-    s = ['# E3: audio M1', '',
+    s = ['# ' + REPORTS[paths.RELEASE][3], '',
          'Wygenerowano przez `python -I -m lektor audio-report`. Model `%s`, GTX 1650 Ti. Raport zawiera tylko liczby '
          'i klucze techniczne.' % D.MODEL_ID, '', '## Czas generowania', '',
          'Podejść: **%d** (%d znaków, %.1f min audio). Czas GPU: **%.1f h**, czyli **%.3f s na znak** i RTF %.2f '
@@ -190,9 +217,12 @@ def audio_report(path=None):
             rows.append(('%d–%s' % (lo, hi - 1 if hi < 10 ** 6 else ''), len(ts), '%.1f' % statistics.mean(t['gen_s'] for t in ts),
                          '%.3f' % (sum(t['gen_s'] for t in ts) / sum(t['chars'] for t in ts))))
     s += [table(('znaki fragmentu', 'podejścia', 'średnio s', 's na znak'), rows), '']
-    m1_chars = con.execute('SELECT SUM(chars) FROM fragments').fetchone()[0]
-    per_char = gen / m1_chars
-    s += ['Na znak tekstu M1 (z podejściami bohaterów i ponownymi): %.3f s. Cała gra (D02, ok. %.2f mln znaków) w tych '
+    old = previous_fragments()
+    new_chars = sum(r['chars'] for r in con.execute('SELECT id, chars FROM fragments') if r['id'] not in old)
+    per_char = gen / new_chars
+    if old:
+        s += ['Z M1 przejęte %d fragmentów bez generowania.' % sum(1 for f in choice if f in old), '']
+    s += ['Na znak nowego tekstu (z podejściami bohaterów i ponownymi): %.3f s. Cała gra (D02, ok. %.2f mln znaków) w tych '
           'samych proporcjach: ok. **%.0f h** GPU (D39; przed przyspieszeniami ok. 610 h na jedno podejście).' % (
               per_char, GAME_CHARS / 1e6, GAME_CHARS * per_char / 3600), '']
     s += ['## Automat (D38)', '']
@@ -225,10 +255,8 @@ def audio_report(path=None):
         frag_of.setdefault(r['key'], []).append(r['fragment'])
     ok = sum(1 for r in lines if all(accepted(f) for f in frag_of.get(r['key'], [])))
     vals = con.execute('SELECT fragment FROM slot_values WHERE fragment IS NOT NULL').fetchall()
-    s += ['## Pokrycie M1', '',
+    s += ['## Pokrycie ' + paths.RELEASE.upper(), '',
           'Klucze do syntezy z zaakceptowanym audio wszystkich fragmentów: **%d / %d (%.1f%%)**. Wartości luk z '
           'zaakceptowanym audio: %d / %d.' % (ok, len(lines), 100 * ok / max(len(lines), 1),
                                               sum(1 for r in vals if accepted(r['fragment'])), len(vals)), '']
-    out = paths.ROOT + '/analysis/E3_AUDIO.md'
-    open(out, 'w', encoding='utf-8', newline='\n').write('\n'.join(s))
-    return out
+    return write(REPORTS[paths.RELEASE][1], s)
