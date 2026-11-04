@@ -198,7 +198,7 @@ def settings_text(dev):
 
 def version_text(platform, fragments):
     git = lambda *a: subprocess.run(['git', '-C', paths.ROOT, *a], capture_output=True, text=True).stdout.strip()
-    commit = git('rev-parse', '--short', 'HEAD') + (' (zmiany niezatwierdzone)' if git('status', '--porcelain') else '')
+    commit = git('rev-parse', '--short', 'HEAD') + (' (zmiany niezatwierdzone)' if git('status', '--porcelain', '--untracked-files=no') else '')
     core = subprocess.run(['git', '-C', paths.ROOT, 'show', 'HEAD:src/plugin/Core/Bootstrap.cs'], capture_output=True, text=True).stdout
     plugin = next((ln.split('"')[1] for ln in core.splitlines() if 'const string Version' in ln), '?')
     return ('Lektor PL dla Descent: Legends of the Dark\n'
