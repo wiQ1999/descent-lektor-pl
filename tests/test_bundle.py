@@ -27,10 +27,18 @@ def fake(tmp_path, monkeypatch):
     (tmp_path / 'doorstop.zip').write_bytes(data)
     pin = {'url': 'https://example.invalid/doorstop.zip', 'sha256': hashlib.sha256(data).hexdigest(),
            'dir': 'doorstop', 'files': ['x86/winhttp.dll', 'x86/.doorstop_version']}
-    monkeypatch.setattr(B, 'pins', lambda: {'doorstop': {'win': pin}})
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, 'w') as z:
+        z.writestr('universal/libdoorstop.dylib', b'doorstop universal')
+        z.writestr('universal/.doorstop_version', b'4.6.0')
+    mac_data = buf.getvalue()
+    mac = {'url': 'https://example.invalid/doorstop-mac.zip', 'sha256': hashlib.sha256(mac_data).hexdigest(),
+           'dir': 'doorstop', 'files': ['universal/libdoorstop.dylib', 'universal/.doorstop_version']}
+    monkeypatch.setattr(B, 'pins', lambda: {'doorstop': {'win': pin, 'mac': mac}})
     monkeypatch.setattr(B, 'CACHE', str(tmp_path))
     (tmp_path / 'doorstop').mkdir()
     (tmp_path / 'doorstop' / 'doorstop.zip').write_bytes(data)
+    (tmp_path / 'doorstop' / 'doorstop-mac.zip').write_bytes(mac_data)
     return tmp_path
 
 
@@ -113,6 +121,21 @@ def test_win_bundle_layout_and_line_endings(fake, monkeypatch):
     assert ps1.startswith(b'\xef\xbb\xbf') and not ps1.startswith(b'\xef\xbb\xbf\xef\xbb\xbf')
     assert b'\n' not in ps1.replace(b'\r\n', b'')
     assert b'\r' not in open(os.path.join(dest, 'ustawienia.toml'), 'rb').read()
+
+
+def test_mac_bundle_layout_and_unix_scripts(fake, monkeypatch):
+    monkeypatch.setattr(B, 'copy_python', lambda platform, dest: None)
+    monkeypatch.setattr(B, 'copy_data', lambda dest: 0)
+    dest = B.build('mac', out=str(fake / 'out'))
+    commands = ['Odinstaluj', 'Test dźwięku', 'Ustawienia', 'Wyłącz lektora', 'Włącz lektora', 'Zainstaluj']
+    assert sorted(B.files_of(dest)) == sorted(
+        ['INSTRUKCJA.md', 'loader/.doorstop_version', 'loader/libdoorstop.dylib', 'plugin/LektorPL.Core.dll',
+         'plugin/LektorPL.Loader.dll', 'skrypty/lektor.sh', 'skrypty/pliki.sha256', 'skrypty/start.sh',
+         'ustawienia.toml', 'wersja.txt'] + [c + '.command' for c in commands] + ['lektor/' + f for f in B.LEKTOR])
+    for rel in [c + '.command' for c in commands] + ['skrypty/lektor.sh', 'skrypty/start.sh']:
+        data = open(os.path.join(dest, rel), 'rb').read()
+        assert data.startswith(b'#!/bin/bash\n') and b'\r' not in data, rel
+    assert 'macOS' in open(os.path.join(dest, 'wersja.txt'), encoding='utf-8').read()
 
 
 def test_dev_rebuild_keeps_state_logs_and_settings(fake):

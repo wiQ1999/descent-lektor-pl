@@ -501,6 +501,12 @@ Plan etapów: [PLAN.md](PLAN.md).
 - Lektor czytał od pierwszego okna: 17 okien, pokrycie 100%, start p95 0,17 s, przerwanie p95 0,13 s.
 - Companion skończył się 1,1 s po wyjściu z gry (powód `gra_zamknieta`).
 
+**Wynik testu W2 (2026-11-04, Windows, paczka z zipa na Pulpicie, według `INSTRUKCJA.md`):**
+- Każdy krok zadziałał, a instrukcja była jasna.
+- W obu sesjach z lektorem plugin uruchomił companion, a ten zamknął się ok. 1 s po wyjściu z gry. Wszystkie okna miały audio, start p95 0,13 s.
+- Sesja po „Wyłącz lektora” nie zostawiła dziennika loadera: Doorstop nie wczytał dodatku.
+- Po „Odinstaluj” folder gry był jak przed instalacją.
+
 ### D60 · 2026-11-02 · Python w folderze paczki, paczka kompletna (zmienia D26)
 **Decyzja:**
 - Companion działa na Pythonie 3.12 z python-build-standalone, czyli tych samych buildach, które instaluje uv. Python leży w folderze paczki razem z `numpy`, `sounddevice` i `soundfile`.

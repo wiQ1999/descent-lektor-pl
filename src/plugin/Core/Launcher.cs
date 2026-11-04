@@ -32,10 +32,10 @@ namespace LektorPL.Core
                     CreateNoWindow = true,
                     WorkingDirectory = o.CompanionWorkDir ?? Path.GetDirectoryName(o.CompanionExe),
                 };
-                // Bez zmiennych loadera: na Macu DYLD_INSERT_LIBRARIES wstrzyknąłby Doorstop także do Pythona.
+                // Bez zmiennych loadera: na Macu DYLD_INSERT_LIBRARIES wstrzyknąłby Doorstop (i overlay Steama) także do Pythona.
                 var drop = new List<string>();
                 foreach (string key in psi.Environment.Keys)
-                    if (key.StartsWith("DOORSTOP_", StringComparison.OrdinalIgnoreCase) || key.Equals("DYLD_INSERT_LIBRARIES", StringComparison.OrdinalIgnoreCase))
+                    if (key.StartsWith("DOORSTOP_", StringComparison.OrdinalIgnoreCase) || key.StartsWith("DYLD_", StringComparison.OrdinalIgnoreCase))
                         drop.Add(key);
                 foreach (string key in drop)
                     psi.Environment.Remove(key);

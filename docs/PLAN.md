@@ -280,7 +280,8 @@ E1 ──────────────────> E4 companion (z repla
 **Stan (2026-11-04):**
 - Kroki 1–3 zrobione. Test W1 przeszedł: loader i autostart działają, wyjście bez crasha (D58, D59).
 - Paczka Windows: 363 MB (zip 316 MB), Python 3.12.15 z bibliotekami, 978 nagrań M1. Skrypty sprawdzone na udawanym folderze gry, także z rozpakowanego zipa.
-- Następny krok: test W2 według `docs/E6_W2_TEST.md`.
+- Test W2 przeszedł: instalacja z zipa według instrukcji, ustawienia, gra, wyłączenie i odinstalowanie (D59).
+- Następny krok: paczka na Maca.
 
 **Co wymaga Ciebie i znajomego:**
 - testy W1 i W2 na Windows;
