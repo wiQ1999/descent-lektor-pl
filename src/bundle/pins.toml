@@ -12,3 +12,13 @@ url = "https://github.com/NeighTools/UnityDoorstop/releases/download/v4.6.0/door
 sha256 = "8282e8ec37abc81bbf736d12c315fdb78b0418654fb57be9e40858649953ccb7"
 dir = "doorstop-4.6.0"
 files = ["universal/libdoorstop.dylib", "universal/.doorstop_version"]
+
+[python.win]        # python-build-standalone 20261020: CPython 3.12.15 (te same buildy instaluje uv), bez symboli debugowania
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20261020/cpython-3.12.15%2B20261020-x86_64-pc-windows-msvc-install_only_stripped.tar.gz"
+sha256 = "09d9f924296a094c6bd6e7ad22548433b0707064bae56bb43ee591a2d75f4177"
+dir = "python-build-standalone-20261020"
+
+[python.mac]        # jak wyżej, Apple Silicon; archiwum zostaje spakowane (dowiązania), rozpakowuje je Zainstaluj.command
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20261020/cpython-3.12.15%2B20261020-aarch64-apple-darwin-install_only_stripped.tar.gz"
+sha256 = "e54a19fd9af218ddd4ed66bbec65f4e9062724ea848a0ddbd269e37765d9959e"
+dir = "python-build-standalone-20261020"

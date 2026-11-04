@@ -481,6 +481,10 @@ Plan etapów: [PLAN.md](PLAN.md).
 - Na Windows znika poprawiony plik MonoMod. W folderze gry zostają 3 pliki Doorstop.
 - Rdzeń od początku nie zależy od loadera (D11).
 
+**Wynik testu W1 (2026-11-04, Windows):**
+- Loader wykrył `UnityEngine.CoreModule` przez `AssemblyLoad`, a rdzeń wystartował na pierwszej scenie (`Splash`), ok. 11 s po starcie Doorstop.
+- Gra startowała i działała normalnie. Wyjście było bez crasha, bez BepInEx i bez poprawki D54.
+
 ### D59 · 2026-11-02 · Companion uruchamia plugin (zmienia D46)
 **Decyzja:**
 - Gdy port companiona jest wolny, plugin uruchamia go w tle z Pythona w paczce.
@@ -491,6 +495,11 @@ Plan etapów: [PLAN.md](PLAN.md).
 - Gra startuje zwykłym przyciskiem w Steam.
 - Powód D46, czyli diagnoza crasha przy wyjściu, odpadł (D54).
 - Użytkownik chce łatwego wyłączenia i odinstalowania.
+
+**Wynik testu W1 (2026-11-04, Windows):**
+- Plugin uruchomił companion (0,44 s na wątku gry, w czasie ekranu startowego), a połączenie było po 0,56 s.
+- Lektor czytał od pierwszego okna: 17 okien, pokrycie 100%, start p95 0,17 s, przerwanie p95 0,13 s.
+- Companion skończył się 1,1 s po wyjściu z gry (powód `gra_zamknieta`).
 
 ### D60 · 2026-11-02 · Python w folderze paczki, paczka kompletna (zmienia D26)
 **Decyzja:**
@@ -546,6 +555,6 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 | – | Odczyt aktualizacji celu z licznikiem i nagrania liczników | QA przed E7 (D55) |
 | – | Ponowny dobór głosów Ronana i Adelynn, ujednolicenie Kehli | przed scenariuszem, w którym mówią (D55, D41) |
 | – | Opis misji na mapie: nowe źródło w pluginie | E7 (D55) |
-| – | Własny punkt wejścia Doorstop przed startem Unity | test W1 w E6 (D58) |
+| – | Własny punkt wejścia Doorstop przed startem Unity | działa na Windows (test W1, D58); na Macu sprawdzimy w sesji E6 |
 | – | Model dla całej gry | po E3, przed E7 (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |

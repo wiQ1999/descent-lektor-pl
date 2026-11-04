@@ -35,9 +35,41 @@ def fake(tmp_path, monkeypatch):
 
 
 def test_pins_have_sha256_for_every_download():
-    for group in B.pins().values():
+    pins = B.pins()
+    assert set(pins) == {'doorstop', 'python'} and all(set(g) == {'win', 'mac'} for g in pins.values())
+    for group in pins.values():
         for pin in group.values():
-            assert len(pin['sha256']) == 64 and pin['url'].startswith('https://') and pin['files']
+            assert len(pin['sha256']) == 64 and pin['url'].startswith('https://')
+    assert all(pin['files'] for pin in pins['doorstop'].values())
+
+
+def test_wheel_requirements_are_hashed_and_match_venv():
+    from importlib.metadata import version
+    for platform in ('win', 'mac'):
+        text = open(os.path.join(B.SRC, 'requirements-%s.txt' % platform), encoding='utf-8').read()
+        pinned = dict(line.split(' ')[0].split('==') for line in text.splitlines() if '==' in line)
+        assert '--hash=sha256:' in text and set(pinned) >= {'numpy', 'sounddevice', 'soundfile'}
+        assert all(pinned[p] == version(p) for p in ('numpy', 'sounddevice', 'soundfile'))
+
+
+def test_bundle_lektor_subset_has_whole_companion():
+    companion = {'companion/' + f for f in os.listdir(os.path.join(B.paths.ROOT, 'src', 'lektor', 'companion')) if f.endswith('.py')}
+    assert companion <= set(B.LEKTOR)
+
+
+def test_zip_keeps_exec_bits_and_utf8_names(tmp_path):
+    dest = tmp_path / 'Descent-Lektor-PL'
+    (dest / 'skrypty').mkdir(parents=True)
+    (dest / 'Zainstaluj.command').write_text('#!/bin/bash\n', encoding='utf-8')
+    (dest / 'Wyłącz lektora.command').write_text('#!/bin/bash\n', encoding='utf-8')
+    (dest / 'skrypty' / 'start.sh').write_text('#!/bin/bash\n', encoding='utf-8')
+    (dest / 'ustawienia.toml').write_text('volume = 1.0\n', encoding='utf-8')
+    path = B.write_zip(str(dest), str(tmp_path / 'p.zip'))
+    with zipfile.ZipFile(path) as z:
+        modes = {i.filename: (i.external_attr >> 16) & 0o777 for i in z.infolist()}
+        assert modes['Descent-Lektor-PL/Zainstaluj.command'] == 0o755 and modes['Descent-Lektor-PL/skrypty/start.sh'] == 0o755
+        assert modes['Descent-Lektor-PL/ustawienia.toml'] == 0o644 and 'Descent-Lektor-PL/logs/' in modes
+        assert z.getinfo('Descent-Lektor-PL/Wyłącz lektora.command').flag_bits & 0x800
 
 
 def test_settings_template_is_valid_toml_with_relative_paths(tmp_path):
@@ -63,12 +95,17 @@ def test_settings_with_bom_from_notepad_load(tmp_path):
     assert C.load(str(f))['port'] == 47810
 
 
-def test_win_bundle_layout_and_line_endings(fake):
+def test_win_bundle_layout_and_line_endings(fake, monkeypatch):
+    monkeypatch.setattr(B, 'copy_python', lambda platform, dest: None)     # Python i audio sprawdza budowa paczki
+    monkeypatch.setattr(B, 'copy_data', lambda dest: 0)
     dest = B.build('win', out=str(fake / 'out'))
-    files = sorted(os.path.relpath(os.path.join(b, f), dest).replace(os.sep, '/') for b, _, fs in os.walk(dest) for f in fs)
-    assert files == sorted(['Odinstaluj.cmd', 'Test dźwięku.cmd', 'Ustawienia.cmd', 'Wyłącz lektora.cmd', 'Włącz lektora.cmd',
-                            'Zainstaluj.cmd', 'loader/.doorstop_version', 'loader/winhttp.dll',
-                            'plugin/LektorPL.Core.dll', 'plugin/LektorPL.Loader.dll', 'skrypty/lektor.ps1', 'ustawienia.toml'])
+    files = sorted(B.files_of(dest))
+    assert files == sorted(['INSTRUKCJA.md', 'Odinstaluj.cmd', 'Test dźwięku.cmd', 'Ustawienia.cmd', 'Wyłącz lektora.cmd',
+                            'Włącz lektora.cmd', 'Zainstaluj.cmd', 'loader/.doorstop_version', 'loader/winhttp.dll',
+                            'plugin/LektorPL.Core.dll', 'plugin/LektorPL.Loader.dll', 'skrypty/lektor.ps1',
+                            'skrypty/pliki.sha256', 'ustawienia.toml', 'wersja.txt'] + ['lektor/' + f for f in B.LEKTOR])
+    sums = open(os.path.join(dest, 'skrypty', 'pliki.sha256'), encoding='utf-8').read().splitlines()
+    assert len(sums) == len(files) - 1 and all(len(line.split('  ')[0]) == 64 for line in sums)
     assert open(os.path.join(dest, 'loader', 'winhttp.dll'), 'rb').read() == b'doorstop x86'
     cmd = open(os.path.join(dest, 'Zainstaluj.cmd'), 'rb').read()
     assert b'\r\n' in cmd and b'\n' not in cmd.replace(b'\r\n', b'')
@@ -94,4 +131,4 @@ def test_bad_download_sum_stops_build(fake, monkeypatch):
     bad = dict(B.pins()['doorstop']['win'], sha256='0' * 64)
     monkeypatch.setattr(B, 'pins', lambda: {'doorstop': {'win': bad}})
     with pytest.raises(SystemExit, match='SHA-256'):
-        B.build('win', out=str(fake / 'out'))
+        B.build('win', dev=True, out=str(fake / 'out'))

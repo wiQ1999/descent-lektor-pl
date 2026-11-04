@@ -1,0 +1,4 @@
+# Biblioteki companiona w paczce (D60): te same wersje co w .venv, w którym przeszły testy E4–E6.
+numpy==2.5.4
+sounddevice==0.5.6
+soundfile==0.14.0

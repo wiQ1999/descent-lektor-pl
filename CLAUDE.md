@@ -94,14 +94,16 @@ Instalację i odinstalowanie w folderze gry (`lektor-hook.ps1 -Install [-LoaderO
 
 - `-Install` zawsze podmienia `BepInEx\core\MonoMod.Utils.dll` na kopię z `monomod-fix.ps1` (D54). Z oryginałem BepInEx 5.4.23.5 gra (x86) wysypuje się przy wyjściu: MonoMod #329 psuje strukturę `MonoAssembly`.
 
-Paczka (E6, D57–D60). Doorstop i Python są przypięte sumami w `src/bundle/pins.toml`, cache w `analysis/work/bin/`:
+Paczka (E6, D57–D60). Doorstop i Python są przypięte sumami w `src/bundle/pins.toml`, koła w `src/bundle/requirements-<platform>.txt` (z `requirements.in` przez `uv pip compile --generate-hashes`). Cache w `analysis/work/bin/`:
 
 ```bash
 .venv/Scripts/python -I -m lektor bundle --dev                 # analysis/work/dev-bundle: plugin z builda, Python z .venv (test W1)
-.venv/Scripts/python -I -m lektor bundle --platform win|mac    # analysis/work/dist/<platform>/Descent-Lektor-PL
+.venv/Scripts/python -I -m lektor bundle --platform win|mac    # analysis/work/dist/<platform>/Descent-Lektor-PL + zip
 ```
 
-- Paczka ma pliki do dwukliku (`Zainstaluj`, `Odinstaluj`, `Wyłącz/Włącz lektora`, `Ustawienia`, `Test dźwięku`). Uruchamia je użytkownik według `docs/E6_W1_TEST.md`.
+- Budowa potrzebuje `uv` (koła dla wybranego systemu, `--python-platform`) i `curl` (pobrania; Python z uv na Windows nie widzi magazynu certyfikatów). Na komputerze z grą żadne z nich nie jest potrzebne.
+
+- Paczka ma pliki do dwukliku (`Zainstaluj`, `Odinstaluj`, `Wyłącz/Włącz lektora`, `Ustawienia`, `Test dźwięku`). Uruchamia je użytkownik według `docs/INSTRUKCJA.md` (kopia w paczce) oraz `docs/E6_W1_TEST.md` i `docs/E6_W2_TEST.md`.
 - Instalator Windows (`skrypty/lektor.ps1`) zapisuje stan w `stan/` paczki, a dzienniki loadera, pluginu i companiona trafiają do `logs/` paczki.
 - Plugin uruchamia companion (`python -I -m lektor.companion --config ustawienia.toml --logs logs --parent-pid <gra>`), a companion kończy się po zamknięciu gry (D59).
 - Pliki `.ps1` mają BOM: PowerShell 5.1 czyta plik bez BOM jako ANSI, a `ł` (bajt 0x82 w cp1250) staje się wtedy apostrofem.
