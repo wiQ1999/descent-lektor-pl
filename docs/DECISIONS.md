@@ -519,6 +519,63 @@ Plan etapów: [PLAN.md](PLAN.md).
 - Na Macu znajomego nic nie zostaje poza folderem: odinstalowanie to usunięcie folderu.
 - uv byłby tylko pośrednikiem, który pobiera ten sam Python.
 
+### D61 · 2026-11-04 · Sesja na Macu później, E7 startuje wcześniej
+**Decyzja:**
+- Sesja E6 na Macu odbędzie się później. Do tego czasu E6 zostaje otwarte tylko w tym kroku: paczka Mac jest gotowa i sprawdzona na atrapach.
+- E7 zaczynamy bez czekania na sesję na Macu.
+
+**Uzasadnienie:** Użytkownik nie ma teraz dostępu do Maca.
+
+### D62 · 2026-11-04 · Kampania znajomego w slocie 5, z niej zakres E7
+**Decyzja:**
+- Zapisy znajomego z Maca (jeden slot, 23,3 h, wersja gry 2.0.10) skopiowałem do nowego slotu `SavedGames\5` w folderze gry. Sloty 1–4 zostały bez zmian. Kopia robocza leży w `analysis/work/saves/mac-friend`.
+- Zakres E7 wyznacza ta kampania. Stan odczytuje `analysis/tools/campaign_state.py` (identyfikatory na konsolę, tytuły PL w `analysis/work/out/campaign_state.md`).
+  - Rozegrane: Q1, Q3, Q4 (`STORY_QUEST_4_S`), Q2, Q5, SQ1 oraz wydarzenia E3B, E4B, E4A i miejskie `CITY_EVENT_0`, `CITY_EVENT_4`, `CITY_EVENT_1`.
+  - Dostępne na mapie: scenariusze Q6, Q7, Q8 i wydarzenia E5B, EC3, EC1.
+
+**Uzasadnienie:**
+- Zapis to JSON. Gra wybiera najnowszy plik po nazwie i nie sprawdza wersji ani platformy przy wczytaniu (`SaveLoadController`).
+  - Pole `AssetBundleVersion` różni się między Makiem (3) i Windows (2), ale gra go nie porównuje.
+  - Nowy slot niczego nie nadpisuje. Wycofanie to usunięcie folderu `5`.
+- Synchronizacja z chmurą Asmodee działa tylko po zalogowaniu i rozpoznaje sloty po `SlotGUID`, więc slot znajomego nie koliduje z Twoimi.
+- Użytkownik chce nagrywać to, co grupa może teraz wybrać, a nie kolejny scenariusz po Q1.
+
+### D63 · 2026-11-04 · Zakres i kolejność E7
+**Decyzja:** E7 obejmuje wszystko, co jest dostępne na mapie (D62), z uwagami z E5 (D55). Kolejność:
+1. Przygotowanie:
+   - postacie poboczne z Q6–Q8 i wydarzeń oraz ich głosy (D41, QA z próbkami);
+   - ponowny dobór Ronana i Adelynn oraz ujednolicenie Kehli (D55);
+   - pozostałe czynności przygotowawcze.
+2. Test: pierwsze wydarzenie poboczne w całym cyklu (baza, audio, plugin, gra).
+3. Jeden duży blok autonomiczny: pozostałe scenariusze i wydarzenia oraz zaktualizowane paczki instalacyjne na Windows i Maca.
+
+**Uzasadnienie:** Wybór użytkownika w QA. Test na jednym wydarzeniu sprawdza cały cykl na małym zakresie, zanim ruszy duży blok.
+
+### D64 · 2026-11-04 · Odczyt celu z licznikiem i guzików ogólnych
+**Decyzja:**
+- Cel z licznikiem (D55 pkt 1): pierwszy raz lektor czyta cały tekst celu, a przy kolejnych zmianach sam licznik (np. „dwa z czterech”). Potrzebne są nagrania liczebników.
+- Okna z wyborem: lektor czyta wybrany guzik (D20), ale pomija guziki ogólne typu „Kontynuuj”. Przykładem jest pytanie o koniec rundy mroku (ruch wrogów). Treść okna czyta jak zawsze.
+
+**Uzasadnienie:** Wybór użytkownika w QA i uwaga z gry. Powtarzany cały cel i odczyt „Kontynuuj” nic nie wnoszą.
+
+### D65 · 2026-11-04 · Model w E7: OmniVoice (część D39)
+**Decyzja:** Scenariusze E7 generujemy OmniVoice, jak M1. O modelu dla całej gry (D39) decydujemy przy większym zakresie.
+
+**Uzasadnienie:**
+- Nowy tekst Q6–Q8 to ok. 89 tys. znaków, tyle co M1 (ok. 6–7 h GPU przy 0,235 s na znak z E3).
+- Głosy i jakość zostają takie jak w M1.
+
+### D66 · 2026-11-04 · E7: podróże i miasto w zakresie, test na E5B, odbiór na Macu
+**Decyzja:**
+- Zakres E7 (D63) obejmuje też wydarzenia podróży aktu 1 (ok. 32 tys. znaków, narrator) i teksty budynków w mieście (ok. 9 tys. znaków). Razem E7 to ok. 140 tys. znaków, czyli ok. 9–10 h GPU.
+- Test cyklu: wydarzenie E5B „Cena wiedzy” (Astarra i Syrus). Grasz je sam na Windows ze slotu 5.
+- Odbiór dużego bloku to gra ze znajomymi na Macu. Paczka Windows też musi być kompletna, ale bez osobnego testu odbioru.
+
+**Uzasadnienie:**
+- Podróże i miasto wypadają przy każdym wyjściu na Q6–Q8. Bez nich lektor milczałby w części gry.
+- E5B jest najkrótsze i sprawdza jednocześnie nowy głos NPC i głos bohatera z dubbingu.
+- Wybór użytkownika w QA.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -558,9 +615,9 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 | # | Kwestia | Stan |
 |---|---|---|
 | z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | usunięty poprawką MonoMod (D54): test D i wyjście po sesji E5 bez crasha; na Macu sprawdzimy w E6 |
-| – | Odczyt aktualizacji celu z licznikiem i nagrania liczników | QA przed E7 (D55) |
+| – | Odczyt aktualizacji celu z licznikiem i nagrania liczników | ustalony w D64, wykonanie w E7 |
 | – | Ponowny dobór głosów Ronana i Adelynn, ujednolicenie Kehli | przed scenariuszem, w którym mówią (D55, D41) |
 | – | Opis misji na mapie: nowe źródło w pluginie | E7 (D55) |
-| – | Własny punkt wejścia Doorstop przed startem Unity | działa na Windows (test W1, D58); na Macu sprawdzimy w sesji E6 |
-| – | Model dla całej gry | po E3, przed E7 (D39) |
+| – | Własny punkt wejścia Doorstop przed startem Unity | działa na Windows (test W1, D58); na Macu sprawdzimy w sesji E6, odłożonej (D61) |
+| – | Model dla całej gry | E7 na OmniVoice (D65); cała gra przy większym zakresie (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |
