@@ -29,6 +29,7 @@ SIM_MIN_S = 2.5         # krótsze nagrania mają w VoiceEncoderze systematyczni
 MIN_SPEECH_S = 0.15     # mniej mowy to pusty wynik (model czasem milczy przy tekstach z 1–3 znaków)
 CPS_RANGE = (0.6, 1.6)  # tempo poza tym zakresem względem oczekiwanego (fragmenty od 15 znaków)
 RETAKE_SLOWER = 0.1     # ucięta końcówka: ponowne podejście wolniej (D34)
+END_RMS, END_GAP = 0.08, 0.11   # mowa urwana przy końcu pliku (speech_end)
 
 
 def words(s):
@@ -98,11 +99,24 @@ def lost_chars(ref, hyp):
 
 
 def tail_cut(ref, hyp):
-    """Ostatnie słowo tekstu (dłuższe niż 2 znaki, inaczej dwa ostatnie) nie występuje w końcówce transkrypcji."""
+    """Ostatnie słowo tekstu nie występuje w końcówce transkrypcji. Krótkie słowo („i”) musi się zgadzać dokładnie (D43)."""
     if not ref:
         return False
-    last = [w for w in ref[-2:] if len(w) > 2] or ref[-1:]
-    return not any(similar(w, h) for w in last[-1:] for h in hyp[-4:])
+    last = ref[-1]
+    return last not in hyp[-3:] if len(last) <= 2 else not any(similar(last, h) for h in hyp[-4:])
+
+
+def speech_end(y, sr=16000):
+    """(poziom mowy w ostatnich 30 ms wobec głośnej mowy, cisza do końca pliku w s). Na M1: naturalny koniec opada
+    do ok. 0,04 przy 0,14 s ciszy, a mowa urwana na granicy wygenerowanego fragmentu kończy się ponad 0,08 przy 0,1 s."""
+    import librosa
+    import numpy as np
+    speech, (_, end) = librosa.effects.trim(y, top_db=40, frame_length=256, hop_length=64)
+    frame = int(0.03 * sr)
+    if len(speech) < 6 * frame:
+        return 0.0, 1.0
+    rms = librosa.feature.rms(y=speech, frame_length=frame, hop_length=frame // 2, center=False)[0]
+    return round(float(rms[-1] / (np.percentile(rms, 90) + 1e-9)), 3), round((len(y) - end) / sr, 3)
 
 
 def expected_cps(speed):
@@ -151,6 +165,7 @@ class Scorer:
         out = {'asr': hyp.strip(), **text_checks(text, hyp), 'speech_s': round(speech, 2),
                'cps': round(len(text) / max(speech, 0.05), 1), 'cps_ratio': round(len(text) / max(speech, 0.05) / expected_cps(speed), 2)}
         out['sim'] = round(float(self.embed(y) @ self.refs[voice]), 3) if speech >= 1.5 else None
+        out['end_rms'], out['end_gap'] = speech_end(y)
         return out
 
 
@@ -191,7 +206,7 @@ def problems(e, sim_median):
     out = []
     if e['cer'] > (MAX_CER if e['chars'] >= SHORT else MAX_CER_SHORT):
         out.append('cer')
-    if e['tail_cut']:
+    if e['tail_cut'] or (e.get('end_rms', 0) >= END_RMS and e.get('end_gap', 1) <= END_GAP):
         out.append('koncowka')
     if e['lost'] >= MAX_LOST:
         out.append('zgubiony_fragment')

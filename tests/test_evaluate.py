@@ -31,8 +31,9 @@ def test_merged_words_are_not_lost():
     assert r['lost'] < E.MAX_LOST
 
 
-def test_short_last_word_uses_previous():
-    assert not E.tail_cut(E.words('idź do niego i'), E.words('idź do niego'))
+def test_short_last_word_must_match():
+    assert E.tail_cut(E.words('idź do niego i'), E.words('idź do niego'))  # zgubione „i” z odsłuchu E3 (D43)
+    assert not E.tail_cut(E.words('idź do niego i'), E.words('idź do niego i'))
 
 
 def evals(**kw):
@@ -57,3 +58,16 @@ def test_takes_and_seeds():
     assert takes_for('brynn') == 3 and takes_for('narrator') == 1 and takes_for('adelynn') == 1
     assert seed_for('0d54849ee9f32833', 1) != seed_for('0d54849ee9f32833', 2)
     assert 0 <= seed_for('ffffffffffffffff', 9) < 2 ** 31
+
+
+def test_speech_cut_at_file_end_is_flagged():
+    import numpy as np
+    sr = 16000
+    t = np.arange(sr) / sr
+    tone = 0.5 * np.sin(2 * np.pi * 200 * t).astype(np.float32)
+    pad = np.zeros(int(0.1 * sr), np.float32)
+    fade = tone * np.clip((1 - t) * 3, 0, 1) ** 3
+    level, gap = E.speech_end(np.concatenate([tone, pad]), sr)
+    assert level >= E.END_RMS and gap <= E.END_GAP
+    level, gap = E.speech_end(np.concatenate([fade, pad, pad]), sr)
+    assert level < E.END_RMS or gap > E.END_GAP
