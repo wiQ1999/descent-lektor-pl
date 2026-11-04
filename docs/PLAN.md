@@ -282,7 +282,7 @@ E1 ──────────────────> E4 companion (z repla
 - Paczka Windows: 363 MB (zip 316 MB), Python 3.12.15 z bibliotekami, 978 nagrań M1. Skrypty sprawdzone na udawanym folderze gry, także z rozpakowanego zipa.
 - Test W2 przeszedł: instalacja z zipa według instrukcji, ustawienia, gra, wyłączenie i odinstalowanie (D59).
 - Paczka Mac: zip 328 MB. Skrypty przeszły `bash -n` i przebieg na udawanym macOS (atrapy `codesign`, `arch`, `pbcopy`): instalacja, wykrycie gry, przepodpisanie, start z lektorem i bez, aktualizacja gry, odmowa zgody, odinstalowanie.
-- Następny krok: sesja na Macu według [E6_MAC_TEST.md](E6_MAC_TEST.md).
+- Następny krok: sesja na Macu, odłożona (D61). Przy stole przejdzie razem z odbiorem E7, a instrukcję [E6_MAC_TEST.md](E6_MAC_TEST.md) zastąpi `E7_MAC_SESSION.md`.
 
 **Co wymaga Ciebie i znajomego:**
 - testy W1 i W2 na Windows;
@@ -290,24 +290,37 @@ E1 ──────────────────> E4 companion (z repla
 - zgoda „Zarządzanie aplikacjami” dla Terminala;
 - sesja przy stole.
 
-## E7 · Kolejne misje przyrostowo
+## E7 · Scenariusze dostępne w kampanii (Q6–Q8, wydarzenia, podróże, miasto)
 
-- przed startem: decyzja o modelu dla całej gry według czasu z E3 (D39);
-- SQ1 i kolejne misje;
-- nagrania wszystkich kwestii: inwentarz czyta też parametry węzłów łupu i testów (D49);
-- łup składany z fragmentów: nagłówki i nazwy z puli łupu misji (D51);
-- głosy pozostałych postaci projektowane od portretu (D41) po rozegraniu M1 z lektorem; docelowy głos systemowy;
-- wersje `VARIABLE_HERO` w głosach bohaterów (D17);
-- złoczyńcy (D19);
-- uwagi z sesji E5 (D55):
-  - odczyt aktualizacji celu z licznikiem (QA) i nagrania liczników;
-  - łup i zdobyte przedmioty czytane przez narratora;
-  - ujednolicona modulacja Kehli;
-  - ponowny dobór głosów Ronana i Adelynn;
-  - opis misji przy wyborze na mapie: hook w pluginie i nagrania;
-- procedura po aktualizacji gry: porównanie manifestu, diff kluczy, regeneracja zmienionych.
+Plan zaakceptowany 2026-11-04. Zakres wyznacza kampania znajomego w slocie 5 (D62). Decyzje: D61–D66. Wynik to kumulatywne wydanie M2 (M1 i E7 w jednej bazie), companion i plugin 0.4.0 oraz paczki na Windows i Maca.
 
-Każda misja przechodzi cykl E2 → E3 → test.
+**Zakres (nowy tekst, ok. 141 tys. znaków, ok. 10–11 h GPU):**
+- scenariusze Q6, Q7, Q8 ze scenami wstępu, zakończeń i podróży oraz scena „Triage Pre Q678”;
+- wydarzenia E5B, EC3, EC1;
+- podróże aktu 1 i teksty miasta;
+- wrogowie Q6–Q8 z pul losowania, pule łupu, liczniki celów, warianty `VARIABLE_HERO` (D17), opisy celów na mapie.
+
+**Faza A: przygotowanie (z QA):**
+- A1: zakres wydania w `scope.py`, baza M2, przejmowanie gotowych fragmentów z M1, inwentarz z węzłów łupu i testów (D49);
+- A2: obsada, trzy rundy QA z próbkami:
+  1. Astarra, Adelynn, Ronan, Kehli;
+  2. Kathryn, Poruczniczka Rand, Mistrz Bruli, Xenith;
+  3. Herbie, Szaman Mok, Książę Banita.
+
+  Na końcu QA o odblokowaniach po Q6–Q8;
+- A3: companion: licznik i guziki ogólne (D64), warianty bohatera, łup (D51), opis misji, nowe przełączniki;
+- A4: plugin 0.4.0, opis misji z `DestinationDetails` (D55 pkt 5);
+- A5: test cyklu na E5B na Windows (slot 5), instrukcja `docs/E7_E5B_TEST.md`.
+
+**Faza B: blok autonomiczny (bez QA):** pełna baza M2, generowanie z kontrolą uciętych końcówek, raporty `analysis/E7_DATA.md` i `analysis/E7_AUDIO.md`, replay bez regresji M1, paczki Windows i Mac, instrukcja `docs/E7_MAC_SESSION.md`.
+
+**Faza C: odbiór:** gra ze znajomymi na Macu (D66). Sesja zamyka też E6 na Macu (D61).
+
+**Później (bez zmian):**
+- złoczyńcy przy ich misjach (D19);
+- docelowy głos systemowy;
+- procedura po aktualizacji gry: porównanie manifestu, diff kluczy, regeneracja zmienionych;
+- kolejne scenariusze: ten sam cykl dla tego, co odblokuje kampania.
 
 ## E8 · Opcjonalnie
 
