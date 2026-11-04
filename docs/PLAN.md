@@ -281,7 +281,8 @@ E1 ──────────────────> E4 companion (z repla
 - Kroki 1–3 zrobione. Test W1 przeszedł: loader i autostart działają, wyjście bez crasha (D58, D59).
 - Paczka Windows: 363 MB (zip 316 MB), Python 3.12.15 z bibliotekami, 978 nagrań M1. Skrypty sprawdzone na udawanym folderze gry, także z rozpakowanego zipa.
 - Test W2 przeszedł: instalacja z zipa według instrukcji, ustawienia, gra, wyłączenie i odinstalowanie (D59).
-- Następny krok: paczka na Maca.
+- Paczka Mac: zip 328 MB. Skrypty przeszły `bash -n` i przebieg na udawanym macOS (atrapy `codesign`, `arch`, `pbcopy`): instalacja, wykrycie gry, przepodpisanie, start z lektorem i bez, aktualizacja gry, odmowa zgody, odinstalowanie.
+- Następny krok: sesja na Macu według [E6_MAC_TEST.md](E6_MAC_TEST.md).
 
 **Co wymaga Ciebie i znajomego:**
 - testy W1 i W2 na Windows;
