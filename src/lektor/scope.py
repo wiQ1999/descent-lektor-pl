@@ -32,9 +32,9 @@ DESTINATIONS = (('d3/coreset/data', 'QuestModel', '_keyName', '_descKey'),
                 ('d3/narrativeevents', 'NarrativeEventModel', '_keyName', '_keyDesc'))
 LOOT_TEMPLATES = ('GAIN_PHYSICAL_TREASURE', 'GAIN_DIGITAL_TREASURE', 'NO_ITEM_BACKUP', 'NO_RECIPE_BACKUP', 'CONSUMABLE_BACKUP',
                   'CONSUMABLE_BACKUP_MULTIPLE', 'REMOVE_ENTITY', 'UI_GOLD', 'UI_RECIPE')
-LOOT_BUNDLES = ('d3/items', 'd3/heroes')
+LOOT_BUNDLES = ('d3/items', 'd3/loot', 'd3/recipes')
 LOOT_MODELS = {'ArmorModel', 'ConsumableModel', 'TrinketModel', 'CraftingMaterialModel', 'WeaponPartsModel', 'LootModel',
-               'SkillModel', 'FeatModel'}
+               'RecipeModel'}
 OBJECTIVE_PREFIXES = ('Q1_OBJECTIVE_', 'Q8_OBJECTIVE_', 'Q_FOF_OBJECTIVE_', 'Q_LISB_OBJECTIVE_')
 # EnemyThemeTraits (flagi) do kryteriów losowania wrogów (EnemyFilter).
 THEMES = {'Undead': 4, 'Dragonkind': 8, 'Uthuk': 0x10, 'UndeadFaction': 0x80000, 'UthukFaction': 0x100000,

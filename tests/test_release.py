@@ -5,7 +5,7 @@ import sqlite3
 
 import pytest
 
-from lektor import build, paths
+from lektor import build, game, paths, scope
 
 pytestmark = pytest.mark.skipif(not os.environ.get('LEKTOR_GAME_TESTS'), reason='potrzebna kopia gry i baza M1')
 
@@ -16,6 +16,13 @@ def rows(path, query):
         return set(con.execute(query))
     finally:
         con.close()
+
+
+def test_loot_covers_item_kinds():
+    g = game.Game()
+    terms = g.terms()
+    assert len(scope.loot_keys(g, terms)) > 200
+    assert len(build.loot_texts(g, terms)) > 300
 
 
 def test_m1_build_is_unchanged(tmp_path):
