@@ -56,7 +56,7 @@ Uruchom grę zwykłym przyciskiem *Graj* w Steam. Lektor startuje razem z grą i
 2. Zmień wartości:
    - `volume`: głośność lektora od `0.0` do `1.0`;
    - `device`: głośnik albo słuchawki. Puste `""` oznacza urządzenie domyślne systemu. Możesz wpisać fragment nazwy urządzenia, np. `"Headphones"`;
-   - sekcja `[toggles]`: `false` wycisza daną kategorię, np. `ui = false` wyłącza komunikaty interfejsu.
+   - sekcja `[toggles]`: `false` wycisza daną kategorię, np. `ui = false` wyłącza komunikaty interfejsu, a `opis_misji = false` wyłącza odczyt nazwy i opisu misji na mapie.
 3. Zapisz plik (Ctrl+S). Zmiany działają od następnego uruchomienia gry.
 4. Uruchom `Test dźwięku.cmd`. Test sprawdza też, czy w pliku nie ma błędu.
 
