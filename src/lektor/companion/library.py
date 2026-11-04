@@ -170,9 +170,15 @@ class Library:
                 u.missing += inner.missing if inner.via else ['luka:%s' % seg['arg_type']]
             return
         shown = squash(N.normalize(N.clean_markup(SPRITE.sub('', arg.get('value') or ''))))
-        for fid in table.values():
+        for value, fid in table.items():
             if fid and shown and squash(self.frag_text.get(fid)) == shown:
                 self._add(u, fid)
+                return
+            line = self.lines.get(value) if not fid and shown else None
+            if line and squash(line['text_norm']) == shown:     # gra podała tekst wartości będącej kwestią (nazwa celu)
+                inner = self.resolve(value, (), None, depth + 1)
+                u.pieces += inner.pieces
+                u.missing += inner.missing
                 return
         u.missing.append('luka:%s' % (seg['arg_type'] or arg.get('type')))
 

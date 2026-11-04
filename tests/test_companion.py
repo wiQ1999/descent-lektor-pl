@@ -170,6 +170,11 @@ def test_loot_with_unknown_name_is_partial(lib):
     assert fids(u) == ['f_gold'] and u.missing == ['luka:RawText']
 
 
+def test_line_value_matched_by_shown_text(lib):
+    u = lib.resolve('NEW_GOAL', [{'i': 0, 'type': 'VariableString', 'as_key': '', 'value': 'Znajdź klucz.'}])
+    assert fids(u) == ['f_goal'] and not u.missing
+
+
 def test_list_of_all_args(lib):
     u = lib.resolve('SPAWN_MULTI', [entity('<sprite=0>ENEMY_BANDIT'), entity('<sprite=0>ENEMY_WITCH')])
     assert u.pieces == [['f_enemy', 0.1], ['f_bandit', LIST_GAP], ['f_witch', 0.0]]

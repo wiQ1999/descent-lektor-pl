@@ -146,11 +146,11 @@ def sources(game, act1, group):
 
 
 def destination_keys(game, terms):
-    """Nazwy i opisy celów aktu 1 z panelu mapy (D55 pkt 5)."""
+    """(klucz nazwy, klucz opisu) celów aktu 1 z panelu mapy (D55 pkt 5)."""
     for bundle, cls, name, desc in DESTINATIONS:
         for _, t, c in game.behaviours(bundle):
             if c == cls and t.get('_act') == 0:
-                yield from (k for k in (t.get(name), t.get(desc)) if k and (terms.get(k) or {}).get('text'))
+                yield tuple(k if k and (terms.get(k) or {}).get('text') else None for k in (t.get(name), t.get(desc)))
 
 
 def loot_keys(game, terms):
@@ -210,8 +210,10 @@ def collect(game, terms, release='m1', only=None):
         for gr in graphs:
             take(gr, group)
     if 'map' in extra:
-        for k in destination_keys(game, terms):
+        destinations = list(destination_keys(game, terms))
+        for k in (k for pair in destinations for k in pair if k):
             group_of.setdefault(k, 'map')
+        var_keys['destname'] |= {name for name, _ in destinations if name}     # pytanie o cel podróży (GO_TO_DESTINATION)
     extra_strings = {s for gr in extra_graphs for s in G.walk_strings(gr['graph']) if UPPER.match(s)}
     if extra_graphs:
         extra_refs = set().union(*(gr['refs'] for gr in extra_graphs))
