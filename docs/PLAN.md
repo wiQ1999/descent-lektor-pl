@@ -314,6 +314,8 @@ Plan zaakceptowany 2026-11-04. Zakres wyznacza kampania znajomego w slocie 5 (D6
 
 Zakres po QA (D69): dochodzą E6A, E7A, E8A, E8B, EC2, EC4, SQ1A, E5A i scena przed Q9. Q9 i SQ2 zostają na kolejny etap.
 
+Test E5B zaliczony 2026-11-05, poprawki w D70. Pełna baza M2: 2349 kluczy, 3919 fragmentów, 283 tys. znaków. Do wygenerowania 241 tys. znaków z podejściami, ok. 16 h GPU.
+
 **Faza B: blok autonomiczny (bez QA):** pełna baza M2, generowanie z kontrolą uciętych końcówek, raporty `analysis/E7_DATA.md` i `analysis/E7_AUDIO.md`, replay bez regresji M1, paczki Windows i Mac, instrukcja `docs/E7_MAC_SESSION.md`.
 
 **Faza C: odbiór:** gra ze znajomymi na Macu (D66). Sesja zamyka też E6 na Macu (D61).

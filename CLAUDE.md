@@ -81,6 +81,15 @@ Audio M1 (E3). Generowanie w środowisku OmniVoice (pakiet `lektor` zainstalowan
 .venv/Scripts/python -I -m lektor audio-report # analysis/E3_AUDIO.md
 ```
 
+Wydanie M2 (E7): te same komendy z `--release m2` (domyślnie `m1`). Baza to `analysis/work/lektor/m2.sqlite`, audio `analysis/work/audio/m2/`, raporty `analysis/E7_DATA.md` i `analysis/E7_AUDIO.md`.
+
+- `build --release m2 --only event_e5b map` buduje tylko wybrane grupy spoza M1.
+- `generate --release m2` przejmuje z `audio/m1` fragmenty o tym samym id i liczy resztę.
+- Po `select` powtarzamy `generate --retake`, `evaluate`, `select` do trzech razy, potem `finalize`.
+- W M2 cytat w opcji czyta bohater okna, a fragmenty mają imię zapisane fonetycznie (`normalize.pronounce`, D70). M1 buduje się bez zmian.
+
+Głosy NPC (D41): `analysis/tools/npc_voices.py` z poleceniami `portrait, scan, mix, select, rasp, tremor, clone, refresh, stats, adopt`. `refresh rN` odświeża stronę odsłuchu bez modelu.
+
 Plugin (referencje do DLL z kopii gry w `analysis/work/game`, wynik w `build/plugin/`):
 
 ```bash
@@ -141,3 +150,5 @@ Companion (E4). Konfiguracja w `%LOCALAPPDATA%\LektorPL\companion.toml` (tworzon
 | [analysis/E3_AUDIO.md](analysis/E3_AUDIO.md) | audio M1 (E3): czas generowania na znak, wyniki automatu, odsłuch, pokrycie kluczy, koszt całej gry |
 | [analysis/E4_COMPANION.md](analysis/E4_COMPANION.md) | companion i plugin 0.2.0 (E4): budowa, zasady odtwarzania, pokrycie i opóźnienia z replayu E1, braki bazy M1 |
 | [analysis/E5_TEST.md](analysis/E5_TEST.md) | sesja M1 z lektorem (E5): D13 w grze, okna i odczyty, braki, wydajność, uwagi z gry (D55) |
+| [analysis/E7_DATA.md](analysis/E7_DATA.md) | baza kwestii M2 (E7): liczności, luki `{n}`, pokrycie wartości, szacunek generowania |
+| [analysis/E7_AUDIO.md](analysis/E7_AUDIO.md) | audio M2 (E7): czas na znak, wyniki automatu, pokrycie kluczy |
