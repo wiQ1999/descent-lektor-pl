@@ -586,6 +586,16 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Wybór z odsłuchu. Liczby (F0, rozrzut) były tylko podpowiedzią. Sekcja z wybranymi głosami pozwala sprawdzić, czy rodzaj głosu się nie powtarza.
 
+### D68 · 2026-11-05 · E7: obsada, rundy 1b, 2 i 3
+**Decyzja:**
+- Ronan: `ronan_d1_s29`, bez dodatkowej chrypy. Referencja ma urywane frazy. Ronan dostaje 3 podejścia na fragment, bo taka referencja czasem daje powtórzenie.
+- Kathryn: `kathryn_d3_s29`. Poruczniczka Rand: `ltrand_d3_s29`. Mistrz Bruli: `bruli_d2_s29`.
+- Herbie: `herbie_d4_s5`. Szaman Mok: `mok_d3_s5`. Książę Banita: `outlaw_d2_s17`.
+- Xenith: klon z dubbingu (jak D19).
+- Automat dostaje regułę pauzy (ponad 1,2 s w środku kwestii), a fragment z wadą ma do 3 ponownych podejść zamiast jednego.
+
+**Uzasadnienie:** Wybór z odsłuchu. W pierwszej kwestii Ronana użytkownik usłyszał za długą pauzę i powtórzenie, a ASR dał tam CER 0,064, poniżej progu 0,08. Kolejne podejścia wyszły z CER 0. W teście E5B jedno ponowne podejście zostawiło ucięte końcówki u Astarry.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -626,7 +636,6 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 |---|---|---|
 | z | Crash przy wyjściu do pulpitu z loaderem (`mono_jit_cleanup`) | usunięty poprawką MonoMod (D54): test D i wyjście po sesji E5 bez crasha; na Macu sprawdzimy w E6 |
 | – | Odczyt aktualizacji celu z licznikiem i nagrania liczników | ustalony w D64, wykonanie w E7 |
-| – | Głos Ronana | runda 1b w toku (D67); Adelynn i Kehli rozstrzygnięte |
 | – | Opis misji na mapie: nowe źródło w pluginie | E7 (D55) |
 | – | Własny punkt wejścia Doorstop przed startem Unity | działa na Windows (test W1, D58); na Macu sprawdzimy w sesji E6, odłożonej (D61) |
 | – | Model dla całej gry | E7 na OmniVoice (D65); cała gra przy większym zakresie (D39) |
