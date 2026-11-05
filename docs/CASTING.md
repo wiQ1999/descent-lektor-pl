@@ -28,7 +28,6 @@ Narzędzie: `analysis/tools/npc_voices.py` (portret, pula kandydatów, wybór 4 
 |---|---|---|---|---|---|---|
 | `adelynn` | `BARONESS_ADELYNN` | starsza kobieta, szlachcianka, bardzo poukładana; mówi zbyt pewnie siebie, szlacheckim tonem | `female, elderly, low pitch` | 11 | wyniosłe zdanie o rodzie, 9,5 zn./s; 9,2 s, SHA `a5b7bc13` | wybrana 2026-11-01 (kandydat 1 z 4, ok. 180 Hz); po E5 do ponownego doboru (D55) |
 | `ronan` | `RONAN` | potężny wojownik jak wiking, jasna broda, pandka na ramieniu; głos niski, urywany | `male, elderly, very low pitch` | 29 | urywane frazy, 7,5 zn./s; 9,5 s, SHA `c7fccc1c` | wybrany w QA E7 (D68), 3 podejścia na fragment; M1 miało inny głos |
-
 | `astarra` | `ASTARRA` | dojrzała czarodziejka z kosturem, surowe spojrzenie; mówi stanowczo i chłodno | `female, elderly, moderate pitch` | 5 | wyniosłe zdanie w stylu Adelynn, 10,5 zn./s; 9,4 s, SHA `ec7dbea1` | wybrany w QA E7 (D67), kandydat `adelynn_d3_s5` |
 | `kathryn` | `KATHRYN` | duch młodej kobiety w podartej sukni; smutny, zawodzący | `female, young adult, low pitch` | 29 | zdanie w stylu postaci; 8,5 s, SHA `105babf2` | wybrany w QA E7 (D68) |
 | `ltrand` | `LTRAND` | młoda oficerka w zbroi; rzeczowa, głos dowódcy | `female, young adult, moderate pitch` | 29 | zdanie w stylu postaci; 7,8 s, SHA `eb5ebaf4` | wybrany w QA E7 (D68) |
