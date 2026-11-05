@@ -9,7 +9,7 @@ from . import direction as D
 from . import game as G
 from . import segment as S
 from .companion.library import LOOT, squash
-from .normalize import cardinal, clean_markup, normalize
+from .normalize import cardinal, clean_markup, normalize, pronounce
 
 PIECE_GAP = 0.06    # sklejanie kawałka szablonu z wartością luki (D16)
 QUOTE_GAP = 0.15    # cytat bohatera → opis narratora (D20)
@@ -28,7 +28,12 @@ def choice_hero(key):
     return next((v for h, v in scope.HEROES.items() if h in parts), None)
 
 
-def line_parts(r):
+def window_hero(r):
+    """Bohater, który mówi w oknie opcji. Mówca NPC to rozmówca, cytat nie należy do niego (D70)."""
+    return next((scope.HEROES[s] for s in r['speakers'] if s in scope.HEROES), None)
+
+
+def line_parts(r, release='m1'):
     """Części kwestii: (rodzaj, głos, tekst albo dane luki)."""
     norm = r['text_norm']
     if r['category'] == 'opcja_wyboru':
@@ -36,7 +41,7 @@ def line_parts(r):
         choice = S.choice_parts(norm)
         if choice:
             quote, desc, hero = choice
-            hero = hero or choice_hero(r['key'])
+            hero = hero or choice_hero(r['key']) or (window_hero(r) if release != 'm1' else None)
             if not hero:
                 r['note'] = 'cytat bez rozpoznanego bohatera'
             parts = [('quote', hero or 'narrator', quote)]
@@ -88,6 +93,7 @@ def build(path=None, release='m1', only=None):
     fragments, segments, slot_values = {}, [], {}
 
     def frag(voice, text, speed, kind):
+        text = text if release == 'm1' else pronounce(text)
         tag = voice + ('@' + refs[voice]['sha'][:8] if voice in refs else '')
         fid = D.fragment_id(tag, text, speed)
         fragments.setdefault(fid, {'id': fid, 'voice': voice, 'speed': speed, 'text': text, 'kind': kind})
@@ -102,7 +108,7 @@ def build(path=None, release='m1', only=None):
         r['speed'], r['pause'] = D.tempo(r['category'], r['chars'])
         # Wartości luk są krótkie i wspólne dla wielu kwestii: jedno tempo (D34 dla krótkiego fragmentu).
         value_speed = None if r['speed'] is None else D.SPEED_MIN
-        parts = line_parts(r)
+        parts = line_parts(r, release)
         for idx, (kind, voice, data) in enumerate(parts):
             nxt = parts[idx + 1][0] if idx + 1 < len(parts) else None
             gap = None if nxt is None else QUOTE_GAP if kind == 'quote' else \

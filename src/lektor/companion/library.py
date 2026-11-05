@@ -67,7 +67,7 @@ class Library:
         self.values = {}
         for r in con.execute('SELECT key, arg, value, fragment FROM slot_values'):
             self.values.setdefault((r['key'], r['arg']), {})[r['value']] = r['fragment']
-        self.frag_text = {r['id']: r['text'] for r in con.execute('SELECT id, text FROM fragments')}
+        self.frag_text = {r['id']: N.pronounce(r['text']) for r in con.execute('SELECT id, text FROM fragments')}
         con.close()
         self.loot = self.values.get((LOOT, 0), {})
         self.generic = {k for k, v in self.lines.items() if v['category'] == 'opcja_wyboru' and squash(v['text_norm']) in GENERIC_CHOICES}
@@ -169,7 +169,7 @@ class Library:
                 u.nested += [cand] + inner.nested
                 u.missing += inner.missing if inner.via else ['luka:%s' % seg['arg_type']]
             return
-        shown = squash(N.normalize(N.clean_markup(SPRITE.sub('', arg.get('value') or ''))))
+        shown = squash(N.pronounce(N.normalize(N.clean_markup(SPRITE.sub('', arg.get('value') or '')))))
         if not shown and not arg.get('as_key'):
             return      # gra zostawiła lukę pustą (łup bez nagłówka)
         for value, fid in table.items():

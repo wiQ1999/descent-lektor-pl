@@ -31,6 +31,7 @@ FRAGMENTS = {           # id: (tekst, sekundy)
     'f_gold': ('złoto', 0.25),
     'f_fifteen': ('piętnaście', 0.25),
     'f_potion': ('mikstura zdrowia', 0.25),
+    'f_keli': ('Keli', 0.25),
     'f_map_name': ('Cena wiedzy', 0.25),
     'f_map_desc': ('Stara wieża czeka.', 0.5),
 }
@@ -79,7 +80,7 @@ SEGMENTS = [    # klucz, idx, rodzaj, luka, typ luki, fragment, pauza po
     ('MAP_DESC', 0, 'text', None, None, 'f_map_desc', 0.0),
 ]
 VALUES = [
-    ('SPAWN', 0, 'ENEMY_BANDIT', 'f_bandit'), ('SPAWN', 0, 'ENEMY_WITCH', 'f_witch'),
+    ('SPAWN', 0, 'ENEMY_BANDIT', 'f_bandit'), ('SPAWN', 0, 'ENEMY_WITCH', 'f_witch'), ('SPAWN', 0, 'HERO_KEHLI', 'f_keli'),
     ('SPAWN_MULTI', -1, 'ENEMY_BANDIT', 'f_bandit'), ('SPAWN_MULTI', -1, 'ENEMY_WITCH', 'f_witch'),
     ('COUNT', 0, '3', 'f_three'),
     ('NEW_GOAL', 0, 'GOAL', None),
@@ -178,6 +179,11 @@ def test_empty_slot_is_not_missing(lib):
 def test_line_value_matched_by_shown_text(lib):
     u = lib.resolve('NEW_GOAL', [{'i': 0, 'type': 'VariableString', 'as_key': '', 'value': 'Znajdź klucz.'}])
     assert fids(u) == ['f_goal'] and not u.missing
+
+
+def test_value_spelled_phonetically_matches_text_from_game(lib):
+    u = lib.resolve('SPAWN', [{'i': 0, 'type': 'EntityName', 'as_key': '', 'value': 'Kehli'}])
+    assert fids(u)[-1] == 'f_keli' and not u.missing
 
 
 def test_list_of_all_args(lib):

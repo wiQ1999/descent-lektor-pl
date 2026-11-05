@@ -334,22 +334,24 @@ namespace LektorPL.Core
             _objectiveText = text;
         }
 
-        // Mapa ustawia CurrentNode przy otwarciu panelu celu i czyści przy zamknięciu.
+        // Mapa ustawia CurrentNode przy otwarciu panelu celu, ale po zamknięciu panelu go nie czyści:
+        // o tym, że cel jest wybrany, decyduje widoczność panelu (D70).
         private void PollDetails()
         {
             if (Time.unscaledTime < _nextDetailsCheck) return;
             _nextDetailsCheck = Time.unscaledTime + _options.ObjectiveInterval;
             var node = SingletonBehaviour<WorldMapSceneController>.IsInitialized
                 ? SingletonBehaviour<WorldMapSceneController>.Instance.CurrentNode : null;
+            var panel = SingletonBehaviour<UIGame>.IsInitialized ? SingletonBehaviour<UIGame>.Instance.DestinationDetails : null;
+            if (node != null && (panel == null || !panel.IsVisible)) node = null;
             if (node == _detailsNode) return;
             if (_detailsNode != null)
                 _log.Write(_log.New("close").Str("kind", "details").Str("via", "poll"));
             _detailsNode = node;
             var model = node != null ? node.Model : null;
             if (model == null) return;
-            var panel = SingletonBehaviour<UIGame>.IsInitialized ? SingletonBehaviour<UIGame>.Instance.DestinationDetails : null;
             _log.Write(_log.New("details").Str("key", model.DescKey).Str("name_key", model.NameKey)
-                .Str("text", panel != null && panel.TextDescription != null ? panel.TextDescription.text : null));
+                .Str("text", panel.TextDescription != null ? panel.TextDescription.text : null));
         }
 
         private void PollActivation()

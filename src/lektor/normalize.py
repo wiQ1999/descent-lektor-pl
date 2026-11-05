@@ -296,6 +296,11 @@ def _icons(text):
     return re.sub(r'(?:(\w+)\s+)?\x01(TERM_[A-Z_]+)\x01', standalone, text)
 
 
+def pronounce(text):
+    """Zapis fonetyczny do syntezy (D70): okno gry dalej ma „Kehli”, model czyta „Keli”."""
+    return re.sub(r'(?<!\w)KEHL', 'KEL', re.sub(r'(?<!\w)([Kk])ehl', r'\1el', text))
+
+
 def normalize(text, drop_directions=True):
     text = clean_markup(text or '')
     if drop_directions:

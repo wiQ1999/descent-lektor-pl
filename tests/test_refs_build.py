@@ -48,6 +48,25 @@ def test_line_parts_choice_without_quote_is_narrator():
     assert build.line_parts(r) == [('text', 'narrator', 'Otwórz drzwi.')]
 
 
+def test_line_parts_quote_takes_hero_of_the_window_in_m2():
+    r = line('E_TEST_31_32A', 'opcja_wyboru', '„Idziemy dalej”.')
+    r['speakers'] = ['SYRUS']
+    assert build.line_parts(r)[0][1] == 'narrator'      # M1 bez zmian
+    assert build.line_parts(r, 'm2')[0][:2] == ('quote', 'syrus')
+
+
+def test_line_parts_quote_in_npc_window_stays_narrator():
+    r = line('E_TEST_13F', 'opcja_wyboru', '„Idziemy dalej”.')
+    r['speakers'] = ['MASTERBRULI', 'MASTERFLINT']
+    assert build.line_parts(r, 'm2')[0][1] == 'narrator'
+
+
+def test_line_parts_option_without_quote_stays_narrator_in_m2():
+    r = line('E_TEST_18_19K', 'opcja_wyboru', 'Test: otwórz drzwi.', voice='narrator')
+    r['speakers'] = ['VAERIX']
+    assert build.line_parts(r, 'm2') == [('text', 'narrator', 'Test: otwórz drzwi.')]
+
+
 def test_line_parts_template_splits_long_text():
     long = ('Bardzo długie zdanie szablonu, które się powtarza. ' * 8).strip()
     r = line('X', 'komunikat_questu', long + ' Teraz {0}.', args=[{'type': 'EntityName', 'ref': 'EnemyGUID'}])

@@ -40,6 +40,12 @@ def test_line_breaks_become_sentences():
     assert normalize('Pytanie?\nOdpowiedź') == 'Pytanie? Odpowiedź'
 
 
+def test_pronounce_spells_name_phonetically():
+    from lektor.normalize import pronounce
+    assert pronounce('Kehli i kehli, KEHLI oraz Kehlik.') == 'Keli i keli, KELI oraz Kelik.'
+    assert pronounce('Bez zmian: Akehli.') == 'Bez zmian: Akehli.'
+
+
 def test_number_words():
     assert cardinal(21) == 'dwadzieścia jeden'
     assert cardinal(2, 'acc', 'f') == 'dwie'

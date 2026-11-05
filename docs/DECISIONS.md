@@ -605,6 +605,17 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Lektor nie powinien milknąć zaraz po ukończeniu scenariuszy ani w wydarzeniach, które mogą wypaść przy stole. Scenariuszy, które trzeba dopiero wybrać na mapie, generujemy dopiero wtedy, gdy będą dostępne. Pierwszy szacunek SQ2 był błędny, więc decyzję podjęto po sprostowaniu.
 
+### D70 · 2026-11-05 · E7: wyniki testu E5B
+**Wynik testu w grze:** opis misji czytany poprawnie, głosy brzmią dobrze, „Kontynuuj” bez odczytu, gra działa płynnie. Trzy poprawki przed blokiem B.
+
+**Decyzja:**
+- Opis misji milknie po zamknięciu panelu celu. Plugin 0.4.1 sprawdza widoczność panelu, bo `CurrentNode` zostaje ustawiony po zamknięciu.
+- Cytat w opcji wyboru w M2 czyta bohater, który mówi w oknie (rozszerza D20). Mówca NPC to rozmówca, więc jego cytat zostaje przy narratorze. Opcje bez cudzysłowu też zostają przy narratorze, bo wśród nich są opisy testów i odpowiedzi skierowane do mówcy.
+- Fragmenty M2 mają imię zapisane fonetycznie: „Keli” zamiast „Kehli”. Okno gry i `text_norm` zostają bez zmian, a companion porównuje tekst luki po tej samej zamianie. M1 się nie zmienia.
+- Kampania znajomego wróciła do slotu 5 po teście (8 z 8 plików identycznych). Stan po teście leży w `analysis/work/saves/slot5-po-e5b`.
+
+**Uzasadnienie:** To uwagi użytkownika z testu. Zmiana imienia dotyczy 108 fragmentów (ok. 12 700 znaków), które powstaną w bloku B razem z resztą. Poprawkę panelu sprawdzimy dopiero w grze, przy sesji na Macu.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
