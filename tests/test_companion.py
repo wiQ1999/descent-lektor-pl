@@ -170,6 +170,11 @@ def test_loot_with_unknown_name_is_partial(lib):
     assert fids(u) == ['f_gold'] and u.missing == ['luka:RawText']
 
 
+def test_empty_slot_is_not_missing(lib):
+    u = lib.resolve('NEW_GOAL', [{'i': 0, 'type': 'VariableString', 'as_key': None, 'value': ''}])
+    assert not u.missing
+
+
 def test_line_value_matched_by_shown_text(lib):
     u = lib.resolve('NEW_GOAL', [{'i': 0, 'type': 'VariableString', 'as_key': '', 'value': 'Znajdź klucz.'}])
     assert fids(u) == ['f_goal'] and not u.missing

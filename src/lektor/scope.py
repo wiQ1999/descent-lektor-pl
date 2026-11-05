@@ -19,7 +19,9 @@ RANDOM_ENEMY_NAMES = ('ENEMY_BANDIT_1_SING', 'ENEMY_ZEALOT_1_SING', 'ENEMY_FAE_S
 # Nazwy wrogów w argumentach EntityName widziane w E1, których nie ma w modelach wrogów z zakresu (boss).
 E1_ENTITY_NAMES = RANDOM_ENEMY_NAMES + ('ENEMY_BERSERKER_SING', 'ENEMY_BLOOD_SISTER_1_SING')
 # Argumenty dodawane przez kod gry, nie przez graf (E1): klucz → argumenty.
-CODE_ARGS = {'DEFAULT_SPAWN_ENEMY_MULTI': [{'type': 'EntityName', 'ref': None}]}
+CODE_ARGS = {'DEFAULT_SPAWN_ENEMY_MULTI': [{'type': 'EntityName', 'ref': None}],
+             'DEFAULT_GET_TREASURE_MULTI': [{'type': 'LocalizationKey', 'ref': None}, {'type': 'RawText', 'ref': None}]}
+CODE_KEYS = ('DEFAULT_GET_TREASURE_MULTI',)     # kwestie spoza grafów, które gra wybiera w kodzie (łup z kilku pozycji, D51)
 GROUPS = ('cutscene_01', 'story_q1', 'welcome_home', 'scene_q1', 'enemies', 'system')
 # Scenariusz: bundel sceny i przedrostek grafów wstępu, zakończeń i podróży w d3/act1.
 QUESTS = {'q6': ('d3/quests/box1/story/q6', 'TANGERINE Q6 '), 'q7': ('d3/quests/box1/story/q7', 'TANGERINE Q7 '),
@@ -208,6 +210,9 @@ def collect(game, terms, release='m1', only=None):
     for gr in game.graphs('d3/gamereq'):
         take(gr, 'system')
 
+    if extra:
+        for k in CODE_KEYS:
+            group_of.setdefault(k, 'system')
     extra_graphs = []
     for group in extra:
         graphs = sources(game, act1, group)

@@ -142,11 +142,11 @@ def test_dev_rebuild_keeps_state_logs_and_settings(fake):
     dest = str(fake / 'dev')
     B.build('win', dev=True, out=dest)
     os.makedirs(os.path.join(dest, 'stan'))
-    for name, text in (('stan/instalacja.txt', 'game=x'), ('logs/hook-1.jsonl', '{}'), ('ustawienia.toml', 'volume = 0.5\n')):
+    for name, text in (('stan/instalacja.txt', 'game=x'), ('logs/hook-1.jsonl', '{}'), ('ustawienia.toml', 'volume = 0.5\n' + B.settings_text(True))):
         with open(os.path.join(dest, name), 'w', encoding='utf-8') as fh:
             fh.write(text)
     B.build('win', dev=True, out=dest)
-    assert open(os.path.join(dest, 'ustawienia.toml'), encoding='utf-8').read() == 'volume = 0.5\n'
+    assert open(os.path.join(dest, 'ustawienia.toml'), encoding='utf-8').read().startswith('volume = 0.5\n')
     assert os.path.exists(os.path.join(dest, 'logs', 'hook-1.jsonl')) and os.path.exists(os.path.join(dest, 'stan', 'instalacja.txt'))
 
 
@@ -155,3 +155,18 @@ def test_bad_download_sum_stops_build(fake, monkeypatch):
     monkeypatch.setattr(B, 'pins', lambda: {'doorstop': {'win': bad}})
     with pytest.raises(SystemExit, match='SHA-256'):
         B.build('win', dev=True, out=str(fake / 'out'))
+
+
+def test_dev_settings_follow_release(tmp_path):
+    from lektor import bundle, paths
+    old = paths.RELEASE
+    path = tmp_path / 'ustawienia.toml'
+    try:
+        paths.use('m1')
+        path.write_text('db = "%s"' % paths.DB.replace('\\', '/'), encoding='utf-8')
+        assert bundle.keep_settings(str(path), True)
+        assert not bundle.keep_settings(str(path), False)
+        paths.use('m2')
+        assert not bundle.keep_settings(str(path), True)
+    finally:
+        paths.use(old)

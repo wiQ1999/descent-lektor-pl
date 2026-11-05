@@ -170,6 +170,8 @@ class Library:
                 u.missing += inner.missing if inner.via else ['luka:%s' % seg['arg_type']]
             return
         shown = squash(N.normalize(N.clean_markup(SPRITE.sub('', arg.get('value') or ''))))
+        if not shown and not arg.get('as_key'):
+            return      # gra zostawiła lukę pustą (łup bez nagłówka)
         for value, fid in table.items():
             if fid and shown and squash(self.frag_text.get(fid)) == shown:
                 self._add(u, fid)

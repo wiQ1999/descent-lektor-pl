@@ -197,6 +197,14 @@ def settings_text(dev):
     return text.rstrip('\n') + '\n'
 
 
+def keep_settings(path, dev):
+    """Paczka deweloperska zachowuje zmienione ustawienia, o ile wskazują bazę budowanego wydania."""
+    if not dev or not os.path.exists(path):
+        return False
+    with open(path, encoding='utf-8') as fh:
+        return paths.DB.replace(os.sep, '/') in fh.read()
+
+
 def version_text(platform, fragments):
     git = lambda *a: subprocess.run(['git', '-C', paths.ROOT, *a], capture_output=True, text=True).stdout.strip()
     commit = git('rev-parse', '--short', 'HEAD') + (' (zmiany niezatwierdzone)' if git('status', '--porcelain', '--untracked-files=no') else '')
@@ -255,7 +263,7 @@ def build(platform='win', dev=False, out=None):
     copy_loader(platform, dest)
     copy_scripts(platform, dest)
     settings = os.path.join(dest, 'ustawienia.toml')
-    if not (dev and os.path.exists(settings)):
+    if not keep_settings(settings, dev):
         with open(settings, 'w', encoding='utf-8', newline='\n') as fh:
             fh.write(settings_text(dev))
     if dev:
