@@ -32,7 +32,8 @@ SCENES = {'pre_q678': 'TANGERINE Story Scene Triage Pre Q678', 'event_e5b': 'TAN
           'event_e6a': 'TANGERINE Event 6A Put to Rest', 'event_e7a': 'TANGERINE Event 7A Not for Teacher',
           'event_e8a': 'TANGERINE Event 8A The Runestone', 'event_e8b': 'TANGERINE Event 8B The Gates of Thelgrim',
           'event_ec2': 'TANGERINE Event Crime Sometimes Pays', 'event_ec4': 'TANGERINE Event The Spreading Mists',
-          'event_sq1a': 'TANGERINE Event SQ1A A Dark Mirror', 'event_e5a': 'TANGERINE Event 5A The Dragon Eggs'}
+          'event_sq1a': 'TANGERINE Event SQ1A A Dark Mirror', 'event_e5a': 'TANGERINE Event 5A The Dragon Eggs',
+          'pre_q9': 'TANGERINE Story Scene Pre Q9'}
 RELEASE_GROUPS = {'m1': (), 'm2': (*QUESTS, *SCENES, 'travel_act1', 'town', 'map')}
 DESTINATIONS = (('d3/coreset/data', 'QuestModel', '_keyName', '_descKey'),
                 ('d3/narrativeevents', 'NarrativeEventModel', '_keyName', '_keyDesc'))

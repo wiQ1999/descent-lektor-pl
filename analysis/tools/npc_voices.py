@@ -142,14 +142,22 @@ CHARACTERS = {
     },
 }
 # Runda 1b (QA 2026-11-04): Ronan niski, z chrypą, mówiący urywanymi frazami.
-ROUND_OVERRIDES = {'ronan': {
+# Runda 4b (QA 2026-11-05): Galgoraz bardzo stary, kandydaci wyraźnie różni barwą, także od bliskich już wybranych.
+ROUND_OVERRIDES = {'r4b': {'galgoraz': {
+    'brief': 'stary smokowiec w ochrowej szacie, rogi, biała broda, kostur; bardzo stary mędrzec, głos starczy, drżący',
+    'designs': ['male, elderly, very low pitch', 'male, elderly, low pitch', 'male, elderly, moderate pitch',
+                'male, elderly, high pitch', 'male, elderly, very high pitch'],
+    'seeds': (5, 17, 29, 41, 53, 67), 'f0_max': 240, 'pick': 6, 'avoid': ('bruli', 'herbie', 'flint', 'ronan'),
+    'tremor': 0.6, 'style_text': 'Ach... cierpliwości, młody uczniu. Stare księgi... nie lubią pośpiechu. Posłuchaj... i zapamiętaj.',
+    'ref_cps': 7.0,
+}}, 'r1b': {'ronan': {
     'brief': 'potężny wojownik jak wiking, jasna broda, krzyczy, na ramieniu pandka; głos niski, urywany, z chrypą',
     'designs': ['male, elderly, very low pitch', 'male, middle-aged, very low pitch', 'male, elderly, low pitch'],
     'seeds': (5, 17, 29, 41, 53, 67), 'f0_max': 125, 'rasp': 0.6,
     'style_text': 'Ha! Krew... i stal! Dawaj ich tu. Wszystkich. Naraz! A potem... piwo. Hej!',
     'ref_cps': 7.5,
-}}
-ROUNDS = {'r1': ('astarra', 'adelynn', 'ronan', 'kehli'), 'r1b': ('ronan',), 'r4': ('galgoraz', 'flint'), 'r2': ('kathryn', 'ltrand', 'bruli', 'xenith'),
+}}}
+ROUNDS = {'r1': ('astarra', 'adelynn', 'ronan', 'kehli'), 'r1b': ('ronan',), 'r4': ('galgoraz', 'flint'), 'r4b': ('galgoraz',), 'r2': ('kathryn', 'ltrand', 'bruli', 'xenith'),
           'r3': ('herbie', 'mok', 'outlaw')}
 SEEDS = (5, 17, 29)
 PICK = 4
@@ -337,9 +345,18 @@ def select(rnd):
         ok = sorted((n for n in mine if 'mixes' in spec or (cands[n]['cer'] <= MAX_CER and lo <= cands[n]['f0'] <= hi)),
                     key=lambda n: cands[n]['cer'])
         chosen = ok[:1]
-        while ok and len(chosen) < min(PICK, len(ok)):
+        pick = spec.get('pick', PICK)
+        avoid = []
+        if spec.get('avoid'):       # kandydaci mają się też różnić od bliskich głosów już wybranych
+            refs = json.load(open(os.path.join(paths.REFS, 'refs.json'), encoding='utf-8'))
+            for v in spec['avoid']:
+                e = ve.embeds_from_wavs([librosa.load(os.path.join(ROOT, refs[v]['wav']), sr=16000)[0]], sample_rate=16000)[0]
+                avoid.append(e / np.linalg.norm(e))
+            chosen = []
+        while ok and len(chosen) < min(pick, len(ok)):
             far = max((n for n in ok if n not in chosen), key=lambda n: min(
-                1 - float(np.dot(cands[n]['emb'], cands[m]['emb'])) for m in chosen))
+                [1 - float(np.dot(cands[n]['emb'], cands[m]['emb'])) for m in chosen] +
+                [1 - float(np.dot(cands[n]['emb'], e)) for e in avoid]))
             chosen.append(far)
         picked[voice] = chosen
         for n in sorted(mine):
@@ -365,6 +382,40 @@ def roughen(y, sr, amount, seed=7):
     drive = 1 + 3 * amount
     out = np.tanh(drive * out) / np.tanh(drive)
     return (out * (np.abs(y).max() / (np.abs(out).max() + 1e-9))).astype(np.float32)
+
+
+def tremble(y, sr, amount, seed=11):
+    """Starcze drżenie: nieregularne wibrato i modulacja głośności około 5–7 Hz oraz lekkie tchnienie."""
+    import numpy as np
+    from scipy import signal
+    rng = np.random.default_rng(seed)
+    wobble = signal.sosfiltfilt(signal.butter(2, (4.5, 7.5), 'band', fs=sr, output='sos'), rng.standard_normal(len(y)))
+    wobble /= np.abs(wobble).max() + 1e-9
+    t = np.arange(len(y), dtype=np.float64)
+    out = np.interp(t + wobble * amount * 0.004 * sr, t, y) * (1 + 0.5 * amount * wobble)
+    env = signal.sosfiltfilt(signal.butter(2, 40, 'low', fs=sr, output='sos'), np.abs(y))
+    breath = signal.sosfiltfilt(signal.butter(2, (2000, 7000), 'band', fs=sr, output='sos'), rng.standard_normal(len(y)))
+    out = out + breath / (np.abs(breath).max() + 1e-9) * env * 0.8 * amount
+    return (out * (np.abs(y).max() / (np.abs(out).max() + 1e-9))).astype(np.float32)
+
+
+def tremor(rnd):
+    """Kandydaci z drżeniem w referencji (klon je przejmuje): pierwsza połowa wybranych."""
+    import soundfile as sf
+    path = round_dir(rnd, 'select.json')
+    sel = json.load(open(path, encoding='utf-8'))
+    for voice in ROUNDS[rnd]:
+        spec = CHARACTERS[voice]
+        names = list(sel['picked'][voice])
+        for name in names[:(len(names) + 1) // 2]:
+            c = sel['candidates'][name]
+            y, sr = sf.read(os.path.join(ROOT, c['wav']), dtype='float32')
+            new = name + '_drzenie'
+            wav = round_dir(rnd, 'scan', new + '.wav')
+            sf.write(wav, tremble(y, sr, spec['tremor']), sr, subtype='PCM_16')
+            sel['candidates'][new] = {**c, 'wav': paths.rel(wav), 'instruct': c['instruct'] + ', drżenie w referencji'}
+            sel['picked'][voice].append(new)
+    json.dump(sel, open(path, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
 
 def rasp(rnd):
@@ -492,9 +543,10 @@ def adopt(rnd, voice, name):
 
 
 if __name__ == '__main__':
-    CHARACTERS['ronan'].update(ROUND_OVERRIDES['ronan'] if sys.argv[2] == 'r1b' else {})
+    for name, change in ROUND_OVERRIDES.get(sys.argv[2], {}).items():
+        CHARACTERS[name].update(change)
     if sys.argv[1] == 'adopt':  # adopt <runda> <głos> <kandydat>, np. adopt r1 astarra astarra_d1_s5
         adopt(*sys.argv[2:5])
     else:
-        {'portrait': portrait, 'scan': scan, 'mix': mix, 'select': select, 'rasp': rasp, 'clone': clone,
+        {'portrait': portrait, 'scan': scan, 'mix': mix, 'select': select, 'rasp': rasp, 'tremor': tremor, 'clone': clone,
          'refresh': refresh, 'stats': stats}[sys.argv[1]](sys.argv[2])
