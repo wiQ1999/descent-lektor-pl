@@ -601,7 +601,7 @@ Plan etapów: [PLAN.md](PLAN.md).
 - Do M2 dochodzą wydarzenia otwierane przez Q6–Q8 (E6A, E7A, E8A) i wydarzenia warunkowe z mapy (E8B, EC2, EC4, SQ1A, E5A).
 - Scena przed Q9 wchodzi jako zabezpieczenie. Z danych gry nie wynika, czy odpala się sama po Q6–Q8.
 - Q9 i SQ2 nie wchodzą. Oba to pełne scenariusze wybierane na mapie, SQ2 ma ok. 47 000 znaków.
-- Nowe postacie: Mistrz Flint (`flint_d2_s17`), Mistrz Galgoraz (osobna runda, głos bardzo starej osoby, kandydaci wyraźnie różni barwą).
+- Nowe postacie: Mistrz Flint (`flint_d2_s17`), Mistrz Galgoraz (`galgoraz_d1_s53_drzenie`, z osobnej rundy: głos bardzo starej osoby, z drżeniem w referencji).
 
 **Uzasadnienie:** Lektor nie powinien milknąć zaraz po ukończeniu scenariuszy ani w wydarzeniach, które mogą wypaść przy stole. Scenariuszy, które trzeba dopiero wybrać na mapie, generujemy dopiero wtedy, gdy będą dostępne. Pierwszy szacunek SQ2 był błędny, więc decyzję podjęto po sprostowaniu.
 

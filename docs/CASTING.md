@@ -36,6 +36,7 @@ Narzędzie: `analysis/tools/npc_voices.py` (portret, pula kandydatów, wybór 4 
 | `mok` | `ELDERMOK` | stary orkowy szaman z kosturem; niski, chrapliwy, powolny | `male, middle-aged, very low pitch` | 5 | zdanie w stylu postaci; 8,6 s, SHA `cd51f9fa` | wybrany w QA E7 (D68) |
 | `outlaw` | `OUTLAWPRINCE` | potężny mężczyzna w ciężkiej zbroi; arogancki przywódca | `male, middle-aged, very low pitch` | 17 | zdanie w stylu postaci; 6,1 s, SHA `c3baa7be` | wybrany w QA E7 (D68) |
 | `flint` | `MASTERFLINT` | krzepki krasnolud kowal, gęsta ruda broda; serdeczny, wesoły | `male, middle-aged, moderate pitch` | 17 | zdanie w stylu postaci; 8,7 s, SHA `0e586296` | wybrany w QA E7 (D69) |
+| `galgoraz` | `MASTERGALGORAZ` | stary smokowiec w ochrowej szacie, rogi, biała broda; bardzo stary mędrzec, głos starczy, drżący | `male, elderly, very low pitch` | 53 | wolne frazy, 7 zn./s, drżenie dodane do referencji; 13,07 s, SHA `f882e69f` | wybrany w QA E7 (D69), runda 4b |
 
 Kwestie NPC mają tempo dialogów z D34, jak bohaterowie; charakter daje referencja.
 
@@ -45,3 +46,4 @@ Historia:
 - Runda E7/1 (2026-11-04, Astarra, Adelynn, Ronan, Kehli): Astarra dostała głos z puli Adelynn, Adelynn została przy obecnym, Kehli ma referencję `kehli_srodek`, a Ronan idzie do rundy 1b: niski, urywany, z chrypą (D67).
 - Runda E7/1b (2026-11-04, Ronan): urywany tekst referencji, 18 kandydatów, warianty z chrypą w referencji i po wygenerowaniu. Wygrał kandydat bez dodatkowej chrypy (D68).
 - Rundy E7/2 i E7/3 (2026-11-05): Kathryn, Rand, Bruli, Xenith, Herbie, Mok, Banita. Strony odsłuchu pokazywały też głosy już wybrane (D68).
+- Rundy E7/4 i 4b (2026-11-05): Flint z pierwszej próby. Galgoraz w drugiej: 30 kandydatów, 9 do odsłuchu, dobranych tak, by różnili się też od Bruliego, Herbiego, Flinta i Ronana (D69).
