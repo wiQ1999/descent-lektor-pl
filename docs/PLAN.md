@@ -312,6 +312,8 @@ Plan zaakceptowany 2026-11-04. Zakres wyznacza kampania znajomego w slocie 5 (D6
 - A4: plugin 0.4.0, opis misji z `DestinationDetails` (D55 pkt 5);
 - A5: test cyklu na E5B na Windows (slot 5), instrukcja `docs/E7_E5B_TEST.md`.
 
+Zakres po QA (D69): dochodzą E6A, E7A, E8A, E8B, EC2, EC4, SQ1A, E5A i scena przed Q9. Q9 i SQ2 zostają na kolejny etap.
+
 **Faza B: blok autonomiczny (bez QA):** pełna baza M2, generowanie z kontrolą uciętych końcówek, raporty `analysis/E7_DATA.md` i `analysis/E7_AUDIO.md`, replay bez regresji M1, paczki Windows i Mac, instrukcja `docs/E7_MAC_SESSION.md`.
 
 **Faza C: odbiór:** gra ze znajomymi na Macu (D66). Sesja zamyka też E6 na Macu (D61).

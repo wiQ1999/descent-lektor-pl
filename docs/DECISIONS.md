@@ -596,6 +596,15 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Wybór z odsłuchu. W pierwszej kwestii Ronana użytkownik usłyszał za długą pauzę i powtórzenie, a ASR dał tam CER 0,064, poniżej progu 0,08. Kolejne podejścia wyszły z CER 0. W teście E5B jedno ponowne podejście zostawiło ucięte końcówki u Astarry.
 
+### D69 · 2026-11-05 · E7: odblokowania po Q6–Q8
+**Decyzja:**
+- Do M2 dochodzą wydarzenia otwierane przez Q6–Q8 (E6A, E7A, E8A) i wydarzenia warunkowe z mapy (E8B, EC2, EC4, SQ1A, E5A).
+- Scena przed Q9 wchodzi jako zabezpieczenie. Z danych gry nie wynika, czy odpala się sama po Q6–Q8.
+- Q9 i SQ2 nie wchodzą. Oba to pełne scenariusze wybierane na mapie, SQ2 ma ok. 47 000 znaków.
+- Nowe postacie: Mistrz Flint (`flint_d2_s17`), Mistrz Galgoraz (osobna runda, głos bardzo starej osoby, kandydaci wyraźnie różni barwą).
+
+**Uzasadnienie:** Lektor nie powinien milknąć zaraz po ukończeniu scenariuszy ani w wydarzeniach, które mogą wypaść przy stole. Scenariuszy, które trzeba dopiero wybrać na mapie, generujemy dopiero wtedy, gdy będą dostępne. Pierwszy szacunek SQ2 był błędny, więc decyzję podjęto po sprostowaniu.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

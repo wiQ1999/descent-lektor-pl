@@ -35,6 +35,7 @@ Narzędzie: `analysis/tools/npc_voices.py` (portret, pula kandydatów, wybór 4 
 | `herbie` | `HERBIE` | chudy wieśniak z kilofem; gadatliwy cwaniaczek | `male, middle-aged, low pitch` | 5 | zdanie w stylu postaci; 6,3 s, SHA `4c2eac83` | wybrany w QA E7 (D68) |
 | `mok` | `ELDERMOK` | stary orkowy szaman z kosturem; niski, chrapliwy, powolny | `male, middle-aged, very low pitch` | 5 | zdanie w stylu postaci; 8,6 s, SHA `cd51f9fa` | wybrany w QA E7 (D68) |
 | `outlaw` | `OUTLAWPRINCE` | potężny mężczyzna w ciężkiej zbroi; arogancki przywódca | `male, middle-aged, very low pitch` | 17 | zdanie w stylu postaci; 6,1 s, SHA `c3baa7be` | wybrany w QA E7 (D68) |
+| `flint` | `MASTERFLINT` | krzepki krasnolud kowal, gęsta ruda broda; serdeczny, wesoły | `male, middle-aged, moderate pitch` | 17 | zdanie w stylu postaci; 8,7 s, SHA `0e586296` | wybrany w QA E7 (D69) |
 
 Kwestie NPC mają tempo dialogów z D34, jak bohaterowie; charakter daje referencja.
 
