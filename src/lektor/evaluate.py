@@ -30,6 +30,8 @@ MIN_SPEECH_S = 0.15     # mniej mowy to pusty wynik (model czasem milczy przy te
 CPS_RANGE = (0.6, 1.6)  # tempo poza tym zakresem względem oczekiwanego (fragmenty od 15 znaków)
 RETAKE_SLOWER = 0.1     # ucięta końcówka: ponowne podejście wolniej (D34)
 END_RMS, END_GAP = 0.08, 0.11   # mowa urwana przy końcu pliku (speech_end)
+MAX_PAUSE = 1.2         # pauza w środku kwestii (s); na podejściach M2 najdłuższa zdrowa ma ok. 1 s
+RETAKES = 3             # tyle ponownych podejść, zanim fragment trafi na listę odsłuchu (D38, E7)
 
 
 def words(s):
@@ -119,6 +121,13 @@ def speech_end(y, sr=16000):
     return round(float(rms[-1] / (np.percentile(rms, 90) + 1e-9)), 3), round((len(y) - end) / sr, 3)
 
 
+def longest_pause(y, sr=16000):
+    """Najdłuższa cisza między odcinkami mowy (s)."""
+    import librosa
+    spans = librosa.effects.split(y, top_db=35, frame_length=512, hop_length=128)
+    return round(max(((b[0] - a[1]) / sr for a, b in zip(spans, spans[1:])), default=0.0), 2)
+
+
 def expected_cps(speed):
     return REF_CPS * (speed or 1.0)
 
@@ -166,6 +175,7 @@ class Scorer:
                'cps': round(len(text) / max(speech, 0.05), 1), 'cps_ratio': round(len(text) / max(speech, 0.05) / expected_cps(speed), 2)}
         out['sim'] = round(float(self.embed(y) @ self.refs[voice]), 3) if speech >= 1.5 else None
         out['end_rms'], out['end_gap'] = speech_end(y)
+        out['pause'] = longest_pause(y)
         return out
 
 
@@ -214,6 +224,8 @@ def problems(e, sim_median):
         out.append('barwa')
     if e['chars'] >= 15 and not CPS_RANGE[0] <= e['cps_ratio'] <= CPS_RANGE[1]:
         out.append('tempo')
+    if e.get('pause', 0) > MAX_PAUSE:
+        out.append('pauza')
     return out
 
 
@@ -241,7 +253,7 @@ def select():
         best = min(es, key=lambda e: (len(e['problems']) > 0, round(e['cer'] / 0.02), -(e['sim'] or 0), e['take']))
         choice[fid] = {'take': best['take'], 'voice': best['voice'], 'speed': best['speed'], 'problems': best['problems'],
                        'cer': best['cer'], 'sim': best['sim'], 'cps': best['cps'], 'takes': len(es)}
-        if best['problems'] and len(es) <= takes_for(best['voice']):   # jedno ponowne podejście (D38)
+        if best['problems'] and len(es) < takes_for(best['voice']) + RETAKES:
             speed = best['speed']
             if 'koncowka' in best['problems']:
                 speed = round(max(0.9, (speed or 1.0) - RETAKE_SLOWER), 2)

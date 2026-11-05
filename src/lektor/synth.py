@@ -25,6 +25,7 @@ from . import direction as D
 
 HEROES = ('brynn', 'syrus', 'galaden', 'vaerix', 'kehli', 'chance')
 HERO_TAKES = 3
+MANY_TAKES = (*HEROES, 'ronan')     # referencja Ronana ma urywane frazy, które czasem dają powtórzenia (QA E7)
 MAX_RTF = 8.0           # po przyspieszeniach RTF ok. 2,5; powyżej 8 przez kilka fragmentów: pamięć systemowa
 MAX_VRAM_GB = 3.7
 SLOW_LIMIT = 5
@@ -33,7 +34,7 @@ SILENT_RETRIES = 8      # teksty z 1–3 znaków bywają ciszą zależnie od zia
 
 
 def takes_for(voice):
-    return HERO_TAKES if voice in HEROES else 1
+    return HERO_TAKES if voice in MANY_TAKES else 1
 
 
 def seed_for(fid, take, retry=0):

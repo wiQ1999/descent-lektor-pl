@@ -1,3 +1,5 @@
+import pytest
+
 from lektor import evaluate as E
 from lektor.synth import seed_for, takes_for
 
@@ -48,6 +50,7 @@ def test_problems():
     assert E.problems(evals(cer=0.12), med) == ['cer']
     assert E.problems(evals(cer=0.12, chars=12), med) == []
     assert E.problems(evals(sim=0.7), med) == ['barwa']
+    assert E.problems(evals(pause=1.5), med) == ['pauza']
     assert E.problems(evals(sim=None), med) == []
     assert E.problems(evals(sim=0.7, speech_s=2.0), med) == []
     assert E.problems(evals(speech_s=0.05, cer=1.0), med) == ['cisza']
@@ -56,6 +59,7 @@ def test_problems():
 
 def test_takes_and_seeds():
     assert takes_for('brynn') == 3 and takes_for('narrator') == 1 and takes_for('adelynn') == 1
+    assert takes_for('ronan') == 3
     assert seed_for('0d54849ee9f32833', 1) != seed_for('0d54849ee9f32833', 2)
     assert 0 <= seed_for('ffffffffffffffff', 9) < 2 ** 31
 
@@ -71,3 +75,10 @@ def test_speech_cut_at_file_end_is_flagged():
     assert level >= E.END_RMS and gap <= E.END_GAP
     level, gap = E.speech_end(np.concatenate([fade, pad, pad]), sr)
     assert level < E.END_RMS or gap > E.END_GAP
+
+
+def test_longest_pause():
+    import numpy as np
+    tone = np.sin(np.arange(8000) / 3).astype(np.float32)
+    assert E.longest_pause(np.concatenate([tone, np.zeros(24000, np.float32), tone])) == pytest.approx(1.5, abs=0.1)
+    assert E.longest_pause(tone) == 0.0
