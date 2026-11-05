@@ -26,7 +26,11 @@ QUESTS = {'q6': ('d3/quests/box1/story/q6', 'TANGERINE Q6 '), 'q7': ('d3/quests/
           'q8': ('d3/quests/box1/story/q8', 'TANGERINE Q8 ')}
 # Sceny i wydarzenia z d3/act1 (grafy Arrival DT w d3/narrativeevents tylko je wywołują).
 SCENES = {'pre_q678': 'TANGERINE Story Scene Triage Pre Q678', 'event_e5b': 'TANGERINE EVENT 5B ',
-          'event_ec3': 'TANGERINE Event Now Lets Find Out', 'event_ec1': 'TANGERINE Event The Orcs of Forthyn'}
+          'event_ec3': 'TANGERINE Event Now Lets Find Out', 'event_ec1': 'TANGERINE Event The Orcs of Forthyn',
+          'event_e6a': 'TANGERINE Event 6A Put to Rest', 'event_e7a': 'TANGERINE Event 7A Not for Teacher',
+          'event_e8a': 'TANGERINE Event 8A The Runestone', 'event_e8b': 'TANGERINE Event 8B The Gates of Thelgrim',
+          'event_ec2': 'TANGERINE Event Crime Sometimes Pays', 'event_ec4': 'TANGERINE Event The Spreading Mists',
+          'event_sq1a': 'TANGERINE Event SQ1A A Dark Mirror', 'event_e5a': 'TANGERINE Event 5A The Dragon Eggs'}
 RELEASE_GROUPS = {'m1': (), 'm2': (*QUESTS, *SCENES, 'travel_act1', 'town', 'map')}
 DESTINATIONS = (('d3/coreset/data', 'QuestModel', '_keyName', '_descKey'),
                 ('d3/narrativeevents', 'NarrativeEventModel', '_keyName', '_keyDesc'))
@@ -44,7 +48,8 @@ HEROES = {'BRYNN': 'brynn', 'SYRUS': 'syrus', 'GALADEN': 'galaden', 'VAERIX': 'v
           'CHANCE': 'chance'}
 CHARACTER_VOICES = {**HEROES, 'BLOOD_SISTER': 'nekrul', 'BARONESS_ADELYNN': 'adelynn', 'RONAN': 'ronan',
                     'ASTARRA': 'astarra', 'KATHRYN': 'kathryn', 'LTRAND': 'ltrand', 'MASTERBRULI': 'bruli',
-                    'DRAGON_HYBRID': 'xenith', 'HERBIE': 'herbie', 'ELDERMOK': 'mok', 'OUTLAWPRINCE': 'outlaw'}
+                    'DRAGON_HYBRID': 'xenith', 'HERBIE': 'herbie', 'ELDERMOK': 'mok', 'OUTLAWPRINCE': 'outlaw',
+                    'MASTERGALGORAZ': 'galgoraz', 'MASTERFLINT': 'flint'}
 HERO_NAME_KEYS = ['HERO_%s_NAME' % h for h in HEROES]
 UPPER = re.compile(r'^[A-Z][A-Z0-9_]{3,}$')
 

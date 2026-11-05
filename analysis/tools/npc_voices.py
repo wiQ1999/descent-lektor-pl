@@ -95,6 +95,22 @@ CHARACTERS = {
         'style_text': 'Każda moneta ma tu swoją rubrykę. Płacisz z góry albo wynosisz się z mojego warsztatu.',
         'ref_cps': 10.5,
     },
+    'galgoraz': {
+        'texture': 'MasterGalgoraz_Dialogue', 'gender': 'male', 'speaker': 'MASTERGALGORAZ',
+        'brief': 'stary smokowiec w ochrowej szacie, rogi, biała broda, kostur; zamyślony mędrzec i nauczyciel',
+        'designs': ['male, elderly, moderate pitch', 'male, elderly, low pitch',
+                    'male, elderly, high pitch', 'male, middle-aged, low pitch'],
+        'style_text': 'Cierpliwości, młody uczniu. Każda księga otwiera się dopiero temu, kto umie zadać właściwe pytanie.',
+        'ref_cps': 9.5,
+    },
+    'flint': {
+        'texture': 'MasterFlint_Dialogue', 'gender': 'male', 'speaker': 'MASTERFLINT',
+        'brief': 'krzepki krasnolud kowal, łysy, gęsta ruda broda, młot i fartuch; serdeczny, wesoły, rubaszny',
+        'designs': ['male, middle-aged, low pitch', 'male, middle-aged, moderate pitch',
+                    'male, young adult, low pitch', 'male, elderly, low pitch'],
+        'style_text': 'Ha, dobra robota! Dobry młot i gorące palenisko, a reszta sama się ułoży. Siadaj, przyjacielu!',
+        'ref_cps': 11.0,
+    },
     'xenith': {
         'gender': 'male', 'speaker': 'DRAGON_HYBRID', 'texture': 'DragonHybrid_Dialogue',
         'brief': 'kapitan hybryd smoka; ma nagrania w dubbingu, więc klon jak Ne’Krul (D19)',
@@ -133,7 +149,7 @@ ROUND_OVERRIDES = {'ronan': {
     'style_text': 'Ha! Krew... i stal! Dawaj ich tu. Wszystkich. Naraz! A potem... piwo. Hej!',
     'ref_cps': 7.5,
 }}
-ROUNDS = {'r1': ('astarra', 'adelynn', 'ronan', 'kehli'), 'r1b': ('ronan',), 'r2': ('kathryn', 'ltrand', 'bruli', 'xenith'),
+ROUNDS = {'r1': ('astarra', 'adelynn', 'ronan', 'kehli'), 'r1b': ('ronan',), 'r4': ('galgoraz', 'flint'), 'r2': ('kathryn', 'ltrand', 'bruli', 'xenith'),
           'r3': ('herbie', 'mok', 'outlaw')}
 SEEDS = (5, 17, 29)
 PICK = 4
