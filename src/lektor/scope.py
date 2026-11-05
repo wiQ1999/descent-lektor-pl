@@ -19,9 +19,9 @@ RANDOM_ENEMY_NAMES = ('ENEMY_BANDIT_1_SING', 'ENEMY_ZEALOT_1_SING', 'ENEMY_FAE_S
 # Nazwy wrogów w argumentach EntityName widziane w E1, których nie ma w modelach wrogów z zakresu (boss).
 E1_ENTITY_NAMES = RANDOM_ENEMY_NAMES + ('ENEMY_BERSERKER_SING', 'ENEMY_BLOOD_SISTER_1_SING')
 # Argumenty dodawane przez kod gry, nie przez graf (E1): klucz → argumenty.
-CODE_ARGS = {'DEFAULT_SPAWN_ENEMY_MULTI': [{'type': 'EntityName', 'ref': None}],
-             'DEFAULT_GET_TREASURE_MULTI': [{'type': 'LocalizationKey', 'ref': None}, {'type': 'RawText', 'ref': None}]}
-CODE_KEYS = ('DEFAULT_GET_TREASURE_MULTI',)     # kwestie spoza grafów, które gra wybiera w kodzie (łup z kilku pozycji, D51)
+CODE_ARGS = {'DEFAULT_SPAWN_ENEMY_MULTI': [{'type': 'EntityName', 'ref': None}]}
+# Kwestie spoza grafów, które gra wybiera w kodzie: klucz → kwestia o tych samych argumentach (łup z kilku pozycji, D51).
+CODE_TWINS = {'DEFAULT_GET_TREASURE_MULTI': 'DEFAULT_GET_TREASURE_SINGLE'}
 GROUPS = ('cutscene_01', 'story_q1', 'welcome_home', 'scene_q1', 'enemies', 'system')
 # Scenariusz: bundel sceny i przedrostek grafów wstępu, zakończeń i podróży w d3/act1.
 QUESTS = {'q6': ('d3/quests/box1/story/q6', 'TANGERINE Q6 '), 'q7': ('d3/quests/box1/story/q7', 'TANGERINE Q7 '),
@@ -41,7 +41,7 @@ LOOT_TEMPLATES = ('GAIN_PHYSICAL_TREASURE', 'GAIN_DIGITAL_TREASURE', 'NO_ITEM_BA
                   'CONSUMABLE_BACKUP_MULTIPLE', 'REMOVE_ENTITY', 'UI_GOLD', 'UI_RECIPE')
 LOOT_BUNDLES = ('d3/items', 'd3/loot', 'd3/recipes')
 LOOT_MODELS = {'ArmorModel', 'ConsumableModel', 'TrinketModel', 'CraftingMaterialModel', 'WeaponPartsModel', 'LootModel',
-               'RecipeModel'}
+               'RecipeModel', 'SkillModel'}     # okno nagrody wymienia też nowe umiejętności bohaterów
 OBJECTIVE_PREFIXES = ('Q1_OBJECTIVE_', 'Q8_OBJECTIVE_', 'Q_FOF_OBJECTIVE_', 'Q_LISB_OBJECTIVE_')
 # EnemyThemeTraits (flagi) do kryteriów losowania wrogów (EnemyFilter).
 THEMES = {'Undead': 4, 'Dragonkind': 8, 'Uthuk': 0x10, 'UndeadFaction': 0x80000, 'UthukFaction': 0x100000,
@@ -164,7 +164,8 @@ def destination_keys(game, terms):
 def loot_keys(game, terms):
     """Klucze tekstów listy łupu (D51): szablony z GiveTreasure i nazwy tego, co gra może dać w akcie 1."""
     keys = set(LOOT_TEMPLATES) | set(HERO_NAME_KEYS)
-    for bundle in LOOT_BUNDLES + tuple(b for b in game.files if b.startswith('d3/weapons/')):
+    extra = (b for b in game.files if b.startswith('d3/weapons/') or (b.startswith('d3/heroes/') and not b.endswith('_act2')))
+    for bundle in LOOT_BUNDLES + tuple(extra):
         for _, t, cls in game.behaviours(bundle):
             if cls in LOOT_MODELS and t.get('_act') == 0:
                 keys |= {k for k in (t.get('KeyName'), t.get('_id')) if k}
@@ -212,7 +213,7 @@ def collect(game, terms, release='m1', only=None):
         take(gr, 'system')
 
     if extra:
-        for k in CODE_KEYS:
+        for k in CODE_TWINS:
             group_of.setdefault(k, 'system')
     extra_graphs = []
     for group in extra:
@@ -260,6 +261,10 @@ def collect(game, terms, release='m1', only=None):
             'args': (all_args(rs) if release != 'm1' else merged_args(main, rs)) or CODE_ARGS.get(key, []),
             'tts': 0 if cat == 'napisy_cutscenek' else 1,  # przerywniki mają dubbing (D14)
         })
+    by_key = {r['key']: r for r in records}
+    for key, twin in CODE_TWINS.items():
+        if key in by_key and twin in by_key:
+            by_key[key]['args'] = by_key[twin]['args']
     order = {g: i for i, g in enumerate(GROUPS + RELEASE_GROUPS[release])}
     records.sort(key=lambda r: (order[r['group']], r['owner'] or '', r['seq'] if r['seq'] is not None else 1e9, r['key']))
 
