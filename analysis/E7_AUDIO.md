@@ -70,5 +70,6 @@ Fragment z pustym tekstem (`​`, znak zerowej szerokości) daje ciszę i nie pr
 
 Replay dzienników E1, E5 i E5B przez M2: 578 okien, pokrycie 0,9983, pokrycie czytelnych okien 1,0. Jeden brak: nazwa w łupie `DEFAULT_GET_TREASURE_MULTI`.
 
-Strona odsłuchu: `analysis/work/audio/m2/listen/index.html` (42 oznaczone i 194 losowe).
+Brak usunięty w D72: lista łupu zna już nazwy wrogów, bez nowego audio.
 
+Strona odsłuchu: `analysis/work/audio/m2/listen/index.html` (30 fragmentów, D72).

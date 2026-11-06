@@ -1,7 +1,8 @@
 """Odtwarzanie wypowiedzi: jeden dźwięk naraz, nowy podmienia bieżący (przerwanie, D03).
 
 Player trzyma otwarty strumień sounddevice (D47), więc start i przerwanie czekają tylko na następny blok
-(512 próbek przy 24 kHz to ok. 21 ms) i bufor urządzenia. Przerwanie wycisza stary dźwięk w 10 ms, bez trzasku.
+(512 próbek przy 24 kHz to ok. 21 ms) i bufor urządzenia. Przerwanie przez nowy dźwięk wycisza stary w 10 ms, bez trzasku.
+Zamknięcie okna bez nowego dźwięku wycisza głos łagodnie (D72), a dźwięk, który ruszy w trakcie, skraca wyciszanie do 10 ms.
 Zdarzenia start, end i stopped mają czas szacowanego wyjścia z przetwornika (DAC), z którego liczymy opóźnienia.
 NullPlayer robi to samo bez dźwięku (replay i testy): czas trwania wynika z długości audio.
 """
@@ -10,18 +11,58 @@ import threading
 import time
 
 FADE_S = 0.01
+CLOSE_FADE_S = 0.35
+
+
+class Mixer:
+    """Bieżący dźwięk i wyciszany ogon poprzedniego. Bez urządzenia audio, żeby dało się to testować."""
+
+    def __init__(self, sample_rate, events):
+        import numpy as np
+        self.np = np
+        self.sample_rate = sample_rate
+        self.events = events
+        self.buf, self.pos, self.token = None, 0, None
+        self.tail = None
+
+    def _ramp(self, audio, seconds):
+        n = min(int(seconds * self.sample_rate), len(audio))
+        return audio[:n] * self.np.linspace(1.0, 0.0, n, dtype=self.np.float32)
+
+    def apply(self, cmd, dac):
+        audio, token, fade = cmd
+        if self.buf is not None:
+            self.tail = self._ramp(self.buf[self.pos:], fade)
+            self.events.append((self.token, 'stopped', dac))
+        elif token is not None and self.tail is not None:
+            self.tail = self._ramp(self.tail, FADE_S)
+        self.buf, self.pos, self.token = audio, 0, token
+        if token is not None:
+            self.events.append((token, 'start', dac))
+
+    def render(self, out, dac):
+        if self.tail is not None:
+            n = min(len(out), len(self.tail))
+            out[:n] += self.tail[:n]
+            self.tail = self.tail[n:] if n < len(self.tail) else None
+        if self.buf is None:
+            return
+        n = min(len(out), len(self.buf) - self.pos)
+        out[:n] += self.buf[self.pos:self.pos + n]
+        self.pos += n
+        if self.pos >= len(self.buf):
+            self.events.append((self.token, 'end', dac + n / self.sample_rate))
+            self.buf, self.token = None, None
 
 
 class Player:
     def __init__(self, sample_rate, device=None, blocksize=512):
-        import numpy as np
         import sounddevice as sd
         self.sample_rate = sample_rate
         self.events = collections.deque()       # (token, 'start'|'end'|'stopped', czas perf_counter)
         self._lock = threading.Lock()
         self._cmd = None
-        self._buf, self._pos, self._token = None, 0, None
-        self._ramp = np.linspace(1.0, 0.0, int(FADE_S * sample_rate), dtype=np.float32)
+        self._mix = Mixer(sample_rate, self.events)
         dev = int(device) if str(device).isdigit() else (device or None)
         self._stream = sd.OutputStream(samplerate=sample_rate, channels=1, dtype='float32', blocksize=blocksize,
                                        latency='low', device=dev, callback=self._callback)
@@ -34,15 +75,15 @@ class Player:
     @property
     def busy(self):
         with self._lock:
-            return self._token is not None or (self._cmd is not None and self._cmd[2] is not None)
+            return self._mix.token is not None or (self._cmd is not None and self._cmd[1] is not None)
 
     def play(self, audio, token):
         with self._lock:
-            self._cmd = (audio, 0, token)
+            self._cmd = (audio, token, FADE_S)
 
-    def stop(self):
+    def stop(self, fade=FADE_S):
         with self._lock:
-            self._cmd = (None, 0, None)
+            self._cmd = (None, None, fade)
 
     def poll(self):
         out = []
@@ -60,21 +101,8 @@ class Player:
         with self._lock:
             cmd, self._cmd = self._cmd, None
             if cmd is not None:
-                if self._buf is not None:
-                    old = self._buf[self._pos:self._pos + min(len(self._ramp), frames)]
-                    out[:len(old), 0] += old * self._ramp[:len(old)]
-                    self.events.append((self._token, 'stopped', dac))
-                self._buf, self._pos, self._token = cmd
-                if self._token is not None:
-                    self.events.append((self._token, 'start', dac))
-            if self._buf is None:
-                return
-            n = min(frames, len(self._buf) - self._pos)
-            out[:n, 0] += self._buf[self._pos:self._pos + n]
-            self._pos += n
-            if self._pos >= len(self._buf):
-                self.events.append((self._token, 'end', dac + n / self.sample_rate))
-                self._buf, self._token = None, None
+                self._mix.apply(cmd, dac)
+            self._mix.render(out[:, 0], dac)
 
 
 class NullPlayer:
@@ -99,7 +127,7 @@ class NullPlayer:
         self._token, self._end = token, now + len(audio) / self.sample_rate
         self.events.append((token, 'start', now))
 
-    def stop(self):
+    def stop(self, fade=FADE_S):
         self._check()
         if self._token is not None:
             self.events.append((self._token, 'stopped', self.clock()))

@@ -3,7 +3,8 @@
   okno wiadomości (open) i fabularne (shown)  przerywa bieżące audio i gra od razu (D03, D45)
   zamknięcie grającego okna                   zatrzymuje jego audio; wybrana opcja (choice_key, bez back) gra
                                               odpowiedź bohatera (D20), a okno otwarte w jej trakcie czeka (D48);
-                                              guzik ogólny („Kontynuuj”) nie gra (D64)
+                                              guzik ogólny („Kontynuuj”) nie gra (D64), a odpowiedź, którą powtarza
+                                              następna kwestia, milknie i tekst czyta okno (D72)
   cel misji, aktywacja wroga, opis misji      czekają w kolejce na ciszę (D45); nowszy cel zastępuje starszy,
                                               zamknięta aktywacja wypada z kolejki, a cel odczytany już w oknie
                                               (wartość luki) nie gra drugi raz; ten sam cel ze zmienionym
@@ -19,6 +20,8 @@ import dataclasses
 import itertools
 import re
 import time
+
+from .player import CLOSE_FADE_S, FADE_S
 
 WINDOWS = ('message', 'story')
 QUEUED = ('objective', 'activation', 'details')
@@ -80,6 +83,7 @@ class Director:
             self._window('message', ev, recv)
         elif name == 'open' and kind == 'story':
             self.story_open[ev.get('id')] = ev
+            self._drop_repeated_answer(ev.get('key'), recv)
         elif name == 'shown' and kind == 'story':
             op = self.story_open.pop(ev.get('id'), None)
             if op is not None:
@@ -152,8 +156,15 @@ class Director:
                   'missing': sorted(set(u.missing))})
         return item if outcome in ('pełne', 'częściowe') else None
 
+    def _drop_repeated_answer(self, key, recv):
+        """Okno otwiera się tuż po wyborze, więc odpowiedź ledwo zaczęła grać: nikt nie usłyszy jej dwa razy (D72)."""
+        if self.current is not None and self.current.src == 'choice' and self.lib.repeats(self.current.key, key):
+            self.log({'ev': 'repeat', 'token': self.current.token, 'key': self.current.key, 'window': key})
+            self._stop(recv, FADE_S)
+
     def _window(self, src, ev, recv):
         self.last_window = recv
+        self._drop_repeated_answer(ev.get('key'), recv)
         item = self._make(src, ev, recv)
         if item is None:
             if self.current is not None and self.current.src in WINDOWS:
@@ -228,11 +239,11 @@ class Director:
         self.log({'ev': 'play', 'token': item.token, 'src': item.src, 'key': item.key, 'seconds': round(len(audio) / self.lib.sample_rate, 2),
                   'prep_ms': round((self.clock() - t0) * 1000, 1), 'immediate': immediate})
 
-    def _stop(self, recv):
+    def _stop(self, recv, fade=CLOSE_FADE_S):
         if self.current is None:
             return
         self.stop_req[self.current.token] = recv
-        self.player.stop()
+        self.player.stop(fade)
         self.current = None
 
     def _player_event(self, token, what, t):

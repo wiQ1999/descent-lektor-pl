@@ -1,3 +1,4 @@
+import collections
 import json
 import os
 import sqlite3
@@ -11,7 +12,7 @@ from lektor.companion import app as A
 from lektor.companion import config as C
 from lektor.companion import director as D
 from lektor.companion.library import LIST_GAP, LOOT, Library
-from lektor.companion.player import NullPlayer
+from lektor.companion.player import CLOSE_FADE_S, FADE_S, Mixer, NullPlayer
 
 SR = 24000
 FRAGMENTS = {           # id: (tekst, sekundy)
@@ -32,6 +33,8 @@ FRAGMENTS = {           # id: (tekst, sekundy)
     'f_fifteen': ('piętnaście', 0.25),
     'f_potion': ('mikstura zdrowia', 0.25),
     'f_keli': ('Keli', 0.25),
+    'f_answer': ('Stara wieża czeka na nas.', 0.5),
+    'f_answer_line': ('Stara wieża czeka na nas, przyjacielu.', 0.5),
     'f_map_name': ('Cena wiedzy', 0.25),
     'f_map_desc': ('Stara wieża czeka.', 0.5),
 }
@@ -45,6 +48,8 @@ LINES = [   # klucz, kategoria, przełącznik, tts, tekst
     ('NEW_GOAL', 'komunikaty_questu', 'komunikaty_questu', 1, '{0}'),
     ('LOOT', 'nagrody', 'nagrody', 1, 'Zdobywasz {0}'),
     ('CHOICE_A', 'okna_wyboru', 'okna_wyboru', 1, 'Idziemy dalej.'),
+    ('ANSWER', 'okna_wyboru', 'okna_wyboru', 1, 'Stara wieża czeka na nas.'),
+    ('ANSWER_LINE', 'dialog', 'dialogi', 1, 'Stara wieża czeka na nas, przyjacielu.'),
     ('CUTSCENE', 'narracja', 'narracja', 0, 'Przerywnik.'),
     ('ACT', 'aktywacje', 'aktywacje', 1, 'Wróg atakuje {0}'),
     ('GOAL_COUNT', 'cel_misji', 'cele', 1, 'Znajdź klucz ({0}/4)'),
@@ -68,6 +73,8 @@ SEGMENTS = [    # klucz, idx, rodzaj, luka, typ luki, fragment, pauza po
     ('LOOT', 0, 'text', None, None, 'f_found', 0.1),
     ('LOOT', 1, 'slot', 0, 'RawText', None, 0.0),
     ('CHOICE_A', 0, 'text', None, None, 'f_choice', 0.0),
+    ('ANSWER', 0, 'text', None, None, 'f_answer', 0.0),
+    ('ANSWER_LINE', 0, 'text', None, None, 'f_answer_line', 0.0),
     ('ACT', 0, 'text', None, None, 'f_enemy', 0.1),
     ('ACT', 1, 'slot', 0, 'EntityName', None, 0.0),
     ('GOAL_COUNT', 0, 'text', None, None, 'f_goal', 0.1),
@@ -274,6 +281,57 @@ def test_choice_reply_holds_next_window(run):
     d = run(dt=0.6)       # odpowiedź (0,5 s) się skończyła: okno 2 gra od początku
     assert playing(d) == 'HELLO' and d.current.wid == 2
     assert run().latency['wait'] == [0.0]
+
+
+def test_answer_repeated_by_next_line_is_read_once(run):
+    run(msg(1, 'HELLO'))
+    run(close(1, choice_key='ANSWER'), 0.3)
+    d = run(msg(2, 'ANSWER_LINE'))
+    assert playing(d) == 'ANSWER_LINE' and d.pending is None
+
+
+def test_answer_repeated_by_story_window_stops_before_shown(run):
+    run(msg(1, 'HELLO'))
+    d = run(close(1, choice_key='ANSWER'), 0.3)
+    assert playing(d) == 'ANSWER'
+    d = run({'ev': 'open', 'kind': 'story', 'id': 2, 'key': 'ANSWER_LINE'})
+    assert playing(d) is None
+    d = run({'ev': 'shown', 'kind': 'story', 'id': 2}, 0.1)
+    assert playing(d) == 'ANSWER_LINE'
+
+
+def test_other_line_after_choice_still_waits(lib):
+    assert not lib.repeats('CHOICE_A', 'ANSWER_LINE')
+    assert lib.repeats('ANSWER', 'ANSWER_LINE')
+    assert not lib.repeats('ANSWER', 'NO_SUCH_KEY')
+
+
+def blocks(mix, n, size=240):
+    out = []
+    for _ in range(n):
+        b = np.zeros(size, dtype=np.float32)
+        mix.render(b, 0.0)
+        out.append(b)
+    return np.concatenate(out)
+
+
+def test_close_fades_the_voice_out():
+    events = collections.deque()
+    mix = Mixer(SR, events)
+    mix.apply((np.ones(SR * 2, dtype=np.float32), 1, FADE_S), 0.0)
+    blocks(mix, 1)
+    mix.apply((None, None, CLOSE_FADE_S), 0.0)
+    y = blocks(mix, int(CLOSE_FADE_S * SR / 240) + 2)
+    assert (1, 'stopped', 0.0) in events
+    assert 0.9 < y[0] <= 1.0 and 0.3 < y[len(y) // 2] < 0.7 and y[-1] == 0.0 and mix.tail is None
+
+
+def test_new_sound_shortens_the_fade():
+    mix = Mixer(SR, collections.deque())
+    mix.apply((np.ones(SR * 2, dtype=np.float32), 1, FADE_S), 0.0)
+    mix.apply((None, None, CLOSE_FADE_S), 0.0)
+    mix.apply((np.zeros(SR, dtype=np.float32), 2, FADE_S), 0.0)
+    assert len(mix.tail) == int(FADE_S * SR)
 
 
 def test_back_does_not_play_choice(run):

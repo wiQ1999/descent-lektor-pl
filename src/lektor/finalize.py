@@ -18,7 +18,7 @@ LUFS = -20.0
 PEAK = 0.99
 EDGE = (0.03, 0.05)     # zostawiona cisza przed i po mowie (s); pauzy między fragmentami dokłada companion
 CATEGORY_GAIN_DB = {'walka_teren': 2.0}     # D04: komunikaty walki głośniej
-LISTEN_SHARE = 0.05
+LISTEN_MAX = 30         # odsłuch ma być krótki: po jednym fragmencie z głosu, reszta losowo (D72)
 LISTEN_SEED = 3
 
 
@@ -59,10 +59,15 @@ def finalize():
 
 
 def listen_list(choice):
-    bad = sorted(f for f, c in choice.items() if c['problems'])
+    """Próbka do odsłuchu bez fragmentów odrzuconych przez automat."""
     rest = sorted(f for f, c in choice.items() if not c['problems'])
-    rnd = random.Random(LISTEN_SEED)
-    return bad, sorted(rnd.sample(rest, round(len(rest) * LISTEN_SHARE)))
+    random.Random(LISTEN_SEED).shuffle(rest)
+    voices = {}
+    for f in rest:
+        voices.setdefault(choice[f]['voice'], f)
+    picked = list(voices.values())[:LISTEN_MAX]
+    others = [f for f in rest if f not in set(picked)]
+    return sorted(picked + others[:LISTEN_MAX - len(picked)])
 
 
 def listen():
@@ -70,7 +75,7 @@ def listen():
     con = db.connect(paths.DB)
     manifest = json.load(open(os.path.join(paths.AUDIO, 'manifest.json'), encoding='utf-8'))
     choice = json.load(open(os.path.join(paths.AUDIO, 'choice.json'), encoding='utf-8'))
-    bad, sample = listen_list(choice)
+    sample = listen_list(choice)
     text = {r['id']: r['text'] for r in con.execute('SELECT id, text FROM fragments')}
     where = {}
     for r in con.execute('SELECT s.fragment, s.key, l.category FROM segments s JOIN lines l ON l.key = s.key '
@@ -96,11 +101,10 @@ def listen():
             c['cer'], c['sim'], c['cps'], c['takes'], ' · <span class="bad">%s</span>' % ', '.join(c['problems'])
             if c['problems'] else '', fid, opts, fid)
 
-    rows = ['<h2>Odrzucone po ponownym podejściu (%d)</h2>' % len(bad)] + [card(f, 'odrzucone') for f in bad]
-    rows += ['<h2>Losowe 5%% pozostałych (%d)</h2>' % len(sample)] + [card(f, 'losowe') for f in sample]
-    page = HTML.replace('{{ROWS}}', '\n'.join(rows)).replace('{{N}}', str(len(bad) + len(sample)))
+    rows = ['<h2>Próbka z każdego głosu (%d)</h2>' % len(sample)] + [card(f, 'losowe') for f in sample]
+    page = HTML.replace('{{ROWS}}', '\n'.join(rows)).replace('{{N}}', str(len(sample)))
     open(os.path.join(out_dir, 'index.html'), 'w', encoding='utf-8').write(page)
-    return os.path.join(out_dir, 'index.html'), len(bad), len(sample)
+    return os.path.join(out_dir, 'index.html'), len(sample)
 
 
 HTML = """<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">

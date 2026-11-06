@@ -90,7 +90,7 @@ def build(path=None, release='m1', only=None):
     records, values, info = scope.collect(game, terms, release, only)
     lines = {r['key'] for r in records if r['tts']}
     refs = load_refs()
-    fragments, segments, slot_values = {}, [], {}
+    fragments, segments, slot_values, entities = {}, [], {}, {}
 
     def frag(voice, text, speed, kind):
         text = text if release == 'm1' else pronounce(text)
@@ -121,8 +121,10 @@ def build(path=None, release='m1', only=None):
                 if not texts and data['type'] != 'RawText':
                     r['note'] = 'luka bez znanych wartości (%s): fallback' % data['type']
                 for value, text in texts.items():
-                    slot_values[r['key'], data['arg'], value] = \
-                        None if text is None else frag(voice, text, value_speed, 'value')
+                    fid = None if text is None else frag(voice, text, value_speed, 'value')
+                    slot_values[r['key'], data['arg'], value] = fid
+                    if fid and data['type'] == 'EntityName' and voice == 'narrator':
+                        entities[squash(text)] = fid
             elif re.search(r'\w', data):
                 seg.update(text=data, fragment=frag(voice, data, r['speed'], kind))
             else:
@@ -132,6 +134,8 @@ def build(path=None, release='m1', only=None):
     if release != 'm1':
         for value, text in loot_texts(game, terms).items():
             slot_values[LOOT, 0, value] = frag('narrator', text, D.SPEED_MIN, 'value')
+        for name, fid in entities.items():      # lista łupu kończy się poleceniem usunięcia wroga (REMOVE_ENTITY)
+            slot_values.setdefault((LOOT, 0, name), fid)
 
     meta = {'version': __version__, 'release': release, 'model': D.MODEL, 'model_id': D.MODEL_ID, 'manifest': game.manifest_hash(),
             'built_at': datetime.datetime.now().isoformat(timespec='seconds'), 'scope': info,

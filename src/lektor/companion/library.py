@@ -5,6 +5,7 @@ w nawiasie). Gdy gra zwraca sam znacznik `<EntityName>`, porównujemy wyświetla
 wartości tej luki (E1_HOOK.md). Wartość będąca kluczem innej kwestii (np. cel misji) odtwarza audio tej kwestii.
 Brakującą wartość pomijamy i zapisujemy jako brak (D44).
 """
+import difflib
 import json
 import os
 import re
@@ -20,6 +21,9 @@ LIST_GAP = 0.15         # między wartościami listy {n} (np. kilku wrogów)
 LOOT = '@LOOT'          # slot_values: teksty listy łupu (D51)
 LOOT_WORDS = 12         # najdłuższy kawałek łupu w słowach
 LOOT_SKIP = {'i'}       # spójnik między pozycjami listy
+REPEAT_RATIO = 0.85     # początek kwestii tak podobny do wybranej opcji to powtórka (D72)
+REPEAT_SLACK = 4        # kwestia bywa o słowo dłuższa
+REPEAT_MIN = 12         # krótszy tekst opcji może trafić w kwestię przypadkiem
 GENERIC_CHOICES = {'kontynuuj'}     # guzik bez treści: bez odczytu (D64)
 MAX_DEPTH = 2           # wartość luki, która jest kwestią z własnymi lukami
 CACHE = 512             # fragmentów audio w pamięci
@@ -103,6 +107,18 @@ class Library:
         if u.tts:
             self._fill(u, key, list(args or []), depth)
         return u
+
+    def repeats(self, option, key):
+        """Kwestia zaczyna się tekstem wybranej opcji albo go zawiera (D72)."""
+        opt, line = self.lines.get(option), self.lines.get(key)
+        if not opt or not line:
+            return False
+        quote = next((s['text'] for s in self.segments.get(option, []) if s['kind'] == 'quote'), None)
+        said, next_line = squash(quote or opt['text_norm']), squash(line['text_norm'])
+        if not said or not next_line:
+            return False
+        head = difflib.SequenceMatcher(None, said, next_line[:len(said) + REPEAT_SLACK]).ratio()
+        return head >= REPEAT_RATIO or (len(said) >= REPEAT_MIN and ' %s ' % said in ' %s ' % next_line)
 
     def counter(self, key, args):
         """Sam licznik celu (D64): luka liczbowa i tekst „z czterech” po niej. None, gdy cel nie ma licznika."""

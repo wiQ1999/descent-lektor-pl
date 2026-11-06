@@ -89,3 +89,12 @@ def test_words_accept_how_whisper_writes_names_and_tiles():
     assert E.words('Keli') == E.words('Kelly') == E.words('Kehli')
     assert E.words('kafel sześć a') == E.words('kafel 6A')
     assert E.words('kafel czternaście be') == E.words('kafel 14B')
+
+
+def test_listen_list_is_short_covers_voices_and_skips_rejected():
+    from lektor import finalize
+    choice = {'%s%04d' % (v, i): {'voice': v, 'problems': []} for v in 'abc' for i in range(100)}
+    choice['bad'] = {'voice': 'd', 'problems': ['cer']}
+    sample = finalize.listen_list(choice)
+    assert len(sample) == finalize.LISTEN_MAX and 'bad' not in sample
+    assert {choice[f]['voice'] for f in sample} == set('abc')

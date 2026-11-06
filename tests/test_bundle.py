@@ -150,6 +150,23 @@ def test_dev_rebuild_keeps_state_logs_and_settings(fake):
     assert os.path.exists(os.path.join(dest, 'logs', 'hook-1.jsonl')) and os.path.exists(os.path.join(dest, 'stan', 'instalacja.txt'))
 
 
+def test_release_rebuild_keeps_install_state_out_of_zip(tmp_path):
+    dest = tmp_path / B.NAME
+    (dest / 'stan').mkdir(parents=True)
+    (dest / 'logs').mkdir()
+    (dest / 'python').mkdir()
+    (dest / 'stan' / 'instalacja.txt').write_text('x')
+    (dest / 'logs' / 'hook.jsonl').write_text('x')
+    (dest / 'python' / 'stary.py').write_text('x')
+    (dest / 'wersja.txt').write_text('x')
+    B.clean(str(dest))
+    assert sorted(p.name for p in dest.iterdir()) == ['logs', 'stan']
+    (dest / 'wersja.txt').write_text('x')
+    B.write_zip(str(dest), str(tmp_path / 'p.zip'))
+    with zipfile.ZipFile(tmp_path / 'p.zip') as z:
+        assert sorted(z.namelist()) == [B.NAME + '/logs/', B.NAME + '/wersja.txt']
+
+
 def test_bad_download_sum_stops_build(fake, monkeypatch):
     bad = dict(B.pins()['doorstop']['win'], sha256='0' * 64)
     monkeypatch.setattr(B, 'pins', lambda: {'doorstop': {'win': bad}})

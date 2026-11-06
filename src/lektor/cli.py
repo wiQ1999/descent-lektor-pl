@@ -57,8 +57,8 @@ def main(argv=None):
     elif a.cmd == 'finalize':
         from . import finalize
         m = finalize.finalize()
-        page, bad, sample = finalize.listen()
-        print('%d fragmentów; odsłuch: %d odrzuconych + %d losowych: %s' % (len(m['fragments']), bad, sample, paths.rel(page)))
+        page, sample = finalize.listen()
+        print('%d fragmentów; odsłuch: %d: %s' % (len(m['fragments']), sample, page))
     elif a.cmd == 'audio-report':
         from .report import audio_report
         print(paths.rel(audio_report(a.db)))

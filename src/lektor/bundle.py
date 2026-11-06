@@ -237,6 +237,8 @@ def write_zip(dest, path):
     """Zip z folderem paczki; pliki .command i .sh z prawem wykonywania (Mac), nazwy w UTF-8."""
     with zipfile.ZipFile(path + '.part', 'w') as z:
         for rel in files_of(dest):
+            if rel.split('/', 1)[0] in UNSIGNED:
+                continue
             full = os.path.join(dest, rel)
             info = zipfile.ZipInfo('%s/%s' % (NAME, rel), time.localtime(os.path.getmtime(full))[:6])
             info.create_system = 3
@@ -254,10 +256,22 @@ def write_zip(dest, path):
     return path
 
 
+def clean(dest):
+    """Czyści folder paczki poza stanem instalacji i dziennikami: gra może być zainstalowana z tego folderu."""
+    for name in os.listdir(dest):
+        path = os.path.join(dest, name)
+        if name in UNSIGNED:
+            continue
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+        else:
+            os.remove(path)
+
+
 def build(platform='win', dev=False, out=None):
     dest = out or (DEV if dev else os.path.join(DIST, platform, NAME))
     if not dev and os.path.exists(dest):
-        shutil.rmtree(dest)
+        clean(dest)
     os.makedirs(os.path.join(dest, 'logs'), exist_ok=True)
     copy_plugin(dest)
     copy_loader(platform, dest)

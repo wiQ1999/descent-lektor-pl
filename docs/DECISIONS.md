@@ -621,6 +621,19 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Większość alarmów to zapis Whispera (nazwy, kafle). Ocena zna już te formy (`ASR_NAMES`, `TILE_LETTERS`, końcówka słowa w `tail_cut`). Niepewne zostały dwa końcowe spójniki w kawałkach kart wrogów, przed wartością luki. Szczegóły w `analysis/E7_AUDIO.md`. Końcówki sprawdzimy też uchem przy sesji na Macu.
 
+### D72 · 2026-11-06 · E7: uwagi z gry na paczce M2
+**Wynik testu:** uciszanie opisu misji i cytaty w głosie bohatera działają. Wymowę „Keli” użytkownik sprawdzi później. Sesję na Macu zagrano na paczce z pierwszą misją: wszystko działało zgodnie z założeniami, dziennika nie ma.
+
+**Decyzja:**
+- Sposób budowania paczek Windows i Mac zostaje bez zmian. Działanie paczki na Macu uznajemy za potwierdzone, E6 jest zamknięte. `analysis/E6_INSTALL.md` nie powstaje, bo nie ma dziennika.
+- Zamknięcie okna w trakcie czytania wycisza głos przez 0,35 s zamiast go urywać. Nowy dźwięk skraca wyciszanie do 10 ms, więc opóźnienie startu się nie zmienia (D13).
+- Odpowiedź z wyboru nie gra, gdy następna kwestia zaczyna się jej tekstem albo go zawiera. Czyta ją okno, w głosie mówcy i w całości. Okno otwiera się w tej samej chwili co zamknięcie opcji, więc ucięcia odpowiedzi nie słychać. W dziennikach zasada zadziałała 6 razy (zdarzenie `repeat`).
+- Lista łupu zna nazwy wrogów z zakresu. Gra kończy nią polecenie usunięcia wroga z planszy (`REMOVE_ENTITY`). To był jedyny brak w replayu. Nowego audio nie trzeba.
+- Strona odsłuchu ma najwyżej 30 fragmentów: po jednym z głosu, reszta losowo, bez odrzuconych przez automat. Odsłuch M2 odkładamy do czasu, aż zapadnie decyzja o sposobie generowania.
+- Ponowna budowa paczki nie usuwa `stan/` i `logs/`, bo gra bywa zainstalowana z tego folderu. Zip ich nie zawiera.
+
+**Uzasadnienie:** To uwagi użytkownika z gry. Rezygnacja z odpowiedzi zamiast z kwestii nie gubi tekstu, bo kwestia bywa dłuższa niż opcja. Replay ostatniej sesji pokazuje jeszcze 56 braków, ale to Q2 i samouczek, czyli teksty spoza zakresu M2.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
