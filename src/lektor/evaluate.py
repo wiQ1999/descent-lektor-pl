@@ -19,6 +19,7 @@ from .normalize import cardinal
 from .synth import inherited, load_state, take_path, takes_for
 
 ASR_MODEL = 'openai/whisper-large-v3-turbo'
+ASR_WINDOW_S = 30       # dłuższe nagranie Whisper czyta w trybie ze znacznikami czasu
 REF_CPS = 10.3          # naturalne tempo referencji dubbingu (znaki na sekundę), speed 1,2 daje ok. 12,1
 MAX_CER = 0.08          # fragmenty od SHORT znaków; krótsze (nazwy, wartości) ASR myli częściej
 MAX_CER_SHORT = 0.25
@@ -169,8 +170,9 @@ class Scorer:
         import librosa
         y = self.load(path)
         speech = librosa.effects.trim(y, top_db=40)[0].size / 16000 if y.size > 1600 else y.size / 16000
+        long_form = {'return_timestamps': True} if y.size > ASR_WINDOW_S * 16000 else {}    # Whisper bez tego odrzuca nagranie
         hyp = '' if speech < MIN_SPEECH_S else self.asr(   # Whisper na ciszy zmyśla zdanie
-            {'raw': y, 'sampling_rate': 16000}, generate_kwargs={'language': 'polish', 'task': 'transcribe'})['text']
+            {'raw': y, 'sampling_rate': 16000}, generate_kwargs={'language': 'polish', 'task': 'transcribe'}, **long_form)['text']
         out = {'asr': hyp.strip(), **text_checks(text, hyp), 'speech_s': round(speech, 2),
                'cps': round(len(text) / max(speech, 0.05), 1), 'cps_ratio': round(len(text) / max(speech, 0.05) / expected_cps(speed), 2)}
         out['sim'] = round(float(self.embed(y) @ self.refs[voice]), 3) if speech >= 1.5 else None
