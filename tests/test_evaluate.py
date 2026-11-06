@@ -82,3 +82,10 @@ def test_longest_pause():
     tone = np.sin(np.arange(8000) / 3).astype(np.float32)
     assert E.longest_pause(np.concatenate([tone, np.zeros(24000, np.float32), tone])) == pytest.approx(1.5, abs=0.1)
     assert E.longest_pause(tone) == 0.0
+
+
+def test_words_accept_how_whisper_writes_names_and_tiles():
+    assert not E.tail_cut(E.words('Ne’Krul'), E.words('Nekrul'))     # imię z apostrofem Whisper pisze razem
+    assert E.words('Keli') == E.words('Kelly') == E.words('Kehli')
+    assert E.words('kafel sześć a') == E.words('kafel 6A')
+    assert E.words('kafel czternaście be') == E.words('kafel 14B')

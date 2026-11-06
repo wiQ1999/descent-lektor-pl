@@ -20,6 +20,8 @@ from .synth import inherited, load_state, take_path, takes_for
 
 ASR_MODEL = 'openai/whisper-large-v3-turbo'
 ASR_WINDOW_S = 30       # dłuższe nagranie Whisper czyta w trybie ze znacznikami czasu
+ASR_NAMES = re.compile(r'\b(kelly|kelli|kehli)\b')      # tak Whisper zapisuje „Keli” (D70)
+TILE_LETTERS = {'a': 'a', 'b': 'be'}                    # kafle planszy: tekst „sześć be”, Whisper „6B”
 REF_CPS = 10.3          # naturalne tempo referencji dubbingu (znaki na sekundę), speed 1,2 daje ok. 12,1
 MAX_CER = 0.08          # fragmenty od SHORT znaków; krótsze (nazwy, wartości) ASR myli częściej
 MAX_CER_SHORT = 0.25
@@ -36,7 +38,10 @@ RETAKES = 3             # tyle ponownych podejść, zanim fragment trafi na list
 
 
 def words(s):
-    s = re.sub(r'\d+', lambda m: cardinal(int(m.group())), unicodedata.normalize('NFC', s.lower()))
+    s = unicodedata.normalize('NFC', s.lower())
+    s = ASR_NAMES.sub('keli', s)
+    s = re.sub(r'(\d)([ab])\b', lambda m: '%s %s' % (m.group(1), TILE_LETTERS[m.group(2)]), s)
+    s = re.sub(r'\d+', lambda m: cardinal(int(m.group())), s)
     return re.sub(r'[^\w ]', ' ', s).split()
 
 
@@ -106,7 +111,7 @@ def tail_cut(ref, hyp):
     if not ref:
         return False
     last = ref[-1]
-    return last not in hyp[-3:] if len(last) <= 2 else not any(similar(last, h) for h in hyp[-4:])
+    return last not in hyp[-3:] if len(last) <= 2 else not any(similar(last, h) or h.endswith(last) for h in hyp[-4:])
 
 
 def speech_end(y, sr=16000):
