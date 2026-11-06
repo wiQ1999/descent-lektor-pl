@@ -616,6 +616,11 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** To uwagi użytkownika z testu. Zmiana imienia dotyczy 108 fragmentów (ok. 12 700 znaków), które powstaną w bloku B razem z resztą. Poprawkę panelu sprawdzimy dopiero w grze, przy sesji na Macu.
 
+### D71 · 2026-11-06 · E7: wyniki generowania M2
+**Decyzja:** Oddajemy audio M2 z 42 oznaczonymi fragmentami z 3919. Nie generujemy ich ponownie, bo po 4 podejściach (bohaterowie po 6) wynik się nie zmienia, a przegląd nie pokazał uciętej kwestii fabularnej.
+
+**Uzasadnienie:** Większość alarmów to zapis Whispera (nazwy, kafle). Ocena zna już te formy (`ASR_NAMES`, `TILE_LETTERS`, końcówka słowa w `tail_cut`). Niepewne zostały dwa końcowe spójniki w kawałkach kart wrogów, przed wartością luki. Szczegóły w `analysis/E7_AUDIO.md`. Końcówki sprawdzimy też uchem przy sesji na Macu.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
