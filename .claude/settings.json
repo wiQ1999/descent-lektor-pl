@@ -1,0 +1,54 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__elevenlabs__list_models",
+      "mcp__elevenlabs__get_voice",
+      "mcp__elevenlabs__search_voices",
+      "mcp__elevenlabs__search_voice_library",
+      "mcp__elevenlabs__check_subscription",
+      "mcp__elevenlabs__list_agents",
+      "mcp__elevenlabs__get_agent",
+      "mcp__elevenlabs__list_conversations",
+      "mcp__elevenlabs__get_conversation",
+      "mcp__elevenlabs__list_phone_numbers"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__elevenlabs__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 15,
+            "command": "uv run --no-project --python 3.13 \"${CLAUDE_PROJECT_DIR}/analysis/tools/elevenlabs/usage_hook.py\" pre"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "mcp__elevenlabs__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 20,
+            "command": "uv run --no-project --python 3.13 \"${CLAUDE_PROJECT_DIR}/analysis/tools/elevenlabs/usage_hook.py\" post"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "mcp__elevenlabs__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 20,
+            "command": "uv run --no-project --python 3.13 \"${CLAUDE_PROJECT_DIR}/analysis/tools/elevenlabs/usage_hook.py\" post"
+          }
+        ]
+      }
+    ]
+  }
+}

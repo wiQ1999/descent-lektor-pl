@@ -30,7 +30,7 @@ Gramy na MacBooku Air M5 (arm64). Development robimy na Windows 11 z GTX 1650 Ti
 ```
 CLAUDE.md, README.md
 docs/        PLAN.md (etapy), DECISIONS.md (decyzje i otwarte kwestie), CASTING.md (obsada głosów)
-analysis/    raporty z analiz + tools/ (skrypty Python/UnityPy)
+analysis/    raporty z analiz + tools/ (skrypty Python/UnityPy, elevenlabs/: serwer MCP i pomiar zużycia)
   work/      kopie gry, depot macOS, dekompilacja, audio, próbki: nieśledzone
 src/         kod docelowy (plugin, pipeline, companion)
   lektor/    pakiet Python: baza kwestii M1 (build), referencje (refs), raporty (report), audio E3 (synth, evaluate, finalize),
@@ -126,6 +126,17 @@ Companion (E4). Konfiguracja w `%LOCALAPPDATA%\LektorPL\companion.toml` (tworzon
 ```
 
 - Replay z `--speed 0 --no-audio` sprawdza samo pokrycie. Opóźnienia mierzymy w czasie rzeczywistym (`--tcp`, wyjście audio wyciszone w configu `volume = 0.0`).
+
+ElevenLabs (E9, D73). Serwer MCP tylko w zakresie projektu (`.mcp.json`), klucz w nieśledzonym `.env.elevenlabs.local`, audio i logi w `analysis/work/elevenlabs/`. Instrukcja: `analysis/tools/elevenlabs/README.md`.
+
+```bash
+uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--period current|all] [--by day|voice|model|tool|session] [--csv PLIK] [--offline]
+.venv/Scripts/python -I -m pytest tests/elevenlabs
+```
+
+- W sesji ten sam raport daje `/zuzycie`.
+- Płatne narzędzia wywołujemy tylko za zgodą użytkownika. Testy automatyczne nie łączą się z siecią.
+- Hooki z `.claude/settings.json` zapisują koszt każdego płatnego wywołania. Log nie zawiera tekstów.
 
 - Python uruchamiamy z `-I`.
 - `analysis/tools/normalize_pl.py` to nakładka na `lektor.normalize`; skrypty E0 wymagają pakietu `lektor` w `.venv`.

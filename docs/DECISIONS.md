@@ -634,6 +634,20 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** To uwagi użytkownika z gry. Rezygnacja z odpowiedzi zamiast z kwestii nie gubi tekstu, bo kwestia bywa dłuższa niż opcja. Replay ostatniej sesji pokazuje jeszcze 56 braków, ale to Q2 i samouczek, czyli teksty spoza zakresu M2.
 
+### D73 · 2026-11-06 · E9: serwer MCP ElevenLabs i pomiar zużycia
+**Decyzja:**
+- Kolejny etap to test jakości głosów w ElevenLabs. OmniVoice zostaje modelem paczek, dopóki test nie wskaże innej drogi.
+- Serwer `elevenlabs-mcp` 0.12.2 działa lokalnie i tylko w zakresie projektu (`.mcp.json`). Konfiguracji globalnej nie zmieniamy.
+- Klucz leży w nieśledzonym `.env.elevenlabs.local`.
+- Skrypty leżą w `analysis/tools/elevenlabs/`, a audio i logi w `analysis/work/elevenlabs/`. Repozytorium nie ma folderów `tools/` ani `runtime/` z planu użytkownika.
+- Hooki zapisują koszt każdego płatnego wywołania: z historii konta, a w zapasie z różnicy licznika. Log trzyma SHA-1 i długość tekstu, bez samego tekstu.
+- Dodatkowy hook `PostToolUseFailure` zapisuje wywołania z błędem, bo `PostToolUse` działa tylko po sukcesie.
+- Stan między hookami to osobny plik na wywołanie (`usage/pending/`), a nie wspólny `pending.json`. Równoległe wywołania nie nadpisują sobie stanu.
+- Bez reguł `deny`: kwestie prawne i licencyjne użytkownik rozstrzygnie w kolejnych etapach.
+- Test na żywo obejmuje TTS na losowej kwestii bohatera, pomiar zużycia i własny wariant głosu. Zastępuje to neutralne zdanie z planu użytkownika.
+
+**Uzasadnienie:** To decyzje użytkownika z QA. Układ ścieżek trzyma się zasady, że wyniki prywatne leżą w `analysis/work/`. Testy automatyczne nie łączą się z siecią, a każde płatne wywołanie wymaga zgody.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

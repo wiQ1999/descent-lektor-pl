@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "elevenlabs": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--no-project",
+        "--python",
+        "3.13",
+        "${CLAUDE_PROJECT_DIR:-.}/analysis/tools/elevenlabs/launch_mcp.py"
+      ]
+    }
+  }
+}

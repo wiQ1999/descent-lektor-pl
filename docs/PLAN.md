@@ -337,6 +337,21 @@ Uwagi z gry w D72. Paczka na Macu potwierdzona na pierwszej misji, E6 zamknięte
 - przyciszanie muzyki przez Wwise (D23);
 - UI ustawień.
 
+## E9 · Test głosów w ElevenLabs
+
+Sprawdzamy jakość generowania w chmurze wobec OmniVoice (D73).
+
+**Przygotowanie (gotowe):** serwer MCP w zakresie projektu, pomiar zużycia, raport `/zuzycie`. Instrukcja w `analysis/tools/elevenlabs/README.md`.
+
+**Test na żywo (czeka na klucz):**
+1. Bezpłatnie: `check_subscription`, `list_models`.
+2. TTS na losowej kwestii bohatera.
+3. Pomiar zużycia: rekord w logu, koszt zgodny z historią konta, procent zgodny z `check_subscription`.
+4. Własny wariant głosu: `text_to_voice`, potem `create_voice_from_preview`.
+5. Próbki do odsłuchu razem z głosem z OmniVoice.
+
+Dalszy zakres etapu ustalamy po tym teście.
+
 ## Weryfikacja
 
 Każdy etap kończy się sprawdzeniem jego kryteriów ukończenia, wpisem decyzji do `DECISIONS.md` i commitem. Pliki z `analysis/work/` nie trafiają do repozytorium.
