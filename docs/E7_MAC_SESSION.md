@@ -42,7 +42,9 @@ Rozpakuj zip i otwórz `INSTRUKCJA.md` z folderu paczki. W Finderze podgląd otw
    - cel z licznikiem: najpierw cały cel, potem sam licznik;
    - lista łupu czytana w całości;
    - guzik „Kontynuuj” bez odczytu, treść okna jak zawsze;
-   - głosy nowych postaci i poprawione głosy Ronana i Kehli.
+   - głosy nowych postaci i poprawione głosy Ronana i Kehli;
+   - cytat po wyborze opcji czytany głosem bohatera (opcje bez cudzysłowu czyta narrator);
+   - imię Kehli wymawiane jako „Keli”.
 5. Wyjdź z gry do pulpitu z menu gry.
 6. Otwórz *Monitor aktywności* i wpisz `python` w polu wyszukiwania. Proces powinien zniknąć do 15 s po wyjściu z gry.
 
