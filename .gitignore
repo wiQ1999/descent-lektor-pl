@@ -1,6 +1,7 @@
-# Zasada (LICENSE.md, D75): w Git jest tylko nasz kod, dokumentacja i raporty bez pełnych tekstów.
-# Treść gry, modele, wygenerowane audio i dane sesji zostają lokalnie. Narzędzia odtwarzają je
-# z kopii aplikacji użytkownika według docs/ODTWORZENIE.md.
+# Zasada (D75, D76): w Git jest tylko nasz kod, dokumentacja i raporty bez pełnych tekstów.
+# Treść gry, modele, wygenerowane audio i dane sesji zostają lokalnie, bez Git LFS. Narzędzia
+# odtwarzają je z kopii aplikacji użytkownika według docs/ODTWORZENIE.md. Gotowe paczki trafiają
+# do GitHub Releases.
 
 # --- Folder roboczy: kopie gry, dekompilacja, baza kwestii, audio, modele, paczki, dzienniki ---
 analysis/work/

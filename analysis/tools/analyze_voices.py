@@ -6,7 +6,7 @@ Charakter kwestii (spokojna / podniesiona / krzyk) liczony względem mediany dan
 Przerywniki łączy z napisami CutsceneModel (SoundEventName → zdarzenie Wwise → media; displayAt).
 
 Wejście: work/voices/index.json, work/voices/wav/**, SoundbanksInfo.xml, bundle d3/cutscenes/*.
-Wyjście (prywatne): work/voices/analysis.json, work/voices/refs/*.wav (+ refs.json z listą źródeł).
+Wyjście (nieśledzone): work/voices/analysis.json, work/voices/refs/*.wav (+ refs.json z listą źródeł).
 
 Uruchomienie (z katalogu głównego repozytorium):
   .venv/Scripts/python -I analysis/tools/analyze_voices.py

@@ -1,7 +1,7 @@
 """Ekstrakcja kwestii PL z Descent: Legends of the Dark (kopia robocza, tylko odczyt).
 
 Wejście: work/game/.../StreamingAssets/bundles (kopie bundli) + work/out/class_scan.json.
-Wyjście (prywatne, nie publikować): work/out/pl_terms.json, work/out/lines.jsonl, work/out/graphs.json.
+Wyjście (nieśledzone): work/out/pl_terms.json, work/out/lines.jsonl, work/out/graphs.json.
 
 Uruchomienie (z katalogu głównego repozytorium): .venv/Scripts/python -I analysis/tools/extract_lines.py
 """

@@ -2,7 +2,7 @@
 
 Nazwy plików i przypisanie do banków bierze z SoundbanksInfo.xml (Media/File z Language="Polish").
 Wejście:  work/game/.../GeneratedSoundBanks/Windows/{Polish.pck,SoundbanksInfo.xml}
-Wyjście (prywatne): work/voices/wem/<grupa>/*.wem, work/voices/wav/<grupa>/*.wav, work/voices/index.json
+Wyjście (nieśledzone): work/voices/wem/<grupa>/*.wem, work/voices/wav/<grupa>/*.wav, work/voices/index.json
 Grupy: cutscenes (Voice_Cutscenes_*), heroes (Voice_Heroes_*), villains (Voice_Villains_*).
 
 Uruchomienie (z katalogu głównego repozytorium):

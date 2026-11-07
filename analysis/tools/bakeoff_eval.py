@@ -6,7 +6,7 @@ Dla każdego modelu z work/bakeoff/<model>/gen.json:
   - tempo (znaki tekstu na sekundę audio) i akcent jako rozrzut wysokości głosu (odchylenie F0 w półtonach);
   - najlepsze z kilku podejść (najniższy CER, potem podobieństwo);
   - wyrównanie głośności do -20 LUFS (raz, w miejscu).
-Wyjście (prywatne): work/bakeoff/eval.json, INDEX.md, index.html (odtwarzacze + oceny), oceny.csv.
+Wyjście (nieśledzone): work/bakeoff/eval.json, INDEX.md, index.html (odtwarzacze + oceny), oceny.csv.
 Na stdout: zbiorcze liczby bez treści gry (do analysis/BAKEOFF.md). Statystyki modeli liczone są tylko
 z zadań wspólnych dla wszystkich modeli; warianty jednego modelu (runda 2) podsumowuje --variants.
 
@@ -215,7 +215,7 @@ def write_index(set_data, best, models, stats, page='index', variants=None):
 
 def write_md_csv(frag, jobs_by_frag, best, models, stats):
     # INDEX.md
-    md = ['# Porównanie TTS: próbki do odsłuchu (prywatne)', '',
+    md = ['# Porównanie TTS: próbki do odsłuchu', '',
           'Każdy wiersz to najlepsze z podejść danego modelu (najniższy CER). Głośność wyrównana do -20 LUFS.',
           'Wygodniej słucha się w `analysis/work/bakeoff/index.html` (odtwarzacze i formularz ocen).', '']
     md += ['| Model | RTF (mediana) | VRAM (max) | CER najlepszych (mediana) | Podobieństwo głosu |', '|---|---:|---:|---:|---:|']

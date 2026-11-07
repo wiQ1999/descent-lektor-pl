@@ -1,6 +1,6 @@
 """Prototyp normalizacji z E0. Kod przeniesiony do src/lektor/normalize.py (E2); ten plik tylko go importuje.
 
-Uruchomienie kontrolne (pokazuje wszystkie miejsca z cyframi i ikonami w M1; wynik prywatny):
+Uruchomienie kontrolne (pokazuje wszystkie miejsca z cyframi i ikonami w M1; wynik nieśledzony):
   .venv/Scripts/python -I analysis/tools/normalize_pl.py --m1
 """
 import re

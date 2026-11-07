@@ -51,4 +51,4 @@ Barwa to podobieństwo do referencji z dubbingu Kehli. F0 referencji w tym samym
 
 ## Odsłuch
 
-Próbki są w `analysis/work/elevenlabs/odsluch/` (prywatne, 6 plików z referencją dubbingu).
+Próbki są w `analysis/work/elevenlabs/odsluch/` (poza repozytorium, 6 plików z referencją dubbingu).

@@ -7,11 +7,11 @@ Nieoficjalny, niekomercyjny polski lektor TTS do aplikacji gry planszowej *Desce
 
 Projekt działa na Windows i na Macu z Apple Silicon. Szczegóły i uzasadnienie są w [analysis/REPORT.md](analysis/REPORT.md), a etapy w [docs/PLAN.md](docs/PLAN.md).
 
-## Licencja i treść gry
+## Licencja i wydania
 
-- Kod, dokumentacja i raporty są na licencji [LICENSE.md](LICENSE.md). Korzystać mogą tylko osoby, które legalnie nabyły grę, i tylko niekomercyjnie.
+- Warunki korzystania: [LICENSE.md](LICENSE.md).
 - Repozytorium nie zawiera treści gry (tekstów, grafik, nagrań, kodu), modeli ani wygenerowanego audio. Narzędzia odtwarzają je lokalnie z kopii aplikacji użytkownika.
-- Nagrania wygenerowane głosami opartymi na dubbingu są tylko do prywatnego użytku.
+- Gotowe paczki dla Windows i Maca (audio, plugin, companion, instalator i instrukcja) będą w wydaniach GitHub Releases. Gracz pobiera jeden plik dla swojego systemu.
 
 ## Odtworzenie od zera
 

@@ -1,6 +1,6 @@
 """Zestaw porównawczy TTS (E0): fragmenty, normalizacja, adnotacja emocji, referencje emocjonalne, lista zadań.
 
-Wynik (prywatny, z tekstami gry): work/bakeoff/set.json oraz work/bakeoff/refs/<głos>__<emocja>.wav.
+Wynik (nieśledzony, z tekstami gry): work/bakeoff/set.json oraz work/bakeoff/refs/<głos>__<emocja>.wav.
 Ten sam set.json czytają generatory wszystkich kandydatów (bakeoff_gen.py), więc każdy model dostaje
 identyczny tekst, referencje, podział na fragmenty i ziarna losowania.
 

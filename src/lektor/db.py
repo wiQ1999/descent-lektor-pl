@@ -1,4 +1,4 @@
-"""Baza kwestii (SQLite, prywatna: analysis/work/lektor/m1.sqlite).
+"""Baza kwestii (SQLite, nieśledzona: analysis/work/lektor/m1.sqlite).
 
 lines        kwestia (klucz okna): grupa, kategoria, przełącznik, głos, tempo, tekst surowy i znormalizowany
 segments     kolejne części kwestii: tekst (fragment do syntezy), luka {n} albo cytat/opis opcji (D20)

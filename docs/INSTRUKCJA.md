@@ -10,7 +10,6 @@ Polski lektor do gry *Descent: Legends of the Dark* ze Steama. Czyta okna fabula
   - Windows: w folderze gry pojawiają się 3 małe pliki.
   - Mac: gra dostaje nowy podpis, a w Steam pojawia się opcja uruchamiania.
 - **Muzyka:** lektor nie przycisza muzyki gry. Ustaw jej głośność w opcjach gry.
-- **Prywatność:** paczka zawiera nagrania z gry. Nie udostępniaj jej publicznie.
 
 ## Zawartość folderu
 

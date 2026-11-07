@@ -6,7 +6,7 @@ Opis postaci bierzemy z portretu z okna dialogu (d3/storymessagecharacters, teks
 
 Postać z dubbingu (Kehli, D55) zamiast projektu ma zestawy klipów: `mix` skleja je w referencje z transkrypcją.
 
-Kroki dla rundy QA (wyniki prywatne w analysis/work/lektor/voice_design/e7/<runda>/):
+Kroki dla rundy QA (wyniki w analysis/work/lektor/voice_design/e7/<runda>/):
   .venv/Scripts/python -I analysis/tools/npc_voices.py portrait r1         # portrety z kopii gry
   <omnivoice>/Scripts/python -I analysis/tools/npc_voices.py scan r1       # kandydaci: opis × ziarno
   .venv/Scripts/python -I analysis/tools/npc_voices.py mix r1              # referencje z klipów dubbingu

@@ -66,7 +66,7 @@ def state(save, catalog):
 
 def markdown(s):
     row = lambda m: '| `%s` | %s | %s | %s |' % (m['id'], m.get('kind', '?'), m.get('asset') or '–', m.get('title') or '–')
-    lines = ['# Stan kampanii (prywatne)', '', '- zapis: `%s`' % s['save'],
+    lines = ['# Stan kampanii', '', '- zapis: `%s`' % s['save'],
              '- wersja %s, %s, akt %s, %.1f h, bohaterowie: %s' % (s['version'], s['campaign'], s['act'], s['hours'], ', '.join(s['heroes'])),
              '- miejsce: `%s`, scenariusz w toku: %s' % (s['location'], s['quest_in_progress'] or 'brak'), '',
              '## Rozegrane (kolejność z dziennika kampanii)', '', '| id | rodzaj | zasób | tytuł PL |', '|---|---|---|---|']

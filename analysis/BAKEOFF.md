@@ -1,7 +1,7 @@
 # E0 · Porównanie modeli TTS
 
 Data: 2026-10-31 – 2026-11-01. GTX 1650 Ti 4 GB, Windows 11.
-Próbki, transkrypcje i wyniki z tekstami są prywatne: `analysis/work/bakeoff/` (`index.html` i `r2.html` do odsłuchu i ocen, `INDEX.md`, `eval.json`, `oceny_tts.csv`, `oceny_r2.csv`).
+Próbki, transkrypcje i wyniki z tekstami leżą poza repozytorium: `analysis/work/bakeoff/` (`index.html` i `r2.html` do odsłuchu i ocen, `INDEX.md`, `eval.json`, `oceny_tts.csv`, `oceny_r2.csv`).
 
 | Skrypt | Rola |
 |---|---|

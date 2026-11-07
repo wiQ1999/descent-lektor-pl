@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "lektor"
 version = "0.1.0"
-description = "Prywatny polski lektor TTS do Descent: Legends of the Dark"
+description = "Nieoficjalny polski lektor TTS do Descent: Legends of the Dark"
 requires-python = ">=3.12"
 # Zależności (UnityPy, numpy, soundfile, librosa, transformers, torch) są w .venv projektu (D12),
 # instalowane osobno, żeby instalacja pakietu nie zmieniała wersji torch/CUDA.

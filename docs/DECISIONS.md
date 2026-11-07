@@ -44,6 +44,8 @@ Plan etapów: [PLAN.md](PLAN.md).
 - Klonujemy tylko głosy z dubbingu tej gry, na potrzeby prywatnej rozgrywki.
 - Głosów innych osób nie klonujemy bez ich zgody.
 
+**Zmiana 2026-11-07:** ograniczenie do użytku prywatnego zastąpione przez D76 (publiczne wydania).
+
 ### D07 · 2026-10-31 · Mac
 **Decyzja:** Na Macu akceptujemy BepInEx albo inny loader, o ile działa. Bez maszyny wirtualnej.
 **Uzasadnienie:** Gra działa natywnie na arm64 (`analysis/MAC_REPORT.md`), a VM byłaby zbyt ciężka dla MacBooka Air przy stole.
@@ -247,6 +249,8 @@ Plan etapów: [PLAN.md](PLAN.md).
 - Najlepsze oceny w obu rundach odsłuchu (`analysis/BAKEOFF.md`), CER bliski zera i najwyższe podobieństwo głosu.
 - 16 kroków skraca czas o połowę, ale brzmi gorzej i ma więcej błędów.
 - Koszt: na GTX 1650 Ti ok. 30 h na jedno podejście M1.
+
+**Zmiana 2026-11-07:** zakaz rozpowszechniania wygenerowanego audio zastąpiony przez D76 (publiczne wydania). Wag nadal nie rozpowszechniamy.
 
 ### D34 · 2026-11-01 · Tempo czytania (b)
 **Decyzja:**
@@ -674,6 +678,22 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Licencja może obejmować tylko utwory autora repozytorium. Prawa do tekstów, grafik i dubbingu ma wydawca i aktorzy, a warunek posiadania gry nie pozwala ich publikować. Publiczne repozytorium z treścią gry grozi zgłoszeniem DMCA i usunięciem. Skan wszystkich plików i całej historii ciągami 6 słów z tekstów gry (PL i EN) nie znalazł treści gry poza tymi dwoma cytatami.
 
+**Zmiana 2026-11-07:** uzasadnienie o publikacji zastąpione przez D76. Zasada „Git bez treści gry, modeli i audio” zostaje.
+
+### D76 · 2026-11-07 · Wydania na GitHub Releases
+**Decyzja:**
+- Wygenerowanego audio nie śledzimy w Git. Nie używamy Git LFS.
+- Repozytorium ma narzędzia, które odtwarzają całe środowisko i pozwalają generować oraz klonować głosy na własne potrzeby (`docs/ODTWORZENIE.md`).
+- Gotowe paczki Windows i Mac publikujemy w GitHub Releases publicznego repozytorium użytkownika. Paczka ma komplet plików jak dotąd: audio, bazę kwestii, plugin, loader, companion z Pythonem, skrypty i instrukcję.
+- Wydania mogą zawierać głosy oparte na dubbingu i teksty gry. To dodatek do Descent objęty licencją tylko dla posiadaczy gry planszowej.
+- Repozytorium nie ma komendy pobierania plików z wydania.
+- Wydanie przygotujemy w etapie E10.
+- Z `LICENSE.md` (pkt 6) znika zdanie o prywatnym użytku nagrań. Dokumentacja nie powtarza zastrzeżeń z licencji.
+- Zostają reguły techniczne: Git bez treści gry, modeli i audio, raporty z kluczami i liczbami, długie teksty gry w plikach `analysis/work/`.
+- D76 zastępuje prywatny użytek klonów z D06, zakaz rozpowszechniania audio z D33 i uzasadnienie D75. Stare wpisy mają adnotacje.
+
+**Uzasadnienie:** To decyzje użytkownika z QA. Audio to najdłuższa część pracy (M2 ok. 16 h GPU) i nie odtwarza się bajt w bajt, więc gracze dostają je gotowe. Pliki wydań leżą poza historią Git (do 2 GiB na plik), więc repozytorium zostaje małe bez LFS.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -718,3 +738,4 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 | – | Własny punkt wejścia Doorstop przed startem Unity | działa na Windows (test W1, D58); na Macu sprawdzimy w sesji E6, odłożonej (D61) |
 | – | Model dla całej gry | E7 na OmniVoice (D65); cała gra przy większym zakresie (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |
+| – | Wydanie paczek w GitHub Releases | E10 (D76) |

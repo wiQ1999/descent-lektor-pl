@@ -1,6 +1,6 @@
 # Lektor PL – Descent: Legends of the Dark
 
-Nieoficjalny, niekomercyjny polski lektor TTS do gry *Descent: Legends of the Dark* (Unity 2022.3.62f2, Mono, Wwise, Steam). Licencja: [LICENSE.md](LICENSE.md), tylko dla osób, które nabyły grę planszową (D75).
+Nieoficjalny, niekomercyjny polski lektor TTS do gry *Descent: Legends of the Dark* (Unity 2022.3.62f2, Mono, Wwise, Steam). Licencja: [LICENSE.md](LICENSE.md) (D75).
 
 Docelowo:
 - plugin w grze wysyła zdarzenia okien (klucz, argumenty, tekst, mówca) do lokalnego procesu companion;
@@ -21,8 +21,9 @@ Gramy na MacBooku Air M5 (arm64). Development robimy na Windows 11 z GTX 1650 Ti
 - Po każdym etapie robimy commit.
 - Gdy krok wymaga gry, przygotowujemy instrukcję dla użytkownika i czekamy na wynik.
 - Pliki gry (`E:\SteamLibrary\steamapps\common\Legends of the Dark`) i `LocalLow` są tylko do odczytu; pracujemy na kopiach w `analysis/work/`.
-- Treść gry (teksty, grafiki, audio, dekompilacja, próbki TTS) jest prywatna. Nie commitujemy jej ani nie publikujemy; w raportach nie ma pełnych tekstów.
-- Repozytorium może trafić publicznie na GitHub (D75), więc `.gitignore` blokuje treść gry, modele i audio w każdym miejscu. Zdalne repozytorium dodaje użytkownik. Logowanie do Steam (DepotDownloader) użytkownik robi sam.
+- Treści gry (teksty, grafiki, nagrania, dekompilacja), modeli ani wygenerowanego audio nie commitujemy (D75, D76). Raporty podają klucze, nazwy i liczby, bez pełnych tekstów.
+- Repozytorium trafi publicznie na GitHub. `.gitignore` blokuje treść gry, modele i audio w każdym miejscu, bez Git LFS. Gotowe paczki idą do GitHub Releases (D76, etap E10). Zdalne repozytorium i publikację wydań robi użytkownik. Logowanie do Steam (DepotDownloader) też.
+- Dokumentacja nie powtarza zastrzeżeń prawnych: opisuje je `LICENSE.md` (D76).
 - Każde nowe narzędzie albo krok przygotowania dopisujemy do [docs/ODTWORZENIE.md](docs/ODTWORZENIE.md), a nowe pakiety `.venv` do `analysis/envs/venv.txt`.
 - Wagi modeli i cache Hugging Face trzymamy w `analysis/work/hf_cache` (ignorowane w Git).
 
@@ -57,7 +58,7 @@ tests/       pytest dla src/lektor (zdania testowe własne, bez tekstów gry)
 .venv/Scripts/python -I analysis/tools/tts_bench.py --asr-only
 ```
 
-Pipeline danych (E2). Baza i referencje lądują w `analysis/work/lektor/` (prywatne):
+Pipeline danych (E2). Baza i referencje lądują w `analysis/work/lektor/` (nieśledzone):
 
 ```bash
 .venv/Scripts/python -I -m lektor build      # baza kwestii M1 z kopii gry (m1.sqlite)
@@ -73,7 +74,7 @@ Modele z porównania E0 mają własne środowiska w `%LOCALAPPDATA%\LektorPL\env
 .venv/Scripts/python -I analysis/tools/bakeoff_eval.py [--page r2 --models omnivoice --variants A P1]
 ```
 
-Audio M1 (E3). Generowanie w środowisku OmniVoice (pakiet `lektor` zainstalowany tam w trybie edytowalnym), ocena w `.venv`. Wyniki w `analysis/work/audio/m1/` (prywatne); każdy krok jest wznawialny:
+Audio M1 (E3). Generowanie w środowisku OmniVoice (pakiet `lektor` zainstalowany tam w trybie edytowalnym), ocena w `.venv`. Wyniki w `analysis/work/audio/m1/` (nieśledzone); każdy krok jest wznawialny:
 
 ```bash
 "$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I -m lektor generate [--limit N] [--voices narrator] [--retake]

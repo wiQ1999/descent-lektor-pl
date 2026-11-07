@@ -1,7 +1,7 @@
 # E1 · Test hooka na Windows (tylko logowanie)
 
 Data: 2026-10-31. Plugin `LektorPL` 0.1.1, BepInEx 5.4.23.5 win_x86 (D11), gra 2.0.10, Unity 2022.3.62f2.
-Dziennik i szczegóły (z tekstami) są prywatne: `%LOCALAPPDATA%\LektorPL\logs\hook-*.jsonl`, `analysis/work/out/e1_coverage.json`.
+Dziennik i szczegóły (z tekstami) leżą poza repozytorium: `%LOCALAPPDATA%\LektorPL\logs\hook-*.jsonl`, `analysis/work/out/e1_coverage.json`.
 Raport powstał przez `analysis/tools/hook_coverage.py` i dodatkowe porównania tekstu z ekranem.
 
 ## Wynik

@@ -11,7 +11,7 @@ requirements-<platform>.txt). Koła instaluje uv, tylko przy budowie: na kompute
 i audio w repozytorium oraz z Pythonem z .venv (test W1). Ponowna budowa podmienia pliki, ale zostawia stan
 instalacji (stan/), dzienniki (logs/) i zmienione ustawienia.
 
-Paczka zawiera audio M1, więc jest prywatna i powstaje w analysis/work/ (ignorowane w Git).
+Paczka zawiera audio, więc powstaje w analysis/work/ (ignorowane w Git). Gotowe paczki idą do GitHub Releases (D76).
 """
 import hashlib
 import json

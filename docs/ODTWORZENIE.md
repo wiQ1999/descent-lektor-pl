@@ -1,11 +1,11 @@
 # Odtworzenie projektu od zera
 
-Repozytorium nie zawiera treści gry, modeli ani wygenerowanego audio (LICENSE.md, D75). Wszystko to powstaje lokalnie w `analysis/work/` według tej instrukcji, z kopii aplikacji na Twoim komputerze. Komendy uruchamiamy z katalogu głównego repozytorium w Git Bash, chyba że blok mówi inaczej.
+Repozytorium nie zawiera treści gry, modeli ani wygenerowanego audio (D75, D76). Gotowe paczki z audio będą w wydaniach GitHub Releases (etap E10). Ta instrukcja pozwala zbudować wszystko samodzielnie w `analysis/work/`, z kopii aplikacji na Twoim komputerze. Komendy uruchamiamy z katalogu głównego repozytorium w Git Bash, chyba że blok mówi inaczej.
 
 ## Wymagania
 
 - Windows 11, karta NVIDIA z CUDA 12.4 (wystarczy GTX 1650 Ti 4 GB) i ok. 40 GB wolnego miejsca.
-- Legalnie nabyta gra planszowa *Descent: Legends of the Dark* i jej darmowa aplikacja ze Steam (warunek licencji).
+- Aplikacja *Descent: Legends of the Dark* zainstalowana ze Steam.
 - Git, Git Bash, [uv](https://docs.astral.sh/uv/), .NET SDK 10 (plugin) i curl (paczki).
 - Opcjonalnie: klucz ElevenLabs (E9) i DepotDownloader (analiza buildu macOS).
 
@@ -133,6 +133,7 @@ powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1
 ```
 
 - Paczka trafia do `analysis/work/dist/`. Doorstop, Python i koła mają sumy w `src/bundle/pins.toml` i `src/bundle/requirements-<platform>.txt`.
+- Gotowe paczki publikujemy w GitHub Releases (D76, etap E10).
 - Instalację w grze opisuje `docs/INSTRUKCJA.md`.
 
 ## 8. Opcjonalnie
@@ -145,4 +146,4 @@ powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1
 
 - **Podejścia audio:** model losuje, więc nowe podejścia brzmią trochę inaczej. Automat wybiera je jednak według tych samych zasad.
 - **Oceny z odsłuchu i dzienniki z gry:** to wyniki sesji użytkownika, z treścią gry, więc nie trafiają do repozytorium. Wnioski z nich są w raportach i w `docs/DECISIONS.md`.
-- **Zapisy gry:** są prywatne, a ich kopie leżą tylko w `analysis/work/saves`.
+- **Zapisy gry:** ich kopie leżą tylko w `analysis/work/saves`.

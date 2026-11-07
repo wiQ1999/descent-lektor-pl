@@ -7,7 +7,7 @@ Grupy:
   tempo/   10 kwestii narratora: cała kwestia jednym przebiegiem vs zdania osobno z pauzą 0,35 / 0,5 s,
            oraz time-stretch 0,9 (WSOLA) dla obu sposobów; exaggeration 0,4.
   exag/    narracja 0,3/0,4/0,5; dialog 0,4/0,5/0,7; okrzyki 0,5/0,7/0,9; systemowy (narrator) 0,3/0,5.
-Wyjście: work/qa_samples/<grupa>/*.wav + work/qa_samples/INDEX.md (z tekstami — prywatne, nieśledzone).
+Wyjście: work/qa_samples/<grupa>/*.wav + work/qa_samples/INDEX.md (z tekstami, nieśledzone).
 
 Uruchomienie (z katalogu głównego repozytorium):
   .venv/Scripts/python -I analysis/tools/style_samples.py
@@ -163,7 +163,7 @@ def main():
 
 
 def write_index(index):
-    out = ['# Próbki do odsłuchu (prywatne)', '',
+    out = ['# Próbki do odsłuchu', '',
            'fp16, cfg_weight 0,3. Odniesienie tempa — oryginalny lektor: `analysis/%s` (9–10 znaków/s z pauzami).' % TEMPO_REF, '']
     for group, title in (('tempo', 'Tempo narratora (exaggeration 0,4)'), ('exag', 'Exaggeration według kategorii')):
         out += ['## ' + title, '']

@@ -1,7 +1,7 @@
 # Głosy: polski dubbing jako referencje do klonowania
 
 Źródło: kopia `Polish.pck` (Wwise AKPK, `StreamingAssets/Audio/GeneratedSoundBanks/Windows/`), ta sama zawartość co `Polish.bytes` w bundlu `audio/windows/polish`.
-Audio i transkrypcje są tylko w `analysis/work/voices/` (prywatne, poza repozytorium). W tym pliku są wyłącznie liczby i nazwy plików.
+Audio i transkrypcje są tylko w `analysis/work/voices/` (poza repozytorium). W tym pliku są wyłącznie liczby i nazwy plików.
 
 Skrypty:
 - [`tools/extract_voices.py`](tools/extract_voices.py): `.wem` z banków (DIDX/DATA), nazwy z `SoundbanksInfo.xml`, konwersja do WAV przez `vgmstream-cli` r2168;

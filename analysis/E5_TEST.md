@@ -5,7 +5,7 @@ Sesja z 2026-11-02 trwała ok. 30 min:
 - plugin 0.2.1 na etapie 4 z poprawką MonoMod (D54);
 - companion z pregenerowanym audio M1 (E3).
 
-Dane pochodzą z prywatnych dzienników w `%LOCALAPPDATA%\LektorPL\logs`: `hook-20261102-222237.jsonl` z pluginu i `companion-20261102-222155.jsonl` z companiona. Raport nie zawiera treści gry.
+Dane pochodzą z dzienników w `%LOCALAPPDATA%\LektorPL\logs`: `hook-20261102-222237.jsonl` z pluginu i `companion-20261102-222155.jsonl` z companiona. Raport nie zawiera treści gry.
 
 ## Wynik względem D13
 

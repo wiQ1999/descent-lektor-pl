@@ -6,7 +6,7 @@ Wejście:
   pliki .qlog z SavedGames zmienione w czasie sesji (gra dopisuje okna przy zapisie w scenie questu)
 Wyjście:
   stdout                 liczby bez treści gry (do analysis/E1_HOOK.md)
-  work/out/e1_coverage.json  szczegóły z kluczami i wartościami argumentów (prywatne)
+  work/out/e1_coverage.json  szczegóły z kluczami i wartościami argumentów (nieśledzone)
 
 Uruchomienie (z katalogu głównego repozytorium):
   .venv/Scripts/python -I analysis/tools/hook_coverage.py [dziennik.jsonl ...]

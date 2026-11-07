@@ -25,6 +25,7 @@ E1 ──────────────────> E4 companion (z repla
 - Proponowany start to E1. Gdy Ty grasz, E0 może liczyć na GPU.
 - Po każdym etapie robię commit, a decyzje trafiają do `DECISIONS.md`.
 - W `analysis/` nie ma treści gry; audio, logi i próbki leżą w `analysis/work/` (ignorowane).
+- E10 (wydanie w GitHub Releases) idzie po E7, gdy zakres audio jest gotowy.
 
 ## E0 · Porządki i porównanie modeli TTS
 
@@ -351,6 +352,17 @@ Sprawdzamy jakość generowania w chmurze wobec OmniVoice (D73).
 5. Próbki do odsłuchu razem z głosem z OmniVoice.
 
 Dalszy zakres etapu ustalamy po odsłuchu próbek.
+
+## E10 · Wydanie w GitHub Releases
+
+Publiczne wydanie gotowych paczek (D76). Etap startuje po Twojej akceptacji, a zakres ustalamy przed startem.
+
+**Wstępny zakres:**
+- paczki Windows i Mac z kompletem plików jak dotąd: audio WAV, baza kwestii, plugin, loader, companion z Pythonem, skrypty i instrukcja;
+- `LICENSE.md` w każdej paczce (pkt 3 licencji wymaga go w każdej kopii);
+- sprawdzenie licencji modeli przy rozpowszechnianiu audio i uznanie autorstwa: OmniVoice (wagi CC-BY-NC) i tokenizer Higgs Audio 2 (notka o autorstwie);
+- tag wersji i opis wydania: zakres scenariuszy i sumy SHA-256 paczek;
+- publikację (`gh release create` albo strona GitHub) robisz Ty.
 
 ## Weryfikacja
 

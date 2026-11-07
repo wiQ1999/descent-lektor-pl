@@ -1,7 +1,7 @@
 # Descent: Legends of the Dark — analiza plików pod lektora TTS (PL)
 
 Data analizy: 2026-10-30 · wersja treści: `manifest.dat` → `version 2.0.10`.
-Pliki gry i `LocalLow` czytałem wyłącznie do skopiowania. Analiza działała na kopiach w `analysis/work/` (5,5 GB, poza repozytorium Git). Skrypty leżą w `analysis/tools/`, a wyniki pośrednie z pełnymi tekstami w `analysis/work/out/`. Te wyniki są prywatne i nie należy ich publikować.
+Pliki gry i `LocalLow` czytałem wyłącznie do skopiowania. Analiza działała na kopiach w `analysis/work/` (5,5 GB, poza repozytorium Git). Skrypty leżą w `analysis/tools/`, a wyniki pośrednie z pełnymi tekstami w `analysis/work/out/`.
 
 ---
 
