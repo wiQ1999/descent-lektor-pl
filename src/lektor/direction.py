@@ -5,6 +5,24 @@ import hashlib
 MODEL = {'name': 'omnivoice', 'rev': '08be0b4', 'dtype': 'fp32', 'num_step': 32, 'guidance_scale': 2.0}
 MODEL_ID = 'omnivoice-08be0b4-fp32-s32-cfg2.0'
 
+# Postacie bez dubbingu czyta ElevenLabs (D80, E13): głosy z rundy 2 E11 (docs/CASTING.md), ustawienia domyślne.
+# Klucze fragmentów zostają z OmniVoice (fragment_id), zmienia się tylko silnik, który je czyta.
+ELEVEN_MODEL = 'eleven_v4'
+ELEVEN_VOICES = {'adelynn': 'dH4FrDMHSw1B31tzWOPw', 'ronan': '7ScqSXmT0oXvHenzw9hJ', 'astarra': 'B9Xmu9MUTLL4L5SIDsAD',
+                 'kathryn': 'JZzQvOujFtUu9vpAsm2q', 'ltrand': 'OLeMFzYjewG73PEGvePC', 'bruli': 'UDpt5qLmStrzpqQQZI9G',
+                 'herbie': 'BFwE7UC8qCq4bda0mhyE', 'mok': 'SQ2Rf1tdmOCUqClP6qJ4', 'outlaw': '6yCDeMiG8Fnpn0gPqxz3',
+                 'flint': 'gfzrH3j2kaDI5cNZuaPW', 'galgoraz': 'Quk21RWppOlJmKTYBeGr'}
+ELEVEN_TAKE0 = 100      # podejścia ElevenLabs mają numery od 101; podejścia OmniVoice tych głosów zostają jako zapas
+
+
+def engine(voice):
+    return 'elevenlabs' if voice in ELEVEN_VOICES else 'omnivoice'
+
+
+def take_engine(take):
+    return 'elevenlabs' if take > ELEVEN_TAKE0 else 'omnivoice'
+
+
 SCENE_CATEGORIES = {'narracja_fabularna'}   # narracja w scenach fabularnych: tempo naturalne
 SCENE_PAUSE = 0.35
 PAUSE = 0.25

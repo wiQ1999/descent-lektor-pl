@@ -36,7 +36,7 @@ analysis/    raporty z analiz + tools/ (skrypty Python/UnityPy, elevenlabs/: ser
   envs/      wersje pakietów: venv.txt (.venv), omnivoice.txt i inne środowiska E0, create_envs.sh
   work/      kopie gry, depot macOS, dekompilacja, audio, próbki: nieśledzone
 src/         kod docelowy (plugin, pipeline, companion)
-  lektor/    pakiet Python: baza kwestii M1 (build), referencje (refs), raporty (report), audio E3 (synth, evaluate, finalize),
+  lektor/    pakiet Python: baza kwestii M1 (build), referencje (refs), raporty (report), audio E3 (synth, evaluate, finalize), ElevenLabs E13 (eleven),
              companion/ (E4: library, director, player, app), bundle (E6: folder paczki)
   plugin/    Core (C#, net472, bez Harmony i BepInEx), Loader (Doorstop 4.6, D58), BepInEx (adapter, zapas deweloperski),
              install/ (lektor-hook.ps1, lektor-companion.ps1, monomod-fix.ps1)
@@ -87,6 +87,7 @@ Audio M1 (E3). Generowanie w środowisku OmniVoice (pakiet `lektor` zainstalowan
 Wydanie M2 (E7): te same komendy z `--release m2` (domyślnie `m1`). Baza to `analysis/work/lektor/m2.sqlite`, audio `analysis/work/audio/m2/`, raporty `analysis/E7_DATA.md` i `analysis/E7_AUDIO.md`.
 
 - `build --release m2 --only event_e5b map` buduje tylko wybrane grupy spoza M1.
+- Postacie bez dubbingu (D80, E13) czyta ElevenLabs `eleven_v4`: `eleven --release m1|m2 [--dry-run] [--retake] [--max-credits N]` w `.venv` (płatne, wznawialne). Głosy i `voice_id` są w `direction.ELEVEN_VOICES`. Podejścia mają numery od 101 obok podejść OmniVoice, `select` bierze dla głosu tylko jego silnik. M1 generujemy przed M2, bo M2 przejmuje z M1 fragmenty o tym samym id.
 - `generate --release m2` przejmuje z `audio/m1` fragmenty o tym samym id i liczy resztę.
 - Po `select` powtarzamy `generate --retake`, `evaluate`, `select` do trzech razy, potem `finalize`.
 - W M2 cytat w opcji czyta bohater okna, a fragmenty mają imię zapisane fonetycznie (`normalize.pronounce`, D70). M1 buduje się bez zmian.
@@ -171,3 +172,4 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 | [analysis/E7_AUDIO.md](analysis/E7_AUDIO.md) | audio M2 (E7): czas na znak, wyniki automatu, pokrycie kluczy |
 | [analysis/E9_ELEVENLABS.md](analysis/E9_ELEVENLABS.md) | test ElevenLabs (E9): wyniki automatu, koszt na znak, co test zmienił w pomiarze |
 | [analysis/E11_VOICES.md](analysis/E11_VOICES.md) | arkusz głosów (E11): dubbing wobec OmniVoice, warianty ElevenLabs, cztery modele TTS, oceny, stawki, koszt na grupę głosów |
+| [analysis/E13_AUDIO.md](analysis/E13_AUDIO.md) | postacie bez dubbingu w ElevenLabs (E13): koszt, wyniki automatu, ponowne podejścia, porównanie z OmniVoice |

@@ -27,6 +27,8 @@ Znacznik robisz raz na prompt. Od niego liczy się zużycie w podsumowaniu z pun
 | płatne | `text_to_speech`, `text_to_voice`, `voice_clone`, `speech_to_speech`, `speech_to_text`, `isolate_audio`, `text_to_sound_effects`, muzyka |
 | nie używamy | agenci, rozmowy i połączenia telefoniczne (`create_agent`, `make_outbound_call` itd.) |
 
+Fragmenty wydania (postacie bez dubbingu, D80) generuje komenda `python -I -m lektor eleven` bez MCP (E13, D81). Jest płatna jak `text_to_speech`, więc obowiązują te same zasady: zgoda, `--mark` i `--summary`. Szacunek bez sieci daje `--dry-run`, a limit wsadu `--max-credits`. Koszt sama zapisuje w logu zużycia (`tool: lektor_eleven`).
+
 ## 3. Zgoda i szacunek kosztu
 
 - Przed płatnym wywołaniem policz koszt: znaki tekstu × stawka modelu. Stawki z pomiarów są niżej.

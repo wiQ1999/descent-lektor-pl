@@ -7,6 +7,8 @@ Dla każdego podejścia z takes.jsonl:
   - tempo: znaki na sekundę mowy (bez ciszy na brzegach) wobec tempa oczekiwanego z D34.
 Wyniki trafiają do evals.jsonl (wznawianie). select() wybiera podejście dla każdego fragmentu (choice.json)
 i zapisuje odrzucone do ponownego podejścia (retake.json: fragment -> [podejście, tempo]).
+Głosy ElevenLabs (D80) wybierają tylko spośród podejść ElevenLabs; podejścia OmniVoice tych głosów biorą
+udział w wyborze tylko wtedy, gdy fragment nie ma jeszcze żadnego podejścia ElevenLabs.
 """
 import json
 import os
@@ -14,7 +16,8 @@ import re
 import sys
 import unicodedata
 
-from . import db, paths
+from . import db, eleven, paths
+from . import direction as D
 from .normalize import cardinal
 from .synth import inherited, load_state, take_path, takes_for
 
@@ -23,6 +26,7 @@ ASR_WINDOW_S = 30       # dłuższe nagranie Whisper czyta w trybie ze znacznika
 ASR_NAMES = re.compile(r'\b(kelly|kelli|kehli)\b')      # tak Whisper zapisuje „Keli” (D70)
 TILE_LETTERS = {'a': 'a', 'b': 'be'}                    # kafle planszy: tekst „sześć be”, Whisper „6B”
 REF_CPS = 10.3          # naturalne tempo referencji dubbingu (znaki na sekundę), speed 1,2 daje ok. 12,1
+ELEVEN_CPS = 14.7       # eleven_v4 przy speed 1,0: mediana 11 nagrań z rundy 2 E11 (D80)
 MAX_CER = 0.08          # fragmenty od SHORT znaków; krótsze (nazwy, wartości) ASR myli częściej
 MAX_CER_SHORT = 0.25
 SHORT = 30
@@ -134,8 +138,8 @@ def longest_pause(y, sr=16000):
     return round(max(((b[0] - a[1]) / sr for a, b in zip(spans, spans[1:])), default=0.0), 2)
 
 
-def expected_cps(speed):
-    return REF_CPS * (speed or 1.0)
+def expected_cps(speed, engine='omnivoice'):
+    return (ELEVEN_CPS if engine == 'elevenlabs' else REF_CPS) * (speed or 1.0)
 
 
 def text_checks(text, hyp):
@@ -161,6 +165,7 @@ class Scorer:
                                            weights_only=True))
         self.ve.eval()
         self.refs = {v: self.embed(self.load(os.path.join(paths.ROOT, r['wav']))) for v, r in refs.items()}
+        self.refs.update({v: self.embed(self.load(os.path.join(paths.ROOT, r['wav']))) for v, r in eleven.refs().items()})
 
     @staticmethod
     def load(path):
@@ -171,7 +176,8 @@ class Scorer:
         e = self.ve.embeds_from_wavs([y], sample_rate=16000)[0]
         return e / self.np.linalg.norm(e)
 
-    def __call__(self, path, text, voice, speed):
+    def __call__(self, path, text, voice, speed, engine='omnivoice'):
+        """Barwa głosu ElevenLabs wobec jego nagrania z oceny E11, tempo wobec naturalnego tempa silnika."""
         import librosa
         y = self.load(path)
         speech = librosa.effects.trim(y, top_db=40)[0].size / 16000 if y.size > 1600 else y.size / 16000
@@ -179,11 +185,18 @@ class Scorer:
         hyp = '' if speech < MIN_SPEECH_S else self.asr(   # Whisper na ciszy zmyśla zdanie
             {'raw': y, 'sampling_rate': 16000}, generate_kwargs={'language': 'polish', 'task': 'transcribe'}, **long_form)['text']
         out = {'asr': hyp.strip(), **text_checks(text, hyp), 'speech_s': round(speech, 2),
-               'cps': round(len(text) / max(speech, 0.05), 1), 'cps_ratio': round(len(text) / max(speech, 0.05) / expected_cps(speed), 2)}
-        out['sim'] = round(float(self.embed(y) @ self.refs[voice]), 3) if speech >= 1.5 else None
+               'cps': round(len(text) / max(speech, 0.05), 1),
+               'cps_ratio': round(len(text) / max(speech, 0.05) / expected_cps(speed, engine), 2)}
+        ref = self.refs.get(ref_key(voice, engine))
+        out['sim'] = round(float(self.embed(y) @ ref), 3) if speech >= 1.5 and ref is not None else None
         out['end_rms'], out['end_gap'] = speech_end(y)
         out['pause'] = longest_pause(y)
         return out
+
+
+def ref_key(voice, engine):
+    """Klucz referencji barwy i mediany barwy: głos OmniVoice albo 'elevenlabs:<głos>'."""
+    return voice if engine == 'omnivoice' else eleven.REF_PREFIX + voice
 
 
 def load_evals():
@@ -209,7 +222,8 @@ def evaluate():
     with open(os.path.join(paths.AUDIO, 'evals.jsonl'), 'a', encoding='utf-8') as log:
         for n, t in enumerate(todo, 1):
             r = {'fragment': t['fragment'], 'take': t['take'], 'voice': t['voice'], 'speed': t['speed'], 'chars': t['chars'],
-                 **score(take_path(t['fragment'], t['take']), texts[t['fragment']], t['voice'], t['speed'])}
+                 **score(take_path(t['fragment'], t['take']), texts[t['fragment']], t['voice'], t['speed'],
+                         D.take_engine(t['take']))}
             log.write(json.dumps(r, ensure_ascii=False) + '\n')
             log.flush()
             if n % 50 == 0:
@@ -227,13 +241,19 @@ def problems(e, sim_median):
         out.append('koncowka')
     if e['lost'] >= MAX_LOST:
         out.append('zgubiony_fragment')
-    if e['sim'] is not None and e['speech_s'] >= SIM_MIN_S and e['sim'] < sim_median[e['voice']] - SIM_DROP:
+    med = sim_median.get(ref_key(e['voice'], D.take_engine(e.get('take', 1))), 0.0)
+    if e['sim'] is not None and e['speech_s'] >= SIM_MIN_S and e['sim'] < med - SIM_DROP:
         out.append('barwa')
     if e['chars'] >= 15 and not CPS_RANGE[0] <= e['cps_ratio'] <= CPS_RANGE[1]:
         out.append('tempo')
     if e.get('pause', 0) > MAX_PAUSE:
         out.append('pauza')
     return out
+
+
+def own_engine(e):
+    """Podejście pochodzi z silnika, który czyta ten głos (D80)."""
+    return D.take_engine(e['take']) == D.engine(e['voice'])
 
 
 def select():
@@ -243,30 +263,32 @@ def select():
     con = db.connect(paths.DB)
     texts = {r['id']: r['text'] for r in con.execute('SELECT id, text FROM fragments')}
     evals = {k: e for k, e in load_evals().items() if e['fragment'] in texts}   # bez fragmentów usuniętych z bazy
+    by_frag = {}
     for e in evals.values():    # reguły tekstowe liczone od nowa z zapisanej transkrypcji (bez ponownego ASR)
         e.update(text_checks(texts[e['fragment']], e['asr']))
-    sims = {}
-    for e in evals.values():
-        if e['sim'] is not None and e['speech_s'] >= SIM_MIN_S:
-            sims.setdefault(e['voice'], []).append(e['sim'])
-    sim_median = {v: statistics.median(s) for v, s in sims.items()}
-    sim_median.update({v: 0.0 for v in {e['voice'] for e in evals.values()} - set(sim_median)})
-    by_frag = {}
-    for e in evals.values():
-        e['problems'] = problems(e, sim_median)
         by_frag.setdefault(e['fragment'], []).append(e)
+    for fid, es in by_frag.items():
+        by_frag[fid] = [e for e in es if own_engine(e)] or es
+    sims = {}
+    for es in by_frag.values():
+        for e in es:
+            if e['sim'] is not None and e['speech_s'] >= SIM_MIN_S:
+                sims.setdefault(ref_key(e['voice'], D.take_engine(e['take'])), []).append(e['sim'])
+    sim_median = {v: statistics.median(s) for v, s in sims.items()}
     choice, retake = {}, {}
     for fid, es in by_frag.items():
+        for e in es:
+            e['problems'] = problems(e, sim_median)
         best = min(es, key=lambda e: (len(e['problems']) > 0, round(e['cer'] / 0.02), -(e['sim'] or 0), e['take']))
         choice[fid] = {'take': best['take'], 'voice': best['voice'], 'speed': best['speed'], 'problems': best['problems'],
                        'cer': best['cer'], 'sim': best['sim'], 'cps': best['cps'], 'takes': len(es)}
-        if best['problems'] and len(es) < takes_for(best['voice']) + RETAKES:
+        if best['problems'] and own_engine(best) and len(es) < takes_for(best['voice']) + RETAKES:
             speed = best['speed']
             if 'koncowka' in best['problems']:
                 speed = round(max(0.9, (speed or 1.0) - RETAKE_SLOWER), 2)
             retake[fid] = [max(e['take'] for e in es) + 1, speed]
     for fid, c in inherited().items():     # fragmenty z poprzedniego wydania zostają takie, jak je wybrano
-        if fid in texts:
+        if fid in texts and (own_engine(c) or fid not in choice):
             choice[fid] = c
             retake.pop(fid, None)
     json.dump(choice, open(os.path.join(paths.AUDIO, 'choice.json'), 'w', encoding='utf-8'), indent=1)

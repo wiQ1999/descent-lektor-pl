@@ -45,13 +45,17 @@ def finalize():
     choice = json.load(open(os.path.join(paths.AUDIO, 'choice.json'), encoding='utf-8'))
     out_dir = os.path.join(paths.AUDIO, 'final')
     os.makedirs(out_dir, exist_ok=True)
-    frags = {}
+    frags, rates = {}, set()
     for fid, c in sorted(choice.items()):
         y, sr = sf.read(take_path(fid, c['take']), dtype='float32')
+        rates.add(sr)
         y, loud = level(trim(y, sr), sr)
         sf.write(os.path.join(out_dir, fid + '.wav'), y, sr, subtype='PCM_16')
         frags[fid] = {'file': 'final/%s.wav' % fid, 'seconds': round(len(y) / sr, 3), 'take': c['take'],
-                      'voice': c['voice'], 'speed': c['speed'], 'source_lufs': loud, 'problems': c['problems']}
+                      'voice': c['voice'], 'speed': c['speed'], 'source_lufs': loud, 'problems': c['problems'],
+                      'model': D.ELEVEN_MODEL if D.take_engine(c['take']) == 'elevenlabs' else D.MODEL_ID}
+    if len(rates) > 1:
+        raise ValueError('Podejścia mają różne próbkowanie: %s' % sorted(rates))
     manifest = {'model': D.MODEL_ID, 'sample_rate': sr, 'lufs': LUFS, 'category_gain_db': CATEGORY_GAIN_DB,
                 'fragments': frags}
     json.dump(manifest, open(os.path.join(paths.AUDIO, 'manifest.json'), 'w', encoding='utf-8'), indent=1)
@@ -70,12 +74,13 @@ def listen_list(choice):
     return sorted(picked + others[:LISTEN_MAX - len(picked)])
 
 
-def listen():
-    """listen/index.html z odtwarzaczami i ocenami (eksport do CSV), listen/lista.csv."""
+def listen(engine=None):
+    """listen/index.html z odtwarzaczami i ocenami (eksport do CSV), listen/lista.csv. engine: tylko głosy tego silnika
+    (E13: odsłuch postaci w ElevenLabs)."""
     con = db.connect(paths.DB)
     manifest = json.load(open(os.path.join(paths.AUDIO, 'manifest.json'), encoding='utf-8'))
     choice = json.load(open(os.path.join(paths.AUDIO, 'choice.json'), encoding='utf-8'))
-    sample = listen_list(choice)
+    sample = listen_list({f: c for f, c in choice.items() if engine is None or D.engine(c['voice']) == engine})
     text = {r['id']: r['text'] for r in con.execute('SELECT id, text FROM fragments')}
     where = {}
     for r in con.execute('SELECT s.fragment, s.key, l.category FROM segments s JOIN lines l ON l.key = s.key '

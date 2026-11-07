@@ -60,6 +60,7 @@ Testy:
 - `create_voice_from_preview` nie kosztuje kredytów (zajmuje miejsce na głos), więc hook je pomija.
 - Modele v3 i v4 mają w historii pusty `text` i `voice_id`. Tekst i głos leżą w polu `dialogue`.
 - Log trzyma SHA-1 i długość tekstu. Tekstu nie zapisuje.
+- Komenda `lektor eleven` (E13, D81) woła API bez MCP i sama dopisuje rekordy do tego logu jako narzędzie `lektor_eleven`. Koszt bierze z wpisu historii wskazanego nagłówkiem `history-item-id`. Gdy historia milczy, liczy go stawką z flagą `estimated`.
 
 | Flaga | Znaczenie |
 |---|---|

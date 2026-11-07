@@ -105,6 +105,19 @@ Głosy projektowane (D41) powstają w środowisku OmniVoice:
 "$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I -m lektor generate --release m2
 ```
 
+Postacie bez dubbingu (D80, E13) czyta ElevenLabs. Ich fragmenty generuje płatna komenda w `.venv` z kluczem z `.env.elevenlabs.local` (`analysis/tools/elevenlabs/README.md`). Najpierw M1, bo M2 przejmuje z niego fragmenty o tym samym id:
+
+```bash
+.venv/Scripts/python -I -m lektor eleven --release m1 --dry-run
+```
+
+```bash
+.venv/Scripts/python -I -m lektor eleven --release m2 --max-credits 5000
+```
+
+- `--dry-run` podaje liczbę znaków i szacunek kredytów bez połączenia z siecią. Koszt każdego wywołania trafia do logu zużycia ElevenLabs.
+- Automat ocenia barwę wobec nagrań v4 z rundy 2 E11 (`analysis/work/elevenlabs/audio/e11r2/`, sekcja 8). Bez nich barwa tych głosów zostaje bez oceny.
+
 ```bash
 .venv/Scripts/python -I -m lektor evaluate --release m2
 ```
@@ -113,8 +126,8 @@ Głosy projektowane (D41) powstają w środowisku OmniVoice:
 .venv/Scripts/python -I -m lektor select --release m2
 ```
 
-- Po `select` powtarzamy `generate --retake`, `evaluate` i `select` do trzech razy.
-- Na końcu `finalize --release m2` tworzy pliki końcowe i stronę odsłuchu.
+- Po `select` powtarzamy `generate --retake` (i `eleven --retake`), `evaluate` i `select` do trzech razy.
+- Na końcu `finalize --release m2` tworzy pliki końcowe i stronę odsłuchu. `--listen-engine elevenlabs` ogranicza odsłuch do głosów ElevenLabs.
 - Całe M2 to ok. 16 h GPU na GTX 1650 Ti. Każdy krok jest wznawialny.
 - M1 buduje się tak samo, z `--release m1`.
 

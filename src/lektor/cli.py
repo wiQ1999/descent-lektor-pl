@@ -1,4 +1,4 @@
-"""python -I -m lektor build | refs | report | generate | evaluate | select | finalize | audio-report | companion | bundle"""
+"""python -I -m lektor build | refs | report | generate | eleven | evaluate | select | finalize | audio-report | companion | bundle"""
 import argparse
 import sys
 
@@ -24,9 +24,16 @@ def main(argv=None):
     g.add_argument('--limit', type=int)
     g.add_argument('--voices', nargs='*')
     g.add_argument('--retake', action='store_true', help='ponowne podejścia z retake.json (po select)')
+    e = sub.add_parser('eleven', parents=[rel], help='podejścia głosów ElevenLabs (D80, .venv, płatne; wznawialne)')
+    e.add_argument('--limit', type=int)
+    e.add_argument('--voices', nargs='*')
+    e.add_argument('--retake', action='store_true', help='ponowne podejścia z retake.json (po select)')
+    e.add_argument('--dry-run', action='store_true', help='tylko liczba podejść, znaków i szacunek kredytów')
+    e.add_argument('--max-credits', type=int, help='zatrzymaj wsad przed przekroczeniem tylu kredytów')
     sub.add_parser('evaluate', parents=[rel], help='ocena podejść: ASR, barwa, tempo (.venv, GPU; wznawialne)')
     sub.add_parser('select', parents=[rel], help='wybór podejść i lista ponownych (choice.json, retake.json)')
-    sub.add_parser('finalize', parents=[rel], help='pliki końcowe, manifest i strona odsłuchu (.venv)')
+    f = sub.add_parser('finalize', parents=[rel], help='pliki końcowe, manifest i strona odsłuchu (.venv)')
+    f.add_argument('--listen-engine', choices=('omnivoice', 'elevenlabs'), help='odsłuch tylko głosów tego silnika')
     q = sub.add_parser('audio-report', parents=[rel], help='raport audio (analysis/E3_AUDIO.md, M2: E7_AUDIO.md)')
     q.add_argument('--db')
     c = sub.add_parser('companion', help='companion lektora (serwer TCP dla pluginu) albo replay dziennika E1')
@@ -48,6 +55,11 @@ def main(argv=None):
         import os
         from . import synth
         synth.generate(a.limit, a.voices, os.path.join(paths.AUDIO, 'retake.json') if a.retake else None)
+    elif a.cmd == 'eleven':
+        import os
+        from . import eleven
+        eleven.generate(a.limit, a.voices, os.path.join(paths.AUDIO, 'retake.json') if a.retake else None, a.dry_run,
+                        a.max_credits)
     elif a.cmd == 'evaluate':
         from . import evaluate
         evaluate.evaluate()
@@ -57,7 +69,7 @@ def main(argv=None):
     elif a.cmd == 'finalize':
         from . import finalize
         m = finalize.finalize()
-        page, sample = finalize.listen()
+        page, sample = finalize.listen(a.listen_engine)
         print('%d fragmentów; odsłuch: %d: %s' % (len(m['fragments']), sample, page))
     elif a.cmd == 'audio-report':
         from .report import audio_report

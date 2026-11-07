@@ -196,7 +196,7 @@ def audio_report(path=None):
     from .evaluate import load_evals
     from .synth import load_state
     con = db.connect(path)
-    takes = list(load_state().values())
+    takes = [t for t in load_state().values() if D.take_engine(t['take']) == 'omnivoice']    # czas GPU (E13: E13_AUDIO.md)
     evals = load_evals()
     choice = json.load(open(os.path.join(paths.AUDIO, 'choice.json'), encoding='utf-8'))
     ratings = load_ratings()

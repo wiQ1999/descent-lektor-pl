@@ -741,6 +741,20 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Wybór użytkownika z QA po arkuszu E11 (`analysis/E11_VOICES.md`). Dubbing w OmniVoice dostał 4,56 za jakość i 4,22 za podobieństwo, bez kredytów. Postacie bez dubbingu: ElevenLabs 4,73, OmniVoice 1,91. W rundzie 2 v4 miał najwyższą średnią (4,36) i był najlepszy lub ex aequo u 10 z 11 postaci, przy tej samej stawce co Multilingual v2 (0,44 kredytu na znak). Między najlepszymi modelami użytkownik nie słyszał znaczących różnic. Postacie bez dubbingu w M2 to ok. 4,9 tys. kredytów.
 
+### D81 · 2026-11-07 · E13: postacie bez dubbingu w ElevenLabs przez własną komendę
+**Decyzja:**
+- Fragmenty generuje komenda `python -I -m lektor eleven` w `.venv` z kluczem z `.env.elevenlabs.local`, bez MCP. Obejmuje M2 i M1 (prolog i Q1, Adelynn i Ronan).
+- Jedno podejście na fragment. Ponowne (do 3) tylko przy uwagach automatu, a przy końcówce wolniej (speed 0,9, jak w D34).
+- Najpierw pilot po jednym fragmencie na postać, potem reszta bez zatrzymania.
+- Silnik i `voice_id` głosu są w `direction.ELEVEN_VOICES`. Klucze fragmentów zostają z OmniVoice. Podejścia ElevenLabs mają numery od 101 i leżą obok podejść OmniVoice, które zostają jako zapas.
+- `select` bierze dla głosu tylko podejścia jego silnika, a medianę barwy liczy osobno dla silnika. M2 przejmuje z M1 podejścia ElevenLabs fragmentów o tym samym id, więc M1 generujemy pierwsze.
+- Wynik w PCM 24 kHz, w próbkowaniu manifestu. Manifest podaje model każdego fragmentu.
+- Automat ocenia barwę wobec nagrania v4 z rundy 2 E11, a tempo wobec tempa v4 przy speed 1,0 (14,7 znaku na sekundę, mediana z E11).
+- Koszt każdego wywołania trafia do logu zużycia jako `lektor_eleven`, z wpisu historii konta wskazanego nagłówkiem `history-item-id`.
+- Limit etapu to zatwierdzony szacunek +20% (ok. 5,9 tys. kredytów), pilnowany opcją `--max-credits`.
+
+**Uzasadnienie:** Wybór użytkownika z QA. Komenda jest wznawialna, liczy koszt jak hook MCP i przyda się przy całej grze. Pilot (11 fragmentów, 303 kredyty) przeszedł automat bez uwag. Wynik: 156 fragmentów w manifestach (M1 16, M2 140), 163 wywołania, 5411 kredytów (0,44 na znak, w tym 7% na ponowne podejścia). Automat zostawił 4 uwagi u Adelynn, wszystkie to fałszywe alarmy Whispera. Szczegóły: `analysis/E13_AUDIO.md`.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -786,4 +800,3 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 | – | Model dla całej gry | E7 na OmniVoice (D65); cała gra przy większym zakresie (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |
 | – | Wydanie paczek w GitHub Releases | E10 (D76) |
-| – | Przegenerowanie fragmentów postaci bez dubbingu w ElevenLabs v4 (sposób wywołań: MCP czy własny skrypt API) | E13 (D80) |

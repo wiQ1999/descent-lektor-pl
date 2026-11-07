@@ -34,7 +34,7 @@ SILENT_RETRIES = 8      # teksty z 1–3 znaków bywają ciszą zależnie od zia
 
 
 def takes_for(voice):
-    return HERO_TAKES if voice in MANY_TAKES else 1
+    return HERO_TAKES if voice in MANY_TAKES and D.engine(voice) == 'omnivoice' else 1
 
 
 def seed_for(fid, take, retry=0):
@@ -173,10 +173,11 @@ class Synth:
 
 
 def jobs(con, voices=None, retake=None):
-    """(fragment, podejście, tekst, głos, tempo) do wygenerowania. retake: {fragment: (podejście, tempo)}."""
+    """(fragment, podejście, tekst, głos, tempo) do wygenerowania. retake: {fragment: (podejście, tempo)}.
+    Głosy ElevenLabs (D80) generuje lektor.eleven."""
     rows = con.execute('SELECT id, voice, speed, text FROM fragments ORDER BY voice, id').fetchall()
     for r in rows:
-        if voices and r['voice'] not in voices:
+        if D.engine(r['voice']) != 'omnivoice' or voices and r['voice'] not in voices:
             continue
         if retake is not None:
             if r['id'] in retake:

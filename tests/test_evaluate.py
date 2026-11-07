@@ -59,7 +59,7 @@ def test_problems():
 
 def test_takes_and_seeds():
     assert takes_for('brynn') == 3 and takes_for('narrator') == 1 and takes_for('adelynn') == 1
-    assert takes_for('ronan') == 3
+    assert takes_for('ronan') == 1        # od D80 głos ElevenLabs: jedno podejście i ponowne przy uwagach
     assert seed_for('0d54849ee9f32833', 1) != seed_for('0d54849ee9f32833', 2)
     assert 0 <= seed_for('ffffffffffffffff', 9) < 2 ** 31
 
