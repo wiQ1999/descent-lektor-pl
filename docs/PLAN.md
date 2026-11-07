@@ -371,7 +371,7 @@ Publiczne wydanie gotowych paczek (D76).
 
 Pytanie etapu: którego modelu użyć (lokalny OmniVoice czy ElevenLabs przez MCP) i w jakim zakresie: narrator, bohaterowie z głosem z gry, reszta postaci (D77).
 
-**Status:** runda 1 oceniona. Runda 2 gotowa do odsłuchu (D79): 44 nagrania czterech modeli TTS na stronach c1 i c2 w `analysis/work/compare/e11/`. Czeka na Twoje oceny.
+**Status:** ukończony 2026-11-07. Wynik w `analysis/E11_VOICES.md`, decyzja D80: dubbing w OmniVoice, postacie bez dubbingu w ElevenLabs `eleven_v4`.
 
 **Zakres ustalony:**
 - głosy z dubbingu (narrator, 6 bohaterów, Ne’Krul, Xenith): referencja z gry i OmniVoice na tych samych kwestiach, bez ElevenLabs;
@@ -383,6 +383,22 @@ Pytanie etapu: którego modelu użyć (lokalny OmniVoice czy ElevenLabs przez MC
 **Runda 2 (D78, D79):** jeden głos na postać bez dubbingu, zapisany na koncie i przeczytany modelami `eleven_v4`, `eleven_multilingual_v2`, `eleven_flash_v2_5` i `eleven_v3`. Po ocenach raport `analysis/E11_VOICES.md` i decyzja o modelu dla każdej grupy.
 
 **Kryteria ukończenia:** oceny obu rund, zmierzone stawki modeli, koszt całej gry na model i grupę głosów, decyzja w `DECISIONS.md`.
+
+## E13 · Postacie bez dubbingu w ElevenLabs (do akceptacji)
+
+Pytanie etapu: jak przegenerować fragmenty postaci bez dubbingu głosami z D80, żeby trafiły do paczki M2 tak jak audio OmniVoice.
+
+**Status:** propozycja, czeka na akceptację.
+
+**Zakres proponowany:**
+- silnik głosu przypisany w `scope.py`: 11 postaci bez dubbingu → ElevenLabs `eleven_v4` z `voice_id` z `docs/CASTING.md`, reszta bez zmian;
+- generowanie 140 fragmentów M2 tych postaci (11 069 znaków, ok. 4,9 tys. kredytów, z ponownymi podejściami do ok. 5,5 tys.) z zapisem kosztu w logu zużycia;
+- te same kroki co E3: `evaluate`, `select`, do 3 ponownych podejść, `finalize` (MP3 do WAV, -20 LUFS, manifest);
+- strona odsłuchu do ok. 30 fragmentów, raport `analysis/E13_AUDIO.md`, paczka M2 przebudowana.
+
+**Do decyzji na starcie:** wywołania przez MCP (140 wywołań narzędzia w sesji) czy własny skrypt w `lektor` z kluczem z `.env.elevenlabs.local` (wznawialny, z tym samym logiem zużycia).
+
+**Kryteria ukończenia:** wszystkie fragmenty tych postaci w manifeście M2 z ElevenLabs, automat bez uciętych końcówek, odsłuch, koszt w raporcie, commit.
 
 ## E12 · Katalog treści gry (później)
 

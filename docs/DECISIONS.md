@@ -731,6 +731,16 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Użytkownik chciał przejść do generowania bez rozstrzygania remisów, bo runda 2 dotyczy modeli. Zmierzone stawki (historia konta, 1921 znaków na model): v4, Multilingual v2 i v3 po 0,44 kredytu na znak, Flash v2.5 0,22. Cała runda kosztowała 2956 kredytów zamiast szacowanych 6,6 tys. Pierwsze cztery rekordy dostały ten sam wpis historii, bo tekst był ten sam, a hooki działały równolegle. Poprawiliśmy je w logu według historii konta.
 
+### D80 · 2026-11-07 · Wynik E11: OmniVoice dla dubbingu, ElevenLabs v4 dla postaci bez dubbingu
+**Decyzja:**
+- Narrator (z głosem systemowym), bohaterowie z dubbingiem i złoczyńcy z dubbingiem zostają w OmniVoice.
+- Postacie bez dubbingu czyta ElevenLabs `eleven_v4` z ustawieniami domyślnymi.
+- Obsada postaci bez dubbingu to głosy z rundy 2, razem z wariantami przy remisach: Adelynn b, Ronan b, Astarra b, Kathryn a, Porucznik Rand a, Bruli a, Herbie c, Mok a, Banita b, Flint a, Galgoraz a (`docs/CASTING.md`). To zamyka ponowny dobór głosu Adelynn z D55.
+- Głosy OmniVoice tych postaci zostają jako zapas. Głosy ElevenLabs zostają na koncie (12 z 30 miejsc).
+- Przegenerowanie fragmentów tych postaci w pipeline to osobny etap (E13 w `docs/PLAN.md`), po akceptacji planu.
+
+**Uzasadnienie:** Wybór użytkownika z QA po arkuszu E11 (`analysis/E11_VOICES.md`). Dubbing w OmniVoice dostał 4,56 za jakość i 4,22 za podobieństwo, bez kredytów. Postacie bez dubbingu: ElevenLabs 4,73, OmniVoice 1,91. W rundzie 2 v4 miał najwyższą średnią (4,36) i był najlepszy lub ex aequo u 10 z 11 postaci, przy tej samej stawce co Multilingual v2 (0,44 kredytu na znak). Między najlepszymi modelami użytkownik nie słyszał znaczących różnic. Postacie bez dubbingu w M2 to ok. 4,9 tys. kredytów.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -776,5 +786,4 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 | – | Model dla całej gry | E7 na OmniVoice (D65); cała gra przy większym zakresie (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |
 | – | Wydanie paczek w GitHub Releases | E10 (D76) |
-| – | Model dla narratora, bohaterów i reszty postaci (OmniVoice czy ElevenLabs) | arkusz E11 (D77, D78, D79) |
-| – | Obsada postaci bez dubbingu: wariant przy remisach (Astarra, Kathryn, Bruli, Mok, Flint, Galgoraz) i Adelynn | E11 (D79) |
+| – | Przegenerowanie fragmentów postaci bez dubbingu w ElevenLabs v4 (sposób wywołań: MCP czy własny skrypt API) | E13 (D80) |

@@ -170,3 +170,4 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 | [analysis/E7_DATA.md](analysis/E7_DATA.md) | baza kwestii M2 (E7): liczności, luki `{n}`, pokrycie wartości, szacunek generowania |
 | [analysis/E7_AUDIO.md](analysis/E7_AUDIO.md) | audio M2 (E7): czas na znak, wyniki automatu, pokrycie kluczy |
 | [analysis/E9_ELEVENLABS.md](analysis/E9_ELEVENLABS.md) | test ElevenLabs (E9): wyniki automatu, koszt na znak, co test zmienił w pomiarze |
+| [analysis/E11_VOICES.md](analysis/E11_VOICES.md) | arkusz głosów (E11): dubbing wobec OmniVoice, warianty ElevenLabs, cztery modele TTS, oceny, stawki, koszt na grupę głosów |

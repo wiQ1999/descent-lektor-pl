@@ -1,6 +1,6 @@
 # Obsada głosów
 
-Rejestr wybranych głosów postaci. Zasady: D06 (klony z dubbingu), D19 (złoczyńcy), D36 (głos systemowy), D41 (projekt głosu dla postaci bez dubbingu).
+Rejestr wybranych głosów postaci. Zasady: D06 (klony z dubbingu), D19 (złoczyńcy), D36 (głos systemowy), D41 (projekt głosu dla postaci bez dubbingu), D80 (postacie bez dubbingu w ElevenLabs).
 
 Referencje leżą w `analysis/work/lektor/refs/` (`refs.json`: plik, transkrypcja, długość, SHA-1). Skrót SHA wchodzi do klucza cache fragmentów, więc zmiana referencji wymusza ponowne wygenerowanie audio tego głosu.
 
@@ -20,7 +20,25 @@ Wycinki do 10 s z neutralnych referencji dubbingu, cięte na granicach słów (D
 | `nekrul` | `BLOOD_SISTER` (Ne’Krul) | dubbing | 5,7 s | `c477e56c` | D19 |
 | `xenith` | `DRAGON_HYBRID` (Xenith) | dubbing, klipy `Xenith_Spawn_2`, `Xenith_Spawn_1` | 7,8 s | `297ce273` | D19, D68 |
 
-## Głosy projektowane (D41)
+## Głosy ElevenLabs dla postaci bez dubbingu (D80)
+
+Od E11 postacie bez dubbingu czyta ElevenLabs `eleven_v4` z ustawieniami domyślnymi (stability 0,5, similarity 0,75, style 0, speed 1,0). Głosy powstały z opisów w `analysis/tools/voice_designs_e11.json` (`text_to_voice`, D78) i są zapisane na koncie jako `Lektor PL - <głos> <wariant>`. Głosy OmniVoice z tabeli niżej zostają jako zapas.
+
+| Głos | Wariant | voice_id | Ocena: podgląd (runda 1) / v4 (runda 2) | Uwagi |
+|---|---|---|---|---|
+| `adelynn` | b | `dH4FrDMHSw1B31tzWOPw` | 4 / 3 | remis z OmniVoice w rundzie 1; zamyka ponowny dobór z D55 |
+| `ronan` | b | `7ScqSXmT0oXvHenzw9hJ` | 5 / 4 | |
+| `astarra` | b | `B9Xmu9MUTLL4L5SIDsAD` | 5 / 5 | remis z c |
+| `kathryn` | a | `JZzQvOujFtUu9vpAsm2q` | 5 / 5 | remis z c |
+| `ltrand` | a | `OLeMFzYjewG73PEGvePC` | 4 / 3 | |
+| `bruli` | a | `UDpt5qLmStrzpqQQZI9G` | 5 / 5 | remis z b i c |
+| `herbie` | c | `BFwE7UC8qCq4bda0mhyE` | 5 / 4 | |
+| `mok` | a | `SQ2Rf1tdmOCUqClP6qJ4` | 4 / 4 | remis z b |
+| `outlaw` | b | `6yCDeMiG8Fnpn0gPqxz3` | 5 / 5 | |
+| `flint` | a | `gfzrH3j2kaDI5cNZuaPW` | 5 / 5 | remis z c |
+| `galgoraz` | a | `Quk21RWppOlJmKTYBeGr` | 5 / 5 | remis z c |
+
+## Głosy projektowane w OmniVoice (D41, zapas od D80)
 
 Narzędzie: `analysis/tools/npc_voices.py` (portret, pula kandydatów, wybór 4 najbardziej różnych barw, klony kwestii do odsłuchu). Tekst referencji jest własny, nie z gry.
 
