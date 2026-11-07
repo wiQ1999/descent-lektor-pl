@@ -355,9 +355,11 @@ Dalszy zakres etapu ustalamy po odsłuchu próbek.
 
 ## E10 · Wydanie w GitHub Releases
 
-Publiczne wydanie gotowych paczek (D76). Etap startuje po Twojej akceptacji, a zakres ustalamy przed startem.
+Publiczne wydanie gotowych paczek (D76).
 
-**Wstępny zakres:**
+**Status:** zakres zaakceptowany 2026-11-07. Start po etapie porządkowania treści gry.
+
+**Zakres:**
 - paczki Windows i Mac z kompletem plików jak dotąd: audio WAV, baza kwestii, plugin, loader, companion z Pythonem, skrypty i instrukcja;
 - `LICENSE.md` w każdej paczce (pkt 3 licencji wymaga go w każdej kopii);
 - sprawdzenie licencji modeli przy rozpowszechnianiu audio i uznanie autorstwa: OmniVoice (wagi CC-BY-NC) i tokenizer Higgs Audio 2 (notka o autorstwie);
