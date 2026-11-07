@@ -6,6 +6,7 @@ Log nie zawiera tekstów, tylko SHA-1 i długość.
 
 Licznik konta dogania wywołanie z opóźnieniem do około minuty, więc zerowa różnica nie znaczy
 zerowego kosztu. Modele v3 i v4 trzymają tekst i głos w polu `dialogue` wpisu historii.
+Narzędzia bez wpisu w historii (np. `text_to_voice`) dostają szacunek ze stawki na znak z testu E9.
 """
 import hashlib
 import json
@@ -24,6 +25,8 @@ HISTORY_SLACK_S = 5
 HISTORY_ATTEMPTS = 3
 HISTORY_RETRY_S = 2
 PENDING_MAX_AGE_S = 3600
+# Kredyty na znak tekstu dla narzędzi bez historii (E9: podglądy głosu kosztowały 1 kredyt na znak).
+RATE_ESTIMATES = {'text_to_voice': 1.0}
 AUDIO_EXT = r'\.(?:mp3|wav|pcm|ogg|opus|flac)'
 AUDIO_PATH = re.compile(r'(?:[A-Za-z]:[\\/]|/)[^,;\n"]+?' + AUDIO_EXT)
 
@@ -185,6 +188,9 @@ def build_record(event, pending, sub, item, failed):
     credits, method, flag, history, delta = measure(
         item or None, pending.get('character_count'), sub.get('character_count'), failed)
     text = request_text(tool_input)
+    tool = short_name(event.get('tool_name', ''))
+    if flag == 'unmeasured' and tool in RATE_ESTIMATES and isinstance(tool_input.get('text'), str):
+        credits, method, flag = round(len(tool_input['text']) * RATE_ESTIMATES[tool]), 'rate_estimate', 'estimated'
     limit = sub.get('character_limit')
     used = max(filter(None, (sub.get('character_count'), item.get('character_count_change_to'))), default=None)
     voice = next((v for v in item_voices(item) if v.get('voice_id')), {})
@@ -192,7 +198,7 @@ def build_record(event, pending, sub, item, failed):
         'ts': common.now_iso(),
         'session_id': event.get('session_id'),
         'tool_use_id': event.get('tool_use_id'),
-        'tool': short_name(event.get('tool_name', '')),
+        'tool': tool,
         'request_id': item.get('request_id'),
         'history_item_id': item.get('history_item_id'),
         'voice_id': voice.get('voice_id') or tool_input.get('voice_id'),

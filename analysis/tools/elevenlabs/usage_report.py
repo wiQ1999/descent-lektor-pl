@@ -1,12 +1,19 @@
-"""Raport zużycia kredytów ElevenLabs: suma z logu, proporcja do limitu, uzgodnienie z kontem."""
+"""Raport zużycia kredytów ElevenLabs: suma z logu, proporcja do limitu, uzgodnienie z kontem.
+
+`--mark` zapisuje licznik konta na początku prompta, a `--summary` podaje zużycie od tego znacznika
+i sumę projektu wobec limitu (podsumowanie na końcu odpowiedzi, skill `elevenlabs`).
+"""
 import argparse
 import csv
+import json
 import sys
 from collections import defaultdict
+from datetime import datetime
 
 import common
 
-FLAGS = ('mismatch', 'unmeasured', 'tool_error')
+FLAGS = ('mismatch', 'unmeasured', 'estimated', 'tool_error')
+MARK = 'prompt_mark.json'
 GROUPS = {
     'day': ('dzień', lambda r: (r.get('ts') or '')[:10]),
     'voice': ('głos', lambda r: r.get('voice_name') or r.get('voice_id') or 'brak'),
@@ -99,6 +106,70 @@ def report(records, sub, period_name, by):
     return '\n'.join(lines + ['', flag_line(shown)])
 
 
+def mark_path():
+    return common.USAGE / MARK
+
+
+def write_mark(sub):
+    sub = sub or {}
+    mark = {'ts': common.now_iso(), 'character_count': sub.get('character_count'),
+            'period_reset': common.unix_to_iso(sub.get('next_character_count_reset_unix'))}
+    common.USAGE.mkdir(parents=True, exist_ok=True)
+    mark_path().write_text(json.dumps(mark), encoding='utf-8')
+    return mark
+
+
+def read_mark():
+    try:
+        return json.loads(mark_path().read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return None
+
+
+def since(records, ts):
+    start = datetime.fromisoformat(ts)
+    return [r for r in records if r.get('ts') and datetime.fromisoformat(r['ts']) >= start]
+
+
+def prompt_line(records, mark, sub):
+    if not mark:
+        return '- ten prompt: brak znacznika początku (`--mark`), pokazuję tylko sumy'
+    own = since(records, mark['ts'])
+    estimated = sum(r.get('flag') == 'estimated' for r in own)
+    unmeasured = sum(r.get('flag') == 'unmeasured' for r in own)
+    text = '- ten prompt: %s kr. z logu (%s wywołań' % (common.pl_int(credits_sum(own)), common.pl_int(len(own)))
+    if estimated:
+        text += ', w tym %d z szacunkiem stawki' % estimated
+    if unmeasured:
+        text += ', %d bez pomiaru' % unmeasured
+    text += ')'
+    reset = common.unix_to_iso((sub or {}).get('next_character_count_reset_unix'))
+    if sub and mark.get('character_count') is not None and reset == mark.get('period_reset'):
+        text += '; licznik konta: +%s kr. od początku prompta' % common.pl_int(sub['character_count'] - mark['character_count'])
+    return text
+
+
+def summary(records, sub, mark):
+    """Krótki blok Markdown na koniec odpowiedzi: ten prompt, projekt i konto wobec limitu."""
+    reset = current_reset(records, sub)
+    period = in_period(records, reset)
+    lines = ['**ElevenLabs: zużycie kredytów**', prompt_line(records, mark, sub)]
+    limit = (sub or {}).get('character_limit')
+    project = '- projekt: %s kr. w bieżącym okresie, %s kr. łącznie' % (
+        common.pl_int(credits_sum(period)), common.pl_int(credits_sum(records)))
+    if limit:
+        project += ' (okres: %s limitu %s)' % (common.pl_pct(credits_sum(period) / limit * 100), common.pl_int(limit))
+    lines.append(project)
+    if limit and sub.get('character_count') is not None:
+        used = sub['character_count']
+        lines.append('- konto: %s / %s (%s), pozostało %s, reset %s' % (
+            common.pl_int(used), common.pl_int(limit), common.pl_pct(used / limit * 100), common.pl_int(limit - used),
+            (common.unix_to_iso(sub.get('next_character_count_reset_unix')) or 'nieznany')[:10]))
+    else:
+        lines.append('- konto: brak danych (tryb offline albo brak odpowiedzi)')
+    return '\n'.join(lines)
+
+
 def write_csv(path, rows, by):
     with open(path, 'w', encoding='utf-8-sig', newline='') as f:
         writer = csv.writer(f, delimiter=';')
@@ -124,10 +195,20 @@ def main(argv=None):
     parser.add_argument('--by', choices=sorted(GROUPS), default='day')
     parser.add_argument('--csv', metavar='PLIK')
     parser.add_argument('--offline', action='store_true')
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--mark', action='store_true', help='zapisz licznik konta na początku prompta')
+    mode.add_argument('--summary', action='store_true', help='zużycie od znacznika i suma projektu wobec limitu')
     args = parser.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
     records = common.read_log()
     sub = None if args.offline else subscription()
+    if args.mark:
+        mark = write_mark(sub)
+        print('Znacznik prompta: %s, licznik konta %s' % (mark['ts'], mark['character_count']))
+        return 0
+    if args.summary:
+        print(summary(records, sub, read_mark()))
+        return 0
     print(report(records, sub, args.period, args.by))
     if args.csv:
         shown = in_period(records, current_reset(records, sub)) if args.period == 'current' else records

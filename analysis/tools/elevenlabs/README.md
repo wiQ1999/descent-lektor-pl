@@ -32,6 +32,18 @@ Raport: `/zuzycie` w sesji albo bezpośrednio:
 uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--period current|all] [--by day|voice|model|tool|session] [--csv PLIK] [--offline]
 ```
 
+Podsumowanie na koniec odpowiedzi (skill `elevenlabs`, D77): `--mark` zapisuje licznik konta na początku prompta, a `--summary` podaje zużycie od znacznika, sumę projektu i stan konta wobec limitu.
+
+```bash
+uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py --mark
+```
+
+```bash
+uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py --summary
+```
+
+Zasady pracy z MCP (koszt, zgoda, parametry, głosy) opisuje skill `.claude/skills/elevenlabs/SKILL.md`.
+
 Testy:
 
 ```bash
@@ -44,7 +56,7 @@ Testy:
 - `method: history`: różnica liczników z wpisu historii, źródło główne.
 - `method: subscription_delta`: różnica licznika konta przed i po wywołaniu. To zapas dla narzędzi spoza historii TTS.
 - Licznik konta dogania wywołanie z opóźnieniem do około minuty, więc zerowa różnica nie znaczy zerowego kosztu. Taki rekord bez wpisu w historii ma flagę `unmeasured`.
-- `text_to_voice` nie ma wpisu w historii, więc zwykle kończy się flagą `unmeasured`. Jego koszt widać w raporcie w wierszu „konto minus log”. W teście wyniósł 1 kredyt na znak tekstu podglądu.
+- `text_to_voice` nie ma wpisu w historii. Gdy licznik nie drgnął, hook szacuje koszt stawką z testu E9: 1 kredyt na znak tekstu podglądu (`method: rate_estimate`, flaga `estimated`). Różnicę wobec konta widać w wierszu „konto minus log”.
 - `create_voice_from_preview` nie kosztuje kredytów (zajmuje miejsce na głos), więc hook je pomija.
 - Modele v3 i v4 mają w historii pusty `text` i `voice_id`. Tekst i głos leżą w polu `dialogue`.
 - Log trzyma SHA-1 i długość tekstu. Tekstu nie zapisuje.
@@ -53,6 +65,7 @@ Testy:
 |---|---|
 | `mismatch` | licznik drgnął, ale podaje co innego niż historia, `credits` pochodzi z historii |
 | `unmeasured` | brak wpisu w historii i licznik nie drgnął albo nie odpowiada, np. opóźnienie licznika, awaria sieci, brak klucza |
+| `estimated` | koszt ze stawki na znak, bo narzędzie nie ma historii, a licznik jeszcze nie drgnął |
 | `tool_error` | narzędzie zwróciło błąd, koszt z różnicy licznika |
 
 Hook zawsze kończy się kodem 0, a zapytania mają limit 5 s. Błędy trafiają do `errors.log`.

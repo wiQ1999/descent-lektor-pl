@@ -26,6 +26,7 @@ E1 ──────────────────> E4 companion (z repla
 - Po każdym etapie robię commit, a decyzje trafiają do `DECISIONS.md`.
 - W `analysis/` nie ma treści gry; audio, logi i próbki leżą w `analysis/work/` (ignorowane).
 - E10 (wydanie w GitHub Releases) idzie po E7, gdy zakres audio jest gotowy.
+- E11 (arkusz porównawczy głosów) idzie teraz. Jego wynik ustala model dla dalszego audio. E12 (katalog treści gry) idzie po nim.
 
 ## E0 · Porządki i porównanie modeli TTS
 
@@ -365,6 +366,25 @@ Publiczne wydanie gotowych paczek (D76).
 - sprawdzenie licencji modeli przy rozpowszechnianiu audio i uznanie autorstwa: OmniVoice (wagi CC-BY-NC) i tokenizer Higgs Audio 2 (notka o autorstwie);
 - tag wersji i opis wydania: zakres scenariuszy i sumy SHA-256 paczek;
 - publikację (`gh release create` albo strona GitHub) robisz Ty.
+
+## E11 · Arkusz porównawczy głosów
+
+Pytanie etapu: którego modelu użyć (lokalny OmniVoice czy ElevenLabs przez MCP) i w jakim zakresie: narrator, bohaterowie z głosem z gry, reszta postaci (D77).
+
+**Status:** w przygotowaniu. Kwestie są wylosowane (`analysis/tools/voice_compare.py pick`, ziarno 20261107). Modele ElevenLabs i sposób robienia wariantów czekają na Twoją decyzję po opisie modeli.
+
+**Zakres ustalony:**
+- głosy z dubbingu (narrator, 6 bohaterów, Ne’Krul, Xenith): referencja z gry i OmniVoice na tych samych kwestiach, bez ElevenLabs;
+- postacie bez dubbingu z audio M2 (11): OmniVoice wobec 3 wyraźnie różnych wariantów ElevenLabs;
+- po 2 losowe kwestie na postać: jeden fragment, co najmniej 7 słów, do 220 znaków. Narrator ma jedną z narracji fabularnej i jedną z komunikatów questu, a Ne’Krul i Xenith mają w M2 po jednej kwestii;
+- każda postać osobno, strony arkusza po 3–6 postaci, oceny z eksportem, wyniki automatu E3 i koszt całej gry na model;
+- wywołania MCP według skilla `elevenlabs`, z podsumowaniem zużycia w każdej odpowiedzi.
+
+**Do decyzji:** modele ElevenLabs w porównaniu, sposób robienia wariantów (opis, parametry API, biblioteka głosów) i koszt.
+
+## E12 · Katalog treści gry (później)
+
+Uporządkowanie treści całej gry do nagrania: kategorie, mówcy, scenariusze, przedmioty i miejsce na poprawki, np. zapis fonetyczny. Sposób przechowywania dobieram sam (D77). Katalog leży w projekcie, w `analysis/work/`, poza Git (D76). Plan etapu przedstawię przed startem.
 
 ## Weryfikacja
 

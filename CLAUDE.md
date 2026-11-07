@@ -139,6 +139,8 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 ```
 
 - W sesji ten sam raport daje `/zuzycie`.
+- Każde zadanie z MCP ElevenLabs prowadzimy według skilla `elevenlabs` (`.claude/skills/elevenlabs/SKILL.md`, D77). Na początku prompta `usage_report.py --mark`, a na końcu odpowiedzi blok z `usage_report.py --summary`.
+- Arkusz porównawczy głosów (E11): `.venv/Scripts/python -I analysis/tools/voice_compare.py pick|status|score|sheet`, wyniki w `analysis/work/compare/e11/`.
 - Płatne narzędzia wywołujemy tylko za zgodą użytkownika. Testy automatyczne nie łączą się z siecią.
 - Hooki z `.claude/settings.json` zapisują koszt każdego płatnego wywołania. Log nie zawiera tekstów.
 

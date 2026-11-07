@@ -694,6 +694,19 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** To decyzje użytkownika z QA. Audio to najdłuższa część pracy (M2 ok. 16 h GPU) i nie odtwarza się bajt w bajt, więc gracze dostają je gotowe. Pliki wydań leżą poza historią Git (do 2 GiB na plik), więc repozytorium zostaje małe bez LFS.
 
+### D77 · 2026-11-07 · E11: arkusz porównawczy głosów i skill ElevenLabs
+**Decyzja:**
+- Następny etap to arkusz porównawczy głosów (E11). Katalog treści gry przechodzi na później (E12). Sposób przechowywania i zarządzania danymi z gry dobieram sam, w projekcie i poza Git.
+- Głosy z dubbingu porównujemy bez ElevenLabs: referencja z gry wobec OmniVoice. Klonów dubbingu w ElevenLabs nie robimy.
+- Postacie bez dubbingu: OmniVoice wobec 3 wariantów ElevenLabs. Modele i sposób robienia wariantów ustalimy w QA po opisie modeli.
+- Kwestie losuje `analysis/tools/voice_compare.py pick` (ziarno 20261107): jeden fragment, co najmniej 7 słów, do 220 znaków, gotowe audio M2 bez uwag automatu.
+- Ne’Krul ma w M2 jedną kwestię, a automat zgłosił w niej uciętą końcówkę i tempo. Arkusz pokazuje ją z tą uwagą.
+- Skill `elevenlabs` (`.claude/skills/elevenlabs/SKILL.md`, tylko to repozytorium) opisuje korzystanie z MCP.
+- Każda odpowiedź z wywołaniem MCP kończy się blokiem zużycia: ten prompt, projekt i konto wobec limitu (`usage_report.py --mark` na początku i `--summary` na końcu).
+- Hook szacuje koszt `text_to_voice` stawką 1 kredytu na znak tekstu podglądu (flaga `estimated`), bo to narzędzie nie ma wpisu w historii.
+
+**Uzasadnienie:** To decyzje użytkownika z QA. Serwer MCP 0.12.2 przekazuje do projektu głosu tylko opis i tekst (endpoint `create_previews`, model `eleven_multilingual_ttv_v2`). Parametry `seed` i `guidance_scale` oraz model `eleven_ttv_v3` wymagałyby własnego wywołania API.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -739,3 +752,4 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 | – | Model dla całej gry | E7 na OmniVoice (D65); cała gra przy większym zakresie (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |
 | – | Wydanie paczek w GitHub Releases | E10 (D76) |
+| – | Model dla narratora, bohaterów i reszty postaci (OmniVoice czy ElevenLabs) | arkusz E11 (D77) |

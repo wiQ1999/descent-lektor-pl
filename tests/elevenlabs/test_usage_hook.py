@@ -213,6 +213,21 @@ def test_tool_without_history_uses_counter(box, monkeypatch, capsys):
     assert (r['tool'], r['credits'], r['method'], r['text_len']) == ('text_to_voice', 300, 'subscription_delta', 10)
 
 
+def test_voice_design_without_counter_move_gets_rate_estimate(box, monkeypatch, capsys):
+    data = event(tool='text_to_voice', tool_input={'voice_description': 'Niski głos', 'text': TEXT})
+    out = cycle(monkeypatch, capsys, [sub(1000), sub(1000)], [], data)
+    [r] = records()
+    assert (r['credits'], r['method'], r['flag']) == (len(TEXT), 'rate_estimate', 'estimated')
+    assert 'flaga: estimated' in out
+
+
+def test_voice_design_without_text_stays_unmeasured(box, monkeypatch, capsys):
+    data = event(tool='text_to_voice', tool_input={'voice_description': 'Niski głos'})
+    cycle(monkeypatch, capsys, [sub(1000), sub(1000)], [], data)
+    [r] = records()
+    assert (r['credits'], r['flag']) == (None, 'unmeasured')
+
+
 def test_post_without_pre_still_records(box, monkeypatch, capsys):
     api(monkeypatch, [sub(1046)], [item()])
     run(monkeypatch, capsys, 'post', event())

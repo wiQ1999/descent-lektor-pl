@@ -56,7 +56,7 @@ def test_unmeasured_cost_is_named_in_reconciliation():
 
 def test_flags_are_counted():
     records = [rec(1, flag='mismatch'), rec(None, flag='unmeasured'), rec(0, flag='tool_error'), rec(0, flag='tool_error')]
-    assert 'Flagi: mismatch 1, unmeasured 1, tool_error 2' in R.report(records, account(), 'current', 'day')
+    assert 'Flagi: mismatch 1, unmeasured 1, estimated 0, tool_error 2' in R.report(records, account(), 'current', 'day')
 
 
 def test_offline_takes_period_from_newest_record():
@@ -82,3 +82,30 @@ def test_cli_survives_account_failure(box, capsys):
     write_log([rec(200)])
     assert R.main([]) == 0
     assert 'pominięta' in capsys.readouterr().out
+
+
+def test_mark_then_summary_counts_only_this_prompt(box, monkeypatch, capsys):
+    write_log([rec(500, ts='2026-11-06T10:00:00+01:00')])
+    monkeypatch.setattr(R, 'subscription', lambda: account(1000))
+    monkeypatch.setattr(common, 'now_iso', lambda: '2026-11-07T12:00:00+01:00')
+    assert R.main(['--mark']) == 0
+    write_log([rec(500, ts='2026-11-06T10:00:00+01:00'), rec(120, ts='2026-11-07T12:05:00+01:00'),
+               rec(80, ts='2026-11-07T12:06:00+01:00', flag='estimated', tool='text_to_voice')])
+    monkeypatch.setattr(R, 'subscription', lambda: account(1210))
+    capsys.readouterr()
+    assert R.main(['--summary']) == 0
+    out = capsys.readouterr().out
+    assert '- ten prompt: 200 kr. z logu (2 wywołań, w tym 1 z szacunkiem stawki); licznik konta: +210 kr.' in out
+    assert '- projekt: 700 kr. w bieżącym okresie, 700 kr. łącznie (okres: 0,70% limitu 100 000)' in out
+    assert '- konto: 1 210 / 100 000 (1,21%), pozostało 98 790' in out
+
+
+def test_summary_without_mark_or_account():
+    text = R.summary([rec(300)], None, None)
+    assert 'brak znacznika' in text and 'konto: brak danych' in text
+
+
+def test_summary_skips_counter_after_period_reset():
+    mark = {'ts': '2026-10-20T10:00:00+01:00', 'character_count': 90000, 'period_reset': common.unix_to_iso(OLD_RESET)}
+    text = R.summary([rec(300)], account(500), mark)
+    assert 'licznik konta' not in text and 'ten prompt: 300 kr.' in text
