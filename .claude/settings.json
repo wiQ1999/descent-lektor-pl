@@ -32,7 +32,7 @@
         "hooks": [
           {
             "type": "command",
-            "timeout": 20,
+            "timeout": 30,
             "command": "uv run --no-project --python 3.13 \"${CLAUDE_PROJECT_DIR}/analysis/tools/elevenlabs/usage_hook.py\" post"
           }
         ]
@@ -44,7 +44,7 @@
         "hooks": [
           {
             "type": "command",
-            "timeout": 20,
+            "timeout": 30,
             "command": "uv run --no-project --python 3.13 \"${CLAUDE_PROJECT_DIR}/analysis/tools/elevenlabs/usage_hook.py\" post"
           }
         ]

@@ -131,6 +131,7 @@ ElevenLabs (E9, D73). Serwer MCP tylko w zakresie projektu (`.mcp.json`), klucz 
 
 ```bash
 uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--period current|all] [--by day|voice|model|tool|session] [--csv PLIK] [--offline]
+.venv/Scripts/python -I analysis/tools/elevenlabs/score_samples.py [plik ...]   # ocena próbek automatem E3
 .venv/Scripts/python -I -m pytest tests/elevenlabs
 ```
 
@@ -163,3 +164,4 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 | [analysis/E5_TEST.md](analysis/E5_TEST.md) | sesja M1 z lektorem (E5): D13 w grze, okna i odczyty, braki, wydajność, uwagi z gry (D55) |
 | [analysis/E7_DATA.md](analysis/E7_DATA.md) | baza kwestii M2 (E7): liczności, luki `{n}`, pokrycie wartości, szacunek generowania |
 | [analysis/E7_AUDIO.md](analysis/E7_AUDIO.md) | audio M2 (E7): czas na znak, wyniki automatu, pokrycie kluczy |
+| [analysis/E9_ELEVENLABS.md](analysis/E9_ELEVENLABS.md) | test ElevenLabs (E9): wyniki automatu, koszt na znak, co test zmienił w pomiarze |

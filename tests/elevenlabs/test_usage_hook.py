@@ -13,6 +13,11 @@ TEXT = 'Zdanie testowe  z ogonkami: zażółć gęślą jaźń.'
 RESET = 1796083200
 
 
+@pytest.fixture(autouse=True)
+def no_wait(monkeypatch):
+    monkeypatch.setattr(H, 'HISTORY_RETRY_S', 0)
+
+
 def sub(count=1000):
     return {'tier': 'creator', 'character_count': count, 'character_limit': 100000,
             'next_character_count_reset_unix': RESET}
@@ -118,6 +123,48 @@ def test_mismatch_keeps_both_values(box, monkeypatch, capsys):
     assert (r['credits'], r['credits_history'], r['credits_delta'], r['flag']) == (46, 46, 100, 'mismatch')
 
 
+def test_counter_lag_is_not_a_mismatch_and_period_uses_history(box, monkeypatch, capsys):
+    cycle(monkeypatch, capsys, [sub(1000), sub(1000)], [item(cost=46)])
+    [r] = records()
+    assert (r['credits'], r['credits_delta'], r['flag']) == (46, 0, None)
+    assert r['used_period'] == 1046 and r['pct_period'] == 1.046
+
+
+def test_counter_lag_without_history_is_not_zero_cost(box, monkeypatch, capsys):
+    out = cycle(monkeypatch, capsys, [sub(1000), sub(1000)], [])
+    [r] = records()
+    assert (r['credits'], r['credits_delta'], r['flag']) == (None, 0, 'unmeasured')
+    assert 'nie zmierzono' in json.loads(out)['hookSpecificOutput']['additionalContext']
+
+
+def test_dialogue_item_matches_by_text_and_voice(box, monkeypatch, capsys):
+    entry = item()
+    entry.update(text=None, voice_id=None, voice_name=None,
+                 dialogue=[{'text': ' '.join(TEXT.split()), 'voice_id': 'v1', 'voice_name': 'Bella'}])
+    cycle(monkeypatch, capsys, [sub(1000), sub(1000)], [entry])
+    [r] = records()
+    assert (r['credits'], r['method'], r['voice_id'], r['voice_name']) == (46, 'history', 'v1', 'Bella')
+
+
+def test_dialogue_item_with_other_voice_is_skipped():
+    entry = item()
+    entry.update(text=None, voice_id=None, dialogue=[{'text': TEXT, 'voice_id': 'v2'}])
+    assert not H.match_history([entry], {'text': TEXT, 'voice_id': 'v1'}, time.time(), time.time(), set())
+
+
+def test_history_is_asked_again_when_item_is_late(box, monkeypatch, capsys):
+    pages = [[], [], [item()]]
+    answers = [sub(1000), sub(1046)]
+
+    def get(path, key):
+        return answers.pop(0) if path == common.SUBSCRIPTION else {'history': pages.pop(0)}
+
+    monkeypatch.setattr(common, 'get_json', get)
+    run(monkeypatch, capsys, 'pre', event('PreToolUse'))
+    run(monkeypatch, capsys, 'post', event())
+    assert records()[0]['method'] == 'history' and not pages
+
+
 def test_network_failure_writes_unmeasured_record_and_error(box, monkeypatch, capsys):
     down = urllib.error.URLError('brak sieci')
     api(monkeypatch, [down, down], [])
@@ -204,7 +251,7 @@ def test_log_has_no_text_and_no_key(box, monkeypatch, capsys):
 
 
 @pytest.mark.parametrize('name,paid', [('text_to_speech', True), ('text_to_voice', True), ('voice_clone', True),
-                                       ('create_voice_from_preview', True), ('list_agents', False),
+                                       ('create_voice_from_preview', False), ('list_agents', False),
                                        ('get_conversation', False), ('create_composition_plan', False)])
 def test_paid_filter(name, paid):
     assert H.is_paid(name) is paid

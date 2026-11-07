@@ -75,6 +75,9 @@ def account_lines(period, sub):
         'Uzgodnienie',
         '  konto minus log: %s (zużycie spoza projektu, np. panel WWW)' % common.pl_int(outside),
     ]
+    unmeasured = sum(r.get('flag') == 'unmeasured' for r in period)
+    if unmeasured:
+        lines.append('  ta wartość obejmuje też koszt rekordów bez pomiaru: %d' % unmeasured)
     if outside < 0:
         lines.append('  UWAGA: log pokazuje więcej niż konto. Sprawdź rekordy z flagami i okres rozliczeniowy.')
     return lines

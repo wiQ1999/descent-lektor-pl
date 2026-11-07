@@ -648,6 +648,19 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** To decyzje użytkownika z QA. Układ ścieżek trzyma się zasady, że wyniki prywatne leżą w `analysis/work/`. Testy automatyczne nie łączą się z siecią, a każde płatne wywołanie wymaga zgody.
 
+### D74 · 2026-11-07 · E9: wynik testu na żywo
+**Wynik:** serwer, pomiar i własny głos działają. Cały test kosztował 325 kredytów. `eleven_v4` kosztuje 0,44 kredytu na znak, więc jedno podejście całego M2 to ok. 124 500 kredytów, czyli 98% miesięcznego limitu planu Creator. Szczegóły: `analysis/E9_ELEVENLABS.md`.
+
+**Decyzja:**
+- Hook bierze tekst i głos także z pola `dialogue`, bo modele v3 i v4 nie wypełniają `text` i `voice_id`.
+- Hook pyta o historię do trzech razy, bo wpis może się spóźnić.
+- Zerowa różnica licznika nie oznacza zerowego kosztu, bo licznik konta spóźnia się o około minutę. Bez wpisu w historii rekord dostaje flagę `unmeasured`.
+- Procent okresu liczymy z wpisu historii, jeśli jest świeższy od licznika.
+- `create_voice_from_preview` jest bezpłatne, więc hook je pomija.
+- Głos `Lektor PL - Kehli test` zostaje na koncie do decyzji po odsłuchu.
+
+**Uzasadnienie:** Pierwsze wywołanie pokazało fałszywe 0 kredytów, a tego testy bez sieci nie mogły wykryć, bo opierały się na opisie API. Po poprawce drugi TTS dał koszt zgodny z licznikiem konta.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

@@ -49,6 +49,11 @@ def test_negative_reconciliation_warns():
     assert 'UWAGA' in text
 
 
+def test_unmeasured_cost_is_named_in_reconciliation():
+    assert 'rekordów bez pomiaru: 1' in R.report([rec(None, flag='unmeasured')], account(173), 'current', 'day')
+    assert 'bez pomiaru' not in R.report([rec(100)], account(173), 'current', 'day')
+
+
 def test_flags_are_counted():
     records = [rec(1, flag='mismatch'), rec(None, flag='unmeasured'), rec(0, flag='tool_error'), rec(0, flag='tool_error')]
     assert 'Flagi: mismatch 1, unmeasured 1, tool_error 2' in R.report(records, account(), 'current', 'day')

@@ -43,15 +43,27 @@ Testy:
 - Hook `pre` zapamiętuje licznik konta, a hook `post` dopasowuje wpis z historii konta po tekście, czasie i głosie.
 - `method: history`: różnica liczników z wpisu historii, źródło główne.
 - `method: subscription_delta`: różnica licznika konta przed i po wywołaniu. To zapas dla narzędzi spoza historii TTS.
+- Licznik konta dogania wywołanie z opóźnieniem do około minuty, więc zerowa różnica nie znaczy zerowego kosztu. Taki rekord bez wpisu w historii ma flagę `unmeasured`.
+- `text_to_voice` nie ma wpisu w historii, więc zwykle kończy się flagą `unmeasured`. Jego koszt widać w raporcie w wierszu „konto minus log”. W teście wyniósł 1 kredyt na znak tekstu podglądu.
+- `create_voice_from_preview` nie kosztuje kredytów (zajmuje miejsce na głos), więc hook je pomija.
+- Modele v3 i v4 mają w historii pusty `text` i `voice_id`. Tekst i głos leżą w polu `dialogue`.
 - Log trzyma SHA-1 i długość tekstu. Tekstu nie zapisuje.
 
 | Flaga | Znaczenie |
 |---|---|
-| `mismatch` | historia i licznik podają co innego, `credits` pochodzi z historii |
-| `unmeasured` | brak obu pomiarów, np. awaria sieci albo brak klucza |
+| `mismatch` | licznik drgnął, ale podaje co innego niż historia, `credits` pochodzi z historii |
+| `unmeasured` | brak wpisu w historii i licznik nie drgnął albo nie odpowiada, np. opóźnienie licznika, awaria sieci, brak klucza |
 | `tool_error` | narzędzie zwróciło błąd, koszt z różnicy licznika |
 
 Hook zawsze kończy się kodem 0, a zapytania mają limit 5 s. Błędy trafiają do `errors.log`.
+
+## Ocena próbek
+
+`score_samples.py` ocenia próbki tym samym automatem co E3: ASR, końcówka, tempo, barwa wobec referencji i F0. Uruchamiamy go w `.venv`:
+
+```bash
+.venv/Scripts/python -I analysis/tools/elevenlabs/score_samples.py [plik ...]
+```
 
 ## Odinstalowanie
 
