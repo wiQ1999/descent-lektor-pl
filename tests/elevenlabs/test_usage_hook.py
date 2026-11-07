@@ -213,12 +213,19 @@ def test_tool_without_history_uses_counter(box, monkeypatch, capsys):
     assert (r['tool'], r['credits'], r['method'], r['text_len']) == ('text_to_voice', 300, 'subscription_delta', 10)
 
 
-def test_voice_design_without_counter_move_gets_rate_estimate(box, monkeypatch, capsys):
+def test_voice_design_without_counter_move_uses_rate(box, monkeypatch, capsys):
     data = event(tool='text_to_voice', tool_input={'voice_description': 'Niski głos', 'text': TEXT})
     out = cycle(monkeypatch, capsys, [sub(1000), sub(1000)], [], data)
     [r] = records()
-    assert (r['credits'], r['method'], r['flag']) == (len(TEXT), 'rate_estimate', 'estimated')
-    assert 'flaga: estimated' in out
+    assert (r['credits'], r['method'], r['flag']) == (len(TEXT), 'rate', None)
+    assert 'flaga' not in out
+
+
+def test_voice_design_ignores_counter_moved_by_other_calls(box, monkeypatch, capsys):
+    data = event(tool='text_to_voice', tool_input={'voice_description': 'Niski głos', 'text': TEXT})
+    cycle(monkeypatch, capsys, [sub(1000), sub(1733)], [], data)
+    [r] = records()
+    assert (r['credits'], r['credits_delta'], r['method']) == (len(TEXT), 733, 'rate')
 
 
 def test_voice_design_without_text_stays_unmeasured(box, monkeypatch, capsys):

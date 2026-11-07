@@ -25,8 +25,10 @@ HISTORY_SLACK_S = 5
 HISTORY_ATTEMPTS = 3
 HISTORY_RETRY_S = 2
 PENDING_MAX_AGE_S = 3600
-# Kredyty na znak tekstu dla narzędzi bez historii (E9: podglądy głosu kosztowały 1 kredyt na znak).
-RATE_ESTIMATES = {'text_to_voice': 1.0}
+# Kredyty na znak tekstu dla narzędzi bez historii. Podglądy głosu kosztują dokładnie 1 kredyt na znak tekstu (E9, E11:
+# przyrost licznika konta równy liczbie znaków). Licznik jest wspólny i spóźniony, więc przy wywołaniach z rzędu
+# jego różnica łapie też koszt sąsiednich wywołań. Dla tych narzędzi liczymy więc ze stawki, a różnicę tylko zapisujemy.
+RATE_PER_CHAR = {'text_to_voice': 1.0}
 AUDIO_EXT = r'\.(?:mp3|wav|pcm|ogg|opus|flac)'
 AUDIO_PATH = re.compile(r'(?:[A-Za-z]:[\\/]|/)[^,;\n"]+?' + AUDIO_EXT)
 
@@ -189,8 +191,8 @@ def build_record(event, pending, sub, item, failed):
         item or None, pending.get('character_count'), sub.get('character_count'), failed)
     text = request_text(tool_input)
     tool = short_name(event.get('tool_name', ''))
-    if flag == 'unmeasured' and tool in RATE_ESTIMATES and isinstance(tool_input.get('text'), str):
-        credits, method, flag = round(len(tool_input['text']) * RATE_ESTIMATES[tool]), 'rate_estimate', 'estimated'
+    if not failed and tool in RATE_PER_CHAR and isinstance(tool_input.get('text'), str):
+        credits, method, flag = round(len(tool_input['text']) * RATE_PER_CHAR[tool]), 'rate', None
     limit = sub.get('character_limit')
     used = max(filter(None, (sub.get('character_count'), item.get('character_count_change_to'))), default=None)
     voice = next((v for v in item_voices(item) if v.get('voice_id')), {})

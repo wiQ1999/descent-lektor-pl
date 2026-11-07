@@ -56,7 +56,7 @@ Testy:
 - `method: history`: różnica liczników z wpisu historii, źródło główne.
 - `method: subscription_delta`: różnica licznika konta przed i po wywołaniu. To zapas dla narzędzi spoza historii TTS.
 - Licznik konta dogania wywołanie z opóźnieniem do około minuty, więc zerowa różnica nie znaczy zerowego kosztu. Taki rekord bez wpisu w historii ma flagę `unmeasured`.
-- `text_to_voice` nie ma wpisu w historii. Gdy licznik nie drgnął, hook szacuje koszt stawką z testu E9: 1 kredyt na znak tekstu podglądu (`method: rate_estimate`, flaga `estimated`). Różnicę wobec konta widać w wierszu „konto minus log”.
+- `text_to_voice` nie ma wpisu w historii. Hook liczy go zawsze stawką 1 kredytu na znak tekstu podglądu (`method: rate`, E9 i E11, D78), a różnicę licznika zapisuje tylko w `credits_delta`. Przy wywołaniach z rzędu spóźniony licznik łapie koszt sąsiednich wywołań, więc różnica nie nadaje się do przypisania kosztu. Rekordy sprzed D78 mogą mieć `method: rate_estimate` i flagę `estimated`.
 - `create_voice_from_preview` nie kosztuje kredytów (zajmuje miejsce na głos), więc hook je pomija.
 - Modele v3 i v4 mają w historii pusty `text` i `voice_id`. Tekst i głos leżą w polu `dialogue`.
 - Log trzyma SHA-1 i długość tekstu. Tekstu nie zapisuje.
@@ -65,7 +65,7 @@ Testy:
 |---|---|
 | `mismatch` | licznik drgnął, ale podaje co innego niż historia, `credits` pochodzi z historii |
 | `unmeasured` | brak wpisu w historii i licznik nie drgnął albo nie odpowiada, np. opóźnienie licznika, awaria sieci, brak klucza |
-| `estimated` | koszt ze stawki na znak, bo narzędzie nie ma historii, a licznik jeszcze nie drgnął |
+| `estimated` | rekordy sprzed D78: koszt ze stawki na znak, bo licznik jeszcze nie drgnął |
 | `tool_error` | narzędzie zwróciło błąd, koszt z różnicy licznika |
 
 Hook zawsze kończy się kodem 0, a zapytania mają limit 5 s. Błędy trafiają do `errors.log`.

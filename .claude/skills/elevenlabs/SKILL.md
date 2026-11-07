@@ -39,7 +39,7 @@ Stawki zmierzone na koncie (kredyty na znak). Brak wpisu znaczy, że stawki nie 
 | Model albo narzędzie | Stawka | Źródło |
 |---|---:|---|
 | `eleven_v4` | 0,44 | E9, D74 |
-| `text_to_voice` (3 podglądy) | 1,0 | E9, D74 |
+| `text_to_voice` (3 podglądy) | 1,0 | E9, E11 (D78): przyrost licznika równy liczbie znaków tekstu |
 
 Nowo zmierzone stawki dopisz do tej tabeli i do raportu etapu.
 
@@ -72,6 +72,8 @@ Cennik API (2026-11) podaje 0,08 USD za 1000 znaków dla v4, v3 i Multilingual v
 
 - Plan Creator ma 30 miejsc na głosy własne. Zajęte miejsca sprawdzisz w `search_voices`. Nazwy zapisujemy jako `Lektor PL - <postać> <wariant>`.
 - `text_to_voice` z polem `text` (100–1000 znaków) daje 3 podglądy, które czytają ten tekst. Podgląd może od razu być próbką do porównania. `create_voice_from_preview` zapisuje tylko wybrany głos.
+- Nazwa pliku podglądu zawiera `generated_voice_id` (`voice_design_<id>_<czas>.mp3`). Dokumentacja nie podaje, jak długo identyfikator jest ważny, więc wybrane podglądy zapisuj na koncie niedługo po ocenie.
+- Filtr bezpieczeństwa ElevenLabs potrafi odrzucić opis (błąd 403 `blocked_generation`, bez kosztu). W E11 odrzucił „frightened girl… has died”. Przeredaguj opis: dorosła postać („young woman”), bez łączenia dziecka ze śmiercią, i zapisz nową wersję w pliku opisów.
 - Serwer 0.12.2 przekazuje do projektu głosu tylko opis i tekst (endpoint `create_previews`, model `eleven_multilingual_ttv_v2`). Model `eleven_ttv_v3`, `seed`, `guidance_scale`, `loudness`, `quality` i referencja audio są dostępne tylko w bezpośrednim API.
 - Opis głosu piszemy według wzoru ElevenLabs: „Native Polish. <płeć>, <wiek>. <jakość>.”, potem „Persona: … Emotion: …” i 1–2 zdania o barwie, tempie i sposobie mówienia. Słowo „accent” zostawiamy dla dialektu, a do intonacji używamy słów „intonation” i „emphasis”.
 - Parametry `text_to_speech` (`stability`, `similarity_boost`, `style`, `speed`) zmieniają sposób czytania, nie barwę głosu. Barwę wybiera opis albo klon.

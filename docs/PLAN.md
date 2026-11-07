@@ -371,7 +371,7 @@ Publiczne wydanie gotowych paczek (D76).
 
 Pytanie etapu: którego modelu użyć (lokalny OmniVoice czy ElevenLabs przez MCP) i w jakim zakresie: narrator, bohaterowie z głosem z gry, reszta postaci (D77).
 
-**Status:** w przygotowaniu. Kwestie są wylosowane (`analysis/tools/voice_compare.py pick`, ziarno 20261107). Modele ElevenLabs i sposób robienia wariantów czekają na Twoją decyzję po opisie modeli.
+**Status:** runda 1 gotowa do odsłuchu (D78): 33 warianty ElevenLabs i strony arkusza w `analysis/work/compare/e11/`. Czeka na Twoje oceny.
 
 **Zakres ustalony:**
 - głosy z dubbingu (narrator, 6 bohaterów, Ne’Krul, Xenith): referencja z gry i OmniVoice na tych samych kwestiach, bez ElevenLabs;
@@ -380,7 +380,9 @@ Pytanie etapu: którego modelu użyć (lokalny OmniVoice czy ElevenLabs przez MC
 - każda postać osobno, strony arkusza po 3–6 postaci, oceny z eksportem, wyniki automatu E3 i koszt całej gry na model;
 - wywołania MCP według skilla `elevenlabs`, z podsumowaniem zużycia w każdej odpowiedzi.
 
-**Do decyzji:** modele ElevenLabs w porównaniu, sposób robienia wariantów (opis, parametry API, biblioteka głosów) i koszt.
+**Runda 2 (po ocenach, D78):** zwycięski wariant każdej postaci bez dubbingu zapisany na koncie i przeczytany modelami `eleven_v4`, `eleven_multilingual_v2`, `eleven_flash_v2_5` i `eleven_v3`. Potem raport `analysis/E11_VOICES.md` i decyzja o modelu dla każdej grupy.
+
+**Kryteria ukończenia:** oceny obu rund, zmierzone stawki modeli, koszt całej gry na model i grupę głosów, decyzja w `DECISIONS.md`.
 
 ## E12 · Katalog treści gry (później)
 

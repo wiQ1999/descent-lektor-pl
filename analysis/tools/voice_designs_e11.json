@@ -1,0 +1,58 @@
+{
+ "_info": "E11 (D77, D78): trzy wyraźnie różne opisy głosu na postać bez dubbingu, z portretu z gry i docs/CASTING.md. Opisy idą do text_to_voice (MCP, eleven_multilingual_ttv_v2). Wariant a jest najbliżej obecnej obsady, b i c zmieniają wiek, barwę i temperament.",
+ "adelynn": {
+  "a": "Native Polish. Female, 60-70. Studio quality. Persona: aristocratic baroness, head of an old noble house. Emotion: haughty, self-assured. Low, slightly husky alto with crisp diction; measured, unhurried pace; clipped endings and condescending emphasis on key words.",
+  "b": "Native Polish. Female, 40-50. Studio quality. Persona: elegant noblewoman and shrewd political schemer. Emotion: cool, polished confidence with a hint of irony. Warm, smooth mid-range voice, refined articulation, moderate pace, every sentence delivered as if it were a command.",
+  "c": "Native Polish. Female, 50-60. Studio quality. Persona: stern matriarch of a proud house who expects obedience. Emotion: imperious, impatient. Bright, sharp mezzo with clear projection; brisk pace, rising emphasis and cutting, theatrical intonation."
+ },
+ "ronan": {
+  "a": "Native Polish. Male, 50-60. Studio quality. Persona: huge northern warrior, veteran of many battles. Emotion: gruff, terse. Very deep, rough bass with natural rasp; short, chopped phrases with pauses between them; slow, heavy delivery.",
+  "b": "Native Polish. Male, 35-45. Studio quality. Persona: boisterous northern berserker who loves a good fight. Emotion: loud, cheerful bravado. Powerful, resonant baritone with a booming chest voice; energetic pace, hearty emphasis, a grin audible in the voice.",
+  "c": "Native Polish. Male, 45-55. Studio quality. Persona: calm, weathered northern warrior who travels with a small pet. Emotion: warm, laconic, quietly confident. Low, gravelly but soft voice, close to the microphone; relaxed pace, gentle intonation with dry humour."
+ },
+ "astarra": {
+  "a": "Native Polish. Female, 45-55. Studio quality. Persona: experienced battle sorceress. Emotion: stern, cold, controlled. Low, smooth contralto, precise articulation; deliberate pace, flat intonation, firm emphasis at the end of sentences.",
+  "b": "Native Polish. Female, 28-35. Studio quality. Persona: fiery young sorceress, proud of her arcane talent. Emotion: confident, impatient, sharp-tongued. Clear, bright mezzo with a slight edge; quick pace, lively intonation, sharp emphasis.",
+  "c": "Native Polish. Female, 35-45. Studio quality. Persona: mysterious wandering mage who weighs every word. Emotion: calm, enigmatic, slightly aloof. Soft, breathy, velvety mid-low voice; slow pace, long pauses, hushed and intimate delivery."
+ },
+ "kathryn": {
+  "a": "Native Polish. Female, 20-28. Studio quality. Persona: restless ghost of a young woman bound to this world. Emotion: grief, longing. Soft, fragile, airy voice with a tremble; slow pace, drawn-out vowels, lamenting, sighing delivery.",
+  "b": "Native Polish. Female, 20-25. Studio quality. Persona: frightened young woman, a lost spirit unsure of where she is. Emotion: anxious, pleading. Light, high, thin voice, slightly shaky; uneven pace, quick breathy phrases that break off.",
+  "c": "Native Polish. Female, 25-35. Studio quality. Persona: melancholic spirit of a noblewoman, calm and distant. Emotion: hollow sorrow, resignation. Low, dark, whispery alto, clear diction; very slow, even pace, quiet and haunting delivery."
+ },
+ "ltrand": {
+  "a": "Native Polish. Female, 25-32. Studio quality. Persona: young officer of the city guard. Emotion: focused, businesslike. Clear, firm mid-range voice, strong projection; brisk, even pace, short commanding sentences with crisp emphasis.",
+  "b": "Native Polish. Female, 35-42. Studio quality. Persona: seasoned veteran captain who has seen many campaigns. Emotion: weary but authoritative. Low, slightly husky alto; steady, unhurried pace, dry, matter-of-fact intonation.",
+  "c": "Native Polish. Female, 22-28. Studio quality. Persona: idealistic young knight, eager to prove herself. Emotion: earnest, energetic, warm. Bright, youthful voice with a smile; lively pace, rising intonation and enthusiastic emphasis."
+ },
+ "bruli": {
+  "a": "Native Polish. Male, 55-65. Studio quality. Persona: stocky dwarven guild master who keeps every ledger in order. Emotion: grumpy, fussy. Low, gruff, slightly nasal voice; measured pace, pedantic emphasis on numbers and details, irritated sighs.",
+  "b": "Native Polish. Male, 65-75. Studio quality. Persona: very old, miserly dwarven merchant. Emotion: suspicious, sour. Creaky, dry, raspy voice with a thin top; slow pace, muttering delivery, words chewed and grumbled.",
+  "c": "Native Polish. Male, 45-55. Studio quality. Persona: proud, booming dwarven master craftsman and trader. Emotion: blunt, bossy, impatient. Deep, round, powerful bass-baritone; fast pace, loud, emphatic delivery."
+ },
+ "herbie": {
+  "a": "Native Polish. Male, 40-50. Studio quality. Persona: skinny village miner and small-time trickster. Emotion: chatty, sly, ingratiating. Light, reedy tenor with a nasal tinge; quick pace, playful intonation, words tumbling out.",
+  "b": "Native Polish. Male, 55-65. Studio quality. Persona: old peasant who has seen it all. Emotion: slow, folksy, sly humour. Thin, raspy, wavering voice; leisurely, drawling pace, rustic intonation.",
+  "c": "Native Polish. Male, 25-35. Studio quality. Persona: nervous young villager who talks too much when scared. Emotion: jittery, eager to please. Higher, slightly breathy voice; fast, uneven pace, hesitations and nervous laughter."
+ },
+ "mok": {
+  "a": "Native Polish. Male, 70-80. Studio quality. Persona: ancient orc shaman, keeper of tribal spirits. Emotion: grave, ominous. Very low, guttural, raspy voice; very slow pace, heavy pauses, rumbling delivery.",
+  "b": "Native Polish. Male, 60-70. Studio quality. Persona: wily old orc shaman, half mad from visions. Emotion: cackling, unsettling glee. Hoarse, crackling, mid-pitched voice; erratic pace, sudden emphasis, hissing consonants.",
+  "c": "Native Polish. Male, 50-60. Studio quality. Persona: wise orc elder speaking at a council fire. Emotion: calm, solemn, measured. Deep, warm, slightly rough baritone; slow, rhythmic, chant-like delivery."
+ },
+ "outlaw": {
+  "a": "Native Polish. Male, 40-50. Studio quality. Persona: self-proclaimed prince of outlaws, armored warlord. Emotion: arrogant, mocking. Very deep, smooth bass, commanding presence; unhurried pace, contemptuous emphasis, slow smirking delivery.",
+  "b": "Native Polish. Male, 30-38. Studio quality. Persona: charismatic young bandit leader. Emotion: cocky, amused, theatrical. Bright, resonant baritone; quick, confident pace, playful mocking intonation.",
+  "c": "Native Polish. Male, 45-55. Studio quality. Persona: brutal, battle-scarred bandit chief. Emotion: menacing, cold anger. Harsh, gravelly, raspy low voice; clipped phrases, low volume with threatening emphasis."
+ },
+ "flint": {
+  "a": "Native Polish. Male, 45-55. Studio quality. Persona: burly dwarven blacksmith. Emotion: hearty, jovial. Warm, round, mid-low baritone with a chuckle in it; lively pace, friendly emphasis, ready to burst out laughing.",
+  "b": "Native Polish. Male, 60-70. Studio quality. Persona: old master smith, gentle teacher of apprentices. Emotion: kind, cosy, grandfatherly. Soft, slightly husky low voice; relaxed pace, warm, smiling intonation.",
+  "c": "Native Polish. Male, 35-45. Studio quality. Persona: loud, energetic dwarven smith working over the forge. Emotion: excited, boisterous. Strong, bright, raspy baritone; fast pace, loud projection, punchy emphasis."
+ },
+ "galgoraz": {
+  "a": "Native Polish. Male, 85-95. Studio quality. Persona: ancient draconic sage. Emotion: weary wisdom. Very low, frail, trembling voice with breathiness; very slow pace, long pauses, quiet, deliberate delivery.",
+  "b": "Native Polish. Male, 70-80. Studio quality. Persona: venerable dragon-blooded scholar, still sharp of mind. Emotion: dignified, stern, authoritative. Deep, resonant, slightly rough bass; slow, measured pace, gravitas and precise emphasis.",
+  "c": "Native Polish. Male, 80-90. Studio quality. Persona: eccentric old dragonkin hermit. Emotion: mischievous, cryptic. Dry, raspy, mid-pitched voice with a hiss on sibilants; uneven pace, sly, whispering asides."
+ }
+}

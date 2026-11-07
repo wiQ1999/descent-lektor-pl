@@ -95,7 +95,7 @@ def test_mark_then_summary_counts_only_this_prompt(box, monkeypatch, capsys):
     capsys.readouterr()
     assert R.main(['--summary']) == 0
     out = capsys.readouterr().out
-    assert '- ten prompt: 200 kr. z logu (2 wywołań, w tym 1 z szacunkiem stawki); licznik konta: +210 kr.' in out
+    assert '- ten prompt: 200 kr. z logu (wywołania: 2, w tym 1 z szacunkiem stawki); licznik konta: +210 kr.' in out
     assert '- projekt: 700 kr. w bieżącym okresie, 700 kr. łącznie (okres: 0,70% limitu 100 000)' in out
     assert '- konto: 1 210 / 100 000 (1,21%), pozostało 98 790' in out
 

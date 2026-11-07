@@ -707,6 +707,20 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** To decyzje użytkownika z QA. Serwer MCP 0.12.2 przekazuje do projektu głosu tylko opis i tekst (endpoint `create_previews`, model `eleven_multilingual_ttv_v2`). Parametry `seed` i `guidance_scale` oraz model `eleven_ttv_v3` wymagałyby własnego wywołania API.
 
+**Zmiana 2026-11-07:** sposób liczenia kosztu `text_to_voice` zastąpiony przez D78.
+
+### D78 · 2026-11-07 · E11: warianty ElevenLabs, druga runda modeli TTS i ocena na ślepo
+**Decyzja:**
+- Warianty postaci bez dubbingu: 3 wyraźnie różne opisy na postać z portretu i `docs/CASTING.md`, przez MCP `text_to_voice`. Opisy są w `analysis/tools/voice_designs_e11.json`, bez osobnej akceptacji przed generowaniem. Wariant a jest najbliżej obecnej obsady, b i c zmieniają wiek, barwę i temperament.
+- Każdy opis daje 3 podglądy z obiema kwestiami. Do arkusza trafia najlepszy według automatu E3: bez uciętej końcówki i dziur, potem najniższy CER.
+- Koszt zatwierdzony: ok. 5,8 tys. kredytów (+20%). Głosów nie zapisujemy na koncie.
+- Druga runda po ocenach: zwycięski wariant każdej z 11 postaci zapisujemy na koncie (11 z 29 wolnych miejsc) i czytamy te same kwestie modelami `eleven_v4`, `eleven_multilingual_v2`, `eleven_flash_v2_5` i `eleven_v3` (ok. 6,6 tys. kredytów przy stawce 1,0 dla modeli niezmierzonych).
+- Ocena na ślepo w skali 1–5 z notatką. Próbki A–D w losowej kolejności, odsłona etykiet i wyników automatu po ocenie, eksport do `e11_oceny.json`. Przy dubbingu oceniamy podobieństwo OmniVoice do oryginału i jakość.
+- Kwestie OmniVoice sklejamy w jedno nagranie (pauza 0,5 s), a wszystkie próbki arkusza wyrównujemy do -20 LUFS, żeby porównywać ten sam tekst przy tej samej głośności.
+- Hook liczy `text_to_voice` zawsze stawką 1 kredytu na znak tekstu podglądu (`method: rate`), a różnicę licznika tylko zapisuje.
+
+**Uzasadnienie:** Wybór użytkownika z QA. Przyrost licznika konta po pierwszych czterech podglądach wyniósł 733 kredyty, dokładnie 3 × 206 + 115 znaków. Licznik konta jest wspólny i spóźniony, więc przy wywołaniach z rzędu jego różnica łapała koszt sąsiednich wywołań: dwa rekordy dostały po 733 kredyty. Te rekordy poprawiliśmy w logu na stawkę.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -752,4 +766,4 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 | – | Model dla całej gry | E7 na OmniVoice (D65); cała gra przy większym zakresie (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |
 | – | Wydanie paczek w GitHub Releases | E10 (D76) |
-| – | Model dla narratora, bohaterów i reszty postaci (OmniVoice czy ElevenLabs) | arkusz E11 (D77) |
+| – | Model dla narratora, bohaterów i reszty postaci (OmniVoice czy ElevenLabs) | arkusz E11 (D77, D78) |

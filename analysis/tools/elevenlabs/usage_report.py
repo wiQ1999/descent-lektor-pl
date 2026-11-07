@@ -137,7 +137,7 @@ def prompt_line(records, mark, sub):
     own = since(records, mark['ts'])
     estimated = sum(r.get('flag') == 'estimated' for r in own)
     unmeasured = sum(r.get('flag') == 'unmeasured' for r in own)
-    text = '- ten prompt: %s kr. z logu (%s wywołań' % (common.pl_int(credits_sum(own)), common.pl_int(len(own)))
+    text = '- ten prompt: %s kr. z logu (wywołania: %s' % (common.pl_int(credits_sum(own)), common.pl_int(len(own)))
     if estimated:
         text += ', w tym %d z szacunkiem stawki' % estimated
     if unmeasured:
