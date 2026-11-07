@@ -1,4 +1,8 @@
-# --- Kopie plików gry, cache, wyniki z pełnymi tekstami, dekompilacja, depot macOS, audio ---
+# Zasada (LICENSE.md, D75): w Git jest tylko nasz kod, dokumentacja i raporty bez pełnych tekstów.
+# Treść gry, modele, wygenerowane audio i dane sesji zostają lokalnie. Narzędzia odtwarzają je
+# z kopii aplikacji użytkownika według docs/ODTWORZENIE.md.
+
+# --- Folder roboczy: kopie gry, dekompilacja, baza kwestii, audio, modele, paczki, dzienniki ---
 analysis/work/
 
 # --- Python ---
@@ -13,8 +17,11 @@ __pycache__/
 *.egg-info/
 /build/
 /dist/
+bin/
+obj/
 
-# --- Audio i dane gry (w dowolnym miejscu) ---
+# --- Treść gry i wyniki z nią (w dowolnym miejscu) ---
+# audio gry i wygenerowane głosy
 *.wav
 *.ogg
 *.mp3
@@ -23,6 +30,7 @@ __pycache__/
 *.wem
 *.bnk
 *.pck
+# zasoby Unity
 *.bytes
 *.assets
 *.bundle
@@ -30,12 +38,25 @@ __pycache__/
 *.resS
 *.resource
 *.qlog
-# binaria gry / narzędzi
+# grafiki (portrety i tekstury z gry); własne grafiki dopisujemy wyjątkiem !ścieżka
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.tga
+*.psd
+# bazy kwestii, zrzuty tekstów, dzienniki hooka, eksporty odsłuchu
+*.sqlite
+*.db
+*.jsonl
+*.csv
+# binaria gry i narzędzi, paczki
 *.dll
 *.dylib
 *.so
 *.exe
 *.pdb
+*.zip
 
 # --- Modele i cache ML ---
 *.safetensors
@@ -44,6 +65,8 @@ __pycache__/
 *.ckpt
 *.onnx
 *.gguf
+*.npy
+*.npz
 .cache/
 hf_cache/
 /models/
@@ -57,6 +80,10 @@ depot.config
 config.vdf
 loginusers.vdf
 ssfn*
+
+# --- Zapisy gry ---
+*.sav
+LocalLow/
 
 # --- Sekrety, logi, śmieci systemowe ---
 *.log
@@ -74,6 +101,6 @@ desktop.ini
 .vscode/*
 !.vscode/extensions.json
 
-# --- Claude Code: ustawienia lokalne i worktree ---
+# --- Agenci: ustawienia lokalne i worktree ---
 .claude/settings.local.json
 .claude/worktrees/

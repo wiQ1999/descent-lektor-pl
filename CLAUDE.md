@@ -1,6 +1,6 @@
 # Lektor PL – Descent: Legends of the Dark
 
-Prywatny polski lektor TTS do gry *Descent: Legends of the Dark* (Unity 2022.3.62f2, Mono, Wwise, Steam).
+Nieoficjalny, niekomercyjny polski lektor TTS do gry *Descent: Legends of the Dark* (Unity 2022.3.62f2, Mono, Wwise, Steam). Licencja: [LICENSE.md](LICENSE.md), tylko dla osób, które nabyły grę planszową (D75).
 
 Docelowo:
 - plugin w grze wysyła zdarzenia okien (klucz, argumenty, tekst, mówca) do lokalnego procesu companion;
@@ -21,16 +21,18 @@ Gramy na MacBooku Air M5 (arm64). Development robimy na Windows 11 z GTX 1650 Ti
 - Po każdym etapie robimy commit.
 - Gdy krok wymaga gry, przygotowujemy instrukcję dla użytkownika i czekamy na wynik.
 - Pliki gry (`E:\SteamLibrary\steamapps\common\Legends of the Dark`) i `LocalLow` są tylko do odczytu; pracujemy na kopiach w `analysis/work/`.
-- Treść gry (teksty, audio, dekompilacja, próbki TTS) jest prywatna. Nie commitujemy jej ani nie publikujemy; w raportach nie ma pełnych tekstów.
-- Repozytorium jest lokalne: gałąź `main`, bez zdalnego `origin`. Logowanie do Steam (DepotDownloader) użytkownik robi sam.
+- Treść gry (teksty, grafiki, audio, dekompilacja, próbki TTS) jest prywatna. Nie commitujemy jej ani nie publikujemy; w raportach nie ma pełnych tekstów.
+- Repozytorium może trafić publicznie na GitHub (D75), więc `.gitignore` blokuje treść gry, modele i audio w każdym miejscu. Zdalne repozytorium dodaje użytkownik. Logowanie do Steam (DepotDownloader) użytkownik robi sam.
+- Każde nowe narzędzie albo krok przygotowania dopisujemy do [docs/ODTWORZENIE.md](docs/ODTWORZENIE.md), a nowe pakiety `.venv` do `analysis/envs/venv.txt`.
 - Wagi modeli i cache Hugging Face trzymamy w `analysis/work/hf_cache` (ignorowane w Git).
 
 ## Układ repozytorium
 
 ```
-CLAUDE.md, README.md
-docs/        PLAN.md (etapy), DECISIONS.md (decyzje i otwarte kwestie), CASTING.md (obsada głosów)
+CLAUDE.md, README.md, LICENSE.md
+docs/        PLAN.md (etapy), DECISIONS.md (decyzje i otwarte kwestie), CASTING.md (obsada głosów), ODTWORZENIE.md (od zera)
 analysis/    raporty z analiz + tools/ (skrypty Python/UnityPy, elevenlabs/: serwer MCP i pomiar zużycia)
+  envs/      wersje pakietów: venv.txt (.venv), omnivoice.txt i inne środowiska E0, create_envs.sh
   work/      kopie gry, depot macOS, dekompilacja, audio, próbki: nieśledzone
 src/         kod docelowy (plugin, pipeline, companion)
   lektor/    pakiet Python: baza kwestii M1 (build), referencje (refs), raporty (report), audio E3 (synth, evaluate, finalize),
@@ -43,7 +45,7 @@ tests/       pytest dla src/lektor (zdania testowe własne, bez tekstów gry)
 
 ## Komendy
 
-Środowisko: `.venv` w katalogu głównym (Python 3.12, torch 2.6.0+cu124, chatterbox-tts 0.1.7, pakiet `lektor` zainstalowany w trybie edytowalnym). Bazowy Python `.venv` leży w `analysis/work/python` (D52).
+Środowisko: `.venv` w katalogu głównym (Python 3.12, torch 2.6.0+cu124, chatterbox-tts 0.1.7, pakiet `lektor` zainstalowany w trybie edytowalnym). Bazowy Python `.venv` leży w `analysis/work/python` (D52). Wersje pakietów: `analysis/envs/venv.txt`, instalacja w `docs/ODTWORZENIE.md`.
 
 - Aplikacja Claude działa jako pakiet MSIX. To, co nasze narzędzia zapisują w `%LOCALAPPDATA%`, trafia do `%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Local` i jest niewidoczne poza aplikacją.
   - Wszystko, czego użytkownik albo gra używa poza aplikacją, trzymamy na D: (w repozytorium).

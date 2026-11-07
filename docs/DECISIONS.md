@@ -661,6 +661,19 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Pierwsze wywołanie pokazało fałszywe 0 kredytów, a tego testy bez sieci nie mogły wykryć, bo opierały się na opisie API. Po poprawce drugi TTS dał koszt zgodny z licznikiem konta.
 
+### D75 · 2026-11-07 · Licencja i publikacja repozytorium
+**Decyzja:**
+- Kod, dokumentacja i raporty mają krótką licencję niekomercyjną po polsku i angielsku (`LICENSE.md`, rozstrzyga wersja polska).
+- Korzystać mogą tylko osoby, które legalnie nabyły grę planszową *Descent: Legends of the Dark* (pol. *Descent: Legendy Mroku*, Fantasy Flight Games). Gra wymaga darmowej aplikacji, więc warunek dotyczy gry planszowej.
+- Repozytorium może trafić publicznie na GitHub. Zdalne repozytorium dodaje użytkownik.
+- W Git nie ma treści gry (tekstów, grafik, nagrań, dekompilacji), modeli ani wygenerowanego audio. `.gitignore` blokuje je w każdym miejscu repozytorium, także grafiki, bazy, dzienniki i archiwa.
+- Narzędzia odtwarzają te dane lokalnie z kopii aplikacji użytkownika (`docs/ODTWORZENIE.md`).
+- Wersje pakietów `.venv` są zapisane w `analysis/envs/venv.txt`. Instalacja na sucho w czystym środowisku przechodzi.
+- Historia Git zostaje bez zmian. Stara wersja `analysis/REPORT.md` ma dwa krótkie cytaty z gry (kilkanaście słów), co mieści się w prawie cytatu. Adres e-mail z commitów będzie publiczny.
+- `AGENTS.md` i `.codex/hooks.json` usunięte: dublowały `CLAUDE.md` i hooki z `.claude/settings.json`.
+
+**Uzasadnienie:** Licencja może obejmować tylko utwory autora repozytorium. Prawa do tekstów, grafik i dubbingu ma wydawca i aktorzy, a warunek posiadania gry nie pozwala ich publikować. Publiczne repozytorium z treścią gry grozi zgłoszeniem DMCA i usunięciem. Skan wszystkich plików i całej historii ciągami 6 słów z tekstów gry (PL i EN) nie znalazł treści gry poza tymi dwoma cytatami.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
