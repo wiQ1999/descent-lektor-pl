@@ -721,6 +721,16 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Wybór użytkownika z QA. Przyrost licznika konta po pierwszych czterech podglądach wyniósł 733 kredyty, dokładnie 3 × 206 + 115 znaków. Licznik konta jest wspólny i spóźniony, więc przy wywołaniach z rzędu jego różnica łapała koszt sąsiednich wywołań: dwa rekordy dostały po 733 kredyty. Te rekordy poprawiliśmy w logu na stawkę.
 
+### D79 · 2026-11-07 · E11: runda 2, cztery modele TTS jednym głosem
+**Decyzja:**
+- Runda 2 porównuje modele TTS, nie głosy. Bierzemy jeden wariant na postać. Przy remisie ocen bierzemy wariant bliższy portretowi i `docs/CASTING.md`: Astarra b, Kathryn a, Bruli a, Mok a, Flint a, Galgoraz a. Adelynn (remis z OmniVoice) dostaje wariant b. Wybór obsady przy remisach zostaje otwarty.
+- 11 głosów zapisanych na koncie jako `Lektor PL - <postać> <wariant>`, razem 12 z 30 miejsc (z testem Kehli). Głosy zostają do decyzji o obsadzie.
+- Te same kwestie czytają `eleven_v4`, `eleven_multilingual_v2`, `eleven_flash_v2_5` i `eleven_v3`, z domyślnymi ustawieniami (stability 0,5, similarity 0,75, style 0, speed 1,0) i bez tagów audio.
+- Strony c1 i c2: 4 modele na ślepo i wzorzec z podglądu rundy 1 bez oceny.
+- Hook dopasowuje wpis historii także po modelu i pomija wpisy już przypisane (`history_item_id`).
+
+**Uzasadnienie:** Użytkownik chciał przejść do generowania bez rozstrzygania remisów, bo runda 2 dotyczy modeli. Zmierzone stawki (historia konta, 1921 znaków na model): v4, Multilingual v2 i v3 po 0,44 kredytu na znak, Flash v2.5 0,22. Cała runda kosztowała 2956 kredytów zamiast szacowanych 6,6 tys. Pierwsze cztery rekordy dostały ten sam wpis historii, bo tekst był ten sam, a hooki działały równolegle. Poprawiliśmy je w logu według historii konta.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -766,4 +776,5 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 | – | Model dla całej gry | E7 na OmniVoice (D65); cała gra przy większym zakresie (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |
 | – | Wydanie paczek w GitHub Releases | E10 (D76) |
-| – | Model dla narratora, bohaterów i reszty postaci (OmniVoice czy ElevenLabs) | arkusz E11 (D77, D78) |
+| – | Model dla narratora, bohaterów i reszty postaci (OmniVoice czy ElevenLabs) | arkusz E11 (D77, D78, D79) |
+| – | Obsada postaci bez dubbingu: wariant przy remisach (Astarra, Kathryn, Bruli, Mok, Flint, Galgoraz) i Adelynn | E11 (D79) |

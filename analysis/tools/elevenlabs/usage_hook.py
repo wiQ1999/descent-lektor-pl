@@ -104,14 +104,21 @@ def voice_matches(item, tool_input):
     return True
 
 
-def match_history(items, tool_input, ts_pre, now, used_requests):
+def model_matches(item, tool_input):
+    # Ten sam tekst czytany kolejno kilkoma modelami (E11, D78) bez tego warunku trafiał w najnowszy wpis historii.
+    wanted = tool_input.get('model_id')
+    return not wanted or not item.get('model_id') or item['model_id'] == wanted
+
+
+def match_history(items, tool_input, ts_pre, now, used):
     text = squeeze(tool_input.get('text'))
     if not text:
         return None
     for item in items:
         fresh = ts_pre - HISTORY_SLACK_S <= item.get('date_unix', 0) <= now + HISTORY_SLACK_S
-        if (fresh and squeeze(item_text(item)) == text and voice_matches(item, tool_input)
-                and item.get('request_id') not in used_requests):
+        claimed = item.get('request_id') in used or item.get('history_item_id') in used
+        if (fresh and not claimed and squeeze(item_text(item)) == text and voice_matches(item, tool_input)
+                and model_matches(item, tool_input)):
             return item
     return None
 
@@ -119,7 +126,7 @@ def match_history(items, tool_input, ts_pre, now, used_requests):
 def find_history(tool_input, ts_pre, key):
     if not squeeze(tool_input.get('text')):
         return None
-    used = {r.get('request_id') for r in common.read_log()} - {None}
+    used = {r.get(k) for r in common.read_log() for k in ('request_id', 'history_item_id')} - {None}
     for attempt in range(HISTORY_ATTEMPTS):
         if attempt:
             time.sleep(HISTORY_RETRY_S)

@@ -115,6 +115,15 @@ M2_GPU_H, GAME_GPU_H = 16, 110   # OmniVoice na GTX 1650 Ti (ODTWORZENIE.md, E7_
 GROUPS = (('Narrator', ('narrator',)), ('Bohaterowie z dubbingiem', ('brynn', 'syrus', 'galaden', 'vaerix', 'kehli', 'chance')),
           ('Złoczyńcy z dubbingiem', ('nekrul', 'xenith')), ('Postacie bez dubbingu', DESIGNED))
 METRICS = ('cer', 'tail_cut', 'missing', 'sim', 'cps_ratio', 'pause', 'speech_s')
+# Runda 2 (D79): zwycięski głos każdej postaci zapisany na koncie, te same kwestie czytane czterema modelami TTS.
+R2_AUDIO = os.path.join(WORK, 'elevenlabs', 'audio', 'e11r2')
+R2_MODELS = ('eleven_v4', 'eleven_multilingual_v2', 'eleven_flash_v2_5', 'eleven_v3')
+# Jeden wariant na postać; przy remisie ocen ten bliższy portretowi i CASTING.md (wybór obsady zostaje otwarty).
+R2_VOICES = {'adelynn': 'b', 'ronan': 'b', 'astarra': 'b', 'kathryn': 'a', 'ltrand': 'a', 'bruli': 'a', 'herbie': 'c',
+             'mok': 'a', 'outlaw': 'b', 'flint': 'a', 'galgoraz': 'a'}
+R2_SHEETS = (('c1', 'Runda 2: modele TTS (1)', DESIGNED[:6]), ('c2', 'Runda 2: modele TTS (2)', DESIGNED[6:]))
+# Kredyty na znak z historii konta (E9, E11: 1921 znaków na model).
+RATES = {'eleven_v4': 0.44, 'eleven_multilingual_v2': 0.44, 'eleven_flash_v2_5': 0.22, 'eleven_v3': 0.44}
 
 
 def el_files(voice, variant, n=0):
@@ -125,6 +134,11 @@ def status():
     have = sum(len(el_files(v, x)) for v in DESIGNED for x in VARIANTS)
     missing = ['%s/%s' % (v, x) for v in DESIGNED for x in VARIANTS if not el_files(v, x)]
     print('podglądy ElevenLabs: %d, opisy bez podglądów: %d %s' % (have, len(missing), ' '.join(missing)))
+
+
+def r2_file(voice, model):
+    files = sorted(glob.glob(os.path.join(R2_AUDIO, voice, model, '*.mp3')))
+    return files[-1] if files else None
 
 
 def text_of(lines, voice):
@@ -157,6 +171,7 @@ def items():
             continue
         for x in VARIANTS:
             out += [('%s|%s|%s' % (voice, x, os.path.basename(f)), voice, x, f) for f in el_files(voice, x)]
+        out += [('%s|r2|%s' % (voice, m), voice, 'r2', r2_file(voice, m)) for m in R2_MODELS if r2_file(voice, m)]
     return lines, out
 
 
@@ -176,6 +191,9 @@ def score():
             r = scorer(f, text_of(lines, voice), voice, 1.0)
             row = {k: (r[k].item() if hasattr(r[k], 'item') else r[k]) for k in METRICS if k in r}
         row['f0'] = median_f0(f)
+        if kind == 'r2':    # czy model TTS zachował głos z podglądu rundy 1
+            ref = best_preview(scores, voice, R2_VOICES[voice])[0]
+            row['sim_preview'] = round(float(scorer.embed(scorer.load(f)) @ scorer.embed(scorer.load(ref))), 3)
         scores[sid] = row
         print(voice, kind, {k: row.get(k) for k in ('cer', 'tail_cut', 'sim', 'f0')}, flush=True)
         json.dump(scores, open(path, 'w', encoding='utf-8'), indent=1)
@@ -239,6 +257,29 @@ def page_data(page, title, voices, lines, scores, designs):
     return {'page': page, 'title': title, 'voices': out}
 
 
+def page_data2(page, title, voices, lines, scores, designs):
+    os.makedirs(os.path.join(OUT, 'clips', page), exist_ok=True)
+    out = []
+    for voice in voices:
+        x = R2_VOICES[voice]
+        best = best_preview(scores, voice, x)
+        entries = [{'label': m, 'kind': m, 'src': r2_file(voice, m),
+                    'metrics': dict(scores.get('%s|r2|%s' % (voice, m), {}), rate=RATES[m])} for m in R2_MODELS]
+        random.Random('%d-r2-%s' % (SEED, voice)).shuffle(entries)
+        for e, letter in zip(entries, 'ABCD'):
+            e['id'] = letter
+        entries.insert(0, {'id': 'orig', 'label': 'Wzorzec: podgląd z rundy 1 (wariant %s)' % x, 'kind': 'preview',
+                           'src': best[0], 'metrics': best[1], 'desc': designs[voice][x]})
+        for e in entries:
+            e['file'] = level_copy(e.pop('src'), os.path.join(OUT, 'clips', page, '%s_%s.wav' % (voice, e['id'])))
+        out.append({'voice': voice, 'name': NAMES[voice], 'kind': 'models', 'portrait': portrait(voice),
+                    'lines': [c['text'] for c in lines[voice]], 'problems': [], 'clips': entries})
+    intro = ('Każda próbka czyta te same dwie kwestie tym samym głosem ElevenLabs. Próbki A–D to cztery modele TTS '
+             'w losowej kolejności. Wzorzec to podgląd z rundy 1 i nie podlega ocenie. Oceń wymowę, naturalność '
+             'i zgodność z wzorcem (1 = źle, 5 = bardzo dobrze), potem odsłoń etykiety.')
+    return {'page': page, 'title': title, 'intro': intro, 'voices': out}
+
+
 def costs():
     con = sqlite3.connect(DB)
     chars = dict(con.execute('select voice, sum(chars) from fragments group by voice'))
@@ -246,9 +287,8 @@ def costs():
     groups = [(name, sum(chars.get(v, 0) for v in vs)) for name, vs in GROUPS]
     return {'m2_chars': total, 'game_chars': GAME_CHARS, 'groups': groups,
             'limit': 127047, 'm2_gpu_h': M2_GPU_H, 'game_gpu_h': GAME_GPU_H,
-            'rates': [('OmniVoice (lokalnie)', 0, 'brak kredytów, czas GPU'), ('eleven_v4', 0.44, 'zmierzona (E9)'),
-                      ('eleven_multilingual_v2', None, 'zmierzymy w 2. rundzie'), ('eleven_flash_v2_5', None, 'zmierzymy w 2. rundzie'),
-                      ('eleven_v3', None, 'zmierzymy w 2. rundzie')]}
+            'rates': [('OmniVoice (lokalnie)', 0, 'brak kredytów, czas GPU')]
+            + [(m, RATES[m], 'zmierzona (E11)') for m in R2_MODELS]}
 
 
 def sheet():
@@ -257,6 +297,8 @@ def sheet():
     scores = load_json(os.path.join(OUT, 'scores.json'), {})
     designs = load_json(DESIGNS)
     pages = [page_data(p, t, vs, lines, scores, designs) for p, t, vs in SHEETS]
+    if all(r2_file(v, m) for v in DESIGNED for m in R2_MODELS):
+        pages += [page_data2(p, t, vs, lines, scores, designs) for p, t, vs in R2_SHEETS]
     json.dump(pages, open(os.path.join(OUT, 'sheet.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     template = open(os.path.join(ROOT, 'analysis', 'tools', 'voice_compare.html'), encoding='utf-8').read()
     nav = [{'page': p['page'], 'title': p['title'],

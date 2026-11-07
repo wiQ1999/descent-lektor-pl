@@ -52,7 +52,7 @@ Testy:
 
 ## Jak liczymy koszt
 
-- Hook `pre` zapamiętuje licznik konta, a hook `post` dopasowuje wpis z historii konta po tekście, czasie i głosie.
+- Hook `pre` zapamiętuje licznik konta, a hook `post` dopasowuje wpis z historii konta po tekście, czasie, głosie i modelu. Wpis już przypisany w logu (`request_id` albo `history_item_id`) pomija (D79).
 - `method: history`: różnica liczników z wpisu historii, źródło główne.
 - `method: subscription_delta`: różnica licznika konta przed i po wywołaniu. To zapas dla narzędzi spoza historii TTS.
 - Licznik konta dogania wywołanie z opóźnieniem do około minuty, więc zerowa różnica nie znaczy zerowego kosztu. Taki rekord bez wpisu w historii ma flagę `unmeasured`.

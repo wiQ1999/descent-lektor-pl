@@ -87,8 +87,9 @@ document.getElementById('nav').innerHTML = '<a href="index.html"' + (page ? '' :
 const fmt = {
   cer: v => `${(v * 100).toFixed(1)}%`, tail_cut: v => v ? '<span class="bad">tak</span>' : '<span class="ok">nie</span>',
   missing: v => v >= 2 ? `<span class="bad">${v} słowa</span>` : String(v), sim: v => v == null ? '—' : v.toFixed(3),
+  sim_preview: v => v.toFixed(3), rate: v => `${String(v).replace('.', ',')} kr./znak`,
   cps_ratio: v => v.toFixed(2), pause: v => `${Number(v).toFixed(2)} s`, speech_s: v => `${Number(v).toFixed(1)} s`, f0: v => v == null ? '—' : `${v} Hz`};
-const names = {cer: 'CER (błędy ASR)', tail_cut: 'ucięta końcówka', missing: 'brak słów z rzędu', sim: 'barwa wobec referencji',
+const names = {cer: 'CER (błędy ASR)', tail_cut: 'ucięta końcówka', missing: 'brak słów z rzędu', sim: 'barwa wobec referencji', sim_preview: 'barwa wobec wzorca z rundy 1', rate: 'koszt',
   cps_ratio: 'tempo wobec lektora', pause: 'najdłuższa pauza', speech_s: 'długość mowy', f0: 'wysokość (F0)'};
 
 function scale(voice, id, field, label, value) {
@@ -101,7 +102,7 @@ function renderPage() {
   if (st.revealed) document.body.classList.add('revealed');
   const dubbed = d.voices[0].kind === 'dubbed';
   let h = `<h1>${esc(d.title)}</h1>`;
-  h += dubbed
+  h += d.intro ? `<p class="muted">${esc(d.intro)}</p>` : dubbed
     ? '<p class="muted">Oryginał z gry to referencja głosu z dubbingu (inny tekst niż kwestie). OmniVoice czyta obie kwestie postaci. Oceń, jak bardzo głos OmniVoice przypomina oryginał i jak dobrze brzmi jako lektor (1 = źle, 5 = bardzo dobrze).</p>'
     : '<p class="muted">Każda próbka czyta te same dwie kwestie. Kolejność A–D jest losowa: jedna to obecny głos OmniVoice, trzy to warianty ElevenLabs z różnych opisów postaci. Oceń, jak dobrze głos pasuje do postaci i brzmi po polsku (1 = źle, 5 = bardzo dobrze). Po ocenie odsłoń etykiety.</p>';
   for (const v of d.voices) {
@@ -112,7 +113,8 @@ function renderPage() {
     h += '</div></div><div class="clips">';
     for (const c of v.clips) {
       const cr = r[c.id] || {};
-      const title = v.kind === 'designed' ? `Próbka ${c.id}` : esc(c.label);
+      const blind = v.kind !== 'dubbed' && c.id !== 'orig';
+      const title = blind ? `Próbka ${c.id}` : esc(c.label);
       h += `<div class="clip"><h3>${title}</h3><audio controls preload="none" src="${c.file}"></audio>`;
       if (c.id !== 'orig') {
         if (v.kind === 'dubbed') h += scale(v.voice, c.id, 'sim', 'Podobieństwo', cr.sim);
@@ -120,7 +122,7 @@ function renderPage() {
         h += `<input class="note" placeholder="Notatka (opcjonalnie)" data-v="${v.voice}" data-c="${c.id}" value="${esc(cr.note || '')}">`;
       }
       h += '<div class="reveal">';
-      if (v.kind === 'designed') h += `<b>${esc(c.label)}</b>`;
+      if (blind) h += `<b>${esc(c.label)}</b>`;
       if (c.desc) h += `<p class="small muted">${esc(c.desc)}</p>`;
       h += '<table>' + Object.keys(fmt).filter(k => c.metrics[k] !== undefined).map(k =>
         `<tr><td class="muted">${names[k]}</td><td>${fmt[k](c.metrics[k])}</td></tr>`).join('') + '</table></div></div>';
@@ -151,7 +153,7 @@ function renderPage() {
 function renderIndex() {
   const c = P.costs;
   let h = '<h1>E11 · Arkusz porównawczy głosów</h1>';
-  h += '<p>Arkusz ma odpowiedzieć, którego modelu użyć dla narratora, bohaterów z głosem z gry i pozostałych postaci: lokalnego OmniVoice czy ElevenLabs. Strony <b>a1–a3</b> porównują dubbing z OmniVoice. Strony <b>b1–b2</b> porównują obecny głos OmniVoice z trzema wariantami ElevenLabs (na ślepo).</p>';
+  h += '<p>Arkusz ma odpowiedzieć, którego modelu użyć dla narratora, bohaterów z głosem z gry i pozostałych postaci: lokalnego OmniVoice czy ElevenLabs. Strony <b>a1–a3</b> porównują dubbing z OmniVoice. Strony <b>b1–b2</b> porównują obecny głos OmniVoice z trzema wariantami ElevenLabs (na ślepo). Strony <b>c1–c2</b> (runda 2) porównują cztery modele TTS ElevenLabs tym samym głosem (na ślepo).</p>';
   h += '<ol><li>Słuchaj w słuchawkach, każdą stronę od góry.</li><li>Oceń próbki w skali 1–5, notatka jest opcjonalna.</li><li>Na końcu strony odsłoń etykiety i wyniki automatu.</li><li>Po ostatniej stronie kliknij „Pobierz oceny” i zapisz plik <code>e11_oceny.json</code> w <code>analysis/work/compare/e11/</code> (albo podaj, gdzie jest).</li></ol>';
   h += '<ul class="pages">' + P.nav.map(n => `<li><a href="${n.page}.html">${esc(n.page)} · ${esc(n.title)}</a> <span class="muted small">ocenione ${rated(n.page)} z ${n.ratable}${load(n.page).revealed ? ', odsłonięte' : ''}</span></li>`).join('') + '</ul>';
   const num = x => Math.round(x).toLocaleString('pl-PL');

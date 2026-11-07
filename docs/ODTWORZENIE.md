@@ -142,6 +142,7 @@ powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1
 - Arkusz porównawczy głosów (E11): `analysis/tools/voice_compare.py pick` losuje kwestie z bazy M2 (stałe ziarno), a `score` i `sheet` oceniają próbki i budują strony w `analysis/work/compare/e11/` z szablonu `voice_compare.html`.
   - Próbki ElevenLabs powstają przez MCP według skilla: `text_to_voice` z opisami z `analysis/tools/voice_designs_e11.json` i tekstem `<głos>#design` z `lines.json`, do `analysis/work/elevenlabs/audio/e11/<głos>/<wariant>/0/`.
   - Podglądy losują głos, więc nowe próbki brzmią inaczej niż w naszej ocenie.
+  - Runda 2 (D79): wybrany podgląd zapisuje `create_voice_from_preview`, a `text_to_speech` czyta tekst `<głos>#design` modelami z `R2_MODELS` do `analysis/work/elevenlabs/audio/e11r2/<głos>/<model>/`. Głosy i warianty są w `R2_VOICES` w `voice_compare.py`.
 - Build macOS do analizy (DepotDownloader, logujesz się sam): `analysis/MAC_REPORT.md`.
 - Testy w grze i replay dzienników: `docs/E1_PLAYTEST.md`, `docs/E5_PLAYTEST.md`, `docs/E7_MAC_SESSION.md`.
 

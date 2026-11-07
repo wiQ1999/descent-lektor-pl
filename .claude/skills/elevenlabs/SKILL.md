@@ -33,12 +33,16 @@ Znacznik robisz raz na prompt. Od niego liczy się zużycie w podsumowaniu z pun
 - Zgoda: użytkownik musi wprost zlecić płatne wywołania w prompcie albo zatwierdzić szacunek w QA (`AskUserQuestion`). Jeśli zakres nie jest jasny, najpierw QA z kosztem.
 - Gdy koszt przekracza zatwierdzony szacunek o więcej niż 20%, zatrzymaj się i zapytaj.
 - Testy automatyczne nigdy nie łączą się z siecią.
+- Ten sam tekst czytany kilkoma modelami podawaj z jawnym `model_id`: hook dopasowuje wpis historii po tekście, głosie i modelu.
 
 Stawki zmierzone na koncie (kredyty na znak). Brak wpisu znaczy, że stawki nie zmierzyliśmy, więc w szacunku przyjmij 1,0:
 
 | Model albo narzędzie | Stawka | Źródło |
 |---|---:|---|
-| `eleven_v4` | 0,44 | E9, D74 |
+| `eleven_v4` | 0,44 | E9, D74; E11, D79 |
+| `eleven_multilingual_v2` | 0,44 | E11, D79 |
+| `eleven_v3` | 0,44 | E11, D79 |
+| `eleven_flash_v2_5` | 0,22 | E11, D79 |
 | `text_to_voice` (3 podglądy) | 1,0 | E9, E11 (D78): przyrost licznika równy liczbie znaków tekstu |
 
 Nowo zmierzone stawki dopisz do tej tabeli i do raportu etapu.
@@ -61,7 +65,7 @@ Cennik API (2026-11) podaje 0,08 USD za 1000 znaków dla v4, v3 i Multilingual v
 
 ## 4. Parametry wywołań
 
-- `output_directory`: ścieżka absolutna w `analysis/work/elevenlabs/audio/<zadanie>/`. Audio nie trafia do Git (D76).
+- `output_directory`: ścieżka absolutna w `analysis/work/elevenlabs/audio/<zadanie>/`. Audio nie trafia do Git (D76). Katalog załóż przed wywołaniem: `text_to_speech` odrzuca nieistniejący katalog („not writeable”, bez kosztu).
 - `text`: tekst do syntezy po normalizacji z bazy wydania (`fragments.text` albo `lines.text_norm` w `analysis/work/lektor/m2.sqlite`). Jest w nim zapis fonetyczny (D70), liczby słowami i ikony słowami. Surowego tekstu okna nie wysyłaj.
 - `model_id`: podawaj zawsze. Modele i obsługę polskiego sprawdzisz bezpłatnie w `list_models`.
 - `language`: `pl`. Serwer 0.12.2 nie przekazuje go do API, model rozpoznaje język z tekstu.

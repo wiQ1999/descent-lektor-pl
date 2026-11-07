@@ -213,6 +213,19 @@ def test_tool_without_history_uses_counter(box, monkeypatch, capsys):
     assert (r['tool'], r['credits'], r['method'], r['text_len']) == ('text_to_voice', 300, 'subscription_delta', 10)
 
 
+def test_history_match_requires_same_model(box):
+    newer = dict(item(request='r2'), model_id='eleven_v3')
+    older = dict(item(request='r1'), model_id='eleven_multilingual_v2')
+    found = H.match_history([newer, older], {'text': TEXT, 'voice_id': 'v1', 'model_id': 'eleven_multilingual_v2'},
+                            time.time(), time.time(), set())
+    assert found['request_id'] == 'r1'
+
+
+def test_history_match_skips_claimed_history_item(box):
+    entry = dict(item(), request_id=None)
+    assert not H.match_history([entry], {'text': TEXT, 'voice_id': 'v1'}, time.time(), time.time(), {'h-r1'})
+
+
 def test_voice_design_without_counter_move_uses_rate(box, monkeypatch, capsys):
     data = event(tool='text_to_voice', tool_input={'voice_description': 'Niski głos', 'text': TEXT})
     out = cycle(monkeypatch, capsys, [sub(1000), sub(1000)], [], data)
