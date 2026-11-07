@@ -109,3 +109,10 @@ def test_summary_skips_counter_after_period_reset():
     mark = {'ts': '2026-10-20T10:00:00+01:00', 'character_count': 90000, 'period_reset': common.unix_to_iso(OLD_RESET)}
     text = R.summary([rec(300)], account(500), mark)
     assert 'licznik konta' not in text and 'ten prompt: 300 kr.' in text
+
+
+def test_record_without_reset_joins_its_period():
+    undated = dict(rec(70, ts='2026-11-07T21:37:00+01:00'), period_reset=None)
+    old = dict(rec(5, reset=OLD_RESET, ts='2026-10-01T10:00:00+02:00'), period_reset=None)
+    reset = common.unix_to_iso(NEW_RESET)
+    assert [r['credits'] for r in R.in_period([rec(100), undated, old], reset)] == [100, 70]

@@ -8,12 +8,13 @@ import csv
 import json
 import sys
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import common
 
 FLAGS = ('mismatch', 'unmeasured', 'estimated', 'tool_error')
 MARK = 'prompt_mark.json'
+PERIOD_MAX = timedelta(days=31)   # okres rozliczeniowy planu trwa miesiąc
 GROUPS = {
     'day': ('dzień', lambda r: (r.get('ts') or '')[:10]),
     'voice': ('głos', lambda r: r.get('voice_name') or r.get('voice_id') or 'brak'),
@@ -34,8 +35,18 @@ def current_reset(records, sub):
     return max(dated, key=lambda r: r['ts'])['period_reset'] if dated else None
 
 
+def period_of(record, resets):
+    """Okres rekordu bez daty resetu (stan konta nie odpowiedział): pierwszy znany reset do miesiąca po czasie rekordu."""
+    ts = datetime.fromisoformat(record['ts'])
+    later = [p for p in resets if timedelta(0) < datetime.fromisoformat(p) - ts <= PERIOD_MAX]
+    return min(later, key=datetime.fromisoformat) if later else None
+
+
 def in_period(records, reset):
-    return [r for r in records if reset is not None and r.get('period_reset') == reset]
+    if reset is None:
+        return []
+    resets = {r['period_reset'] for r in records if r.get('period_reset')} | {reset}
+    return [r for r in records if (r.get('period_reset') or period_of(r, resets)) == reset]
 
 
 def grouped(records, by):
