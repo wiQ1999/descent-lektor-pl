@@ -19,6 +19,8 @@ robocopy "E:\SteamLibrary\steamapps\common\Legends of the Dark" "analysis\work\g
 
 Ścieżkę biblioteki Steam dopasuj do swojego komputera.
 
+Projekt powstał na wersji gry ze Steam o numerze build `23973225`, z manifestem bundli `fddf8aedeb14` (`meta.manifest` w bazie). Z tej wersji baza kwestii, portrety i referencje głosów z dubbingu wychodzą bajt w bajt takie same (sprawdzone 2026-11-07). Aktualizacja gry może zmienić teksty, a wtedy baza też się zmieni. Głosy projektowane i audio za każdym razem wychodzą nieco inaczej, bo model losuje.
+
 ## 2. Środowisko `.venv`
 
 Bazowy Python leży w projekcie (D52). Wersje pakietów są w `analysis/envs/venv.txt`.
