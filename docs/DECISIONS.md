@@ -804,6 +804,15 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Prośba użytkownika po odsłuchu arkusza E14. Skan m3: 264 wstawki w kwestiach postaci (prawie wszystkie to ta sama jednowyrazowa wstawka na początku kwestii) i 28 w kwestiach narratora. Do E15 postać czyta wstawkę razem z kwestią, więc E15 wymaga ponownego generowania tych kwestii.
 
+### D87 · 2026-11-08 · E14: obsada po rundzie 2 arkusza
+**Decyzja:**
+- Przyjęte nowe głosy ElevenLabs: Waiqar i Morant (ocena 4). Zapisane jako „Lektor PL - <postać> E14 r2”, a ich głosy z rundy 1 usunięte z konta (zgoda z QA, D84).
+- Przyjęte warianty złoczyńców (ocena 5): Levirax `levirax_v2a` (monolog jak w rundzie 1, tempo 0,85) i Gilliam `gilliam_v2b` (referencja z rundy 1 z drżeniem).
+- Delphyndra, Nara i Meza (ocena 1): runda 3 z trzema wyraźnie różnymi opisami na postać (`el3` a, b, c w `voice_designs_e14.json`). Arkusz pokazuje z każdego opisu jeden podgląd: przy równym CER ten z F0 najbliżej 200 Hz.
+- Głosy tych trzech postaci z rundy 1 zostają na koncie do wyboru w rundzie 3.
+
+**Uzasadnienie:** Oceny użytkownika z arkusza `e14r2_oceny.json` i prośba o po 3 warianty dla głosów z niską oceną. Uwagi z rundy 2: Delphyndra brzmi jak mężczyzna (podgląd miał 98 Hz, bo arkusz wybierał tylko po CER), Nara nie brzmi jak kobieta ork, a Meza ma być chłodna i demoniczna. Koszt rundy 3: 9 projektów, ok. 2 tys. kredytów.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

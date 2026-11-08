@@ -16,6 +16,8 @@ Runda 2 (uwagi z arkusza, D84): podglądy `el2` przez MCP do …/<głos>/design2
     <omni> -I analysis/tools/voice_compare_e14.py clone2                    # klony wariantów
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py score      # ocenia też rundę 2
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet2     # strony r2n, r2z, r2w i runda2.html
+Runda 3 (D87): trzy opisy `el3` (a, b, c) przez MCP do …/<głos>/design3<a|b|c>/, potem `score` i
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet3     # strony r3n, r3w i runda3.html
 
 Opisy głosów są w voice_designs_e14.json. Próbki ElevenLabs powstają przez MCP (skill `elevenlabs`):
 text_to_voice z opisem `el` i tekstem `<głos>#design` z lines.json do analysis/work/elevenlabs/audio/e14/<głos>/design/,
@@ -478,6 +480,114 @@ def sheet2():
                                                os.path.join(OUT, 'runda2.html')))
 
 
+# --- runda 3 (QA 2026-11-08) -----------------------------------------------------------------------------------------
+# Postacie z oceną 1 w rundzie 2: trzy wyraźnie różne opisy `el3` (a, b, c), każdy to jedno text_to_voice
+# do …/<głos>/design3<a|b|c>/. Z trzech podglądów opisu arkusz bierze najlepszy według automatu, z F0 w zakresie płci.
+R3_EL = ('delphyndra', 'nara', 'meza')
+R3_VARIANTS = 'abc'
+R3_CER_OK = 0.02            # poniżej tego CER podglądy uznajemy za równe
+R3_F0_TARGET = {'female': 200, 'male': 110}   # niski, ale wyraźnie kobiecy głos (Delphyndra z rundy 2 miała 98 Hz)
+
+
+def el_previews3(voice, var):
+    return sorted(glob.glob(os.path.join(EL_AUDIO, voice, 'design3' + var, '*.mp3')))
+
+
+def best_preview3(scores, voice, var, gender):
+    lo, hi = F0_RANGE[gender]
+    cands = [(f, scores.get('%s|preview3%s|%s' % (voice, var, os.path.basename(f)))) for f in el_previews3(voice, var)]
+    cands = [(f, s) for f, s in cands if s and 'cer' in s]
+    return min(cands, key=lambda c: (bool(c[1].get('tail_cut')), c[1].get('missing', 0) >= 2,
+                                     not lo <= (c[1].get('f0') or 0) <= hi, c[1]['cer'] > R3_CER_OK,
+                                     abs((c[1].get('f0') or 0) - R3_F0_TARGET[gender])), default=None)
+
+
+def items3():
+    lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
+    return [('%s|preview3%s|%s' % (v, var, os.path.basename(f)), v, f, r2_text(lines, v))
+            for v in R3_EL for var in R3_VARIANTS for f in el_previews3(v, var)]
+
+
+def sheet3():
+    """Strony rundy 3: trzy nowe warianty na ślepo obok odrzuconego z rundy 2 i wszystkie głosy już w obsadzie."""
+    import html as H
+    lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
+    scores = load_json(os.path.join(OUT, 'scores.json'), {})
+    specs = load_json(DESIGNS)
+    names = load_json(os.path.join(OUT, 'names.json'), {})
+    from voice_compare import NAMES
+    names.update({v: NAMES[v] for v in CHOSEN if v in NAMES})
+    r3n = []
+    for v in R3_EL:
+        best2 = best_preview2(scores, v)
+        clips = []
+        for var in R3_VARIANTS:
+            best = best_preview3(scores, v, var, specs[v]['gender'])
+            if best:
+                clips.append({'label': 'Opis %s: %s' % (var, specs[v]['el3_label'][var]), 'kind': 'el3' + var,
+                              'files': [best[0]], 'metrics': best[1], 'desc': specs[v]['el3'][var], 'voice_id': preview_id(best[0])})
+        random.Random('%d-r3-%s' % (SEED, v)).shuffle(clips)
+        for c, letter in zip(clips, 'ABC'):
+            c['id'] = letter
+        clips.insert(0, {'id': 'orig', 'label': 'Runda 2 (ocena 1: %s)' % specs[v]['qa2'], 'kind': 'el2',
+                         'files': [best2[0]] if best2 else [], 'metrics': best2[1] if best2 else {}, 'desc': specs[v]['el2']})
+        r3n.append({'voice': v, 'kind': 'designed', 'clips': clips, 'decide': ['Wariant A', 'Wariant B', 'Wariant C', 'Żaden'],
+                    'brief': '%s. Uwaga z rundy 2: %s.' % (specs[v]['brief'], specs[v]['qa2'])})
+    chosen = []
+    for v in CHOSEN:
+        chosen.append({'voice': v, 'label': 'Obecny głos: ' + ('OmniVoice (klon z dubbingu)' if v in ('nekrul', 'xenith') else 'ElevenLabs (E13)'),
+                       'files': [f['file'] for f in lines[v]]})
+    for v in NEW:
+        if v in R3_EL:
+            continue
+        if v in R2_EL:
+            best2 = best_preview2(scores, v)
+            chosen.append({'voice': v, 'label': 'Wybrany w rundzie 2: ElevenLabs', 'files': [best2[0]]})
+        else:
+            chosen.append({'voice': v, 'label': 'Wybrany w rundzie 1: ElevenLabs', 'files': [best_preview(scores, v)[0], el_v4(v)]})
+    for v in R2_ACCEPTED_VILLAINS + tuple(R2_VILLAINS):
+        name = specs[v].get('variant', v)
+        chosen.append({'voice': v, 'label': 'Wybrany: OmniVoice (klon z dubbingu%s)' % (', wariant z rundy 2' if name != v else ''),
+                       'files': [os.path.join(OMNI, 'clips', '%s_%d.wav' % (name, i)) for i in (1, 2)]})
+    r3w = [{'voice': c['voice'], 'kind': 'chosen', 'clips': [{'id': 'orig', 'kind': 'chosen', 'metrics': {},
+                                                             'label': c['label'], 'files': c['files']}]} for c in chosen]
+    pages = [{'page': 'r3n', 'title': 'Runda 3: trzy warianty ElevenLabs', 'voices': r3n,
+              'intro': 'Każda postać ma trzy nowe opisy głosu (A–C, kolejność losowa). Każda próbka to podgląd projektu, który '
+                       'czyta oba fragmenty (Meza: pierwszy). Na górze odrzucony głos z rundy 2 dla porównania. Oceń A–C, '
+                       'odsłoń etykiety i wybierz wariant albo „Żaden”.'},
+             {'page': 'r3w', 'title': 'Głosy już w obsadzie', 'voices': r3w,
+              'intro': 'Wszystkie głosy już w obsadzie, także wybrane w rundzie 2 (Waiqar, Morant, Levirax, Gilliam). Bez ocen.'}]
+    for p in pages:
+        p['footer'] = 'Barwa wobec referencji: względem projektu OmniVoice postaci (nowe postacie) albo dubbingu (złoczyńcy).'
+        for entry in p['voices']:
+            v = entry['voice']
+            entry.update(name=names.get(v, v), portrait=portrait_rel(v), problems=[], lines=[f['text'] for f in lines[v]])
+            entry.setdefault('brief', '')
+            for c in entry['clips']:
+                files = [f for f in c.pop('files') if f and os.path.exists(f)]
+                c['file'] = glue(files, os.path.join(OUT, 'clips', p['page'], '%s_%s.wav' % (v, c['id']))) if files else ''
+            entry['clips'] = [c for c in entry['clips'] if c['file']]
+    template = open(os.path.join(ROOT, 'analysis', 'tools', 'voice_compare.html'), encoding='utf-8').read()
+    template = template.replace('href="index.html"', 'href="runda3.html"')
+    nav = [{'page': p['page'], 'title': p['title'],
+            'ratable': sum(c['id'] != 'orig' for v in p['voices'] for c in v['clips'])} for p in pages]
+    index = {'title': 'E14 · Obsada, runda 3', 'file': 'e14r3_oceny.json', 'dir': 'analysis/work/compare/e14/',
+             'intro': 'Trzy wyraźnie różne opisy głosu dla Delphyndry, Nary i Mezy (ocena 1 w rundzie 2). Strona r3w ma '
+                      'wszystkie głosy już w obsadzie.',
+             'notes': ['Każdy opis dał 3 podglądy; arkusz pokazuje najlepszy według automatu (CER, końcówka, wysokość głosu '
+                       'kobiecego), więc odrzucony w rundzie 2 męski podgląd Delphyndry już nie przejdzie.',
+                       'Wybrany wariant zapiszemy na koncie w miejsce głosu z rundy 1.']}
+    for p in pages:
+        body = json.dumps({'mode': 'page', 'stage': 'E14R3', 'data': p, 'nav': nav}, ensure_ascii=False).replace('</', '<\\/')
+        open(os.path.join(OUT, p['page'] + '.html'), 'w', encoding='utf-8').write(
+            template.replace('__TITLE__', H.escape('E14 · ' + p['title'])).replace('__DATA__', body))
+    body = json.dumps({'mode': 'index', 'stage': 'E14R3', 'nav': nav, 'index': index}, ensure_ascii=False).replace('</', '<\\/')
+    open(os.path.join(OUT, 'runda3.html'), 'w', encoding='utf-8').write(
+        template.replace('__TITLE__', H.escape(index['title'])).replace('__DATA__', body))
+    print('strony: %d, nagrania: %d -> %s' % (len(pages) + 1, sum(len(v['clips']) for p in pages for v in p['voices']),
+                                               os.path.join(OUT, 'runda3.html')))
+
+
 # --- ElevenLabs, ocena i arkusz ----------------------------------------------------------------------------------------
 
 def el_previews(voice):
@@ -532,7 +642,7 @@ def score():
     from score_samples import median_f0
     path = os.path.join(OUT, 'scores.json')
     scores = load_json(path, {})
-    todo = [t for t in items() + items2() if t[0] not in scores]
+    todo = [t for t in items() + items2() + items3() if t[0] not in scores]
     if not todo:
         print('ocenione nagrania: %d' % len(scores))
         return
@@ -689,7 +799,7 @@ def sheet():
 if __name__ == '__main__':
     commands = {'portrait': portrait, 'context': context, 'pick': pick, 'refs': refs, 'design': design, 'choose': choose,
                 'clone': clone, 'status': status, 'score': score, 'sheet': sheet, 'refs2': refs2, 'clone2': clone2,
-                'sheet2': sheet2}
+                'sheet2': sheet2, 'sheet3': sheet3}
     if len(sys.argv) != 2 or sys.argv[1] not in commands:
         raise SystemExit(__doc__)
     sys.stdout.reconfigure(encoding='utf-8')

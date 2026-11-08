@@ -420,7 +420,9 @@ Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci 
   - Koszt obsady: ok. 5–6 tys. kredytów.
   - Arkusz gotowy 2026-11-08 (`analysis/tools/voice_compare_e14.py`, opisy w `voice_designs_e14.json`): 18 głosów „Lektor PL - <postać> E14” zapisanych na koncie (30 z 30 miejsc), próbki ok. 4,5 tys. kredytów, w tym ok. 0,9 tys. straty na podglądach bez katalogu wyjściowego. Złoczyńcy Zachareth, Reneyr i Levirax mają referencję z monologu, pozostali z okrzyków.
   - Runda 1 oceniona 2026-11-08 (D84): tylko ElevenLabs dla postaci bez dubbingu, 13 głosów i 5 złoczyńców przyjętych. Głos testowy Kehli usunięty (29 z 30 miejsc).
-  - Runda 2 gotowa 2026-11-08 (`runda2.html`, oceny w `e14r2_oceny.json`): po 3 nowe podglądy dla Waiqara, Moranta, Delphyndry, Nary i Mezy (ok. 1,2 tys. kredytów), na arkuszu najlepszy z nich obok głosu z rundy 1; Levirax i Gilliam po 2 nowe warianty klonu. Czeka na Twoją ocenę.
+  - Runda 2 gotowa 2026-11-08 (`runda2.html`, oceny w `e14r2_oceny.json`): po 3 nowe podglądy dla Waiqara, Moranta, Delphyndry, Nary i Mezy (ok. 1,2 tys. kredytów), na arkuszu najlepszy z nich obok głosu z rundy 1; Levirax i Gilliam po 2 nowe warianty klonu.
+  - Runda 2 oceniona 2026-11-08 (D87): przyjęci Waiqar i Morant (nowe głosy, stare usunięte) oraz Levirax `v2a` i Gilliam `v2b`.
+  - Runda 3 gotowa 2026-11-08 (`runda3.html`, oceny w `e14r3_oceny.json`): Delphyndra, Nara i Meza po 3 różne opisy (ok. 2 tys. kredytów). Czeka na Twoją ocenę.
 - A4: komunikaty gry w kwestiach postaci czyta narrator, a tekst wielkimi literami nie znika (D85). Baza `m3` przebudowana: 126 kwestii zmienionych, 17 968 fragmentów.
 - A5: wstawki sceniczne w kwestiach zebrane do E15 (D86, `analysis/E14_INSERTS.md`).
 

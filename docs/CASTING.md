@@ -57,13 +57,13 @@ Głosy z opisów w `analysis/tools/voice_designs_e14.json` (`text_to_voice`, jed
 | `pryor` | `PRYOR` | `6gJmPw2772iK66WdPEKX` | przyjęty w rundzie 1 |
 | `grace` | `GRACE` | `7nGRsoaWpcG4aZ7JLbJW` | przyjęty w rundzie 1; opis z wiekiem 18–20, bo `text_to_voice` odrzuca wiek poniżej 18 |
 | `drys` | `DRYS` | `UrUMN6EMRqqvJz3oDHD1` | przyjęty w rundzie 1 |
-| `waiqar` | `WAIQAR` | `3GSeupNgHDzIQjsQjZaA` | runda 2: głos ma brzmieć jak doświadczony wojownik |
-| `morant` | `MORANT` | `trKNF7Zp0IemLIuf7zts` | runda 2: inny wariant przy tej samej jakości |
-| `delphyndra` | `DELPHYNDRA` | `1sr70RNkbV4TmYCh7tKG` | runda 2: głos smoczy, nie ludzki |
-| `nara` | `NARA` | `4kAJ1piV25xUmOdFB7Z8` | runda 2: kobieta ork |
-| `meza` | `MEZA` | `ByoziVNmCijKhXdCZ3Z6` | runda 2: mniej ludzki, jak hybryda |
+| `waiqar` | `WAIQAR` | `IQY1bvB4YbPVoS6Go9q3` | przyjęty w rundzie 2 (opis `el2`: doświadczony wojownik), głos z rundy 1 usunięty |
+| `morant` | `MORANT` | `3CNDe9njN2kEBkgjZlEi` | przyjęty w rundzie 2 (opis `el2`), głos z rundy 1 usunięty |
+| `delphyndra` | `DELPHYNDRA` | `1sr70RNkbV4TmYCh7tKG` (runda 1) | runda 3: smoczyca, wyraźnie kobieca, nie męska |
+| `nara` | `NARA` | `4kAJ1piV25xUmOdFB7Z8` (runda 1) | runda 3: kobieta ork |
+| `meza` | `MEZA` | `ByoziVNmCijKhXdCZ3Z6` (runda 1) | runda 3: chłodny, demoniczny |
 
-Postać z wybranym nowym wariantem dostaje nowy głos na koncie, a głos z rundy 1 usuwamy (zgoda z QA, D84).
+Postać z wybranym nowym wariantem dostaje nowy głos na koncie, a głos z rundy 1 usuwamy (zgoda z QA, D84). Runda 3 (D87): trzy opisy `el3` na postać.
 
 ## E14: złoczyńcy z okrzykami dubbingu w OmniVoice (D83, D84)
 
@@ -76,8 +76,10 @@ Klony OmniVoice z okrzyków albo monologów z gry, jak Ne’Krul i Xenith (D19).
 | `greysdon` | `GREYSDON` | okrzyki `Greysdon_Spawn_2`, `Greysdon_Spawn_1` | 7,2 s | przyjęty w rundzie 1 |
 | `navoth` | `NAVOTH` | okrzyki | 6,4 s | przyjęty w rundzie 1 |
 | `vraskhar` | `VRASKHAR` | okrzyki | 6,6 s | przyjęty w rundzie 1 |
-| `levirax` | `LEVIRAX` | monolog `Levirax_VoiceOver` | 8,5 s | runda 2: przeciągane końcówki jak u gada |
-| `gilliam` | `GILLIAM`, `GILLIAM_EVIL` | okrzyki | 5,3 s | runda 2: bardziej przerażony |
+| `levirax` | `LEVIRAX` | monolog `Levirax_VoiceOver` | 8,5 s | przyjęty w rundzie 2: wariant `levirax_v2a`, tempo 0,85 (przeciągane końcówki) |
+| `gilliam` | `GILLIAM`, `GILLIAM_EVIL` | okrzyki z drżeniem 0,6 | 5,3 s | przyjęty w rundzie 2: wariant `gilliam_v2b` (bardziej przerażony) |
+
+Referencje wariantów z rundy 2 są w `analysis/work/compare/e14/omni/refs2.json`.
 
 ## Głosy projektowane w OmniVoice (D41, zapas od D80)
 

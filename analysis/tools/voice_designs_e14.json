@@ -1,5 +1,5 @@
 {
- "_info": "E14 (D83): jeden opis głosu na nową postać bez dubbingu, z portretu z gry (d3/storymessagecharacters) i charakteru z jej kwestii. `el` idzie do text_to_voice (MCP), `omni` do projektu OmniVoice (opis płci, wieku i wysokości oraz własne zdanie w stylu postaci, nie tekst gry). Złoczyńcy mają klon OmniVoice z dubbingu, więc tylko `brief`. Głosy mają się różnić od obsady E13 (docs/CASTING.md). Runda 2 (QA 2026-11-08): `el2` to nowy opis po uwadze z arkusza (`qa1`).",
+ "_info": "E14 (D83): jeden opis głosu na nową postać bez dubbingu, z portretu z gry (d3/storymessagecharacters) i charakteru z jej kwestii. `el` idzie do text_to_voice (MCP), `omni` do projektu OmniVoice (opis płci, wieku i wysokości oraz własne zdanie w stylu postaci, nie tekst gry). Złoczyńcy mają klon OmniVoice z dubbingu, więc tylko `brief`. Głosy mają się różnić od obsady E13 (docs/CASTING.md). Runda 2 (QA 2026-11-08): `el2` to nowy opis po uwadze z arkusza (`qa1`). Runda 3 (QA 2026-11-08): `el3` to trzy wyraźnie różne opisy (a, b, c) po uwadze z rundy 2 (`qa2`); wybrany głos z rundy 2 zapisuje `voice_r2`, wariant złoczyńcy `variant`.",
  "magrit": {
   "gender": "female",
   "brief": "dojrzała baronessa w zbroi i płaszczu z futrem, długi ciemny warkocz, skrzyżowane ręce; dowódczyni lojalistów, rzeczowa i zdecydowana, zmęczona wojną",
@@ -110,7 +110,8 @@
    "style_text": "Ależ proszę się nie lękać. Śmierć to tylko drobna niedogodność, a ja zawsze dotrzymuję słowa."
   },
   "el2": "Native Polish. Male, 55-65. Studio quality. Persona: ancient undead warlord and necromancer in antlered plate armour, a veteran of a thousand battles. Emotion: cold, commanding, battle-hardened, quietly menacing. Deep, gravelly, rasping bass with a hollow, grave-like resonance and an unnatural chill; slow, heavy, deliberate delivery, every sentence like an order, the rough texture of an old soldier.",
-  "qa1": "za zwyczajny głos; z portretu doświadczony wojownik"
+  "qa1": "za zwyczajny głos; z portretu doświadczony wojownik",
+  "voice_r2": "IQY1bvB4YbPVoS6Go9q3"
  },
  "morant": {
   "gender": "male",
@@ -122,7 +123,8 @@
    "style_text": "Cisza! Twoje kłamstwa nikogo tu nie zwiodą. Prawo jest po mojej stronie, a wyrok zapadnie dziś!"
   },
   "el2": "Native Polish. Male, 35-45. Studio quality. Persona: fanatical knight-judge in heavy armour and a red cloak, a cruel inquisitor who relishes his power. Emotion: cold contempt, self-righteous zeal, cruel amusement. Deep, dark, velvety baritone with a menacing edge; controlled, theatrical courtroom delivery, slow sneering emphasis, sudden booming outbursts.",
-  "qa1": "inny wariant, jakość dobra"
+  "qa1": "inny wariant, jakość dobra",
+  "voice_r2": "3CNDe9njN2kEBkgjZlEi"
  },
  "pryor": {
   "gender": "female",
@@ -144,7 +146,18 @@
    "style_text": "Hmm. Fascynujące. Mały ssak z narzędziami. Zanotuję to, zanim zdecyduję, czy cię zjeść."
   },
   "el2": "Native Polish. Female, ageless. Studio quality. Persona: colossal ancient dragon and eccentric inventor. Emotion: aloof, clinical curiosity, whimsical menace. Monstrous, inhuman voice: very deep, booming, reverberant contralto with a draconic growl and smoky rasp under every word and a hiss on sibilants; precise, fussy articulation, amused rumbling hums.",
-  "qa1": "brzmi jak człowiek, ma być bardziej smoczy"
+  "qa1": "brzmi jak człowiek, ma być bardziej smoczy",
+  "el3": {
+   "a": "Native Polish. Female, ageless. Persona: enormous ancient she-dragon, regal and amused. Clearly feminine voice, a rich, regal mezzo-soprano, never masculine, with a smoky, breathy draconic purr under the words, a soft growl on stressed syllables, long hissing sibilants and a faint cavernous echo, as if speaking from a huge chest. Emotion: aloof, coldly curious, whimsical. Slow, elegant, predatory delivery.",
+   "b": "Native Polish. Female, ageless. Persona: eccentric blue dragon inventor with a monocle, who treats mortals as lab specimens. Feminine, mid-pitched voice with a crackling reptilian rasp and a sharp hiss, clicking consonants and a wet, drooling sibilance; quick, fussy, whimsical delivery with sudden pauses, delighted hums and a cold clinical edge. Theatrical and otherworldly, clearly not human.",
+   "c": "Native Polish. Female, ageless. Persona: colossal blue dragoness. Otherworldly, inhuman feminine voice that sounds doubled, as if a woman's voice and a huge beast's low rumble speak together; breathy and resonant, with the reverb of a vast cave, a smoky crackle of fire in the throat and hissing s-sounds. Emotion: calm, superior, casually menacing. Measured, unhurried delivery."
+  },
+  "el3_label": {
+   "a": "królewska smoczyca: kobiecy mezzosopran z mruczeniem i echem",
+   "b": "ekscentryczna wynalazczyni: syk, klekot, szybkie tempo",
+   "c": "podwójny głos: kobieta i ryk bestii, pogłos jaskini"
+  },
+  "qa2": "brzmi jak męski głos, nie jak fantastyczna smoczyca"
  },
  "nara": {
   "gender": "female",
@@ -156,7 +169,18 @@
    "style_text": "Smoki? Też mi coś. Długa nuda, potem chwila grozy i znowu nuda. Bierz włócznię i nie marudź."
   },
   "el2": "Native Polish. Female, 35-45. Studio quality. Persona: female orc warrior and veteran dragon hunter with tusks and war paint. Emotion: gruff, blunt, dry, unimpressed. Harsh, guttural, very low growling voice with a heavy rasp and throaty grit, almost masculine; short, blunt phrases, flat deadpan delivery, heavy consonants.",
-  "qa1": "nie brzmi jak oschła łowczyni, ma być jak orczyca"
+  "qa1": "nie brzmi jak oschła łowczyni, ma być jak orczyca",
+  "el3": {
+   "a": "Native Polish. Female, 35-45. Persona: female orc warrior with tusks and red skin, a veteran dragon hunter. Clearly a woman, but bestial: husky, throaty alto with a coarse growl in the throat, snarled consonants and rough breathing; tusks slightly thicken the speech. Emotion: gruff, blunt, dry sarcasm. Short, heavy phrases, flat deadpan delivery.",
+   "b": "Native Polish. Female, 30-40. Persona: savage orcish huntress from a barbaric tribe. Aggressive, snarling, guttural female voice, very raspy, as if growling through clenched teeth, with an animal edge and harsh breathy bursts; loud, forceful, impatient delivery with barked words. Still clearly female.",
+   "c": "Native Polish. Female, 50-60. Persona: battle-scarred old orc matron and dragon hunter. Low, smoky, cracked female voice ruined by years of war cries and campfire smoke, a wet gravel rattle and deep chesty grunts between phrases; slow, lazy, sardonic drawl, completely unimpressed."
+  },
+  "el3_label": {
+   "a": "orczyca wojowniczka: chropawy alt z warknięciem",
+   "b": "dzika łowczyni: warczy przez zęby, szczeka słowa",
+   "c": "stara orczyca: zdarty, zadymiony głos, leniwy sarkazm"
+  },
+  "qa2": "nie brzmi jak kobieta ork"
  },
  "grace": {
   "gender": "female",
@@ -179,7 +203,18 @@
    "style_text": "Jesteście tu bezpieczni. Póki trzymam straż, nikt nie skrzywdzi tych, którzy szukają schronienia."
   },
   "el2": "Native Polish. Female, ageless. Studio quality. Persona: winged dragon-hybrid warden, half woman and half dragon, guarding a community of exiles. Emotion: solemn, watchful, protective. Inhuman, reptilian voice: low, breathy, hissing timbre with a dry rattle in the throat and drawn-out sibilants, a slightly otherworldly resonance; slow, grave, measured delivery.",
-  "qa1": "zbyt ludzki jak na hybrydę"
+  "qa1": "zbyt ludzki jak na hybrydę",
+  "el3": {
+   "a": "Native Polish. Female, ageless. Persona: winged demon-dragon hybrid in a horned skull mask. Cold, icy, demonic female voice: hushed, breathy, close whisper with a dark low undertone and an eerie hiss, no warmth at all; slow, emotionless, deliberate delivery, every word chilling.",
+   "b": "Native Polish. Female, ageless. Persona: demonic warden, half woman and half dragon. Unnatural, distorted, layered female voice with a deep demonic growl underneath and a metallic, echoing resonance, as if speaking from inside a bone mask; cold, commanding, ominous, slow and grave.",
+   "c": "Native Polish. Female, ageless. Persona: pale, winged reptilian hybrid guardian. Dry, raspy, serpentine female voice with long hissing sibilants and a clicking rattle in the throat; detached, cold and alien, quiet menace, slow measured cadence with unnatural pauses."
+  },
+  "el3_label": {
+   "a": "lodowaty szept z demonicznym podtonem",
+   "b": "zniekształcony, warstwowy głos demona zza maski",
+   "c": "gadzi syk i klekot, obcy i beznamiętny"
+  },
+  "qa2": "głos ma być chłodny i demoniczny"
  },
  "drys": {
   "gender": "male",
@@ -201,7 +236,8 @@
  },
  "levirax": {
   "gender": "female",
-  "brief": "turkusowa smoczyca z rogami i rozwartą paszczą; smocza władczyni, pogardliwa, wściekła. Klon z monologu z dubbingu"
+  "brief": "turkusowa smoczyca z rogami i rozwartą paszczą; smocza władczyni, pogardliwa, wściekła. Klon z monologu z dubbingu",
+  "variant": "levirax_v2a"
  },
  "greysdon": {
   "gender": "male",
@@ -217,6 +253,7 @@
  },
  "gilliam": {
   "gender": "male",
-  "brief": "szczupły baron w ciemnej szacie, złożone dłonie, drugi portret jako wampir; nerwowy, przymilny, wystraszony. Klon z okrzyków"
+  "brief": "szczupły baron w ciemnej szacie, złożone dłonie, drugi portret jako wampir; nerwowy, przymilny, wystraszony. Klon z okrzyków",
+  "variant": "gilliam_v2b"
  }
 }
