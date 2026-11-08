@@ -167,8 +167,8 @@ def jobs(con, voices=None, retake=None):
 
 
 def inherited(con):
-    """M2: podejścia ElevenLabs wybrane w M1 dla fragmentów o tym samym id (pliki kopiuje synth.inherit)."""
-    if paths.RELEASE == 'm1':
+    """Podejścia ElevenLabs wybrane w poprzednim wydaniu dla fragmentów o tym samym id (pliki kopiuje synth.inherit)."""
+    if paths.RELEASE not in paths.PREVIOUS:
         return {}
     return {f: c for f, c in inherit(con).items() if D.take_engine(c['take']) == 'elevenlabs'}
 

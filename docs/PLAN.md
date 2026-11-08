@@ -405,21 +405,23 @@ Pytanie etapu: jak przegenerować fragmenty postaci bez dubbingu głosami z D80,
 
 Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci bez dubbingu w ElevenLabs, potem lokalnie w OmniVoice narrator, bohaterowie i złoczyńcy. Szacunek: `analysis/E14_NO_DUB_SCOPE.md`. Decyzje z QA: D83.
 
-**Status:** plan do akceptacji (2026-11-08).
+**Status:** plan zaakceptowany 2026-11-08, z głosami OmniVoice nowych postaci w arkuszu. Trwa faza A.
 
 **Faza A: przygotowanie**
 - A1: baza całej gry `m3`: zakres wszystkich scenariuszy, wydarzeń, podróży i miasta aktów 1 i 2, łup i wrogowie aktu 2. Fragmenty o tym samym id przejmujemy z M2. Raport liczności jak `E7_DATA.md`.
+  - Zrobione 2026-11-08: 12 622 klucze, 17 876 fragmentów (1,50 mln znaków), 95 grup; 3919 fragmentów M2 bez zmian, nowych 13 957 (1,22 mln znaków). Raport `analysis/E14_DATA.md`.
 - A2: konto ElevenLabs: usunięcie testowego głosu Kehli po potwierdzeniu nazwy i id (12 → 11 z 30 miejsc).
 - A3: obsada z Twoim udziałem:
   - 18 nowych postaci: portret z plików gry (`npc_voices.py portrait`), jeden opis głosu z portretu i kontekstu kwestii, jeden projekt `text_to_voice` czytający pierwszy losowy fragment, zapis głosu na koncie i drugi losowy fragment w `eleven_v4`;
+  - te same 18 postaci w OmniVoice: projekt z portretu jak w D41 (`npc_voices.py`), te same 2 fragmenty, do decyzji o silniku;
   - 7 złoczyńców z okrzykami: klon OmniVoice z okrzyków (jak Ne’Krul i Xenith, D19), te same 2 losowe fragmenty;
   - arkusz porównawczy: portret, opis i 2 fragmenty każdej postaci, a obok dotychczasowe głosy (11 postaci ElevenLabs z E13 oraz Ne’Krul i Xenith w OmniVoice) z 2 fragmentami;
-  - Twoja ocena: akceptacja, poprawka opisu albo zmiana silnika (złoczyńca do ElevenLabs, gdy klon jest słaby). Wynik w `docs/CASTING.md`.
+  - Twoja ocena: akceptacja, poprawka opisu albo zmiana silnika (ElevenLabs albo OmniVoice dla każdej postaci). Wynik w `docs/CASTING.md`.
   - Koszt obsady: ok. 5–6 tys. kredytów.
 
 **Faza B: generowanie paczkami z postępem**
 - B1: ElevenLabs: paczka na postać (11 głosów z E13 i 18 nowych, 101,6 tys. znaków, ok. 48 tys. kredytów z ponownymi). Po każdej paczce automat E3 i ponowne podejścia tej postaci. Limit `--max-credits`: zatwierdzony szacunek +20%.
-- B2: OmniVoice: paczka na misję (scenariusz, wydarzenie, podróże, miasto, system), narrator, bohaterowie i złoczyńcy razem. Szacunek: ok. 85–95 h GPU.
+- B2: OmniVoice: paczka na misję (scenariusz, wydarzenie, podróże, miasto, system), narrator, bohaterowie i złoczyńcy razem. Szacunek z bazy `m3`: ok. 105 h GPU bez ponownych podejść (narrator 830 tys. znaków, bohaterowie 255 tys. po 3 podejścia, D38).
 - Komenda postępu: dla każdej paczki stan (gotowe, w toku, czeka), fragmenty i znaki zrobione i pozostałe, kredyty albo godziny GPU oraz przewidywany czas do końca z tempa dotychczasowych paczek.
 
 **Faza C: odbiór**

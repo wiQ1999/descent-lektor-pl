@@ -24,6 +24,45 @@ def test_voice_for(category, speakers, voice):
     assert scope.voice_for(category, speakers) == voice
 
 
+@pytest.mark.parametrize('speakers, voice', [
+    (['STORY_CHARACTER_ALYS'], 'alys'),
+    (['STORY_CHARACTER_SHADOW_RENEYR'], 'reneyr'),
+    (['STORY_CHARACTER_ALYS', 'STORY_CHARACTER_BRYNN'], 'brynn'),     # głos z M1/M2 wygrywa jak dotąd
+    (['STORY_CHARACTER_ALYS', 'STORY_CHARACTER_VARIABLE_HERO2'], 'narrator'),
+])
+def test_voice_for_m3_characters(speakers, voice):
+    assert scope.voice_for('dialog', speakers) == voice
+
+
+@pytest.mark.parametrize('bundle, owner, group', [
+    ('d3/quests/box1/story/q12', 'DT Boss', 'a1_q12'),
+    ('d3/quests/box1/side/s2', 'DT', 'a1_sq2'),
+    ('d3/quests/dle04/story/q3', 'DT Meet Shadow', 'a2_q3'),
+    ('d3/act1', 'TANGERINE Q10 Outro Win', 'a1_q10'),
+    ('d3/act1', 'TANGERINE Q2_Q5 Transition', 'a1_q5'),
+    ('d3/act1', 'TANGERINE Post Q10', 'a1_q10'),
+    ('d3/act1', 'TANGERINE SQ1 Intro', 'a1_sq1'),
+    ('d3/act1', 'TANGERINE EVENT 4A Something', 'a1_event_4a'),
+    ('d3/act1', 'TANGERINE Story Scene Pre Finale (Imported)', 'a1_scene_pre_finale'),
+    ('d3/act2', 'A2 Q00 Intro', 'a2_q0'),
+    ('d3/act2', 'A2 SE05 New', 'a2_se05'),
+    ('d3/act2', 'A2 SS03 (Imported)', 'a2_ss03'),
+    ('d3/act2', 'Act_2_WorldMap_DT', 'town_act2'),
+    ('d3/travelevents', 'Act 2 Road', 'travel_act2'),
+    ('d3/cityevents', 'A2S01 The Citadel', 'city_act2'),
+    ('d3/weapons/bow', 'Bow', 'gear'),
+    ('d3/quests/enemy tool', 'Tool', None),
+])
+def test_m3_group(bundle, owner, group):
+    assert scope.m3_group(bundle, owner) == group
+
+
+def test_m3_rank_follows_campaign():
+    groups = ['a2_q1', 'a1_q10', 'city', 'a1_q2', 'a1_event_pre9a', 'a1_event_10a', 'a1_sq1', 'a2_se05']
+    assert sorted(groups, key=scope.m3_rank) == ['a1_q2', 'a1_q10', 'a1_sq1', 'a1_event_pre9a', 'a1_event_10a', 'city',
+                                                 'a2_q1', 'a2_se05']
+
+
 @pytest.mark.parametrize('name, vid', [
     ('Quest_BB/Hero On Watch Name', 'hero on watch name'),
     ('@Global_Timing_BB/trinketWSBonus', 'trinketwsbonus'),

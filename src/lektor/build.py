@@ -73,10 +73,10 @@ def value_texts(slot, arg, line_key, values, terms, lines):
     return out
 
 
-def loot_texts(game, terms):
+def loot_texts(game, terms, release='m2'):
     """{tekst z okna gry (squash): tekst do syntezy} dla listy łupu (D51). Szablony dzielimy na stałe kawałki."""
     out = {str(n): cardinal(n) for n in LOOT_NUMBERS}
-    for k in scope.loot_keys(game, terms):
+    for k in scope.loot_keys(game, terms, scope.release_acts(release)):
         for piece in S.SLOT.split(clean_markup(SPRITE.sub('', terms[k]['text']))):
             if squash(piece) and not piece.isdigit():
                 out.setdefault(squash(piece), normalize(piece).strip())
@@ -132,7 +132,7 @@ def build(path=None, release='m1', only=None):
             segments.append(seg)
 
     if release != 'm1':
-        for value, text in loot_texts(game, terms).items():
+        for value, text in loot_texts(game, terms, release).items():
             slot_values[LOOT, 0, value] = frag('narrator', text, D.SPEED_MIN, 'value')
         for name, fid in entities.items():      # lista łupu kończy się poleceniem usunięcia wroga (REMOVE_ENTITY)
             slot_values.setdefault((LOOT, 0, name), fid)

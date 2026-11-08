@@ -61,9 +61,9 @@ def inherited():
     return json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
 
 
-def inherit(con, source='m1'):
+def inherit(con, source=None):
     """Wybrane podejścia fragmentów o tym samym id (głos z SHA referencji, tekst, tempo) z poprzedniego wydania."""
-    src = os.path.join(paths.WORK, 'audio', source)
+    src = os.path.join(paths.WORK, 'audio', source or paths.PREVIOUS[paths.RELEASE])
     choice = json.load(open(os.path.join(src, 'choice.json'), encoding='utf-8'))
     ids = {r['id'] for r in con.execute('SELECT id FROM fragments')}
     out = {f: c for f, c in choice.items() if f in ids}
@@ -197,7 +197,7 @@ def generate(limit=None, voices=None, retake_file=None):
     if retake_file:
         retake = {k: tuple(v) for k, v in json.load(open(retake_file, encoding='utf-8')).items()}
     state = load_state()
-    done = inherit(con) if paths.RELEASE != 'm1' else {}
+    done = inherit(con) if paths.RELEASE in paths.PREVIOUS else {}
     todo = [j for j in jobs(con, voices, retake) if (j[0], j[1]) not in state and j[0] not in done]
     if limit:
         todo = todo[:limit]

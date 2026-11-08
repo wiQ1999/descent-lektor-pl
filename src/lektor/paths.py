@@ -8,7 +8,8 @@ VOICES = os.path.join(WORK, 'voices')          # nagrania dubbingu (analysis/too
 OUT = os.path.join(WORK, 'lektor')
 REFS = os.path.join(OUT, 'refs')
 HF_HOME = os.path.join(WORK, 'hf_cache')
-RELEASES = ('m1', 'm2')                         # m2: M1 i scenariusze E7 w jednej bazie (D63)
+RELEASES = ('m1', 'm2', 'm3')                   # m2: M1 i scenariusze E7 (D63), m3: cała gra (E14, D83)
+PREVIOUS = {'m2': 'm1', 'm3': 'm2'}             # wydanie, z którego przejmujemy fragmenty o tym samym id
 RELEASE = DB = AUDIO = None
 
 

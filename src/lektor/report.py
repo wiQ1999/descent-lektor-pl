@@ -17,8 +17,10 @@ HERO_TAKES = 3          # D38
 HEROES = ('brynn', 'syrus', 'galaden', 'vaerix', 'kehli', 'chance')
 GAME_CHARS = 1_430_000  # cała gra (D02)
 S_PER_CHAR = 0.235      # zmierzone w E3 (analysis/E3_AUDIO.md), z fp32 i bez dopełniania
+EL_RATE = 0.44          # kredyty na znak eleven_v4 (E9, E13)
 REPORTS = {'m1': ('E2_DATA.md', 'E3_AUDIO.md', 'E2: baza kwestii M1', 'E3: audio M1'),
-           'm2': ('E7_DATA.md', 'E7_AUDIO.md', 'E7: baza kwestii M2', 'E7: audio M2')}
+           'm2': ('E7_DATA.md', 'E7_AUDIO.md', 'E7: baza kwestii M2', 'E7: audio M2'),
+           'm3': ('E14_DATA.md', 'E14_AUDIO.md', 'E14: baza kwestii całej gry (M3)', 'E14: audio całej gry (M3)')}
 
 
 def table(head, rows):
@@ -37,10 +39,10 @@ def audio_seconds(chars, speed):
 
 
 def previous_fragments():
-    """Id fragmentów M1, które M2 przejmuje bez generowania."""
-    if paths.RELEASE == 'm1':
+    """Id fragmentów poprzedniego wydania, które to wydanie przejmuje bez generowania."""
+    if paths.RELEASE not in paths.PREVIOUS:
         return set()
-    p = os.path.join(paths.WORK, 'audio', 'm1', 'choice.json')
+    p = os.path.join(paths.WORK, 'audio', paths.PREVIOUS[paths.RELEASE], 'choice.json')
     return set(json.load(open(p, encoding='utf-8'))) if os.path.exists(p) else set()
 
 
@@ -145,14 +147,16 @@ def report(path=None):
     old = previous_fragments()
     if old:
         new = [f for f in frags if f['id'] not in old]
-        rows = [(v, sum(1 for f in new if f['voice'] == v), sum(f['chars'] for f in new if f['voice'] == v),
+        rows = [(v, D.engine(v), sum(1 for f in new if f['voice'] == v), sum(f['chars'] for f in new if f['voice'] == v),
                  HERO_TAKES if v in HEROES else 1) for v in sorted({f['voice'] for f in new})]
-        gpu = sum(chars * takes * S_PER_CHAR for _, _, chars, takes in rows) / 3600
+        gpu = sum(chars * takes * S_PER_CHAR for _, e, _, chars, takes in rows if e == 'omnivoice') / 3600
+        el = sum(chars for _, e, _, chars, _ in rows if e == 'elevenlabs')
         s += ['## Szacunek generowania', '',
-              'Z M1 przejęte %d fragmentów. Nowe: **%d** (%d znaków).' % (
-                  len(frags) - len(new), len(new), sum(f['chars'] for f in new)), '',
-              table(('głos', 'fragmenty', 'znaki', 'podejścia'), rows), '',
-              'Razem ok. **%.1f h** GPU bez ponownych podejść, przy %.3f s na znak (E3).' % (gpu, S_PER_CHAR), '']
+              'Z %s przejęte %d fragmentów. Nowe: **%d** (%d znaków).' % (
+                  paths.PREVIOUS[paths.RELEASE].upper(), len(frags) - len(new), len(new), sum(f['chars'] for f in new)), '',
+              table(('głos', 'silnik', 'fragmenty', 'znaki', 'podejścia'), rows), '',
+              'OmniVoice: ok. **%.1f h** GPU bez ponownych podejść, przy %.3f s na znak (E3). ElevenLabs: %d znaków, '
+              'ok. **%d** kredytów (%.2f na znak, bez ponownych).' % (gpu, S_PER_CHAR, el, round(el * EL_RATE), EL_RATE), '']
         return write(REPORTS[paths.RELEASE][0], s)
     s += ['## Szacunek generowania (E3)', '']
     rows, total = [], 0.0
@@ -221,7 +225,8 @@ def audio_report(path=None):
     new_chars = sum(r['chars'] for r in con.execute('SELECT id, chars FROM fragments') if r['id'] not in old)
     per_char = gen / new_chars
     if old:
-        s += ['Z M1 przejęte %d fragmentów bez generowania.' % sum(1 for f in choice if f in old), '']
+        s += ['Z %s przejęte %d fragmentów bez generowania.' % (paths.PREVIOUS[paths.RELEASE].upper(),
+                                                              sum(1 for f in choice if f in old)), '']
     s += ['Na znak nowego tekstu (z podejściami bohaterów i ponownymi): %.3f s. Cała gra (D02, ok. %.2f mln znaków) w tych '
           'samych proporcjach: ok. **%.0f h** GPU (D39; przed przyspieszeniami ok. 610 h na jedno podejście).' % (
               per_char, GAME_CHARS / 1e6, GAME_CHARS * per_char / 3600), '']

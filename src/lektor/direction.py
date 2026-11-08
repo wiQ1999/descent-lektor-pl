@@ -39,7 +39,8 @@ TOGGLES = {
     'system_nagroda': 'nagrody',
     'ui_system': 'ui',
 }
-GROUP_TOGGLES = {'travel_act1': 'podroze', 'town': 'miasto', 'map': 'opis_misji'}     # D66, D55 pkt 5
+GROUP_TOGGLES = {'travel_act1': 'podroze', 'town': 'miasto', 'map': 'opis_misji',     # D66, D55 pkt 5
+                 'travel_act2': 'podroze', 'town_act2': 'miasto', 'city': 'miasto', 'city_act2': 'miasto'}    # E14
 
 
 def tempo(category, chars):

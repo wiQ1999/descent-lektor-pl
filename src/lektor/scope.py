@@ -1,5 +1,7 @@
 """Zakres wydań. M1 (D15): prolog, Q1 i scena „Welcome Home”, wrogowie Q1 i z losowania (E1), grafy systemowe.
 M2 (D62, D66): M1 oraz scenariusze i wydarzenia dostępne w kampanii, podróże aktu 1, miasto i opisy celów na mapie.
+M3 (E14, D83): cała gra, czyli M2 i wszystkie pozostałe grafy aktów 1 i 2. Grupa to misja albo wydarzenie
+(paczka generowania OmniVoice), z nazwy bundla i grafu.
 
 Klucz trafia do pierwszej grupy wydania. Kwestie to tylko teksty okien (komunikat, opcja wyboru, cel misji);
 klucze z warunków i akcji grafów odpadają, a klucze wstawiane w luki {n} trafiają do inwentarza wartości.
@@ -35,8 +37,14 @@ SCENES = {'pre_q678': 'TANGERINE Story Scene Triage Pre Q678', 'event_e5b': 'TAN
           'event_sq1a': 'TANGERINE Event SQ1A A Dark Mirror', 'event_e5a': 'TANGERINE Event 5A The Dragon Eggs',
           'pre_q9': 'TANGERINE Story Scene Pre Q9'}
 RELEASE_GROUPS = {'m1': (), 'm2': (*QUESTS, *SCENES, 'travel_act1', 'town', 'map')}
+RELEASE_GROUPS['m3'] = RELEASE_GROUPS['m2']     # plus grupy z m3_sources
 DESTINATIONS = (('d3/coreset/data', 'QuestModel', '_keyName', '_descKey'),
-                ('d3/narrativeevents', 'NarrativeEventModel', '_keyName', '_keyDesc'))
+                ('d3/narrativeevents', 'NarrativeEventModel', '_keyName', '_keyDesc'),
+                ('d3/dle04/data', 'QuestModel', '_keyName', '_descKey'))
+# M3: sceny deweloperskie poza zakresem; kolejność grup w bazie (przedrostek nazwy grupy, potem numer).
+M3_SKIP = ('d3/quests/enemy tool', 'd3/quests/obstacle course')
+M3_ORDER = ('a1_q', 'a1_sq', 'a1_event_', 'a1_scene_', 'a1_other', 'city', 'travel_act1', 'town', 'a2_q', 'a2_se', 'a2_ss',
+            'a2_other', 'city_act2', 'travel_act2', 'town_act2', 'a2_terrain', 'events', 'gear', 'enemies', 'system')
 LOOT_TEMPLATES = ('GAIN_PHYSICAL_TREASURE', 'GAIN_DIGITAL_TREASURE', 'NO_ITEM_BACKUP', 'NO_RECIPE_BACKUP', 'CONSUMABLE_BACKUP',
                   'CONSUMABLE_BACKUP_MULTIPLE', 'REMOVE_ENTITY', 'UI_GOLD', 'UI_RECIPE')
 LOOT_BUNDLES = ('d3/items', 'd3/loot', 'd3/recipes')
@@ -53,6 +61,15 @@ CHARACTER_VOICES = {**HEROES, 'BLOOD_SISTER': 'nekrul', 'BARONESS_ADELYNN': 'ade
                     'ASTARRA': 'astarra', 'KATHRYN': 'kathryn', 'LTRAND': 'ltrand', 'MASTERBRULI': 'bruli',
                     'DRAGON_HYBRID': 'xenith', 'HERBIE': 'herbie', 'ELDERMOK': 'mok', 'OUTLAWPRINCE': 'outlaw',
                     'MASTERGALGORAZ': 'galgoraz', 'MASTERFLINT': 'flint'}
+# Postacie bez dubbingu spoza M2 (E14, D83), obsada w docs/CASTING.md. Warianty mówcy (cień, „zły” Gilliam) czytają
+# głosem postaci bazowej. voice_for sprawdza je po CHARACTER_VOICES, więc głosy kluczy M1 i M2 się nie zmieniają.
+M3_VOICES = {'BARONESSMAGRIT': 'magrit', 'ALYS': 'alys', 'GREIGORY': 'greigory', 'BUTTON': 'button', 'LAUREL': 'laurel',
+             'ARDEN': 'arden', 'VETA': 'veta', 'TREVALYN': 'trevalyn', 'SIRBALTHAIN': 'balthain',
+             'COUNTESSDUCARD': 'ducard', 'WAIQAR': 'waiqar', 'MORANT': 'morant', 'PRYOR': 'pryor',
+             'DELPHYNDRA': 'delphyndra', 'NARA': 'nara', 'GRACE': 'grace', 'MEZA': 'meza', 'DRYS': 'drys',
+             'BARONZACHARETH': 'zachareth', 'RENEYR': 'reneyr', 'SHADOW_RENEYR': 'reneyr', 'GREYSDON': 'greysdon',
+             'NAVOTH': 'navoth', 'LEVIRAX': 'levirax', 'GILLIAM': 'gilliam', 'GILLIAM_EVIL': 'gilliam',
+             'VRASKHAR': 'vraskhar', 'CHANCE_SHADOW': 'chance'}
 HERO_NAME_KEYS = ['HERO_%s_NAME' % h for h in HEROES]
 UPPER = re.compile(r'^[A-Z][A-Z0-9_]{3,}$')
 
@@ -66,8 +83,82 @@ def voice_for(category, speakers):
                 return 'narrator'
             if i in CHARACTER_VOICES:
                 return CHARACTER_VOICES[i]
+        for i in ids:
+            if i in M3_VOICES:
+                return M3_VOICES[i]
         return 'inny' if ids else 'narrator'
     return 'narrator'
+
+
+def m3_group(bundle, owner):
+    """Grupa M3 grafu: misja (a1_q2, a1_sq1, a2_q1), wydarzenie, scena albo rodzaj treści; None poza zakresem."""
+    tail = bundle.rsplit('/', 1)[-1]
+    if bundle in M3_SKIP or not bundle.startswith('d3/'):
+        return None
+    if bundle.startswith('d3/quests/box1/story/'):
+        return 'a1_' + tail
+    if bundle.startswith('d3/quests/box1/side/'):
+        return 'a1_sq' + tail[1:]
+    if bundle.startswith('d3/quests/dle04/story/'):
+        return 'a2_' + tail
+    if bundle == 'd3/act1':
+        m = re.match(r'TANGERINE (?:Q\d+_Q(\d+) Transition|Post Q(\d+))', owner)
+        if m:
+            return 'a1_q' + (m.group(1) or m.group(2))
+        m = re.match(r'TANGERINE (S?Q)(\d+) ', owner)
+        if m:
+            return 'a1_%s%s' % (m.group(1).lower(), m.group(2))
+        m = re.match(r'TANGERINE EVENT (\w+)', owner, re.I)
+        if m:
+            return 'a1_event_' + m.group(1).lower()
+        m = re.match(r'TANGERINE Story Scene (.+)', owner)
+        if m:
+            return 'a1_scene_' + re.sub(r'\W+', '_', m.group(1).replace('(Imported)', '').lower()).strip('_')
+        return 'city' if owner.startswith('TANGERINE City Event') else 'a1_other'
+    if bundle == 'd3/act2':
+        m = re.match(r'A2 Q(\d+)', owner)
+        if m:
+            return 'a2_q%d' % int(m.group(1))
+        m = re.match(r'A2 S([ES])(\d+)', owner)
+        if m:
+            return 'a2_s%s%s' % (m.group(1).lower(), m.group(2))
+        return 'town_act2' if 'WorldMap' in owner else 'a2_other'
+    if bundle == 'd3/cityevents':
+        return 'city_act2' if owner.startswith(('A2', 'Act 2')) else 'city'
+    if bundle == 'd3/travelevents':
+        return 'travel_act2' if owner.startswith('Act 2') else 'travel_act1'
+    if bundle.startswith('d3/worldmap/'):
+        return 'town_act2' if bundle.endswith('act2') else 'town'
+    if bundle == 'd3/narrativeevents':
+        return 'events'
+    if bundle.startswith('d3/dle04/'):
+        return 'a2_terrain'
+    if bundle.startswith(('d3/coreset/', 'd3/weapons/')) or bundle == 'd3/items':
+        return 'gear'
+    if bundle.startswith('d3/enemies/'):
+        return 'enemies'
+    return 'system' if bundle in ('d3/gamereq', 'd3/ui') else None
+
+
+def m3_rank(group):
+    """Kolejność grupy M3: przedrostek z M3_ORDER, numer misji albo wydarzenia, reszta nazwy."""
+    for i, prefix in enumerate(M3_ORDER):
+        if group.startswith(prefix):
+            m = re.match(r'(\d*)(.*)', group[len(prefix):])
+            return i, int(m.group(1) or 0), m.group(2)
+    return len(M3_ORDER), 0, group
+
+
+def m3_sources(game, taken):
+    """[(grupa, grafy)] całej gry poza grafami już wziętymi przez M1 i M2 (taken: skróty grafów)."""
+    out = defaultdict(list)
+    for name in sorted(game.files):
+        for gr in game.graphs(name) if name.startswith('d3/') and name not in M3_SKIP else ():
+            group = m3_group(name, gr['owner'])
+            if group and gr['hash'] not in taken:
+                taken.add(gr['hash'])
+                out[group].append(gr)
+    return sorted(out.items(), key=lambda x: m3_rank(x[0]))
 
 
 def var_id(name):
@@ -153,21 +244,27 @@ def sources(game, act1, group):
     return []
 
 
-def destination_keys(game, terms):
-    """(klucz nazwy, klucz opisu) celów aktu 1 z panelu mapy (D55 pkt 5)."""
+def release_acts(release):
+    """Akty gry w wydaniu (pole _act modeli: 0 = akt 1, 1 = akt 2)."""
+    return (0, 1) if release == 'm3' else (0,)
+
+
+def destination_keys(game, terms, acts=(0,)):
+    """(klucz nazwy, klucz opisu) celów z panelu mapy (D55 pkt 5) w podanych aktach."""
     for bundle, cls, name, desc in DESTINATIONS:
         for _, t, c in game.behaviours(bundle):
-            if c == cls and t.get('_act') == 0:
+            if c == cls and t.get('_act') in acts:
                 yield tuple(k if k and (terms.get(k) or {}).get('text') else None for k in (t.get(name), t.get(desc)))
 
 
-def loot_keys(game, terms):
-    """Klucze tekstów listy łupu (D51): szablony z GiveTreasure i nazwy tego, co gra może dać w akcie 1."""
+def loot_keys(game, terms, acts=(0,)):
+    """Klucze tekstów listy łupu (D51): szablony z GiveTreasure i nazwy tego, co gra może dać w podanych aktach."""
     keys = set(LOOT_TEMPLATES) | set(HERO_NAME_KEYS)
-    extra = (b for b in game.files if b.startswith('d3/weapons/') or (b.startswith('d3/heroes/') and not b.endswith('_act2')))
+    extra = (b for b in game.files if b.startswith('d3/weapons/') or
+             (b.startswith('d3/heroes/') and (1 in acts or not b.endswith('_act2'))))
     for bundle in LOOT_BUNDLES + tuple(extra):
         for _, t, cls in game.behaviours(bundle):
-            if cls in LOOT_MODELS and t.get('_act') == 0:
+            if cls in LOOT_MODELS and t.get('_act') in acts:
                 keys |= {k for k in (t.get('KeyName'), t.get('_id')) if k}
     return sorted(k for k in keys if (terms.get(k) or {}).get('text'))
 
@@ -178,8 +275,10 @@ def collect(game, terms, release='m1', only=None):
     extra = [g for g in RELEASE_GROUPS[release] if not only or g in only]
     group_of, refs = {}, defaultdict(list)
     var_keys, name_vars = defaultdict(set), set()
+    taken = set()
 
     def take(gr, group):
+        taken.add(gr['hash'])
         for ln in G.graph_lines(gr, terms):
             group_of.setdefault(ln['key'], group)
             refs[ln['key']].append(ln)
@@ -222,7 +321,7 @@ def collect(game, terms, release='m1', only=None):
         for gr in graphs:
             take(gr, group)
     if 'map' in extra:
-        destinations = list(destination_keys(game, terms))
+        destinations = list(destination_keys(game, terms, release_acts(release)))
         for k in (k for pair in destinations for k in pair if k):
             group_of.setdefault(k, 'map')
         var_keys['destname'] |= {name for name, _ in destinations if name}     # pytanie o cel podróży (GO_TO_DESTINATION)
@@ -235,12 +334,26 @@ def collect(game, terms, release='m1', only=None):
                 take(gr, 'enemies')
         chosen = sorted(set(chosen) | added)
 
+    # M3: reszta gry. Klucze M1 i M2 zachowują kategorię, mówców i grupę z wcześniejszych grafów (te same fragmenty),
+    # a nowe odwołania uzupełniają tylko argumenty luk.
+    m3_order, before = [], {k: list(v) for k, v in refs.items()}
+    if release == 'm3':
+        for group, graphs in m3_sources(game, taken):
+            if only and group not in only:
+                continue
+            m3_order.append(group)
+            extra_graphs += graphs
+            for gr in graphs:
+                take(gr, group)
+        extra_strings |= {s for gr in extra_graphs for s in G.walk_strings(gr['graph']) if UPPER.match(s)}
+        chosen = sorted(enemies)
+
     records = []
     for key, group in group_of.items():
         term = terms.get(key) or {}
         if not term.get('text'):
             continue
-        rs = refs.get(key, [])
+        rs = before.get(key) or refs.get(key, [])
         if group == 'cutscene_01' and not rs:
             cat = 'napisy_cutscenek'
         elif group == 'map':
@@ -258,29 +371,33 @@ def collect(game, terms, release='m1', only=None):
             'hero_variant': sorted({c for r in rs for c in r['conds'] if c.startswith('HERO:')}),
             'role': main.get('role', 'model'), 'node_type': main.get('node_type'),
             'owner': main.get('owner'), 'seq': main.get('seq'),
-            'args': (all_args(rs) if release != 'm1' else merged_args(main, rs)) or CODE_ARGS.get(key, []),
+            'args': (all_args(refs.get(key, [])) if release != 'm1' else merged_args(main, rs)) or CODE_ARGS.get(key, []),
             'tts': 0 if cat == 'napisy_cutscenek' else 1,  # przerywniki mają dubbing (D14)
         })
     by_key = {r['key']: r for r in records}
     for key, twin in CODE_TWINS.items():
         if key in by_key and twin in by_key:
             by_key[key]['args'] = by_key[twin]['args']
-    order = {g: i for i, g in enumerate(GROUPS + RELEASE_GROUPS[release])}
+    order = {g: i for i, g in enumerate(GROUPS + RELEASE_GROUPS[release] + tuple(m3_order))}
     records.sort(key=lambda r: (order[r['group']], r['owner'] or '', r['seq'] if r['seq'] is not None else 1e9, r['key']))
 
     # Inwentarz wartości luk (D16). E1: EntityName to forma pojedyncza nazwy wroga, u bossa z aliasem
     # w nawiasie („ENEMY_…_SING (Q1_BOSS_NAME)”); zmienne tekstowe dostają klucze, najczęściej HERO_*_NAME.
     entity = sorted({k for e in chosen for k in enemies[e]['keys'] if re.match(r'^ENEMY_.*_SING$', k)} |
                     {k for k in E1_ENTITY_NAMES if k in terms})
-    entity += sorted(s for s in q1_strings | extra_strings if re.match(r'^Q\d+_BOSS_NAME$', s) and s in terms)
+    boss = r'^(A\d)?Q\d+_BOSS_NAME$' if release == 'm3' else r'^Q\d+_BOSS_NAME$'
+    entity += sorted(s for s in q1_strings | extra_strings if re.match(boss, s) and s in terms)
+    if release == 'm3':     # cele wszystkich misji obu aktów (A2Q3_…, Q10_…, Q_LISB_…, SQ1_…)
+        objective_keys = {k for k in terms if re.match(r'^(A\d)?S?Q[A-Z0-9_]*_OBJECTIVE', k)}
+    else:
+        objective_keys = {k for k in terms if k.startswith(OBJECTIVE_PREFIXES if extra else 'Q1_OBJECTIVE_')}
     values = {
         'entity': entity + HERO_NAME_KEYS,
         'vars': {v: sorted(k for k in ks if k in terms) for v, ks in var_keys.items()},
         'name_vars': sorted(name_vars),
-        'objectives': sorted({k for k, rs in refs.items() if any(r['role'] == 'objective' for r in rs)} |
-                             {k for k in terms if k.startswith(OBJECTIVE_PREFIXES if extra else 'Q1_OBJECTIVE_')}),
+        'objectives': sorted({k for k, rs in refs.items() if any(r['role'] == 'objective' for r in rs)} | objective_keys),
     }
-    info = {'enemies': chosen, 'q1_graphs': len(q1), 'cutscene_keys': len(cutscene), 'groups': extra}
+    info = {'enemies': chosen, 'q1_graphs': len(q1), 'cutscene_keys': len(cutscene), 'groups': extra + m3_order}
     if release != 'm1':     # VARIABLE_HERO (D17): wersja w głosie każdego bohatera, companion wybiera po mówcy
         records += [dict(r, key='%s#%s' % (r['key'], hero), voice=hero) for r in records
                     if r['category'] == 'dialog' and any(s.startswith('VARIABLE_HERO') for s in r['speakers'])

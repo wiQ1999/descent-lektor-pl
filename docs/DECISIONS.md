@@ -771,7 +771,8 @@ Plan etapów: [PLAN.md](PLAN.md).
 - Następny etap to reszta gry (E14). Najpierw kwestie postaci bez dubbingu w ElevenLabs, potem pozostałe kwestie narratora i postaci z dubbingiem lokalnie w OmniVoice.
 - Generowanie idzie paczkami: w ElevenLabs paczka na postać, w OmniVoice paczka na misję. Postęp pokazuje, ile zrobiono i ile czasu zostało.
 - Złoczyńcy z samymi okrzykami dubbingu (Zachareth, Reneyr, Greysdon, Navoth, Levirax, Gilliam, Vraskhar) dostają klon OmniVoice z okrzyków, jak Ne’Krul i Xenith. ElevenLabs tylko wtedy, gdy klon wypadnie słabo w ocenie użytkownika.
-- Obsada 18 nowych postaci z udziałem użytkownika: jeden opis z portretu i kontekstu kwestii, jeden projekt głosu, 2 losowe fragmenty. Arkusz pokazuje portret, opis i fragmenty, dotychczasowe głosy oraz nowe głosy OmniVoice złoczyńców do decyzji o silniku.
+- Obsada 18 nowych postaci z udziałem użytkownika: jeden opis z portretu i kontekstu kwestii, jeden projekt głosu ElevenLabs, 2 losowe fragmenty. Arkusz pokazuje portret, opis i fragmenty, dotychczasowe głosy oraz głosy OmniVoice nowych postaci i złoczyńców, żeby dla każdej postaci wybrać silnik.
+- Plan E14 zaakceptowany 2026-11-08.
 - Testowy głos Kehli zostaje usunięty z konta ElevenLabs.
 
 **Uzasadnienie:** Wybory użytkownika z QA po szacunku `analysis/E14_NO_DUB_SCOPE.md`: 129,1 tys. znaków postaci bez dubbingu poza M2, w tym 27,5 tys. złoczyńców z okrzykami. Wariant z OmniVoice dla złoczyńców kosztuje ok. 57 tys. kredytów z obsadą i mieści się w 30 miejscach na głosy. Wszystko w ElevenLabs to ok. 74 tys. i 37 miejsc.

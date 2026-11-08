@@ -29,7 +29,8 @@ import zipfile
 from . import paths
 
 NAME = 'Descent-Lektor-PL'
-SCOPES = {'m1': 'M1 (prolog i Q1)', 'm2': 'M2 (prolog, Q1, Q6–Q8, wydarzenia kampanii, podróże aktu 1, miasto)'}
+SCOPES = {'m1': 'M1 (prolog i Q1)', 'm2': 'M2 (prolog, Q1, Q6–Q8, wydarzenia kampanii, podróże aktu 1, miasto)',
+          'm3': 'M3 (cała gra: akty 1 i 2)'}
 SRC = os.path.join(paths.ROOT, 'src', 'bundle')
 PLUGIN_BIN = os.path.join(paths.ROOT, 'build', 'plugin', 'LektorPL.Loader', 'bin', 'Release')
 PLUGIN_FILES = ('LektorPL.Loader.dll', 'LektorPL.Core.dll')

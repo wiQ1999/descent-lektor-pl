@@ -87,6 +87,7 @@ Audio M1 (E3). Generowanie w środowisku OmniVoice (pakiet `lektor` zainstalowan
 ```
 
 Wydanie M2 (E7): te same komendy z `--release m2` (domyślnie `m1`). Baza to `analysis/work/lektor/m2.sqlite`, audio `analysis/work/audio/m2/`, raporty `analysis/E7_DATA.md` i `analysis/E7_AUDIO.md`.
+Cała gra M3 (E14): `--release m3`, baza `m3.sqlite`, audio `audio/m3/`, raporty `analysis/E14_DATA.md` i `analysis/E14_AUDIO.md`. Grupa kwestii to misja albo wydarzenie (`scope.m3_group`), a M3 przejmuje fragmenty z M2 (`paths.PREVIOUS`).
 
 - `build --release m2 --only event_e5b map` buduje tylko wybrane grupy spoza M1.
 - Postacie bez dubbingu (D80, E13) czyta ElevenLabs `eleven_v4`: `eleven --release m1|m2 [--dry-run] [--retake] [--max-credits N]` w `.venv` (płatne, wznawialne). Głosy i `voice_id` są w `direction.ELEVEN_VOICES`. Podejścia mają numery od 101 obok podejść OmniVoice, `select` bierze dla głosu tylko jego silnik. M1 generujemy przed M2, bo M2 przejmuje z M1 fragmenty o tym samym id.
@@ -175,4 +176,5 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 | [analysis/E9_ELEVENLABS.md](analysis/E9_ELEVENLABS.md) | test ElevenLabs (E9): wyniki automatu, koszt na znak, co test zmienił w pomiarze |
 | [analysis/E11_VOICES.md](analysis/E11_VOICES.md) | arkusz głosów (E11): dubbing wobec OmniVoice, warianty ElevenLabs, cztery modele TTS, oceny, stawki, koszt na grupę głosów |
 | [analysis/E13_AUDIO.md](analysis/E13_AUDIO.md) | postacie bez dubbingu w ElevenLabs (E13): koszt, wyniki automatu, ponowne podejścia, porównanie z OmniVoice |
+| [analysis/E14_DATA.md](analysis/E14_DATA.md) | baza kwestii całej gry M3 (E14): liczności według grupy, kategorii i głosu, luki `{n}`, szacunek generowania |
 | [analysis/E14_NO_DUB_SCOPE.md](analysis/E14_NO_DUB_SCOPE.md) | postacie bez dubbingu w całej grze (E14): kwestie poza M2 według mówcy i aktu, koszt ElevenLabs, miejsca na głosy |
