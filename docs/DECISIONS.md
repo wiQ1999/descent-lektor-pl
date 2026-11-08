@@ -896,6 +896,19 @@ Najniższe głosy mogą brzmieć męsko, a o tym rozstrzyga odsłuch.
 
 **Uzasadnienie:** Uwaga użytkownika: B momentami brzmi robotycznie. Niska barwa pasuje, ale głos ma dostać trochę kobiecego charakteru przy tej samej barwie. Przepróbkowanie usuwa przyczynę, zamiast ją maskować. Instrukcja „female” to jedyny sposób w OmniVoice, żeby nadać kobiecy charakter bez zmiany referencji. Model przyjmuje ją razem z klonem, bo opis stylu i referencja to osobne części wejścia.
 
+### D94 · 2026-11-08 · E14: Delphyndra w OmniVoice, obsada A3 zamknięta
+**Decyzja:**
+- Delphyndrę czyta klon OmniVoice `delph_b_jasniej`, czyli próbka A z rundy 9:
+  - referencja to monolog Leviraxa przepróbkowany 3 półtony niżej, transkrypcja bez zmian (`refs9.json`);
+  - instrukcja OmniVoice „female” obok klonu;
+  - tempo 0,85 × wydłużenie referencji 1,189.
+- To wyjątek od D84: jedyna postać bez dubbingu w OmniVoice.
+- Pipeline fazy B dostaje dla głosu instrukcję i mnożnik tempa, które dziś ma tylko `voice_compare_e14.py` (`clone_kw`).
+- Zakres: 16 fragmentów, 1675 znaków, tylko w misji `a2_q6`. Levirax mówi w `a1_q10`, `a2_q7` i `a2_q11`, więc podobne głosy nie spotkają się w jednej scenie.
+- Paczka ElevenLabs fazy B1 bez Delphyndry: 1027 nowych fragmentów, 99,8 tys. znaków (11 głosów E13: 25,4 tys., 17 głosów E14: 74,4 tys.).
+
+**Uzasadnienie:** Ostateczny wybór użytkownika po rundzie 9. Żaden z 6 rund opisów ElevenLabs nie dał głosu smoczycy, a klon Leviraxa z kobiecym charakterem tak.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
