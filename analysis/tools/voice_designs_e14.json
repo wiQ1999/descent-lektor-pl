@@ -1,5 +1,5 @@
 {
- "_info": "E14 (D83): jeden opis głosu na nową postać bez dubbingu, z portretu z gry (d3/storymessagecharacters) i charakteru z jej kwestii. `el` idzie do text_to_voice (MCP), `omni` do projektu OmniVoice (opis płci, wieku i wysokości oraz własne zdanie w stylu postaci, nie tekst gry). Złoczyńcy mają klon OmniVoice z dubbingu, więc tylko `brief`. Głosy mają się różnić od obsady E13 (docs/CASTING.md). Runda 2 (QA 2026-11-08): `el2` to nowy opis po uwadze z arkusza (`qa1`). Runda 3 (QA 2026-11-08): `el3` to trzy wyraźnie różne opisy (a, b, c) po uwadze z rundy 2 (`qa2`); wybrany głos z rundy 2 zapisuje `voice_r2`, wariant złoczyńcy `variant`. Runda 4: `el4` to pięć opisów (a–e) dla Delphyndry (`qa3`). Runda 5: `el5` to pięć opisów głosu głębokiego i chropawego (`qa4`), każdy też z efektem smoka. Runda 6: `el6` to pięć opisów z „wielką, krwiożerczą smoczycą” wprost i kobiecym głosem (`qa5`), bez efektu. Runda 7: mieszanki OmniVoice z Leviraxa i próbki C rundy 6 (`qa6`, refs7.json).",
+ "_info": "E14 (D83): jeden opis głosu na nową postać bez dubbingu, z portretu z gry (d3/storymessagecharacters) i charakteru z jej kwestii. `el` idzie do text_to_voice (MCP), `omni` do projektu OmniVoice (opis płci, wieku i wysokości oraz własne zdanie w stylu postaci, nie tekst gry). Złoczyńcy mają klon OmniVoice z dubbingu, więc tylko `brief`. Głosy mają się różnić od obsady E13 (docs/CASTING.md). Runda 2 (QA 2026-11-08): `el2` to nowy opis po uwadze z arkusza (`qa1`). Runda 3 (QA 2026-11-08): `el3` to trzy wyraźnie różne opisy (a, b, c) po uwadze z rundy 2 (`qa2`); wybrany głos z rundy 2 zapisuje `voice_r2`, wariant złoczyńcy `variant`. Runda 4: `el4` to pięć opisów (a–e) dla Delphyndry (`qa3`). Runda 5: `el5` to pięć opisów głosu głębokiego i chropawego (`qa4`), każdy też z efektem smoka. Runda 6: `el6` to pięć opisów z „wielką, krwiożerczą smoczycą” wprost i kobiecym głosem (`qa5`), bez efektu. Runda 7: mieszanki OmniVoice z Leviraxa i próbki C rundy 6 (`qa6`, refs7.json). Runda 8: nowy profil `brief` z portretu (bestia zamiast ekscentrycznej damy, poprzedni w `brief_r1`), z niego jeden opis `el8` (`qa7`).",
  "magrit": {
   "gender": "female",
   "brief": "dojrzała baronessa w zbroi i płaszczu z futrem, długi ciemny warkocz, skrzyżowane ręce; dowódczyni lojalistów, rzeczowa i zdecydowana, zmęczona wojną",
@@ -138,7 +138,7 @@
  },
  "delphyndra": {
   "gender": "female",
-  "brief": "niebieska smoczyca z monoklem i mechaniczną złotą łapą, ślina kapie z pyska; wynalazczyni, ekscentryczna, zimno ciekawa, mimochodem groźna",
+  "brief": "ogromna, ciężka bestia o granatowych łuskach z jarzącymi się pęknięciami, z czterema rogami, mosiężnym goglem na oku i mechanicznym szponem zamiast łapy; z pyska pełnego krzywych kłów kapie zielona, żrąca ślina. Bardziej zwierzę niż dama: okrutna badaczka, która ogląda ofiary jak preparaty, zanim je zje. Głos zwierzęcy i mroczny: z głębi gardła, mokry od śliny, z warczeniem pod słowami, sapaniem i sykiem przez zęby; kobiecy, ale nieludzki",
   "el": "Native Polish. Female, ageless. Studio quality. Persona: ancient dragon and eccentric inventor with mechanical prosthetics, who treats mortals like lab specimens. Emotion: aloof, clinical curiosity, whimsical, casually menacing. Deep, resonant contralto with the weight of a large creature; crisp, fussy articulation, abrupt shifts of tempo, amused hums.",
   "omni": {
    "instruct": "female, middle-aged, very low pitch",
@@ -203,7 +203,15 @@
    "e": "zimna i inteligentna: niski, złowrogi głos, gadzi syk i mruczenie"
   },
   "qa5": "głosy nie przypominają smoka, część brzmi jak męska; opis ma wprost mówić o wielkiej, krwiożerczej smoczycy",
-  "qa6": "najciekawsza próbka C, ale to wciąż nie to; połączyć głos Leviraxa z próbką C"
+  "qa6": "najciekawsza próbka C, ale to wciąż nie to; połączyć głos Leviraxa z próbką C",
+  "brief_r1": "niebieska smoczyca z monoklem i mechaniczną złotą łapą, ślina kapie z pyska; wynalazczyni, ekscentryczna, zimno ciekawa, mimochodem groźna",
+  "el8": {
+   "a": "An enormous, ancient female dragon, a beast far more animal than human. A slobbering predator with a jaw full of crooked fangs and acid saliva dripping from her mouth. Dark, guttural, inhuman female voice from deep in the throat: wet and gurgling with saliva, a low animal growl rumbling under every word, snarls between phrases, heavy wheezing breath and a hiss through the teeth. Native Polish. A cruel, curious monster who studies her prey like a specimen before eating it; slow, heavy, predatory delivery with sudden snarls and sniffs."
+  },
+  "el8_label": {
+   "a": "bestia z portretu: mokry, gardłowy warkot, ślina, sapanie i syk przez zęby"
+  },
+  "qa7": "głos wciąż kompletnie nie pasuje do postaci; przepisać profil od portretu, głos bardziej zwierzęcy i mroczny; do tego trzy mocno różne klony Leviraxa w OmniVoice"
  },
  "nara": {
   "gender": "female",

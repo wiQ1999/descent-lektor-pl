@@ -31,6 +31,11 @@ Runda 7 (D91): Delphyndra jako mieszanka Leviraxa i próbki C z rundy 6 (klon Om
     <omni> -I analysis/tools/voice_compare_e14.py retake7                   # inne ziarna dla nagrań z błędem automatu
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py score      # potem pick7: najlepsze podejście
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet7     # strona r7n i runda7.html
+Runda 8 (D92): nowy profil `el8` z portretu (bestia) przez MCP do …/delphyndra/design8a/ i trzy różne klony Leviraxa:
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py refs8      # referencje Leviraxa z obróbką (ton, warczenie, syk)
+    <omni> -I analysis/tools/voice_compare_e14.py clone8                    # kwestie Delphyndry z trzech referencji
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py score      # potem retake8, score, pick8 jak w rundzie 7
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet8     # strona r8n i runda8.html
 
 Opisy głosów są w voice_designs_e14.json. Próbki ElevenLabs powstają przez MCP (skill `elevenlabs`):
 text_to_voice z opisem `el` i tekstem `<głos>#design` z lines.json do analysis/work/elevenlabs/audio/e14/<głos>/design/,
@@ -509,9 +514,13 @@ R5_VARIANTS = 'abcde'
 # Runda 6 (D90): opis wprost „wielka, krwiożercza smoczyca”, bez efektu; część głosów z rundy 5 brzmiała jak męskie.
 R6_EL = ('delphyndra',)
 R6_VARIANTS = 'abcde'
-ROUNDS_EL = ((3, R3_EL, R3_VARIANTS), (4, R4_EL, R4_VARIANTS), (5, R5_EL, R5_VARIANTS), (6, R6_EL, R6_VARIANTS))
+# Runda 8 (D92): jeden opis `el8` z nowego profilu (zwierzęca, mroczna bestia); arkusz pokazuje wszystkie trzy podglądy.
+R8_EL = ('delphyndra',)
+R8_VARIANTS = 'a'
+ROUNDS_EL = ((3, R3_EL, R3_VARIANTS), (4, R4_EL, R4_VARIANTS), (5, R5_EL, R5_VARIANTS), (6, R6_EL, R6_VARIANTS),
+             (8, R8_EL, R8_VARIANTS))
 # Zakres i cel F0 (Hz) podglądu: runda 5 głęboko, ale nie męsko (98 Hz z rundy 2); runda 6 wyraźnie kobieco.
-ROUND_F0 = {5: (120, 330, 140), 6: (160, 330, 190)}
+ROUND_F0 = {5: (120, 330, 140), 6: (160, 330, 190), 8: (120, 330, 170)}
 FX = os.path.join(OUT, 'fx')
 DRAGON_FX = {'semitones': -3, 'sub_gain': 0.35, 'sub_hz': 300, 'drive': 3.0, 'grit': 0.35,
              'rt60_s': 1.6, 'reverb': 0.22, 'predelay_s': 0.025}
@@ -629,8 +638,7 @@ DELPHYNDRA_ROUNDS = {
 
 
 def sheet_delphyndra(rnd):
-    """Strona rundy 4 albo 5: opisy Delphyndry na ślepo; dla porównania Levirax (smoczyca z dubbingu)."""
-    import html as H
+    """Strona rundy 4–6: opisy Delphyndry na ślepo; dla porównania Levirax (smoczyca z dubbingu)."""
     cfg = DELPHYNDRA_ROUNDS[rnd]
     lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
     scores = load_json(os.path.join(OUT, 'scores.json'), {})
@@ -651,9 +659,6 @@ def sheet_delphyndra(rnd):
     entry['clips'] = [c for c in entry['clips'] if c['file']]
     page = {'page': page_id, 'title': cfg['title'], 'voices': [entry], 'intro': cfg['intro'],
             'footer': 'Barwa wobec referencji: względem projektu OmniVoice postaci z rundy 1, więc mówi tylko, jak daleko głos jest od niego.'}
-    template = open(os.path.join(ROOT, 'analysis', 'tools', 'voice_compare.html'), encoding='utf-8').read()
-    template = template.replace('href="index.html"', 'href="runda%d.html"' % rnd)
-    nav = [{'page': page_id, 'title': page['title'], 'ratable': sum(c['id'] != 'orig' for c in entry['clips'])}]
     index = {'title': 'E14 · Obsada, runda %d' % rnd, 'file': 'e14r%d_oceny.json' % rnd, 'dir': 'analysis/work/compare/e14/',
              'intro': cfg['index'],
              'notes': ['Każdy opis dał 3 podglądy; arkusz pokazuje jeden według automatu (CER, końcówka, wysokość głosu kobiecego).',
@@ -661,14 +666,24 @@ def sheet_delphyndra(rnd):
     if cfg.get('fx'):
         index['notes'].append('Efekt smoka to obróbka lokalna (bez kredytów). Jeśli go wybierzesz, przed generowaniem dodamy go '
                               'do pipeline’u dla kwestii Delphyndry (osobna decyzja).')
+    write_round(rnd, page, index)
+
+
+def write_round(rnd, page, index):
+    """Strona jednej postaci z szablonu voice_compare.html i spis runda<rnd>.html z plikiem ocen."""
+    import html as H
+    template = open(os.path.join(ROOT, 'analysis', 'tools', 'voice_compare.html'), encoding='utf-8').read()
+    template = template.replace('href="index.html"', 'href="runda%d.html"' % rnd)
+    clips = [c for v in page['voices'] for c in v['clips']]
+    nav = [{'page': page['page'], 'title': page['title'], 'ratable': sum(c['id'] != 'orig' for c in clips)}]
     stage = 'E14R%d' % rnd
     body = json.dumps({'mode': 'page', 'stage': stage, 'data': page, 'nav': nav}, ensure_ascii=False).replace('</', '<\\/')
-    open(os.path.join(OUT, page_id + '.html'), 'w', encoding='utf-8').write(
+    open(os.path.join(OUT, page['page'] + '.html'), 'w', encoding='utf-8').write(
         template.replace('__TITLE__', H.escape('E14 · ' + page['title'])).replace('__DATA__', body))
     body = json.dumps({'mode': 'index', 'stage': stage, 'nav': nav, 'index': index}, ensure_ascii=False).replace('</', '<\\/')
     open(os.path.join(OUT, 'runda%d.html' % rnd), 'w', encoding='utf-8').write(
         template.replace('__TITLE__', H.escape(index['title'])).replace('__DATA__', body))
-    print('nagrania: %d -> %s' % (len(entry['clips']), os.path.join(OUT, 'runda%d.html' % rnd)))
+    print('nagrania: %d -> %s' % (len(clips), os.path.join(OUT, 'runda%d.html' % rnd)))
 
 
 def sheet4():
@@ -745,10 +760,14 @@ def refs7():
 
 
 def clone7():
-    """Kwestie Delphyndry klonem z referencji mieszanych (środowisko OmniVoice)."""
+    clone_refs('refs7.json')
+
+
+def clone_refs(refs_file):
+    """Kwestie Delphyndry klonem z referencji rundy (środowisko OmniVoice)."""
     import npc_voices as N
     lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
-    refs_ = load_json(os.path.join(OMNI, 'refs7.json'))
+    refs_ = load_json(os.path.join(OMNI, refs_file))
     model = N.load_omnivoice()
     prompts = {n: model.create_voice_clone_prompt(os.path.join(ROOT, r['wav']), r['text']) for n, r in refs_.items()}
     N.tokenizer_to_cpu(model)
@@ -760,11 +779,11 @@ def clone7():
                 N.synth(model, wav, f['text'], 1234, voice_clone_prompt=prompts[name], **({'speed': speed} if speed != 1.0 else {}))
 
 
-def flagged7():
-    """Nagrania mieszanek z błędem automatu (CER powyżej progu albo ucięta końcówka): (nazwa, nr fragmentu)."""
+def flagged(refs_file):
+    """Nagrania klonów rundy z błędem automatu (CER powyżej progu albo ucięta końcówka): (nazwa, nr fragmentu)."""
     scores = load_json(os.path.join(OUT, 'scores.json'), {})
     out = []
-    for name, r in load_json(os.path.join(OMNI, 'refs7.json'), {}).items():
+    for name, r in load_json(os.path.join(OMNI, refs_file), {}).items():
         for i in (1, 2):
             s = scores.get('%s|%s|%d' % (r['voice'], name, i))
             if s and (s['cer'] > MAX_CER or s.get('tail_cut')):
@@ -773,14 +792,18 @@ def flagged7():
 
 
 def retake7():
-    """Ponowne podejścia z ziarnami SEEDS dla nagrań z błędem (środowisko OmniVoice)."""
+    retake_refs('refs7.json')
+
+
+def retake_refs(refs_file):
+    """Ponowne podejścia z ziarnami R7_SEEDS dla nagrań z błędem (środowisko OmniVoice)."""
     import npc_voices as N
-    todo = flagged7()
+    todo = flagged(refs_file)
     if not todo:
         print('brak nagrań do poprawy')
         return
     lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
-    refs_ = load_json(os.path.join(OMNI, 'refs7.json'))
+    refs_ = load_json(os.path.join(OMNI, refs_file))
     model = N.load_omnivoice()
     prompts = {n: model.create_voice_clone_prompt(os.path.join(ROOT, refs_[n]['wav']), refs_[n]['text']) for n in {n for n, _ in todo}}
     N.tokenizer_to_cpu(model)
@@ -794,11 +817,15 @@ def retake7():
 
 
 def pick7():
-    """Najlepsze podejście (bez uciętej końcówki, najmniejszy CER) zastępuje nagranie mieszanki; oryginał zostaje jako _s1234."""
+    pick_refs('refs7.json')
+
+
+def pick_refs(refs_file):
+    """Najlepsze podejście (bez uciętej końcówki, najmniejszy CER) zastępuje nagranie klonu; oryginał zostaje jako _s1234."""
     import shutil
     path = os.path.join(OUT, 'scores.json')
     scores = load_json(path, {})
-    for name, i in flagged7():
+    for name, i in flagged(refs_file):
         main = os.path.join(OMNI, 'clips', '%s_%d.wav' % (name, i))
         key = 'delphyndra|%s|%d' % (name, i)
         backup = os.path.join(OMNI, 'clips', '%s_%d_s1234.wav' % (name, i))
@@ -816,9 +843,11 @@ def pick7():
 
 
 def items7():
+    """Nagrania klonów Delphyndry z rund 7 i 8 (z ponownymi podejściami)."""
     lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
     out = []
-    for name, r in load_json(os.path.join(OMNI, 'refs7.json'), {}).items():
+    refs_ = {**load_json(os.path.join(OMNI, 'refs7.json'), {}), **load_json(os.path.join(OMNI, 'refs8.json'), {})}
+    for name, r in refs_.items():
         for i, f in enumerate(lines[r['voice']], 1):
             wav = os.path.join(OMNI, 'clips', '%s_%d.wav' % (name, i))
             if os.path.exists(wav):
@@ -832,7 +861,6 @@ def items7():
 
 def sheet7():
     """Strona rundy 7: cztery mieszanki Levirax + C na ślepo; obie składowe dla porównania."""
-    import html as H
     lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
     scores = load_json(os.path.join(OUT, 'scores.json'), {})
     specs = load_json(DESIGNS)
@@ -868,21 +896,133 @@ def sheet7():
                      'OmniVoice z referencji sklejonej z obu głosów w różnych proporcjach. Oceń A–D, odsłoń etykiety i wybierz '
                      'wariant albo „Żaden”.',
             'footer': 'Barwa wobec referencji: względem projektu OmniVoice postaci z rundy 1, więc mówi tylko, jak daleko głos jest od niego.'}
-    template = open(os.path.join(ROOT, 'analysis', 'tools', 'voice_compare.html'), encoding='utf-8').read()
-    template = template.replace('href="index.html"', 'href="runda7.html"')
-    nav = [{'page': 'r7n', 'title': page['title'], 'ratable': sum(c['id'] != 'orig' for c in entry['clips'])}]
     index = {'title': 'E14 · Obsada, runda 7', 'file': 'e14r7_oceny.json', 'dir': 'analysis/work/compare/e14/',
              'intro': 'Delphyndra jako połączenie głosu Leviraxa z próbką C z rundy 6: cztery proporcje mieszanki.',
              'notes': ['Mieszanki to klon OmniVoice (lokalnie, bez kredytów), a nie ElevenLabs. Wybór mieszanki zmienia silnik '
                        'Delphyndry z ElevenLabs na OmniVoice (wyjątek od D84), co zapiszemy jako decyzję.',
                        'Delphyndra i Levirax będą brzmiały podobnie, bo mieszanka bierze barwę z Leviraxa.']}
-    body = json.dumps({'mode': 'page', 'stage': 'E14R7', 'data': page, 'nav': nav}, ensure_ascii=False).replace('</', '<\\/')
-    open(os.path.join(OUT, 'r7n.html'), 'w', encoding='utf-8').write(
-        template.replace('__TITLE__', H.escape('E14 · ' + page['title'])).replace('__DATA__', body))
-    body = json.dumps({'mode': 'index', 'stage': 'E14R7', 'nav': nav, 'index': index}, ensure_ascii=False).replace('</', '<\\/')
-    open(os.path.join(OUT, 'runda7.html'), 'w', encoding='utf-8').write(
-        template.replace('__TITLE__', H.escape(index['title'])).replace('__DATA__', body))
-    print('nagrania: %d -> %s' % (len(entry['clips']), os.path.join(OUT, 'runda7.html')))
+    write_round(7, page, index)
+
+
+# --- runda 8 (D92): nowy profil z portretu (zwierzęca, mroczna bestia) i trzy wyraźnie różne klony Leviraxa ----------------
+# Klon przejmuje z referencji wysokość, chrypę i syk, więc różnice robimy w referencji: ton, warczenie, syk, inne okrzyki.
+# (nazwa, opis, referencja z refs.json albo refs2.json, obróbka referencji, tempo)
+R8_CLONES = (('delph_lev_olbrzym', 'olbrzymka: monolog Leviraxa 4 półtony niżej (większe gardło), tempo 0,85',
+              'levirax', {'semitones': -4}, 0.85),
+             ('delph_lev_bestia', 'bestia: monolog 2 półtony niżej z warczeniem i mocną chrypą, tempo 0,9',
+              'levirax', {'semitones': -2, 'growl': 0.8}, 0.9),
+             ('delph_lev_gad', 'gadzina: ciche, syczące okrzyki (Spawn 2, Defend 3 i 2) z sykiem, tempo 0,8',
+              'levirax_v2b', {'hiss': 1.0}, 0.8))
+
+
+def growl(y, sr, amount):
+    """Warczenie: warstwa oktawę niżej (pasmo do 400 Hz) i chrypa z npc_voices (modulacja 25–70 Hz, szum, przester)."""
+    import librosa
+    from scipy import signal
+    import npc_voices as N
+    sub = librosa.effects.pitch_shift(y, sr=sr, n_steps=-12)
+    sub = signal.sosfilt(signal.butter(4, 400, 'low', fs=sr, output='sos'), sub)
+    return N.roughen(y + 0.5 * amount * sub, sr, amount)
+
+
+def hiss(y, sr, amount, seed=3):
+    """Syk: szum 3–9 kHz idący za obwiednią głosek szczelinowych i słabsze tchnienie pod całą mową."""
+    import numpy as np
+    from scipy import signal
+    rng = np.random.default_rng(seed)
+    env = lambda x: signal.sosfiltfilt(signal.butter(2, 30, 'low', fs=sr, output='sos'), np.abs(x))
+    sib = env(signal.sosfiltfilt(signal.butter(4, 3500, 'high', fs=sr, output='sos'), y))
+    noise = signal.sosfiltfilt(signal.butter(2, (3000, 9000), 'band', fs=sr, output='sos'), rng.standard_normal(len(y)))
+    noise /= np.abs(noise).max() + 1e-9
+    out = y + noise * (4 * sib + 0.4 * env(y)) * amount
+    return (out * (np.abs(y).max() / (np.abs(out).max() + 1e-9))).astype(np.float32)
+
+
+def refs8():
+    """Referencje trzech klonów: monolog albo okrzyki Leviraxa po obróbce, transkrypcja bez zmian (ta sama mowa)."""
+    import librosa
+    import soundfile as sf
+    from lektor.finalize import level
+    src = {**load_json(os.path.join(OMNI, 'refs.json')), **load_json(os.path.join(OMNI, 'refs2.json'))}
+    out = {}
+    for name, label, source, fx, tempo in R8_CLONES:
+        r = src[source]
+        y, _ = librosa.load(os.path.join(ROOT, r['wav']), sr=R7_SR, mono=True)
+        if fx.get('semitones'):
+            y = librosa.effects.pitch_shift(y, sr=R7_SR, n_steps=fx['semitones'])
+        if fx.get('growl'):
+            y = growl(y, R7_SR, fx['growl'])
+        if fx.get('hiss'):
+            y = hiss(y, R7_SR, fx['hiss'])
+        wav = os.path.join(OMNI, 'refs', name + '.wav')
+        sf.write(wav, level(y, R7_SR)[0], R7_SR, subtype='PCM_16')
+        out[name] = {'voice': 'delphyndra', 'label': label, 'source': source, 'fx': fx, 'wav': paths.rel(wav),
+                     'text': r['text'], 'tempo': tempo, 'seconds': round(len(y) / R7_SR, 2)}
+        print('%-18s %.1f s z %s, %s' % (name, out[name]['seconds'], source, fx))
+    save_json(os.path.join(OMNI, 'refs8.json'), out)
+
+
+def clone8():
+    clone_refs('refs8.json')
+
+
+def retake8():
+    retake_refs('refs8.json')
+
+
+def pick8():
+    pick_refs('refs8.json')
+
+
+def sheet8():
+    """Strona rundy 8: trzy podglądy nowego profilu i trzy klony Leviraxa na ślepo; Levirax dla porównania."""
+    lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
+    scores = load_json(os.path.join(OUT, 'scores.json'), {})
+    specs = load_json(DESIGNS)
+    names = load_json(os.path.join(OUT, 'names.json'), {})
+    v, lev = 'delphyndra', specs['levirax']['variant']
+    clips, dropped = [], []
+    for k, f in enumerate(el_previews3(v, 'a', 8), 1):
+        s = scores.get('%s|preview8a|%s' % (v, os.path.basename(f)))
+        if not s or s.get('tail_cut') or s['cer'] > MAX_CER:
+            dropped.append(preview_id(f))
+            continue
+        clips.append({'label': 'Nowy profil (ElevenLabs), podgląd %d' % k, 'kind': 'el8a', 'metrics': s,
+                      'desc': specs[v]['el8']['a'], 'voice_id': preview_id(f), 'files': [f]})
+    for name, r in load_json(os.path.join(OMNI, 'refs8.json')).items():
+        c = {'label': 'Klon Leviraxa: %s' % r['label'], 'kind': name,
+             'metrics': merged(scores.get('%s|%s|1' % (v, name)), scores.get('%s|%s|2' % (v, name))),
+             'desc': 'OmniVoice, klon z referencji %.1f s po obróbce, tempo %s.' % (r['seconds'], str(r['tempo']).replace('.', ',')),
+             'files': [os.path.join(OMNI, 'clips', '%s_%d.wav' % (name, i)) for i in (1, 2)]}
+        if c['metrics'].get('cer', 0) > MAX_CER:
+            c['desc'] += ' Automat: brakuje słów (CER %.0f%%) mimo %d ponownych podejść z innymi ziarnami.' % (
+                100 * c['metrics']['cer'], len(R7_SEEDS))
+        clips.append(c)
+    random.Random('%d-r8-%s' % (SEED, v)).shuffle(clips)
+    for c, letter in zip(clips, 'ABCDEF'):
+        c['id'] = letter
+    clips.insert(0, {'id': 'orig', 'label': 'Dla porównania: Levirax, smoczyca złoczyńca (klon z dubbingu)', 'kind': 'chosen',
+                     'metrics': {}, 'files': [os.path.join(OMNI, 'clips', '%s_%d.wav' % (lev, i)) for i in (1, 2)]})
+    entry = {'voice': v, 'kind': 'designed', 'clips': clips, 'name': names.get(v, v), 'portrait': portrait_rel(v), 'problems': [],
+             'lines': [f['text'] for f in lines[v]], 'decide': ['Wariant %s' % c['id'] for c in clips[1:]] + ['Żaden'],
+             'brief': 'Nowy profil: %s. Uwaga z rundy 7: %s.' % (specs[v]['brief'], specs[v]['qa7'])}
+    for k, c in enumerate(entry['clips']):
+        files = [f for f in c.pop('files') if f and os.path.exists(f)]
+        c['file'] = glue(files, os.path.join(OUT, 'clips', 'r8n', '%s_%s%d.wav' % (v, c['id'], k))) if files else ''
+    entry['clips'] = [c for c in entry['clips'] if c['file']]
+    page = {'page': 'r8n', 'title': 'Runda 8: Delphyndra, bestia z portretu', 'voices': [entry],
+            'intro': 'Nowy profil z portretu: ciężka bestia z kłami i kapiącą śliną, głos zwierzęcy i mroczny. Na górze Levirax '
+                     'dla porównania. Niżej (kolejność losowa) trzy podglądy ElevenLabs z nowego opisu i trzy klony Leviraxa '
+                     'w OmniVoice: niżej i wolniej, z warczeniem, z sykiem. Oceń, odsłoń etykiety i wybierz wariant albo „Żaden”.',
+            'footer': 'Barwa wobec referencji: względem projektu OmniVoice postaci z rundy 1, więc mówi tylko, jak daleko głos jest od niego.'}
+    index = {'title': 'E14 · Obsada, runda 8', 'file': 'e14r8_oceny.json', 'dir': 'analysis/work/compare/e14/',
+             'intro': 'Delphyndra po rundzie 7: nowy profil z portretu (bestia, nie dama) i trzy wyraźnie różne klony Leviraxa.',
+             'notes': ['Klony Leviraxa to OmniVoice (lokalnie, bez kredytów). Wybór klonu zmienia silnik Delphyndry z ElevenLabs '
+                       'na OmniVoice (wyjątek od D84), co zapiszemy jako decyzję.',
+                       'Podglądy ElevenLabs nie zajmują miejsc na koncie; wybrany zapiszemy w miejsce głosu z rundy 1.']}
+    if dropped:
+        index['notes'].append('Automat odrzucił podglądy: %s (brak słów albo ucięta końcówka).' % ', '.join(dropped))
+    write_round(8, page, index)
 
 
 def sheet3():
@@ -1170,7 +1310,8 @@ if __name__ == '__main__':
                 'clone': clone, 'status': status, 'score': score, 'sheet': sheet, 'refs2': refs2, 'clone2': clone2,
                 'sheet2': sheet2, 'sheet3': sheet3, 'sheet4': sheet4,
                 'fx5': fx5, 'sheet5': sheet5, 'sheet6': sheet6, 'refs7': refs7, 'clone7': clone7, 'retake7': retake7,
-                'pick7': pick7, 'sheet7': sheet7}
+                'pick7': pick7, 'sheet7': sheet7, 'refs8': refs8, 'clone8': clone8, 'retake8': retake8, 'pick8': pick8,
+                'sheet8': sheet8}
     if len(sys.argv) != 2 or sys.argv[1] not in commands:
         raise SystemExit(__doc__)
     sys.stdout.reconfigure(encoding='utf-8')

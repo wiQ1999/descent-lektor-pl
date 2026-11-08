@@ -854,6 +854,29 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Uwaga użytkownika po rundzie 6: próbka C jest najciekawsza, ale to wciąż nie to. Prośba o połączenie jej z głosem Leviraxa. ElevenLabs nie łączy głosów przez MCP, a klon ElevenLabs z nagrań dubbingu wymaga osobnej zgody (prawa do głosu, skill `elevenlabs`). Lokalny klon OmniVoice z dubbingu stosujemy dla złoczyńców od D19 i nie kosztuje kredytów. Mieszanka z przewagą próbki C we wszystkich 7 podejściach pomija dwa krótkie okrzyki we fragmencie 2 (CER 20%). Pozostałe mają CER 0.
 
+### D92 · 2026-11-08 · E14: Delphyndra, runda 8 z nowym profilem i trzema klonami Leviraxa
+**Decyzja:**
+- Profil Delphyndry (`brief` w `voice_designs_e14.json`) piszemy od nowa z portretu. To ciężka bestia, a nie ekscentryczna dama:
+  - krzywe kły, z pyska kapie zielona, żrąca ślina;
+  - mosiężny gogiel na oku i mechaniczny szpon;
+  - głos zwierzęcy i mroczny: gardłowy, mokry od śliny, z warczeniem, sapaniem i sykiem; kobiecy, ale nieludzki.
+- Poprzedni profil zostaje w `brief_r1`.
+- Z nowego profilu powstaje jeden opis `el8` (`text_to_voice`, 243 kredyty). Arkusz pokazuje wszystkie trzy podglądy, bo każdy to inny głos, a automat żadnego nie odrzucił.
+- Trzy klony Leviraxa w OmniVoice różnią się referencją, bo klon przejmuje z niej wysokość, chrypę i syk (`refs8` w `voice_compare_e14.py`):
+  - olbrzymka: monolog 4 półtony niżej, tempo 0,85;
+  - bestia: monolog 2 półtony niżej z warczeniem (warstwa oktawę niżej i chrypa `roughen`), tempo 0,9;
+  - gadzina: ciche, syczące okrzyki z wariantu `levirax_v2b` z dodanym sykiem, tempo 0,8.
+- Nagrania z błędem automatu dostają ponowne podejścia jak w rundzie 7 (`retake8`, `pick8`).
+- Wybór klonu oznacza, że Delphyndrę czyta OmniVoice (wyjątek od D84). Zapiszemy to po wyborze.
+
+**Uzasadnienie:** Uwaga użytkownika po rundzie 7: głos wciąż kompletnie nie pasuje do postaci. Prośba o profil od portretu, głos bardziej zwierzęcy i mroczny oraz trzy mocno różne klony Leviraxa. Stary profil opisywał ekscentryczną wynalazczynię i prowadził opisy ElevenLabs w stronę ludzkiego głosu. Portret pokazuje bestię. Obróbka referencji zamiast gotowego nagrania daje klon z naturalną intonacją. Efekt nałożony po generowaniu w rundzie 5 nie przekonał.
+
+Wyniki automatu: wszystkie sześć wariantów ma CER 0 i nie ma uciętych końcówek. Gadzina potrzebowała ponownego podejścia we fragmencie 1: pierwsze miało CER 14%, wybrane ziarno 17. Mediana F0:
+- podglądy ElevenLabs: 116, 119 i 269 Hz;
+- klony: olbrzymka 90 Hz, bestia 107 Hz (jak Levirax), gadzina 230 Hz.
+
+Najniższe głosy mogą brzmieć męsko, a o tym rozstrzyga odsłuch.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
