@@ -20,6 +20,8 @@ Runda 3 (D87): trzy opisy `el3` (a, b, c) przez MCP do …/<głos>/design3<a|b|c
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet3     # strony r3n, r3w i runda3.html
 Runda 4 (D88): pięć opisów `el4` (a–e) Delphyndry do …/delphyndra/design4<a–e>/, potem `score` i
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet4     # strona r4n i runda4.html
+Runda 5 (D89): pięć opisów `el5` do …/delphyndra/design5<a–e>/, potem `score`, `fx5` (efekt smoka), znowu `score` i
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet5     # strona r5n i runda5.html
 
 Opisy głosów są w voice_designs_e14.json. Próbki ElevenLabs powstają przez MCP (skill `elevenlabs`):
 text_to_voice z opisem `el` i tekstem `<głos>#design` z lines.json do analysis/work/elevenlabs/audio/e14/<głos>/design/,
@@ -490,9 +492,16 @@ R3_VARIANTS = 'abc'
 R3_CER_OK = 0.02            # poniżej tego CER podglądy uznajemy za równe
 R3_F0_TARGET = {'female': 200, 'male': 110}   # niski, ale wyraźnie kobiecy głos (Delphyndra z rundy 2 miała 98 Hz)
 # Runda 4 (D88): Delphyndra nadal nie pasuje, pięć bardzo różnych opisów `el4` (a–e) do …/design4<a–e>/.
+# Runda 5 (D89): pięć opisów `el5` głosu głębokiego i chropawego; obok każdego ta sama próbka z efektem smoka (dragon_fx).
 R4_EL = ('delphyndra',)
 R4_VARIANTS = 'abcde'
-ROUNDS_EL = ((3, R3_EL, R3_VARIANTS), (4, R4_EL, R4_VARIANTS))
+R5_EL = ('delphyndra',)
+R5_VARIANTS = 'abcde'
+ROUNDS_EL = ((3, R3_EL, R3_VARIANTS), (4, R4_EL, R4_VARIANTS), (5, R5_EL, R5_VARIANTS))
+ROUND_F0 = {5: (120, 330, 140)}   # runda 5: głos ma być głęboki, więc niżej niż 200 Hz, ale nie męski (98 Hz z rundy 2)
+FX = os.path.join(OUT, 'fx')
+DRAGON_FX = {'semitones': -3, 'sub_gain': 0.35, 'sub_hz': 300, 'drive': 3.0, 'grit': 0.35,
+             'rt60_s': 1.6, 'reverb': 0.22, 'predelay_s': 0.025}
 
 
 def el_previews3(voice, var, rnd=3):
@@ -501,73 +510,155 @@ def el_previews3(voice, var, rnd=3):
 
 def best_preview3(scores, voice, var, gender, rnd=3):
     lo, hi = F0_RANGE[gender]
+    target = R3_F0_TARGET[gender]
+    if rnd in ROUND_F0:
+        lo, hi, target = ROUND_F0[rnd]
     cands = [(f, scores.get('%s|preview%d%s|%s' % (voice, rnd, var, os.path.basename(f))))
              for f in el_previews3(voice, var, rnd)]
     cands = [(f, s) for f, s in cands if s and 'cer' in s]
     return min(cands, key=lambda c: (bool(c[1].get('tail_cut')), c[1].get('missing', 0) >= 2,
                                      not lo <= (c[1].get('f0') or 0) <= hi, c[1]['cer'] > R3_CER_OK,
-                                     abs((c[1].get('f0') or 0) - R3_F0_TARGET[gender])), default=None)
+                                     abs((c[1].get('f0') or 0) - target)), default=None)
+
+
+def fx_path(voice, rnd, var):
+    return os.path.join(FX, '%s_r%d%s_fx.wav' % (voice, rnd, var))
 
 
 def items3():
     lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
-    return [('%s|preview%d%s|%s' % (v, rnd, var, os.path.basename(f)), v, f, r2_text(lines, v))
-            for rnd, voices, variants in ROUNDS_EL for v in voices for var in variants for f in el_previews3(v, var, rnd)]
+    out = [('%s|preview%d%s|%s' % (v, rnd, var, os.path.basename(f)), v, f, r2_text(lines, v))
+           for rnd, voices, variants in ROUNDS_EL for v in voices for var in variants for f in el_previews3(v, var, rnd)]
+    out += [('%s|fx5%s|1' % (v, var), v, fx_path(v, 5, var), r2_text(lines, v))
+            for v in R5_EL for var in R5_VARIANTS if os.path.exists(fx_path(v, 5, var))]
+    return out
 
 
-def variant_clips(scores, specs, voice, rnd, variants):
-    """Najlepszy podgląd z każdego opisu rundy, na ślepo (litery A… w losowej kolejności)."""
+def dragon_fx(y, sr, p=DRAGON_FX):
+    """Efekt wielkiego smoka: ton niżej z formantami (większe gardło), warstwa basu oktawę niżej, chrypa i pogłos jaskini."""
+    import librosa
+    import numpy as np
+    from scipy import signal
+    main = librosa.effects.pitch_shift(y, sr=sr, n_steps=p['semitones'])
+    sub = librosa.effects.pitch_shift(y, sr=sr, n_steps=-12)
+    sub = signal.sosfilt(signal.butter(4, p['sub_hz'], 'low', fs=sr, output='sos'), sub)
+    x = main + p['sub_gain'] * sub
+    x = (1 - p['grit']) * x + p['grit'] * np.tanh(p['drive'] * x) / np.tanh(p['drive'])
+    n = int(p['rt60_s'] * sr)
+    ir = np.random.default_rng(1).standard_normal(n) * np.exp(-6.9 * np.arange(n) / n)
+    ir = signal.sosfilt(signal.butter(2, 5000, 'low', fs=sr, output='sos'), ir)
+    ir = np.concatenate([np.zeros(int(p['predelay_s'] * sr)), ir / np.sqrt(np.sum(ir ** 2))])
+    wet = signal.fftconvolve(x, ir)[:len(x) + int(0.6 * sr)]
+    out = np.pad(x, (0, len(wet) - len(x))) + p['reverb'] * wet
+    return (0.95 * out / np.max(np.abs(out))).astype(np.float32)
+
+
+def fx5():
+    """Wersje z efektem smoka dla podglądu wybranego z każdego opisu rundy 5."""
+    import librosa
+    import soundfile as sf
+    scores = load_json(os.path.join(OUT, 'scores.json'), {})
+    specs = load_json(DESIGNS)
+    os.makedirs(FX, exist_ok=True)
+    for v in R5_EL:
+        for var in R5_VARIANTS:
+            best = best_preview3(scores, v, var, specs[v]['gender'], 5)
+            dst = fx_path(v, 5, var)
+            if best and not os.path.exists(dst):
+                y, sr = librosa.load(best[0], sr=44100, mono=True)
+                sf.write(dst, dragon_fx(y, sr), sr, subtype='PCM_16')
+                print(v, var, preview_id(best[0]), 'efekt', flush=True)
+
+
+def variant_clips(scores, specs, voice, rnd, variants, fx=False):
+    """Najlepszy podgląd z każdego opisu rundy, na ślepo (litery A… w losowej kolejności); z fx także wersja z efektem."""
     clips = []
     for var in variants:
         best = best_preview3(scores, voice, var, specs[voice]['gender'], rnd)
         if best:
             clips.append({'label': 'Opis %s: %s' % (var, specs[voice]['el%d_label' % rnd][var]), 'kind': 'el%d%s' % (rnd, var),
                           'files': [best[0]], 'metrics': best[1], 'desc': specs[voice]['el%d' % rnd][var],
-                          'voice_id': preview_id(best[0])})
+                          'voice_id': preview_id(best[0]), 'var': var})
     random.Random('%d-r%d-%s' % (SEED, rnd, voice)).shuffle(clips)
+    out = []
     for c, letter in zip(clips, 'ABCDE'):
         c['id'] = letter
-    return clips
+        out.append(c)
+        if fx and os.path.exists(fx_path(voice, rnd, c['var'])):
+            out.append({**c, 'id': letter + '-efekt', 'label': c['label'] + ' + efekt smoka', 'kind': c['kind'] + 'fx',
+                        'files': [fx_path(voice, rnd, c['var'])],
+                        'metrics': scores.get('%s|fx%d%s|1' % (voice, rnd, c['var']), {}),
+                        'desc': 'Efekt: ton niżej o %d półtony, bas oktawę niżej, chrypa i pogłos jaskini. ' % -DRAGON_FX['semitones']
+                                + c['desc']})
+    for c in out:
+        c.pop('var', None)
+    return out
 
 
-def sheet4():
-    """Strona rundy 4: pięć opisów Delphyndry na ślepo; dla porównania Levirax (smoczyca z dubbingu) i Meza."""
+DELPHYNDRA_ROUNDS = {
+    4: {'variants': R4_VARIANTS, 'qa': ('qa3', 3), 'title': 'Runda 4: Delphyndra, pięć wariantów',
+        'intro': 'Pięć bardzo różnych opisów głosu potężnej smoczycy (A–E, kolejność losowa). Każda próbka to podgląd projektu, '
+                 'który czyta oba fragmenty. Na górze Levirax, druga smoczyca w grze, żeby głosy się nie myliły. '
+                 'Oceń A–E, odsłoń etykiety i wybierz wariant albo „Żaden”.',
+        'index': 'Delphyndra po rundzie 3 nadal nie pasuje: pięć bardzo różnych opisów głosu potężnej smoczycy.'},
+    5: {'variants': R5_VARIANTS, 'qa': ('qa4', 4), 'title': 'Runda 5: Delphyndra, głos głęboki i chropawy', 'fx': True,
+        'intro': 'Pięć opisów głębokiego, chropawego głosu smoczycy (A–E, kolejność losowa); każdy także w wersji z efektem smoka '
+                 '(np. „A-efekt”: ton niżej, bas, chrypa, pogłos). Na górze Levirax dla porównania. Oceń próbki, odsłoń etykiety '
+                 'i wybierz wariant albo „Żaden”.',
+        'index': 'Delphyndra po rundzie 4: głos ma być głęboki i chropawy jak smok z filmu. Pięć opisów ElevenLabs, każdy także '
+                 'z efektem smoka zrobionym lokalnie.'},
+}
+
+
+def sheet_delphyndra(rnd):
+    """Strona rundy 4 albo 5: opisy Delphyndry na ślepo; dla porównania Levirax (smoczyca z dubbingu)."""
     import html as H
+    cfg = DELPHYNDRA_ROUNDS[rnd]
     lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
     scores = load_json(os.path.join(OUT, 'scores.json'), {})
     specs = load_json(DESIGNS)
     names = load_json(os.path.join(OUT, 'names.json'), {})
-    v = 'delphyndra'
-    clips = variant_clips(scores, specs, v, 4, R4_VARIANTS)
+    v, page_id = 'delphyndra', 'r%dn' % rnd
+    clips = variant_clips(scores, specs, v, rnd, cfg['variants'], cfg.get('fx', False))
     lev = specs['levirax']['variant']
     clips.insert(0, {'id': 'orig', 'label': 'Dla porównania: Levirax, smoczyca złoczyńca (klon z dubbingu, wybrany w rundzie 2)',
                      'kind': 'chosen', 'metrics': {}, 'files': [os.path.join(OMNI, 'clips', '%s_%d.wav' % (lev, i)) for i in (1, 2)]})
+    qa_key, qa_round = cfg['qa']
     entry = {'voice': v, 'kind': 'designed', 'clips': clips, 'name': names.get(v, v), 'portrait': portrait_rel(v), 'problems': [],
              'lines': [f['text'] for f in lines[v]], 'decide': ['Wariant %s' % c['id'] for c in clips[1:]] + ['Żaden'],
-             'brief': '%s. Uwaga z rundy 3: %s.' % (specs[v]['brief'], specs[v]['qa3'])}
+             'brief': '%s. Uwaga z rundy %d: %s.' % (specs[v]['brief'], qa_round, specs[v][qa_key])}
     for c in entry['clips']:
         files = [f for f in c.pop('files') if f and os.path.exists(f)]
-        c['file'] = glue(files, os.path.join(OUT, 'clips', 'r4n', '%s_%s.wav' % (v, c['id']))) if files else ''
+        c['file'] = glue(files, os.path.join(OUT, 'clips', page_id, '%s_%s.wav' % (v, c['id']))) if files else ''
     entry['clips'] = [c for c in entry['clips'] if c['file']]
-    page = {'page': 'r4n', 'title': 'Runda 4: Delphyndra, pięć wariantów', 'voices': [entry],
-            'intro': 'Pięć bardzo różnych opisów głosu potężnej smoczycy (A–E, kolejność losowa). Każda próbka to podgląd projektu, '
-                     'który czyta oba fragmenty. Na górze Levirax, druga smoczyca w grze, żeby głosy się nie myliły. '
-                     'Oceń A–E, odsłoń etykiety i wybierz wariant albo „Żaden”.',
+    page = {'page': page_id, 'title': cfg['title'], 'voices': [entry], 'intro': cfg['intro'],
             'footer': 'Barwa wobec referencji: względem projektu OmniVoice postaci z rundy 1, więc mówi tylko, jak daleko głos jest od niego.'}
     template = open(os.path.join(ROOT, 'analysis', 'tools', 'voice_compare.html'), encoding='utf-8').read()
-    template = template.replace('href="index.html"', 'href="runda4.html"')
-    nav = [{'page': 'r4n', 'title': page['title'], 'ratable': sum(c['id'] != 'orig' for c in entry['clips'])}]
-    index = {'title': 'E14 · Obsada, runda 4', 'file': 'e14r4_oceny.json', 'dir': 'analysis/work/compare/e14/',
-             'intro': 'Delphyndra po rundzie 3 nadal nie pasuje: pięć bardzo różnych opisów głosu potężnej smoczycy.',
+    template = template.replace('href="index.html"', 'href="runda%d.html"' % rnd)
+    nav = [{'page': page_id, 'title': page['title'], 'ratable': sum(c['id'] != 'orig' for c in entry['clips'])}]
+    index = {'title': 'E14 · Obsada, runda %d' % rnd, 'file': 'e14r%d_oceny.json' % rnd, 'dir': 'analysis/work/compare/e14/',
+             'intro': cfg['index'],
              'notes': ['Każdy opis dał 3 podglądy; arkusz pokazuje jeden według automatu (CER, końcówka, wysokość głosu kobiecego).',
                        'Podglądy nie zajmują miejsc na koncie. Wybrany wariant zapiszemy w miejsce głosu z rundy 1.']}
-    body = json.dumps({'mode': 'page', 'stage': 'E14R4', 'data': page, 'nav': nav}, ensure_ascii=False).replace('</', '<\\/')
-    open(os.path.join(OUT, 'r4n.html'), 'w', encoding='utf-8').write(
+    if cfg.get('fx'):
+        index['notes'].append('Efekt smoka to obróbka lokalna (bez kredytów). Jeśli go wybierzesz, przed generowaniem dodamy go '
+                              'do pipeline’u dla kwestii Delphyndry (osobna decyzja).')
+    stage = 'E14R%d' % rnd
+    body = json.dumps({'mode': 'page', 'stage': stage, 'data': page, 'nav': nav}, ensure_ascii=False).replace('</', '<\\/')
+    open(os.path.join(OUT, page_id + '.html'), 'w', encoding='utf-8').write(
         template.replace('__TITLE__', H.escape('E14 · ' + page['title'])).replace('__DATA__', body))
-    body = json.dumps({'mode': 'index', 'stage': 'E14R4', 'nav': nav, 'index': index}, ensure_ascii=False).replace('</', '<\\/')
-    open(os.path.join(OUT, 'runda4.html'), 'w', encoding='utf-8').write(
+    body = json.dumps({'mode': 'index', 'stage': stage, 'nav': nav, 'index': index}, ensure_ascii=False).replace('</', '<\\/')
+    open(os.path.join(OUT, 'runda%d.html' % rnd), 'w', encoding='utf-8').write(
         template.replace('__TITLE__', H.escape(index['title'])).replace('__DATA__', body))
-    print('nagrania: %d -> %s' % (len(entry['clips']), os.path.join(OUT, 'runda4.html')))
+    print('nagrania: %d -> %s' % (len(entry['clips']), os.path.join(OUT, 'runda%d.html' % rnd)))
+
+
+def sheet4():
+    sheet_delphyndra(4)
+
+
+def sheet5():
+    sheet_delphyndra(5)
 
 
 def sheet3():
@@ -853,7 +944,8 @@ def sheet():
 if __name__ == '__main__':
     commands = {'portrait': portrait, 'context': context, 'pick': pick, 'refs': refs, 'design': design, 'choose': choose,
                 'clone': clone, 'status': status, 'score': score, 'sheet': sheet, 'refs2': refs2, 'clone2': clone2,
-                'sheet2': sheet2, 'sheet3': sheet3, 'sheet4': sheet4}
+                'sheet2': sheet2, 'sheet3': sheet3, 'sheet4': sheet4,
+                'fx5': fx5, 'sheet5': sheet5}
     if len(sys.argv) != 2 or sys.argv[1] not in commands:
         raise SystemExit(__doc__)
     sys.stdout.reconfigure(encoding='utf-8')

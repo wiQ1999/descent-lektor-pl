@@ -424,7 +424,8 @@ Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci 
   - Runda 2 oceniona 2026-11-08 (D87): przyjęci Waiqar i Morant (nowe głosy, stare usunięte) oraz Levirax `v2a` i Gilliam `v2b`.
   - Runda 3 gotowa 2026-11-08 (`runda3.html`, oceny w `e14r3_oceny.json`): Delphyndra, Nara i Meza po 3 różne opisy (ok. 2 tys. kredytów).
   - Runda 3 oceniona 2026-11-08 (D88): przyjęte Nara i Meza (nowe głosy, stare usunięte).
-  - Runda 4 gotowa 2026-11-08 (`runda4.html`, oceny w `e14r4_oceny.json`): Delphyndra, 5 bardzo różnych opisów (ok. 1,2 tys. kredytów). Czeka na Twoją ocenę.
+  - Runda 4 gotowa 2026-11-08 (`runda4.html`, oceny w `e14r4_oceny.json`): Delphyndra, 5 bardzo różnych opisów (ok. 1,2 tys. kredytów). Żaden nie pasował.
+  - Runda 5 gotowa 2026-11-08 (`runda5.html`, oceny w `e14r5_oceny.json`, D89): Delphyndra, 5 opisów głosu głębokiego i chropawego, każdy też z lokalnym efektem smoka (ok. 1,2 tys. kredytów). Czeka na Twoją ocenę.
 - A4: komunikaty gry w kwestiach postaci czyta narrator, a tekst wielkimi literami nie znika (D85). Baza `m3` przebudowana: 126 kwestii zmienionych, 17 968 fragmentów.
 - A5: wstawki sceniczne w kwestiach zebrane do E15 (D86, `analysis/E14_INSERTS.md`).
 

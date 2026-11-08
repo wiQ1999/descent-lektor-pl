@@ -821,6 +821,18 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Oceny użytkownika z arkusza `e14r3_oceny.json`. Delphyndra nadal nie pasuje, a głos ma przypominać potężnego smoka płci żeńskiej. Koszt rundy 4: 5 projektów, ok. 1,2 tys. kredytów.
 
+### D89 · 2026-11-08 · E14: Delphyndra, runda 5 z efektem smoka
+**Decyzja:**
+- Runda 5 dla Delphyndry: pięć opisów głosu głębokiego i chropawego (`el5` a–e). Arkusz bierze z każdego opisu podgląd z F0 najbliżej 140 Hz, nie niżej niż 120 Hz.
+- Obok każdego wariantu jest ta sama próbka z efektem smoka zrobionym lokalnie (`dragon_fx` w `voice_compare_e14.py`):
+  - ton niżej o 3 półtony razem z formantami;
+  - bas oktawę niżej pod filtrem 300 Hz;
+  - chrypa z nasycenia;
+  - pogłos jaskini 1,6 s.
+- Jeśli wygra wersja z efektem, dodanie efektu do pipeline’u dla kwestii Delphyndry będzie osobną decyzją przed generowaniem.
+
+**Uzasadnienie:** Uwaga użytkownika po rundzie 4: głos ma być głęboki i chropawy, podobny do smoka z filmu „Hobbit”. Taki głos w filmie powstał z obróbki dźwięku. Projekt głosu ElevenLabs przy bardzo niskim tonie daje głos męski (98 Hz w rundzie 2), więc niski ton uzyskujemy też efektem, a nie tylko opisem. Koszt rundy 5: 5 projektów, ok. 1,2 tys. kredytów. Efekt nie kosztuje kredytów, a automat ma po nim CER ≤ 0,4%.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

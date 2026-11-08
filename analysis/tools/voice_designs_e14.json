@@ -1,5 +1,5 @@
 {
- "_info": "E14 (D83): jeden opis głosu na nową postać bez dubbingu, z portretu z gry (d3/storymessagecharacters) i charakteru z jej kwestii. `el` idzie do text_to_voice (MCP), `omni` do projektu OmniVoice (opis płci, wieku i wysokości oraz własne zdanie w stylu postaci, nie tekst gry). Złoczyńcy mają klon OmniVoice z dubbingu, więc tylko `brief`. Głosy mają się różnić od obsady E13 (docs/CASTING.md). Runda 2 (QA 2026-11-08): `el2` to nowy opis po uwadze z arkusza (`qa1`). Runda 3 (QA 2026-11-08): `el3` to trzy wyraźnie różne opisy (a, b, c) po uwadze z rundy 2 (`qa2`); wybrany głos z rundy 2 zapisuje `voice_r2`, wariant złoczyńcy `variant`. Runda 4: `el4` to pięć opisów (a–e) dla Delphyndry (`qa3`).",
+ "_info": "E14 (D83): jeden opis głosu na nową postać bez dubbingu, z portretu z gry (d3/storymessagecharacters) i charakteru z jej kwestii. `el` idzie do text_to_voice (MCP), `omni` do projektu OmniVoice (opis płci, wieku i wysokości oraz własne zdanie w stylu postaci, nie tekst gry). Złoczyńcy mają klon OmniVoice z dubbingu, więc tylko `brief`. Głosy mają się różnić od obsady E13 (docs/CASTING.md). Runda 2 (QA 2026-11-08): `el2` to nowy opis po uwadze z arkusza (`qa1`). Runda 3 (QA 2026-11-08): `el3` to trzy wyraźnie różne opisy (a, b, c) po uwadze z rundy 2 (`qa2`); wybrany głos z rundy 2 zapisuje `voice_r2`, wariant złoczyńcy `variant`. Runda 4: `el4` to pięć opisów (a–e) dla Delphyndry (`qa3`). Runda 5: `el5` to pięć opisów głosu głębokiego i chropawego (`qa4`), każdy też z efektem smoka.",
  "magrit": {
   "gender": "female",
   "brief": "dojrzała baronessa w zbroi i płaszczu z futrem, długi ciemny warkocz, skrzyżowane ręce; dowódczyni lojalistów, rzeczowa i zdecydowana, zmęczona wojną",
@@ -172,7 +172,22 @@
    "d": "smocza cesarzowa: podniosły, donośny głos z echem sali",
    "e": "ogień i dym: trzaskający, zadymiony głos z sapnięciami"
   },
-  "qa3": "wciąż nie pasuje; ma przypominać potężnego smoka płci żeńskiej"
+  "qa3": "wciąż nie pasuje; ma przypominać potężnego smoka płci żeńskiej",
+  "el5": {
+   "a": "Native Polish. Female, ancient. Persona: colossal ancient dragoness lying on a mountain of gold in a dark cavern. Very deep, rough, gravelly female voice, the lowest a woman can speak, with a rumbling, resonant chest and a dry rasp like grinding stones; slow and deliberate, savouring every word, quiet menace that swells into thunder. Emotion: arrogant, vain, amused, deadly.",
+   "b": "Native Polish. Female, 50-60. Persona: huge dragoness whose throat is scorched by centuries of fire. Very deep, husky, raspy female voice with heavy vocal fry and a crackling, smoky texture, half whisper and half growl, breath hissing out between words. Emotion: sly, menacing, mocking. Slow, low and intimate, like a predator speaking right next to you.",
+   "c": "Native Polish. Female, 40-50. Persona: enormous, terrifying she-dragon. Booming, thunderous, very deep female voice with coarse gravel in every word and a growl at the end of phrases, huge chest resonance, loud and overwhelming, as if the cave walls shake. Emotion: proud, wrathful, contemptuous. Heavy, slow, powerful delivery.",
+   "d": "Native Polish. Female, ageless. Persona: vast ancient dragoness, a cunning predator. Deep, dark, gravelly purr of a voice: a low rumbling growl constantly under the words, rough and grainy texture, long hissing sibilants. Emotion: amused, seductive menace, cold curiosity. Slow, rolling, unhurried delivery with drawn-out vowels.",
+   "e": "Native Polish. Female, very old. Persona: ancient dragon crone, older than kingdoms. Very deep, cracked, gravelly and croaking female voice, rough as bark, with wheezing breaths and a rattling rumble in the throat. Emotion: eccentric, curious, darkly amused. Slow, creaking delivery with sudden sharp words."
+  },
+  "el5_label": {
+   "a": "smoczyca na złocie: najniższy kobiecy głos, zgrzyt kamieni",
+   "b": "spalone gardło: chrypa, trzeszczenie, pół szeptu i pół warczenia",
+   "c": "grzmiąca: donośna, żwirowa, warczy na końcu fraz",
+   "d": "mruczący drapieżnik: stałe niskie warczenie pod słowami, syk",
+   "e": "pradawna starucha: popękany, skrzeczący głos, rzężący oddech"
+  },
+  "qa4": "głos ma być głęboki i chropawy, jak smok z filmu Hobbit"
  },
  "nara": {
   "gender": "female",
