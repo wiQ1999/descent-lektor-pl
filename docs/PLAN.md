@@ -426,7 +426,8 @@ Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci 
   - Runda 3 oceniona 2026-11-08 (D88): przyjęte Nara i Meza (nowe głosy, stare usunięte).
   - Runda 4 gotowa 2026-11-08 (`runda4.html`, oceny w `e14r4_oceny.json`): Delphyndra, 5 bardzo różnych opisów (ok. 1,2 tys. kredytów). Żaden nie pasował.
   - Runda 5 gotowa 2026-11-08 (`runda5.html`, oceny w `e14r5_oceny.json`, D89): Delphyndra, 5 opisów głosu głębokiego i chropawego, każdy też z lokalnym efektem smoka (ok. 1,2 tys. kredytów). Głosy nie przypominały smoka, część brzmiała jak męska.
-  - Runda 6 gotowa 2026-11-08 (`runda6.html`, oceny w `e14r6_oceny.json`, D90): Delphyndra, 5 opisów z „wielką, krwiożerczą smoczycą” wprost i wyraźnie kobiecym głosem, bez efektu (ok. 1,2 tys. kredytów). Czeka na Twoją ocenę.
+  - Runda 6 gotowa 2026-11-08 (`runda6.html`, oceny w `e14r6_oceny.json`, D90): Delphyndra, 5 opisów z „wielką, krwiożerczą smoczycą” wprost i wyraźnie kobiecym głosem, bez efektu (ok. 1,2 tys. kredytów). Najciekawsza próbka C, ale wciąż nie to.
+  - Runda 7 gotowa 2026-11-08 (`runda7.html`, oceny w `e14r7_oceny.json`, D91): Delphyndra jako mieszanka Leviraxa i próbki C, 4 proporcje klonu OmniVoice (bez kredytów). Czeka na Twoją ocenę.
 - A4: komunikaty gry w kwestiach postaci czyta narrator, a tekst wielkimi literami nie znika (D85). Baza `m3` przebudowana: 126 kwestii zmienionych, 17 968 fragmentów.
 - A5: wstawki sceniczne w kwestiach zebrane do E15 (D86, `analysis/E14_INSERTS.md`).
 

@@ -24,6 +24,13 @@ Runda 5 (D89): pięć opisów `el5` do …/delphyndra/design5<a–e>/, potem `sc
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet5     # strona r5n i runda5.html
 Runda 6 (D90): pięć opisów `el6` (wielka, krwiożercza smoczyca, bez efektu) do …/delphyndra/design6<a–e>/, `score` i
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet6     # strona r6n i runda6.html
+Runda 7 (D91): Delphyndra jako mieszanka Leviraxa i próbki C z rundy 6 (klon OmniVoice):
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py refs7      # referencje mieszane (Whisper, granice słów)
+    <omni> -I analysis/tools/voice_compare_e14.py clone7                    # kwestie Delphyndry z mieszanek
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py score      # ocenia też mieszanki
+    <omni> -I analysis/tools/voice_compare_e14.py retake7                   # inne ziarna dla nagrań z błędem automatu
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py score      # potem pick7: najlepsze podejście
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet7     # strona r7n i runda7.html
 
 Opisy głosów są w voice_designs_e14.json. Próbki ElevenLabs powstają przez MCP (skill `elevenlabs`):
 text_to_voice z opisem `el` i tekstem `<głos>#design` z lines.json do analysis/work/elevenlabs/audio/e14/<głos>/design/,
@@ -676,6 +683,208 @@ def sheet6():
     sheet_delphyndra(6)
 
 
+# --- runda 7 (D91): Delphyndra jako połączenie Leviraxa i próbki C z rundy 6 ----------------------------------------------
+# Referencja OmniVoice to sklejka: początek monologu Leviraxa (klon z dubbingu) i początek podglądu C (ElevenLabs),
+# oba przycięte na granicy słowa, z transkrypcją z tych samych wycinków. Proporcja części decyduje o barwie.
+R7_SOURCE = ('el6', 'a')        # próbka C z rundy 6 to opis el6 a
+# (nazwa, opis, najdłuższy wycinek Leviraxa s, najdłuższy wycinek próbki C s, tempo); monolog ma pauzę 4,6–5,2 s.
+R7_MIXES = (('delph_mix_l', 'więcej Leviraxa', 7.5, 2.8, 1.0),
+            ('delph_mix_eq', 'po równo', 5.0, 5.0, 1.0),
+            ('delph_mix_c', 'więcej próbki C', 3.5, 6.5, 1.0),
+            ('delph_mix_eq_slow', 'po równo, tempo 0,85 jak wybrany Levirax (przeciągane końcówki)', 5.0, 5.0, 0.85))
+R7_SR = 24000
+R7_SEEDS = SEEDS + (41, 53, 67)   # ponowne podejścia mieszanek: kolejne ziarna, gdy pierwsze trzy zawiodą
+
+
+def r7_preview():
+    scores = load_json(os.path.join(OUT, 'scores.json'), {})
+    return best_preview3(scores, 'delphyndra', R7_SOURCE[1], 'female', 6)[0]
+
+
+def word_cut(asr, y, sr, seconds):
+    """Wycinek od początku do końca ostatniego słowa, które kończy się przed `seconds`, i jego transkrypcja."""
+    import librosa
+    y16 = librosa.resample(y, orig_sr=sr, target_sr=16000)
+    out = asr({'raw': y16, 'sampling_rate': 16000}, return_timestamps='word',
+              generate_kwargs={'language': 'polish', 'task': 'transcribe'})
+    words_ = [c for c in out['chunks'] if c['timestamp'][1] is not None and c['timestamp'][1] <= seconds]
+    if not words_:
+        raise SystemExit('za krótki wycinek: %.1f s' % seconds)
+    end = words_[-1]['timestamp'][1]
+    nxt = [c['timestamp'][0] for c in out['chunks'] if c['timestamp'][0] is not None and c['timestamp'][0] >= end]
+    end = min(end + 0.08, nxt[0]) if nxt else end + 0.08
+    return y[:int(end * sr)], ''.join(c['text'] for c in words_).strip()
+
+
+def refs7():
+    """Referencje mieszane Levirax + próbka C (Whisper ze znacznikami słów, głośność wyrównana)."""
+    import librosa
+    import numpy as np
+    import soundfile as sf
+    from lektor.finalize import level
+    import npc_voices as N
+    lev = load_json(os.path.join(OMNI, 'refs.json'))['levirax']
+    y_l, _ = librosa.load(os.path.join(ROOT, lev['wav']), sr=R7_SR, mono=True)
+    y_c, _ = librosa.load(r7_preview(), sr=R7_SR, mono=True)
+    y_c, _ = librosa.effects.trim(y_c, top_db=40)
+    asr = N.load_asr()
+    out = {}
+    os.makedirs(os.path.join(OMNI, 'refs'), exist_ok=True)
+    for name, label, sec_l, sec_c, tempo in R7_MIXES:
+        a, t_a = word_cut(asr, y_l, R7_SR, sec_l)
+        b, t_b = word_cut(asr, y_c, R7_SR, sec_c)
+        y = np.concatenate([level(a, R7_SR)[0], np.zeros(int(MIX_GAP_S * R7_SR), np.float32), level(b, R7_SR)[0]])
+        wav = os.path.join(OMNI, 'refs', name + '.wav')
+        sf.write(wav, y, R7_SR, subtype='PCM_16')
+        out[name] = {'voice': 'delphyndra', 'label': label, 'wav': paths.rel(wav), 'text': t_a + ' ' + t_b, 'tempo': tempo,
+                     'seconds': round(len(y) / R7_SR, 2), 'parts_s': [round(len(a) / R7_SR, 2), round(len(b) / R7_SR, 2)],
+                     'preview': preview_id(r7_preview())}
+        print('%-18s %.1f s (Levirax %.1f s + C %.1f s), słów %d' % (name, out[name]['seconds'], *out[name]['parts_s'],
+                                                                     len(out[name]['text'].split())))
+    save_json(os.path.join(OMNI, 'refs7.json'), out)
+
+
+def clone7():
+    """Kwestie Delphyndry klonem z referencji mieszanych (środowisko OmniVoice)."""
+    import npc_voices as N
+    lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
+    refs_ = load_json(os.path.join(OMNI, 'refs7.json'))
+    model = N.load_omnivoice()
+    prompts = {n: model.create_voice_clone_prompt(os.path.join(ROOT, r['wav']), r['text']) for n, r in refs_.items()}
+    N.tokenizer_to_cpu(model)
+    for name, r in refs_.items():
+        for i, f in enumerate(lines[r['voice']], 1):
+            wav = os.path.join(OMNI, 'clips', '%s_%d.wav' % (name, i))
+            if not os.path.exists(wav):
+                speed = (f.get('speed') or 1.0) * r['tempo']
+                N.synth(model, wav, f['text'], 1234, voice_clone_prompt=prompts[name], **({'speed': speed} if speed != 1.0 else {}))
+
+
+def flagged7():
+    """Nagrania mieszanek z błędem automatu (CER powyżej progu albo ucięta końcówka): (nazwa, nr fragmentu)."""
+    scores = load_json(os.path.join(OUT, 'scores.json'), {})
+    out = []
+    for name, r in load_json(os.path.join(OMNI, 'refs7.json'), {}).items():
+        for i in (1, 2):
+            s = scores.get('%s|%s|%d' % (r['voice'], name, i))
+            if s and (s['cer'] > MAX_CER or s.get('tail_cut')):
+                out.append((name, i))
+    return out
+
+
+def retake7():
+    """Ponowne podejścia z ziarnami SEEDS dla nagrań z błędem (środowisko OmniVoice)."""
+    import npc_voices as N
+    todo = flagged7()
+    if not todo:
+        print('brak nagrań do poprawy')
+        return
+    lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
+    refs_ = load_json(os.path.join(OMNI, 'refs7.json'))
+    model = N.load_omnivoice()
+    prompts = {n: model.create_voice_clone_prompt(os.path.join(ROOT, refs_[n]['wav']), refs_[n]['text']) for n in {n for n, _ in todo}}
+    N.tokenizer_to_cpu(model)
+    for name, i in todo:
+        r, f = refs_[name], lines[refs_[name]['voice']][i - 1]
+        speed = (f.get('speed') or 1.0) * r['tempo']
+        for seed in R7_SEEDS:
+            wav = os.path.join(OMNI, 'clips', '%s_%d_s%d.wav' % (name, i, seed))
+            if not os.path.exists(wav):
+                N.synth(model, wav, f['text'], seed, voice_clone_prompt=prompts[name], **({'speed': speed} if speed != 1.0 else {}))
+
+
+def pick7():
+    """Najlepsze podejście (bez uciętej końcówki, najmniejszy CER) zastępuje nagranie mieszanki; oryginał zostaje jako _s1234."""
+    import shutil
+    path = os.path.join(OUT, 'scores.json')
+    scores = load_json(path, {})
+    for name, i in flagged7():
+        main = os.path.join(OMNI, 'clips', '%s_%d.wav' % (name, i))
+        key = 'delphyndra|%s|%d' % (name, i)
+        backup = os.path.join(OMNI, 'clips', '%s_%d_s1234.wav' % (name, i))
+        if not os.path.exists(backup):
+            shutil.copyfile(main, backup)
+        cands = [(backup, scores.get(key + '|s1234') or scores[key])]
+        cands += [(os.path.join(OMNI, 'clips', '%s_%d_s%d.wav' % (name, i, s)), scores.get('%s|s%d' % (key, s))) for s in R7_SEEDS]
+        cands = [(f, s) for f, s in cands if s and os.path.exists(f)]
+        best = min(cands, key=lambda c: (bool(c[1].get('tail_cut')), c[1]['cer']))
+        scores.setdefault(key + '|s1234', scores[key])
+        shutil.copyfile(best[0], main)
+        scores[key] = best[1]
+        print('%-18s fragment %d: %s, CER %.3f' % (name, i, os.path.basename(best[0]), best[1]['cer']))
+    save_json(path, scores)
+
+
+def items7():
+    lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
+    out = []
+    for name, r in load_json(os.path.join(OMNI, 'refs7.json'), {}).items():
+        for i, f in enumerate(lines[r['voice']], 1):
+            wav = os.path.join(OMNI, 'clips', '%s_%d.wav' % (name, i))
+            if os.path.exists(wav):
+                out.append(('%s|%s|%d' % (r['voice'], name, i), r['voice'], wav, f['text']))
+            for seed in R7_SEEDS:
+                alt = os.path.join(OMNI, 'clips', '%s_%d_s%d.wav' % (name, i, seed))
+                if os.path.exists(alt):
+                    out.append(('%s|%s|%d|s%d' % (r['voice'], name, i, seed), r['voice'], alt, f['text']))
+    return out
+
+
+def sheet7():
+    """Strona rundy 7: cztery mieszanki Levirax + C na ślepo; obie składowe dla porównania."""
+    import html as H
+    lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
+    scores = load_json(os.path.join(OUT, 'scores.json'), {})
+    specs = load_json(DESIGNS)
+    names = load_json(os.path.join(OUT, 'names.json'), {})
+    refs_ = load_json(os.path.join(OMNI, 'refs7.json'))
+    v, lev = 'delphyndra', specs['levirax']['variant']
+    clips = [{'label': 'Mieszanka: %s' % r['label'], 'kind': name,
+              'metrics': merged(scores.get('%s|%s|1' % (v, name)), scores.get('%s|%s|2' % (v, name))),
+              'desc': 'OmniVoice, klon z referencji %.1f s: Levirax %.1f s + próbka C %.1f s, tempo %s.'
+                      % (r['seconds'], r['parts_s'][0], r['parts_s'][1], str(r['tempo']).replace('.', ',')),
+              'files': [os.path.join(OMNI, 'clips', '%s_%d.wav' % (name, i)) for i in (1, 2)]} for name, r in refs_.items()]
+    for c in clips:
+        if c['metrics'].get('cer', 0) > MAX_CER:
+            c['desc'] += ' Automat: brakuje słów (CER %.0f%%) mimo %d ponownych podejść z innymi ziarnami.' % (
+                100 * c['metrics']['cer'], len(R7_SEEDS))
+    random.Random('%d-r7-%s' % (SEED, v)).shuffle(clips)
+    for c, letter in zip(clips, 'ABCD'):
+        c['id'] = letter
+    c_preview = best_preview3(scores, v, R7_SOURCE[1], 'female', 6)
+    clips = [{'id': 'orig', 'label': 'Składowa 1: Levirax, smoczyca złoczyńca (klon z dubbingu)', 'kind': 'chosen', 'metrics': {},
+              'files': [os.path.join(OMNI, 'clips', '%s_%d.wav' % (lev, i)) for i in (1, 2)]},
+             {'id': 'orig', 'label': 'Składowa 2: próbka C z rundy 6 (ElevenLabs, opis el6 a)', 'kind': 'el6a',
+              'metrics': c_preview[1], 'files': [c_preview[0]]}] + clips
+    entry = {'voice': v, 'kind': 'designed', 'clips': clips, 'name': names.get(v, v), 'portrait': portrait_rel(v), 'problems': [],
+             'lines': [f['text'] for f in lines[v]], 'decide': ['Wariant %s' % c['id'] for c in clips[2:]] + ['Żaden'],
+             'brief': '%s. Uwaga z rundy 6: %s.' % (specs[v]['brief'], specs[v]['qa6'])}
+    for k, c in enumerate(entry['clips']):
+        files = [f for f in c.pop('files') if f and os.path.exists(f)]
+        c['file'] = glue(files, os.path.join(OUT, 'clips', 'r7n', '%s_%s%d.wav' % (v, c['id'], k))) if files else ''
+    entry['clips'] = [c for c in entry['clips'] if c['file']]
+    page = {'page': 'r7n', 'title': 'Runda 7: Delphyndra, Levirax + próbka C', 'voices': [entry],
+            'intro': 'Na górze obie składowe: Levirax i próbka C z rundy 6. Niżej cztery mieszanki (A–D, kolejność losowa): klon '
+                     'OmniVoice z referencji sklejonej z obu głosów w różnych proporcjach. Oceń A–D, odsłoń etykiety i wybierz '
+                     'wariant albo „Żaden”.',
+            'footer': 'Barwa wobec referencji: względem projektu OmniVoice postaci z rundy 1, więc mówi tylko, jak daleko głos jest od niego.'}
+    template = open(os.path.join(ROOT, 'analysis', 'tools', 'voice_compare.html'), encoding='utf-8').read()
+    template = template.replace('href="index.html"', 'href="runda7.html"')
+    nav = [{'page': 'r7n', 'title': page['title'], 'ratable': sum(c['id'] != 'orig' for c in entry['clips'])}]
+    index = {'title': 'E14 · Obsada, runda 7', 'file': 'e14r7_oceny.json', 'dir': 'analysis/work/compare/e14/',
+             'intro': 'Delphyndra jako połączenie głosu Leviraxa z próbką C z rundy 6: cztery proporcje mieszanki.',
+             'notes': ['Mieszanki to klon OmniVoice (lokalnie, bez kredytów), a nie ElevenLabs. Wybór mieszanki zmienia silnik '
+                       'Delphyndry z ElevenLabs na OmniVoice (wyjątek od D84), co zapiszemy jako decyzję.',
+                       'Delphyndra i Levirax będą brzmiały podobnie, bo mieszanka bierze barwę z Leviraxa.']}
+    body = json.dumps({'mode': 'page', 'stage': 'E14R7', 'data': page, 'nav': nav}, ensure_ascii=False).replace('</', '<\\/')
+    open(os.path.join(OUT, 'r7n.html'), 'w', encoding='utf-8').write(
+        template.replace('__TITLE__', H.escape('E14 · ' + page['title'])).replace('__DATA__', body))
+    body = json.dumps({'mode': 'index', 'stage': 'E14R7', 'nav': nav, 'index': index}, ensure_ascii=False).replace('</', '<\\/')
+    open(os.path.join(OUT, 'runda7.html'), 'w', encoding='utf-8').write(
+        template.replace('__TITLE__', H.escape(index['title'])).replace('__DATA__', body))
+    print('nagrania: %d -> %s' % (len(entry['clips']), os.path.join(OUT, 'runda7.html')))
+
+
 def sheet3():
     """Strony rundy 3: trzy nowe warianty na ślepo obok odrzuconego z rundy 2 i wszystkie głosy już w obsadzie."""
     import html as H
@@ -802,7 +1011,7 @@ def score():
     from score_samples import median_f0
     path = os.path.join(OUT, 'scores.json')
     scores = load_json(path, {})
-    todo = [t for t in items() + items2() + items3() if t[0] not in scores]
+    todo = [t for t in items() + items2() + items3() + items7() if t[0] not in scores]
     if not todo:
         print('ocenione nagrania: %d' % len(scores))
         return
@@ -960,7 +1169,8 @@ if __name__ == '__main__':
     commands = {'portrait': portrait, 'context': context, 'pick': pick, 'refs': refs, 'design': design, 'choose': choose,
                 'clone': clone, 'status': status, 'score': score, 'sheet': sheet, 'refs2': refs2, 'clone2': clone2,
                 'sheet2': sheet2, 'sheet3': sheet3, 'sheet4': sheet4,
-                'fx5': fx5, 'sheet5': sheet5, 'sheet6': sheet6}
+                'fx5': fx5, 'sheet5': sheet5, 'sheet6': sheet6, 'refs7': refs7, 'clone7': clone7, 'retake7': retake7,
+                'pick7': pick7, 'sheet7': sheet7}
     if len(sys.argv) != 2 or sys.argv[1] not in commands:
         raise SystemExit(__doc__)
     sys.stdout.reconfigure(encoding='utf-8')

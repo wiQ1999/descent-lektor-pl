@@ -840,6 +840,20 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Uwaga użytkownika po rundzie 5: głosy nie przypominają smoka, a część z nich brzmi jak męska. Prośba, by zapytanie do MCP wprost mówiło o wielkiej, krwiożerczej smoczycy. Każdy opis daje zwykle jeden lub dwa podglądy około 120–150 Hz i jeden powyżej 200 Hz, więc próg 160 Hz odcina głosy podobne do męskich. Koszt rundy 6: 5 projektów, ok. 1,2 tys. kredytów.
 
+### D91 · 2026-11-08 · E14: Delphyndra, runda 7 jako mieszanka Leviraxa i próbki C
+**Decyzja:**
+- Głos Delphyndry łączymy z dwóch źródeł: klonu Leviraxa z dubbingu i próbki C z rundy 6 (podgląd ElevenLabs z opisu `el6` a).
+- Mieszanka to klon OmniVoice z referencji sklejonej z obu głosów. Oba wycinki są przycięte na granicach słów (Whisper ze znacznikami słów), mają wyrównaną głośność i transkrypcję z tych samych wycinków (`refs7` w `voice_compare_e14.py`).
+- Arkusz ma cztery proporcje:
+  - więcej Leviraxa: 7,5 s + 2,4 s;
+  - po równo: 4,6 s + 4,6 s;
+  - po równo w tempie 0,85 jak wybrany Levirax;
+  - więcej próbki C: 3,5 s + 6,3 s.
+- Nagrania z błędem automatu dostają ponowne podejścia z innymi ziarnami (`retake7`, `pick7`).
+- Jeśli wygra mieszanka, Delphyndrę czyta OmniVoice, co jest wyjątkiem od D84. Zapiszemy to po wyborze.
+
+**Uzasadnienie:** Uwaga użytkownika po rundzie 6: próbka C jest najciekawsza, ale to wciąż nie to. Prośba o połączenie jej z głosem Leviraxa. ElevenLabs nie łączy głosów przez MCP, a klon ElevenLabs z nagrań dubbingu wymaga osobnej zgody (prawa do głosu, skill `elevenlabs`). Lokalny klon OmniVoice z dubbingu stosujemy dla złoczyńców od D19 i nie kosztuje kredytów. Mieszanka z przewagą próbki C we wszystkich 7 podejściach pomija dwa krótkie okrzyki we fragmencie 2 (CER 20%). Pozostałe mają CER 0.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
