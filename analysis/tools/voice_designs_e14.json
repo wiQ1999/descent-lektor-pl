@@ -1,5 +1,5 @@
 {
- "_info": "E14 (D83): jeden opis głosu na nową postać bez dubbingu, z portretu z gry (d3/storymessagecharacters) i charakteru z jej kwestii. `el` idzie do text_to_voice (MCP), `omni` do projektu OmniVoice (opis płci, wieku i wysokości oraz własne zdanie w stylu postaci, nie tekst gry). Złoczyńcy mają klon OmniVoice z dubbingu, więc tylko `brief`. Głosy mają się różnić od obsady E13 (docs/CASTING.md). Runda 2 (QA 2026-11-08): `el2` to nowy opis po uwadze z arkusza (`qa1`). Runda 3 (QA 2026-11-08): `el3` to trzy wyraźnie różne opisy (a, b, c) po uwadze z rundy 2 (`qa2`); wybrany głos z rundy 2 zapisuje `voice_r2`, wariant złoczyńcy `variant`.",
+ "_info": "E14 (D83): jeden opis głosu na nową postać bez dubbingu, z portretu z gry (d3/storymessagecharacters) i charakteru z jej kwestii. `el` idzie do text_to_voice (MCP), `omni` do projektu OmniVoice (opis płci, wieku i wysokości oraz własne zdanie w stylu postaci, nie tekst gry). Złoczyńcy mają klon OmniVoice z dubbingu, więc tylko `brief`. Głosy mają się różnić od obsady E13 (docs/CASTING.md). Runda 2 (QA 2026-11-08): `el2` to nowy opis po uwadze z arkusza (`qa1`). Runda 3 (QA 2026-11-08): `el3` to trzy wyraźnie różne opisy (a, b, c) po uwadze z rundy 2 (`qa2`); wybrany głos z rundy 2 zapisuje `voice_r2`, wariant złoczyńcy `variant`. Runda 4: `el4` to pięć opisów (a–e) dla Delphyndry (`qa3`).",
  "magrit": {
   "gender": "female",
   "brief": "dojrzała baronessa w zbroi i płaszczu z futrem, długi ciemny warkocz, skrzyżowane ręce; dowódczyni lojalistów, rzeczowa i zdecydowana, zmęczona wojną",
@@ -157,7 +157,22 @@
    "b": "ekscentryczna wynalazczyni: syk, klekot, szybkie tempo",
    "c": "podwójny głos: kobieta i ryk bestii, pogłos jaskini"
   },
-  "qa2": "brzmi jak męski głos, nie jak fantastyczna smoczyca"
+  "qa2": "brzmi jak męski głos, nie jak fantastyczna smoczyca",
+  "el4": {
+   "a": "Native Polish. Female, ancient; sounds like a very old and immensely powerful woman. Persona: millennia-old dragon queen, matriarch of her kind. Low, aged, chesty female voice with enormous lungs behind it: slow, heavy breaths like bellows, a deep resonant rumble in the chest, a slight tremor of great age, words drawn out and savoured. Emotion: utterly superior, patient, amused by tiny mortals. Very slow, regal pacing with long pauses.",
+   "b": "Native Polish. Female, 40-50. Persona: mighty, furious she-dragon, a beast-queen. Powerful, snarling female voice with a heavy guttural growl and a roar-like rasp on every stressed word, teeth-bared aggression and loud chest projection that fills a cavern; the voice of a huge predator, not a person, yet clearly a woman. Emotion: dominant, menacing, barely restrained rage. Forceful, punchy delivery.",
+   "c": "Native Polish. Female, ageless. Persona: sinuous serpentine wyrm, a cunning and powerful female dragon. Silky, low, breathy female voice that hisses: every s and sz stretched into a long snake-like hiss, a dry rattle deep in the throat, a sly purring tone. Emotion: cunning, mocking, coldly amused. Slow, slithering, hypnotic delivery with drawn-out word endings.",
+   "d": "Native Polish. Female, 45-55. Persona: majestic, god-like dragon empress addressing worshippers in a vast stone hall. Grand, commanding, theatrical dramatic alto with huge projection and a natural hall echo, rich and dark, every phrase like a proclamation; epic fantasy film quality. Emotion: imperious, proud, overwhelming power. Measured, booming, ceremonial delivery.",
+   "e": "Native Polish. Female, 35-45. Persona: huge fire-breathing blue dragoness with embers in her throat. Smoky, scorched, crackling female voice, as if hot ash and flame rasp through every word, heavy breathy exhales and short snorting huffs of smoke between phrases, a low simmering rumble beneath. Emotion: eccentric, curious, casually deadly. Quick bursts of words, then slow smouldering pauses."
+  },
+  "el4_label": {
+   "a": "pradawna matka smoków: stary, niski głos, oddech jak miech",
+   "b": "smocza królowa bestii: warczenie i ryk",
+   "c": "wężowa wyrma: syk i przeciągane końcówki",
+   "d": "smocza cesarzowa: podniosły, donośny głos z echem sali",
+   "e": "ogień i dym: trzaskający, zadymiony głos z sapnięciami"
+  },
+  "qa3": "wciąż nie pasuje; ma przypominać potężnego smoka płci żeńskiej"
  },
  "nara": {
   "gender": "female",
@@ -180,7 +195,8 @@
    "b": "dzika łowczyni: warczy przez zęby, szczeka słowa",
    "c": "stara orczyca: zdarty, zadymiony głos, leniwy sarkazm"
   },
-  "qa2": "nie brzmi jak kobieta ork"
+  "qa2": "nie brzmi jak kobieta ork",
+  "voice_r3": "peH5NmVUWPLR3C6OwCIg"
  },
  "grace": {
   "gender": "female",
@@ -214,7 +230,8 @@
    "b": "zniekształcony, warstwowy głos demona zza maski",
    "c": "gadzi syk i klekot, obcy i beznamiętny"
   },
-  "qa2": "głos ma być chłodny i demoniczny"
+  "qa2": "głos ma być chłodny i demoniczny",
+  "voice_r3": "6QqpmxamtHSBJVCpfj8E"
  },
  "drys": {
   "gender": "male",

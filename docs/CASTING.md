@@ -59,11 +59,11 @@ Głosy z opisów w `analysis/tools/voice_designs_e14.json` (`text_to_voice`, jed
 | `drys` | `DRYS` | `UrUMN6EMRqqvJz3oDHD1` | przyjęty w rundzie 1 |
 | `waiqar` | `WAIQAR` | `IQY1bvB4YbPVoS6Go9q3` | przyjęty w rundzie 2 (opis `el2`: doświadczony wojownik), głos z rundy 1 usunięty |
 | `morant` | `MORANT` | `3CNDe9njN2kEBkgjZlEi` | przyjęty w rundzie 2 (opis `el2`), głos z rundy 1 usunięty |
-| `delphyndra` | `DELPHYNDRA` | `1sr70RNkbV4TmYCh7tKG` (runda 1) | runda 3: smoczyca, wyraźnie kobieca, nie męska |
-| `nara` | `NARA` | `4kAJ1piV25xUmOdFB7Z8` (runda 1) | runda 3: kobieta ork |
-| `meza` | `MEZA` | `ByoziVNmCijKhXdCZ3Z6` (runda 1) | runda 3: chłodny, demoniczny |
+| `delphyndra` | `DELPHYNDRA` | `1sr70RNkbV4TmYCh7tKG` (runda 1) | runda 4: potężna smoczyca, wyraźnie kobieca |
+| `nara` | `NARA` | `peH5NmVUWPLR3C6OwCIg` | przyjęta w rundzie 3 (opis `el3` c: stara orczyca), głos z rundy 1 usunięty |
+| `meza` | `MEZA` | `6QqpmxamtHSBJVCpfj8E` | przyjęta w rundzie 3 (opis `el3` a: lodowaty szept), głos z rundy 1 usunięty |
 
-Postać z wybranym nowym wariantem dostaje nowy głos na koncie, a głos z rundy 1 usuwamy (zgoda z QA, D84). Runda 3 (D87): trzy opisy `el3` na postać.
+Postać z wybranym nowym wariantem dostaje nowy głos na koncie, a głos z rundy 1 usuwamy (zgoda z QA, D84). Runda 3 (D87): trzy opisy `el3` na postać. Runda 4 (D88): pięć opisów `el4` dla Delphyndry.
 
 ## E14: złoczyńcy z okrzykami dubbingu w OmniVoice (D83, D84)
 

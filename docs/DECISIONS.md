@@ -813,6 +813,14 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Oceny użytkownika z arkusza `e14r2_oceny.json` i prośba o po 3 warianty dla głosów z niską oceną. Uwagi z rundy 2: Delphyndra brzmi jak mężczyzna (podgląd miał 98 Hz, bo arkusz wybierał tylko po CER), Nara nie brzmi jak kobieta ork, a Meza ma być chłodna i demoniczna. Koszt rundy 3: 9 projektów, ok. 2 tys. kredytów.
 
+### D88 · 2026-11-08 · E14: obsada po rundzie 3 arkusza
+**Decyzja:**
+- Przyjęte głosy (ocena 5): Nara z opisu c (stara orczyca, zdarty głos) i Meza z opisu a (lodowaty szept z demonicznym podtonem). Zapisane jako „Lektor PL - <postać> E14 r3”, a głosy z rundy 1 usunięte z konta.
+- Delphyndra: runda 4 z pięcioma bardzo różnymi opisami głosu potężnej smoczycy (`el4` a–e w `voice_designs_e14.json`). Na stronie jest dla porównania Levirax, żeby dwie smoczyce w grze brzmiały różnie.
+- Głos Delphyndry z rundy 1 zostaje na koncie do wyboru w rundzie 4. Podglądy nie zajmują miejsc, więc liczba wariantów nie zależy od wolnych miejsc (29 z 30 zajętych).
+
+**Uzasadnienie:** Oceny użytkownika z arkusza `e14r3_oceny.json`. Delphyndra nadal nie pasuje, a głos ma przypominać potężnego smoka płci żeńskiej. Koszt rundy 4: 5 projektów, ok. 1,2 tys. kredytów.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
