@@ -766,6 +766,16 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Prośba użytkownika po lokalnym teście paczki M2 i wybory z QA. Wagi OmniVoice (CC BY-NC) i tokenizer Higgs Audio v2 (Boson Higgs Audio 2 Community License) wymagają uznania autorstwa, a CC BY-NC także użytku niekomercyjnego. Wydanie jest niekomercyjne, a uznanie autorstwa jest w każdej paczce. Audio ElevenLabs powstało w płatnym planie. Doorstop (LGPL 2.1) wymaga tekstu licencji i dostępu do źródeł, stąd plik w `licencje/` i link do wydania źródłowego. Skan historii (66 commitów, ciągi 5 słów ze wszystkich tekstów gry PL i EN) znalazł tylko dwa cytaty z D75 i żadnych kluczy API ani tokenów.
 
+### D83 · 2026-11-08 · E14: reszta gry, kolejność i obsada
+**Decyzja:**
+- Następny etap to reszta gry (E14). Najpierw kwestie postaci bez dubbingu w ElevenLabs, potem pozostałe kwestie narratora i postaci z dubbingiem lokalnie w OmniVoice.
+- Generowanie idzie paczkami: w ElevenLabs paczka na postać, w OmniVoice paczka na misję. Postęp pokazuje, ile zrobiono i ile czasu zostało.
+- Złoczyńcy z samymi okrzykami dubbingu (Zachareth, Reneyr, Greysdon, Navoth, Levirax, Gilliam, Vraskhar) dostają klon OmniVoice z okrzyków, jak Ne’Krul i Xenith. ElevenLabs tylko wtedy, gdy klon wypadnie słabo w ocenie użytkownika.
+- Obsada 18 nowych postaci z udziałem użytkownika: jeden opis z portretu i kontekstu kwestii, jeden projekt głosu, 2 losowe fragmenty. Arkusz pokazuje portret, opis i fragmenty, dotychczasowe głosy oraz nowe głosy OmniVoice złoczyńców do decyzji o silniku.
+- Testowy głos Kehli zostaje usunięty z konta ElevenLabs.
+
+**Uzasadnienie:** Wybory użytkownika z QA po szacunku `analysis/E14_NO_DUB_SCOPE.md`: 129,1 tys. znaków postaci bez dubbingu poza M2, w tym 27,5 tys. złoczyńców z okrzykami. Wariant z OmniVoice dla złoczyńców kosztuje ok. 57 tys. kredytów z obsadą i mieści się w 30 miejscach na głosy. Wszystko w ElevenLabs to ok. 74 tys. i 37 miejsc.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

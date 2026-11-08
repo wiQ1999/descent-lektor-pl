@@ -175,3 +175,4 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 | [analysis/E9_ELEVENLABS.md](analysis/E9_ELEVENLABS.md) | test ElevenLabs (E9): wyniki automatu, koszt na znak, co test zmienił w pomiarze |
 | [analysis/E11_VOICES.md](analysis/E11_VOICES.md) | arkusz głosów (E11): dubbing wobec OmniVoice, warianty ElevenLabs, cztery modele TTS, oceny, stawki, koszt na grupę głosów |
 | [analysis/E13_AUDIO.md](analysis/E13_AUDIO.md) | postacie bez dubbingu w ElevenLabs (E13): koszt, wyniki automatu, ponowne podejścia, porównanie z OmniVoice |
+| [analysis/E14_NO_DUB_SCOPE.md](analysis/E14_NO_DUB_SCOPE.md) | postacie bez dubbingu w całej grze (E14): kwestie poza M2 według mówcy i aktu, koszt ElevenLabs, miejsca na głosy |

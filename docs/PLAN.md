@@ -27,6 +27,7 @@ E1 ──────────────────> E4 companion (z repla
 - W `analysis/` nie ma treści gry; audio, logi i próbki leżą w `analysis/work/` (ignorowane).
 - E10 (wydanie w GitHub Releases) poszło po E13, przed E12 (D82).
 - E11 (arkusz porównawczy głosów) idzie teraz. Jego wynik ustala model dla dalszego audio. E12 (katalog treści gry) idzie po nim.
+- E14 (reszta gry) idzie po E10. E12 zostaje na później.
 
 ## E0 · Porządki i porównanie modeli TTS
 
@@ -399,6 +400,32 @@ Pytanie etapu: jak przegenerować fragmenty postaci bez dubbingu głosami z D80,
 **Do decyzji na starcie:** wywołania przez MCP (140 wywołań narzędzia w sesji) czy własny skrypt w `lektor` z kluczem z `.env.elevenlabs.local` (wznawialny, z tym samym logiem zużycia).
 
 **Kryteria ukończenia:** wszystkie fragmenty tych postaci w manifestach M1 i M2 z ElevenLabs, automat bez uciętych końcówek, odsłuch, koszt w raporcie, commit.
+
+## E14 · Reszta gry: postacie bez dubbingu, potem narrator i głosy z dubbingu
+
+Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci bez dubbingu w ElevenLabs, potem lokalnie w OmniVoice narrator, bohaterowie i złoczyńcy. Szacunek: `analysis/E14_NO_DUB_SCOPE.md`. Decyzje z QA: D83.
+
+**Status:** plan do akceptacji (2026-11-08).
+
+**Faza A: przygotowanie**
+- A1: baza całej gry `m3`: zakres wszystkich scenariuszy, wydarzeń, podróży i miasta aktów 1 i 2, łup i wrogowie aktu 2. Fragmenty o tym samym id przejmujemy z M2. Raport liczności jak `E7_DATA.md`.
+- A2: konto ElevenLabs: usunięcie testowego głosu Kehli po potwierdzeniu nazwy i id (12 → 11 z 30 miejsc).
+- A3: obsada z Twoim udziałem:
+  - 18 nowych postaci: portret z plików gry (`npc_voices.py portrait`), jeden opis głosu z portretu i kontekstu kwestii, jeden projekt `text_to_voice` czytający pierwszy losowy fragment, zapis głosu na koncie i drugi losowy fragment w `eleven_v4`;
+  - 7 złoczyńców z okrzykami: klon OmniVoice z okrzyków (jak Ne’Krul i Xenith, D19), te same 2 losowe fragmenty;
+  - arkusz porównawczy: portret, opis i 2 fragmenty każdej postaci, a obok dotychczasowe głosy (11 postaci ElevenLabs z E13 oraz Ne’Krul i Xenith w OmniVoice) z 2 fragmentami;
+  - Twoja ocena: akceptacja, poprawka opisu albo zmiana silnika (złoczyńca do ElevenLabs, gdy klon jest słaby). Wynik w `docs/CASTING.md`.
+  - Koszt obsady: ok. 5–6 tys. kredytów.
+
+**Faza B: generowanie paczkami z postępem**
+- B1: ElevenLabs: paczka na postać (11 głosów z E13 i 18 nowych, 101,6 tys. znaków, ok. 48 tys. kredytów z ponownymi). Po każdej paczce automat E3 i ponowne podejścia tej postaci. Limit `--max-credits`: zatwierdzony szacunek +20%.
+- B2: OmniVoice: paczka na misję (scenariusz, wydarzenie, podróże, miasto, system), narrator, bohaterowie i złoczyńcy razem. Szacunek: ok. 85–95 h GPU.
+- Komenda postępu: dla każdej paczki stan (gotowe, w toku, czeka), fragmenty i znaki zrobione i pozostałe, kredyty albo godziny GPU oraz przewidywany czas do końca z tempa dotychczasowych paczek.
+
+**Faza C: odbiór**
+- `select` i `finalize` dla `m3`, raporty `analysis/E14_DATA.md` i `analysis/E14_AUDIO.md`, odsłuch do ok. 30 fragmentów (osobno ElevenLabs i OmniVoice), paczki Windows i Mac, wydanie na GitHub po Twoim teście w grze.
+
+**Kryteria ukończenia:** wszystkie kwestie aktów 1 i 2 w manifeście `m3`, automat bez uciętych końcówek, odsłuch, koszt w raporcie, commit.
 
 ## E12 · Katalog treści gry (później)
 
