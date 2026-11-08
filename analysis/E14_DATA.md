@@ -1,6 +1,6 @@
 # E14: baza kwestii całej gry (M3)
 
-Wygenerowano przez `python -I -m lektor report` z `analysis/work/lektor/m3.sqlite` (zbudowana 2026-11-08T12:02:35, pakiet 0.1.0, model `omnivoice-08be0b4-fp32-s32-cfg2.0`, manifest gry `fddf8aedeb14`). Raport zawiera tylko liczby i klucze techniczne.
+Wygenerowano przez `python -I -m lektor report` z `analysis/work/lektor/m3.sqlite` (zbudowana 2026-11-08T14:23:04, pakiet 0.1.0, model `omnivoice-08be0b4-fp32-s32-cfg2.0`, manifest gry `fddf8aedeb14`). Raport zawiera tylko liczby i klucze techniczne.
 
 ## Kwestie
 
@@ -194,12 +194,12 @@ Wrogowie w zakresie: `A2Q01_VRASKHAR`, `A2Q02_ENEMY_MORANT`, `ENEMY_A2Q11_LEVIRA
 
 | rodzaj segmentu | liczba |
 |---|---|
-| text | 17688 |
+| text | 17776 |
 | slot | 1491 |
 | quote | 134 |
 | desc | 5 |
 
-Unikalnych fragmentów do syntezy: **17876** (text 16495, value 1242, quote 134, desc 5), znaków: 1498544.
+Unikalnych fragmentów do syntezy: **17968** (text 16587, value 1242, quote 134, desc 5), znaków: 1502835.
 
 Najdłuższy fragment: 434 znaków.
 
@@ -499,53 +499,53 @@ Głosy fragmentów bez referencji w bazie: `alys`, `arden`, `balthain`, `button`
 
 ## Szacunek generowania
 
-Z M2 przejęte 3919 fragmentów. Nowe: **13957** (1215235 znaków).
+Z M2 przejęte 3917 fragmentów. Nowe: **14051** (1219801 znaków).
 
 | głos | silnik | fragmenty | znaki | podejścia |
 |---|---|---|---|---|
 | adelynn | elevenlabs | 17 | 1710 | 1 |
-| alys | omnivoice | 98 | 10512 | 1 |
+| alys | omnivoice | 98 | 10467 | 1 |
 | arden | omnivoice | 42 | 4674 | 1 |
 | astarra | elevenlabs | 37 | 3105 | 1 |
 | balthain | omnivoice | 38 | 4002 | 1 |
-| bruli | elevenlabs | 57 | 4818 | 1 |
-| brynn | omnivoice | 771 | 54015 | 3 |
-| button | omnivoice | 62 | 5594 | 1 |
-| chance | omnivoice | 574 | 35248 | 3 |
+| bruli | elevenlabs | 57 | 4760 | 1 |
+| brynn | omnivoice | 770 | 53914 | 3 |
+| button | omnivoice | 62 | 5581 | 1 |
+| chance | omnivoice | 574 | 35012 | 3 |
 | delphyndra | omnivoice | 16 | 1675 | 1 |
 | drys | omnivoice | 3 | 244 | 1 |
-| ducard | omnivoice | 41 | 3906 | 1 |
-| flint | elevenlabs | 19 | 1832 | 1 |
-| galaden | omnivoice | 608 | 39955 | 3 |
+| ducard | omnivoice | 41 | 3876 | 1 |
+| flint | elevenlabs | 19 | 1749 | 1 |
+| galaden | omnivoice | 609 | 39977 | 3 |
 | galgoraz | elevenlabs | 49 | 4095 | 1 |
 | gilliam | omnivoice | 25 | 3321 | 1 |
 | grace | omnivoice | 15 | 1233 | 1 |
-| greigory | omnivoice | 65 | 6608 | 1 |
+| greigory | omnivoice | 65 | 6584 | 1 |
 | greysdon | omnivoice | 27 | 2786 | 1 |
 | herbie | elevenlabs | 5 | 526 | 1 |
 | kathryn | elevenlabs | 12 | 1120 | 1 |
-| kehli | omnivoice | 613 | 41995 | 3 |
+| kehli | omnivoice | 614 | 41838 | 3 |
 | laurel | omnivoice | 62 | 4919 | 1 |
 | levirax | omnivoice | 26 | 2580 | 1 |
 | ltrand | elevenlabs | 15 | 1219 | 1 |
-| magrit | omnivoice | 150 | 15210 | 1 |
+| magrit | omnivoice | 150 | 15168 | 1 |
 | meza | omnivoice | 4 | 448 | 1 |
-| mok | elevenlabs | 23 | 2310 | 1 |
-| morant | omnivoice | 27 | 2591 | 1 |
+| mok | elevenlabs | 23 | 2301 | 1 |
+| morant | omnivoice | 27 | 2589 | 1 |
 | nara | omnivoice | 15 | 1562 | 1 |
-| narrator | omnivoice | 8882 | 829894 | 1 |
+| narrator | omnivoice | 8975 | 835518 | 1 |
 | navoth | omnivoice | 25 | 2771 | 1 |
 | nekrul | omnivoice | 10 | 632 | 1 |
 | outlaw | elevenlabs | 4 | 189 | 1 |
-| pryor | omnivoice | 12 | 1838 | 1 |
+| pryor | omnivoice | 12 | 1812 | 1 |
 | reneyr | omnivoice | 77 | 7679 | 1 |
 | ronan | elevenlabs | 55 | 4624 | 1 |
-| syrus | omnivoice | 638 | 45875 | 3 |
+| syrus | omnivoice | 638 | 45839 | 3 |
 | trevalyn | omnivoice | 39 | 4145 | 1 |
-| vaerix | omnivoice | 554 | 38298 | 3 |
+| vaerix | omnivoice | 554 | 38227 | 3 |
 | veta | omnivoice | 38 | 4405 | 1 |
 | vraskhar | omnivoice | 10 | 821 | 1 |
 | waiqar | omnivoice | 23 | 2666 | 1 |
-| zachareth | omnivoice | 74 | 7585 | 1 |
+| zachareth | omnivoice | 74 | 7438 | 1 |
 
-OmniVoice: ok. **111.0 h** GPU bez ponownych podejść, przy 0.235 s na znak (E3). ElevenLabs: 25548 znaków, ok. **11241** kredytów (0.44 na znak, bez ponownych).
+OmniVoice: ok. **111.2 h** GPU bez ponownych podejść, przy 0.235 s na znak (E3). ElevenLabs: 25398 znaków, ok. **11175** kredytów (0.44 na znak, bez ponownych).

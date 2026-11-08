@@ -9,11 +9,17 @@ from . import direction as D
 from . import game as G
 from . import segment as S
 from .companion.library import LOOT, squash
-from .normalize import cardinal, clean_markup, normalize, pronounce
+from .normalize import cardinal, clean_markup, normalize, ordinal, pronounce
 
 PIECE_GAP = 0.06    # sklejanie kawałka szablonu z wartością luki (D16)
 QUOTE_GAP = 0.15    # cytat bohatera → opis narratora (D20)
 SPRITE = re.compile(r'<sprite[^>]*>')
+PARAGRAPH = re.compile(r'\n\s*\n')
+SYSTEM_NOTICE = re.compile(r'^(\*.*\*|Do (waszych|twoich) zasobów\b.*|Zyskuje(cie|sz)\b.*|Zdobywa(cie|sz)\b.*)$', re.S | re.I)
+CAPS_TOKEN = re.compile(r'[^\sa-ząćęłńóśźż<>=]*[A-ZĄĆĘŁŃÓŚŹŻ0-9}\x01][^\sa-ząćęłńóśźż<>=]*')
+DIRECTION = re.compile(r'\bWYBIERA\b')
+ROMAN_VALUES = {'II': 2, 'III': 3, 'IV': 4, 'VI': 6}
+ROMAN = re.compile(r'\b(%s)\b' % '|'.join(sorted(ROMAN_VALUES, key=len, reverse=True)))
 LOOT_NUMBERS = range(0, 100)
 
 
@@ -33,8 +39,67 @@ def window_hero(r):
     return next((scope.HEROES[s] for s in r['speakers'] if s in scope.HEROES), None)
 
 
+def system_tail(raw):
+    """Komunikat gry doklejony po pustym wierszu do kwestii postaci (nagroda, przychylność): (mowa, komunikat) albo None."""
+    paras = [p.strip() for p in PARAGRAPH.split(raw.strip()) if p.strip()]
+    if len(paras) < 2:
+        return None
+    last = paras[-1]
+    if SYSTEM_NOTICE.match(last) or (last.isupper() and len(last.split()) >= 3):
+        return '\n\n'.join(paras[:-1]), last.strip('*').strip()
+    return None
+
+
+def caps_to_speech(text):
+    """Tekst WIELKIMI literami (komunikat gry, okrzyk) → zwykła pisownia, żeby normalizacja go nie wycięła.
+
+    Wskazówki „X WYBIERA…” zostają wielkimi literami i normalizacja dalej je pomija."""
+    tokens = list(re.finditer(r'\S+', text))
+    out, pos, i = [], 0, 0
+    while i < len(tokens):
+        j = i
+        while j < len(tokens) and CAPS_TOKEN.fullmatch(tokens[j].group(0)):
+            j += 1
+        run = tokens[i:j]
+        if sum(len(re.sub(r'\x01[^\x01]*\x01|[^A-ZĄĆĘŁŃÓŚŹŻ]', '', t.group(0))) >= 2 for t in run) >= 2:
+            a, b = run[0].start(), run[-1].end()
+            chunk = text[a:b]
+            if not DIRECTION.search(chunk):
+                chunk = ROMAN.sub(lambda m: ordinal(ROMAN_VALUES[m.group(0)]), chunk)     # AKT II → akt drugi
+                chunk = re.sub(r'\x01[^\x01]*\x01|[^\x01]+', lambda m: m.group(0) if m.group(0)[0] == '\x01' else m.group(0).lower(), chunk)
+                start = r'(^|[.!?…:]\s+)' if re.search(r'(^|[.!?…:])\s*$', text[:a]) else r'([.!?…]\s+)'
+                chunk = re.sub(start + r'(\W*?)(\w)', lambda m: m.group(1) + m.group(2) + m.group(3).upper(), chunk)
+            out.append(text[pos:a] + chunk)
+            pos = b
+        i = max(j, i + 1)
+    return ''.join(out) + text[pos:]
+
+
+def spoken(r, raw, voice=None):
+    """Kopia kwestii do podziału na części: inny tekst i ewentualnie inny głos."""
+    return {**r, 'text_raw': raw, 'text_norm': normalize(raw), 'voice': voice or r['voice']}
+
+
 def line_parts(r, release='m1'):
-    """Części kwestii: (rodzaj, głos, tekst albo dane luki)."""
+    """Części kwestii: (rodzaj, głos, tekst albo dane luki).
+
+    W m3 (uwagi z QA E14) komunikat gry doklejony do kwestii postaci czyta narrator, a tekst WIELKIMI literami
+    czytamy zwykłą pisownią zamiast go wycinać. M1 i M2 bez zmian."""
+    if release in ('m1', 'm2'):
+        return speech_parts(r, release)
+    tail = system_tail(r['text_raw']) if r['category'] == 'dialog' and r['voice'] != 'narrator' else None
+    copies = [spoken(r, caps_to_speech(clean_markup(t)), v) for t, v in zip(tail, (None, 'narrator'))] if tail \
+        else [spoken(r, caps_to_speech(clean_markup(r['text_raw'])))]
+    parts = [p for c in copies for p in speech_parts(c, release)]
+    if not tail:
+        r['voice'] = copies[0]['voice']     # opcja wyboru: narrator (D20)
+    for c in copies:
+        if c.get('note'):
+            r['note'] = c['note']
+    return parts
+
+
+def speech_parts(r, release='m1'):
     norm = r['text_norm']
     if r['category'] == 'opcja_wyboru':
         r['voice'] = 'narrator'  # opcja bez cytatu i opis cytatu: narrator (D20)

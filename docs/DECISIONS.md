@@ -777,6 +777,33 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Wybory użytkownika z QA po szacunku `analysis/E14_NO_DUB_SCOPE.md`: 129,1 tys. znaków postaci bez dubbingu poza M2, w tym 27,5 tys. złoczyńców z okrzykami. Wariant z OmniVoice dla złoczyńców kosztuje ok. 57 tys. kredytów z obsadą i mieści się w 30 miejscach na głosy. Wszystko w ElevenLabs to ok. 74 tys. i 37 miejsc.
 
+### D84 · 2026-11-08 · E14: obsada po rundzie 1 arkusza
+**Decyzja:**
+- Postacie bez dubbingu gry czyta tylko ElevenLabs. Głosów OmniVoice dla nich nie robimy.
+- Przyjęte głosy ElevenLabs (13): Magrit, Alys, Greigory, Button, Laurel, Arden, Veta, Trevalyn, Balthain, Ducard, Pryor, Grace i Drys.
+- Nowy wariant do ponownej oceny (5): Waiqar (doświadczony wojownik), Morant (inny wariant), Delphyndra (smoczy, nie ludzki), Nara (kobieta ork), Meza (mniej ludzki, hybryda).
+- Przyjęci złoczyńcy w OmniVoice (5): Zachareth, Reneyr, Greysdon, Navoth i Vraskhar. Nowy wariant: Levirax (przeciągane końcówki jak u gada) i Gilliam (bardziej przerażony).
+- Testowy głos „Lektor PL - Kehli test” usunięty z konta 2026-11-08. Gdy w rundzie 2 wybierzemy nowy wariant, głos tej postaci z rundy 1 usuwamy z konta i zapisujemy nowy.
+- Głosy i voice_id: `docs/CASTING.md`.
+
+**Uzasadnienie:** Oceny użytkownika z arkusza `e14_oceny.json`: w ślepym porównaniu ElevenLabs wygrał u każdej postaci i słychać, który to model, bo ma lepszą jakość. Uwagi przy 5 postaciach i 2 złoczyńcach wymagają innego wariantu. Konto ma 30 z 30 miejsc, więc nowe głosy zastępują stare.
+
+### D85 · 2026-11-08 · M3: komunikaty gry czyta narrator
+**Decyzja:**
+- W m3 komunikat gry doklejony po pustym wierszu do kwestii postaci (zasoby, złoto, przychylność, legendy, żetony, rozdziały) czyta narrator jako osobny segment. Postać czyta tylko swoją wypowiedź.
+- Tekst WIELKIMI literami w m3 czytamy zwykłą pisownią zamiast go wycinać. Liczby rzymskie zamieniamy na słowa („akt drugi”). Pomijamy tylko wskazówki „X WYBIERA…”.
+- M1 i M2 budują się bez zmian.
+
+**Uzasadnienie:** Uwaga użytkownika przy Zacharecie: kwestia „Do waszych zasobów dodano…” brzmi jak dla narratora. Komunikaty systemowe czyta narrator od D36. Przegląd bazy pokazał, że normalizacja wycinała komunikaty wielkimi literami tylko w części i postać czytała resztki, np. „W AKCIE jeden Z”. Wybór z QA: komunikaty czyta narrator. Wynik: 87 kwestii z komunikatem narratora (69 różnych komunikatów, 5 w zakresie M2), 39 kwestii z odzyskanym tekstem wielkimi literami, fragmentów +183 i −91 (ok. 15 tys. znaków, głównie narrator).
+
+### D86 · 2026-11-08 · Wstawki sceniczne w kwestiach: etap po E14
+**Decyzja:**
+- Wstawki w nawiasach z opisem zachowania postaci zbieramy teraz i poprawiamy w osobnym etapie E15, po nagraniu całej gry.
+- E15 rozważy dwa warianty: postać pomija wstawkę albo wstawkę czyta narrator.
+- Listę daje `analysis/tools/inserts_scan.py`, raport `analysis/E14_INSERTS.md`.
+
+**Uzasadnienie:** Prośba użytkownika po odsłuchu arkusza E14. Skan m3: 264 wstawki w kwestiach postaci (prawie wszystkie to ta sama jednowyrazowa wstawka na początku kwestii) i 28 w kwestiach narratora. Do E15 postać czyta wstawkę razem z kwestią, więc E15 wymaga ponownego generowania tych kwestii.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

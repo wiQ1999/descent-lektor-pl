@@ -418,7 +418,11 @@ Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci 
   - arkusz porównawczy: portret, opis i 2 fragmenty każdej postaci, a obok dotychczasowe głosy (11 postaci ElevenLabs z E13 oraz Ne’Krul i Xenith w OmniVoice) z 2 fragmentami;
   - Twoja ocena: akceptacja, poprawka opisu albo zmiana silnika (ElevenLabs albo OmniVoice dla każdej postaci). Wynik w `docs/CASTING.md`.
   - Koszt obsady: ok. 5–6 tys. kredytów.
-  - Arkusz gotowy 2026-11-08 (`analysis/tools/voice_compare_e14.py`, opisy w `voice_designs_e14.json`): 18 głosów „Lektor PL - <postać> E14” zapisanych na koncie (30 z 30 miejsc), próbki ok. 4,5 tys. kredytów, w tym ok. 0,9 tys. straty na podglądach bez katalogu wyjściowego. Złoczyńcy Zachareth, Reneyr i Levirax mają referencję z monologu, pozostali z okrzyków. Czeka na Twoją ocenę.
+  - Arkusz gotowy 2026-11-08 (`analysis/tools/voice_compare_e14.py`, opisy w `voice_designs_e14.json`): 18 głosów „Lektor PL - <postać> E14” zapisanych na koncie (30 z 30 miejsc), próbki ok. 4,5 tys. kredytów, w tym ok. 0,9 tys. straty na podglądach bez katalogu wyjściowego. Złoczyńcy Zachareth, Reneyr i Levirax mają referencję z monologu, pozostali z okrzyków.
+  - Runda 1 oceniona 2026-11-08 (D84): tylko ElevenLabs dla postaci bez dubbingu, 13 głosów i 5 złoczyńców przyjętych. Głos testowy Kehli usunięty (29 z 30 miejsc).
+  - Runda 2 gotowa 2026-11-08 (`runda2.html`, oceny w `e14r2_oceny.json`): po 3 nowe podglądy dla Waiqara, Moranta, Delphyndry, Nary i Mezy (ok. 1,2 tys. kredytów), na arkuszu najlepszy z nich obok głosu z rundy 1; Levirax i Gilliam po 2 nowe warianty klonu. Czeka na Twoją ocenę.
+- A4: komunikaty gry w kwestiach postaci czyta narrator, a tekst wielkimi literami nie znika (D85). Baza `m3` przebudowana: 126 kwestii zmienionych, 17 968 fragmentów.
+- A5: wstawki sceniczne w kwestiach zebrane do E15 (D86, `analysis/E14_INSERTS.md`).
 
 **Faza B: generowanie paczkami z postępem**
 - B1: ElevenLabs: paczka na postać (11 głosów z E13 i 18 nowych, 101,6 tys. znaków, ok. 48 tys. kredytów z ponownymi). Po każdej paczce automat E3 i ponowne podejścia tej postaci. Limit `--max-credits`: zatwierdzony szacunek +20%.
@@ -429,6 +433,13 @@ Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci 
 - `select` i `finalize` dla `m3`, raporty `analysis/E14_DATA.md` i `analysis/E14_AUDIO.md`, odsłuch do ok. 30 fragmentów (osobno ElevenLabs i OmniVoice), paczki Windows i Mac, wydanie na GitHub po Twoim teście w grze.
 
 **Kryteria ukończenia:** wszystkie kwestie aktów 1 i 2 w manifeście `m3`, automat bez uciętych końcówek, odsłuch, koszt w raporcie, commit.
+
+## E15 · Wstawki sceniczne w kwestiach (po E14)
+
+Pytanie etapu: jak czytać opisy zachowania postaci w nawiasach (D86). Skan `analysis/tools/inserts_scan.py` znalazł 264 wstawki w kwestiach postaci i 28 w kwestiach narratora (`analysis/E14_INSERTS.md`).
+- Próbki obu wariantów: postać pomija wstawkę albo wstawkę czyta narrator przed kwestią. Wybór w QA po odsłuchu.
+- Zmiana w `build` dla wybranego wariantu, przebudowa `m3`, ponowne generowanie zmienionych kwestii (ElevenLabs tylko u postaci bez dubbingu, reszta w OmniVoice).
+- Plan etapu przedstawię przed startem.
 
 ## E12 · Katalog treści gry (później)
 

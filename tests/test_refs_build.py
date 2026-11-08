@@ -1,4 +1,6 @@
 """Cięcie referencji (D33) i składanie części kwestii (D16, D20)."""
+import pytest
+
 from lektor import build, refs
 from lektor import segment as S
 
@@ -73,6 +75,61 @@ def test_line_parts_template_splits_long_text():
     parts = build.line_parts(r)
     assert parts[-1][0] == 'slot' and sum(p[0] == 'text' for p in parts) > 1
     assert all(len(p[2]) <= S.LONG for p in parts if p[0] == 'text')
+
+
+@pytest.mark.parametrize('tail', ['Do waszych zasobów dodano 30 sztuk złota.', 'ZYSKUJECIE ZAUFANIE KUPCÓW.',
+                                  'Zdobywasz dwa żetony.', '*Do twoich zasobów dodano Płaszcz.*'])
+def test_system_tail_splits_game_notice(tail):
+    speech, notice = build.system_tail('Bierzcie, ile trzeba.\nI ruszajcie.\n\n' + tail)
+    assert speech == 'Bierzcie, ile trzeba.\nI ruszajcie.' and notice == tail.strip('*')
+
+
+@pytest.mark.parametrize('raw', ['Bierzcie, ile trzeba. Do waszych zasobów dodano złoto.',
+                                 'Pierwszy akapit.\n\nDrugi akapit mówi dalej postać.', 'Tylko JEDNO SŁOWO.\n\nOK TAK'])
+def test_system_tail_keeps_speech(raw):
+    assert build.system_tail(raw) is None
+
+
+def test_line_parts_game_notice_goes_to_narrator_from_m3():
+    r = line('E_TEST_11', 'dialog', 'Bierzcie, ile trzeba.\n\nDo waszych zasobów dodano 30 sztuk złota.', voice='kehli')
+    assert [p[1] for p in build.line_parts(dict(r), 'm2')] == ['kehli']   # M1 i M2 bez zmian
+    assert build.line_parts(dict(r), 'm3') == [('text', 'kehli', 'Bierzcie, ile trzeba.'),
+                                               ('text', 'narrator', 'Do waszych zasobów dodano trzydzieści sztuk złota.')]
+
+
+def test_line_parts_game_notice_with_slot():
+    r = line('E_TEST_12', 'dialog', 'Proszę.\n\nDo waszych zasobów dodano recepturę ({0}).', voice='kehli',
+             args=[{'type': 'ItemName', 'ref': 'X'}])
+    parts = build.line_parts(r, 'm3')
+    assert parts[0] == ('text', 'kehli', 'Proszę.') and {p[1] for p in parts[1:]} == {'narrator'}
+    assert any(p[0] == 'slot' for p in parts[1:])
+
+
+@pytest.mark.parametrize('text, expected', [
+    ('Idziemy. ZYSKUJECIE ZAUFANIE KUPCÓW Z MIASTA.', 'Idziemy. Zyskujecie zaufanie kupców z miasta.'),
+    ('KAŻDY BOHATER BIERZE 1 ŻETON. POTEM ODPOCZYWA.', 'Każdy bohater bierze 1 żeton. Potem odpoczywa.'),
+    ('Krzyczy: OTO NASZE SKARBY!', 'Krzyczy: Oto nasze skarby!'),
+    ('POCZĄTEK ROZDZIAŁU „STARA WIEŻA”.', 'Początek rozdziału „stara wieża”.'),
+    ('SYRUS WYBIERA…', 'SYRUS WYBIERA…'),
+    ('ROZPOCZNIESZ AKT II Z ZAPASAMI.', 'Rozpoczniesz akt drugi z zapasami.'),
+    ('Możemy badać i poznać NASZE STARE SEKRETY!', 'Możemy badać i poznać nasze stare sekrety!'),
+    ('I wtedy ORK przyszedł.', 'I wtedy ORK przyszedł.'),
+    ('ZADAJ \x01TERM_DAMAGE\x01 TERAZ.', 'Zadaj \x01TERM_DAMAGE\x01 teraz.'),
+])
+def test_caps_to_speech(text, expected):
+    assert build.caps_to_speech(text) == expected
+
+
+def test_line_parts_caps_notice_read_by_narrator_in_m3():
+    r = line('E_TEST_13', 'dialog', 'Dziękuję.\n\nZYSKUJECIE ZAUFANIE KUPCÓW Z MIASTA.', voice='kehli')
+    assert [p[1] for p in build.line_parts(dict(r), 'm2')] == ['kehli']     # M2 bez zmian
+    assert build.line_parts(dict(r), 'm3') == [('text', 'kehli', 'Dziękuję.'),
+                                               ('text', 'narrator', 'Zyskujecie zaufanie kupców z miasta.')]
+
+
+def test_line_parts_direction_still_dropped_in_m3():
+    r = line('E_TEST_14', 'narracja_fabularna', 'Drzwi się otwierają. GRUPA WYBIERA…')
+    assert build.line_parts(dict(r), 'm3') == [('text', 'narrator', 'Drzwi się otwierają.')]
 
 
 def test_value_texts_numbers_cover_range():

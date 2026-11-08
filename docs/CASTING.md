@@ -38,6 +38,47 @@ Od E11 postacie bez dubbingu czyta ElevenLabs `eleven_v4` z ustawieniami domyśl
 | `flint` | a | `gfzrH3j2kaDI5cNZuaPW` | 5 / 5 | remis z c |
 | `galgoraz` | a | `Quk21RWppOlJmKTYBeGr` | 5 / 5 | remis z c |
 
+## E14: nowe postacie bez dubbingu w ElevenLabs (D84)
+
+Głosy z opisów w `analysis/tools/voice_designs_e14.json` (`text_to_voice`, jeden opis z portretu i kontekstu kwestii), zapisane jako `Lektor PL - <postać> E14`. W ślepym porównaniu z OmniVoice wygrał ElevenLabs, więc OmniVoice dla tych postaci odpada. Ustawienia jak wyżej.
+
+| Głos | Mówca w grze | voice_id | Stan |
+|---|---|---|---|
+| `magrit` | `BARONESSMAGRIT` | `4z2ttMe9kFzyBLgroafB` | przyjęty w rundzie 1 |
+| `alys` | `ALYS` | `PzYUKC9HYBoJ4OGyP1QE` | przyjęty w rundzie 1 |
+| `greigory` | `GREIGORY` | `1iufCs0OK7CV8njHiko7` | przyjęty w rundzie 1 |
+| `button` | `BUTTON` | `RMWgUKFzzgxce9riuhEC` | przyjęty w rundzie 1 |
+| `laurel` | `LAUREL` | `YpSjl2k2ogKW014dXeX3` | przyjęty w rundzie 1 |
+| `arden` | `ARDEN` | `jl1qd5mvirQo588r4kkX` | przyjęty w rundzie 1 |
+| `veta` | `VETA` | `0rtBIPGtLS4yt8kPC7Cs` | przyjęty w rundzie 1 |
+| `trevalyn` | `TREVALYN` | `PnphcFpQiiZTzbeOcbxp` | przyjęty w rundzie 1 |
+| `balthain` | `SIRBALTHAIN` | `9CdwdaxrlepOclY1rmY5` | przyjęty w rundzie 1 |
+| `ducard` | `COUNTESSDUCARD` | `m5FL5XfqLXQEY9dOd5GJ` | przyjęty w rundzie 1 |
+| `pryor` | `PRYOR` | `6gJmPw2772iK66WdPEKX` | przyjęty w rundzie 1 |
+| `grace` | `GRACE` | `7nGRsoaWpcG4aZ7JLbJW` | przyjęty w rundzie 1; opis z wiekiem 18–20, bo `text_to_voice` odrzuca wiek poniżej 18 |
+| `drys` | `DRYS` | `UrUMN6EMRqqvJz3oDHD1` | przyjęty w rundzie 1 |
+| `waiqar` | `WAIQAR` | `3GSeupNgHDzIQjsQjZaA` | runda 2: głos ma brzmieć jak doświadczony wojownik |
+| `morant` | `MORANT` | `trKNF7Zp0IemLIuf7zts` | runda 2: inny wariant przy tej samej jakości |
+| `delphyndra` | `DELPHYNDRA` | `1sr70RNkbV4TmYCh7tKG` | runda 2: głos smoczy, nie ludzki |
+| `nara` | `NARA` | `4kAJ1piV25xUmOdFB7Z8` | runda 2: kobieta ork |
+| `meza` | `MEZA` | `ByoziVNmCijKhXdCZ3Z6` | runda 2: mniej ludzki, jak hybryda |
+
+Postać z wybranym nowym wariantem dostaje nowy głos na koncie, a głos z rundy 1 usuwamy (zgoda z QA, D84).
+
+## E14: złoczyńcy z okrzykami dubbingu w OmniVoice (D83, D84)
+
+Klony OmniVoice z okrzyków albo monologów z gry, jak Ne’Krul i Xenith (D19). Referencje do 10 s w `analysis/work/compare/e14/omni/refs.json`; do bazy referencji trafią przed generowaniem.
+
+| Głos | Mówca w grze | Źródło referencji | Długość | Stan |
+|---|---|---|---|---|
+| `zachareth` | `BARONZACHARETH` | monolog `DLE04_4_Betrayal_Zachareth_VoiceOver` | 8,1 s | przyjęty w rundzie 1 |
+| `reneyr` | `RENEYR`, `SHADOW_RENEYR` | monolog `DLE04_4_Betrayal_Reneyr_VoiceOver` | 7,5 s | przyjęty w rundzie 1 |
+| `greysdon` | `GREYSDON` | okrzyki `Greysdon_Spawn_2`, `Greysdon_Spawn_1` | 7,2 s | przyjęty w rundzie 1 |
+| `navoth` | `NAVOTH` | okrzyki | 6,4 s | przyjęty w rundzie 1 |
+| `vraskhar` | `VRASKHAR` | okrzyki | 6,6 s | przyjęty w rundzie 1 |
+| `levirax` | `LEVIRAX` | monolog `Levirax_VoiceOver` | 8,5 s | runda 2: przeciągane końcówki jak u gada |
+| `gilliam` | `GILLIAM`, `GILLIAM_EVIL` | okrzyki | 5,3 s | runda 2: bardziej przerażony |
+
 ## Głosy projektowane w OmniVoice (D41, zapas od D80)
 
 Narzędzie: `analysis/tools/npc_voices.py` (portret, pula kandydatów, wybór 4 najbardziej różnych barw, klony kwestii do odsłuchu). Tekst referencji jest własny, nie z gry.

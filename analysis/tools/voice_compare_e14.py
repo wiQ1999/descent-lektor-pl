@@ -11,6 +11,11 @@ Kroki (z katalogu głównego; <omni> = "$LOCALAPPDATA/LektorPL/envs/omnivoice/Sc
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py status     # które próbki ElevenLabs już są
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py score      # automat E3 dla wszystkich próbek
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet      # strony arkusza z szablonu voice_compare.html
+Runda 2 (uwagi z arkusza, D84): podglądy `el2` przez MCP do …/<głos>/design2/, potem
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py refs2      # referencje wariantów złoczyńców
+    <omni> -I analysis/tools/voice_compare_e14.py clone2                    # klony wariantów
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py score      # ocenia też rundę 2
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet2     # strony r2n, r2z, r2w i runda2.html
 
 Opisy głosów są w voice_designs_e14.json. Próbki ElevenLabs powstają przez MCP (skill `elevenlabs`):
 text_to_voice z opisem `el` i tekstem `<głos>#design` z lines.json do analysis/work/elevenlabs/audio/e14/<głos>/design/,
@@ -295,6 +300,184 @@ def clone():
                 N.synth(model, wav, f['text'], 1234, voice_clone_prompt=prompts[voice], **kw)
 
 
+# --- runda 2 (QA 2026-11-08) -----------------------------------------------------------------------------------------
+# Postacie bez dubbingu tylko w ElevenLabs (D84). Nowy opis `el2` dla postaci z uwagą; podgląd czyta oba fragmenty
+# (Meza: pierwszy, bo drugi go powtarza). Złoczyńcy z uwagą: dwa wyraźnie różne warianty klonu OmniVoice.
+R2_EL = ('waiqar', 'morant', 'delphyndra', 'nara', 'meza')
+R2_FIRST_ONLY = ('meza',)
+R2_VILLAINS = {
+    'levirax': (('levirax_v2a', 'monolog jak w rundzie 1, tempo 0,85 (dłuższe końcówki)', {'tempo': 0.85}),
+                ('levirax_v2b', 'okrzyki Spawn 2 i Defend 2–3 (spokojniejsze, syczące), tempo 0,85',
+                 {'clips': ('Levirax_Spawn_2.wav', 'Levirax_Defend_3.wav', 'Levirax_Defend_2.wav'), 'tempo': 0.85})),
+    'gilliam': (('gilliam_v2a', 'okrzyki Defend 3, Defeat 2 i Defend 2 (obrona i porażka)',
+                 {'clips': ('Gilliam_Defend_3.wav', 'Gilliam_Defeat_2.wav', 'Gilliam_Defend_2.wav')}),
+                ('gilliam_v2b', 'referencja z rundy 1 z drżeniem (strach)', {'tremble': 0.6})),
+}
+R2_SHEETS = (('r2n', 'Runda 2: nowe warianty ElevenLabs', R2_EL), ('r2z', 'Runda 2: warianty złoczyńców', tuple(R2_VILLAINS)),
+             ('r2w', 'Głosy już w obsadzie', None))
+R2_ACCEPTED_VILLAINS = ('zachareth', 'reneyr', 'greysdon', 'navoth', 'vraskhar')
+
+
+def r2_text(lines, voice):
+    return lines[voice + '#design'] if voice in R2_FIRST_ONLY else ' '.join(f['text'] for f in lines[voice])
+
+
+def refs2():
+    """Referencje wariantów złoczyńców: okrzyki sklejone z transkrypcją Whispera albo referencja z rundy 1 z drżeniem."""
+    import librosa
+    import numpy as np
+    import soundfile as sf
+    import torch
+    from transformers import pipeline
+    import npc_voices as N
+    os.environ.setdefault('HF_HOME', paths.HF_HOME)
+    clips = {c['name']: os.path.join(ROOT, 'analysis', c['wav']) for c in load_json(os.path.join(paths.VOICES, 'analysis.json'))}
+    r1 = load_json(os.path.join(OMNI, 'refs.json'))
+    asr = pipeline('automatic-speech-recognition', model='openai/whisper-large-v3-turbo', dtype=torch.float16, device='cuda')
+    out = {}
+    for voice, variants in R2_VILLAINS.items():
+        for name, label, opt in variants:
+            wav = os.path.join(OMNI, 'refs', name + '.wav')
+            if 'clips' in opt:
+                parts, sr = [], None
+                for n in opt['clips']:
+                    y, sr = sf.read(clips[n], dtype='float32')
+                    parts += [y.mean(axis=1) if y.ndim > 1 else y, np.zeros(int(MIX_GAP_S * sr), np.float32)]
+                sf.write(wav, np.concatenate(parts[:-1]), sr, subtype='PCM_16')
+                y16, _ = librosa.load(wav, sr=16000, mono=True)
+                text = asr({'raw': y16, 'sampling_rate': 16000}, generate_kwargs={'language': 'polish', 'task': 'transcribe'})['text'].strip()
+            else:
+                y, sr = sf.read(os.path.join(ROOT, r1[voice]['wav']), dtype='float32')
+                if opt.get('tremble'):
+                    y = N.tremble(y, sr, opt['tremble'])
+                sf.write(wav, y, sr, subtype='PCM_16')
+                text = r1[voice]['text']
+            out[name] = {'voice': voice, 'label': label, 'wav': paths.rel(wav), 'text': text,
+                         'tempo': opt.get('tempo', 1.0), 'seconds': round(sf.info(wav).duration, 2)}
+            print('%-12s %.1f s, słów %d' % (name, out[name]['seconds'], len(text.split())))
+    save_json(os.path.join(OMNI, 'refs2.json'), out)
+
+
+def clone2():
+    import npc_voices as N
+    lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
+    refs_ = load_json(os.path.join(OMNI, 'refs2.json'))
+    model = N.load_omnivoice()
+    prompts = {n: model.create_voice_clone_prompt(os.path.join(ROOT, r['wav']), r['text']) for n, r in refs_.items()}
+    N.tokenizer_to_cpu(model)
+    for name, r in refs_.items():
+        for i, f in enumerate(lines[r['voice']], 1):
+            wav = os.path.join(OMNI, 'clips', '%s_%d.wav' % (name, i))
+            if not os.path.exists(wav):
+                speed = (f.get('speed') or 1.0) * r['tempo']
+                N.synth(model, wav, f['text'], 1234, voice_clone_prompt=prompts[name], **({'speed': speed} if speed != 1.0 else {}))
+
+
+def el_previews2(voice):
+    return sorted(glob.glob(os.path.join(EL_AUDIO, voice, 'design2', '*.mp3')))
+
+
+def best_preview2(scores, voice):
+    cands = [(f, scores.get('%s|preview2|%s' % (voice, os.path.basename(f)))) for f in el_previews2(voice)]
+    cands = [(f, s) for f, s in cands if s and 'cer' in s]
+    return min(cands, key=lambda c: (bool(c[1].get('tail_cut')), c[1].get('missing', 0) >= 2, c[1]['cer']), default=None)
+
+
+def items2():
+    lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
+    out = [('%s|preview2|%s' % (v, os.path.basename(f)), v, f, r2_text(lines, v)) for v in R2_EL for f in el_previews2(v)]
+    for name, r in load_json(os.path.join(OMNI, 'refs2.json'), {}).items():
+        for i, f in enumerate(lines[r['voice']], 1):
+            wav = os.path.join(OMNI, 'clips', '%s_%d.wav' % (name, i))
+            if os.path.exists(wav):
+                out.append(('%s|%s|%d' % (r['voice'], name, i), r['voice'], wav, f['text']))
+    return out
+
+
+def sheet2():
+    """Strony rundy 2: nowy wariant obok odrzuconego, warianty złoczyńców i wszystkie głosy już w obsadzie."""
+    import html as H
+    lines = load_json(os.path.join(OUT, 'lines.json'))['lines']
+    scores = load_json(os.path.join(OUT, 'scores.json'), {})
+    specs = load_json(DESIGNS)
+    names = load_json(os.path.join(OUT, 'names.json'), {})
+    from voice_compare import NAMES
+    names.update({v: NAMES[v] for v in CHOSEN if v in NAMES})
+    refs1, refs2_ = load_json(os.path.join(OMNI, 'refs.json')), load_json(os.path.join(OMNI, 'refs2.json'), {})
+    pages = []
+    for page, title, voices in R2_SHEETS:
+        out = []
+        if page == 'r2n':
+            for v in voices:
+                best1, best2 = best_preview(scores, v), best_preview2(scores, v)
+                clips = [{'id': 'orig', 'label': 'Runda 1 (wariant z uwagą)', 'kind': 'el1', 'files': [best1[0], el_v4(v)],
+                          'metrics': merged(best1[1], scores.get(v + '|v4|2')), 'desc': specs[v]['el']}]
+                if best2:
+                    clips.append({'id': 'A', 'label': 'Runda 2: nowy opis (podgląd czyta oba fragmenty)', 'kind': 'el2',
+                                  'files': [best2[0]], 'metrics': best2[1], 'desc': specs[v]['el2'],
+                                  'voice_id': preview_id(best2[0])})
+                out.append({'voice': v, 'kind': 'designed', 'clips': clips, 'decide': ['Nowy wariant', 'Runda 1', 'Jeszcze inny'],
+                            'brief': '%s. Uwaga z rundy 1: %s.' % (specs[v]['brief'], specs[v]['qa1'])})
+        elif page == 'r2z':
+            for v in voices:
+                clips = [{'id': 'orig', 'label': 'Oryginał z gry (dubbing, inny tekst)', 'kind': 'dubbing',
+                          'files': [os.path.join(ROOT, refs1[v]['wav'])], 'metrics': {}, 'desc': 'referencja rundy 1: ' + refs1[v]['source']},
+                         {'id': 'r1', 'label': 'Runda 1', 'kind': 'omni1', 'metrics': merged(scores.get(v + '|omni|1'), scores.get(v + '|omni|2')),
+                          'files': [os.path.join(OMNI, 'clips', '%s_%d.wav' % (v, i)) for i in (1, 2)]}]
+                for (name, label, _), letter in zip(R2_VILLAINS[v], 'AB'):
+                    clips.append({'id': letter, 'label': 'Wariant %s: %s' % (letter, label), 'kind': name,
+                                  'metrics': merged(scores.get('%s|%s|1' % (v, name)), scores.get('%s|%s|2' % (v, name))),
+                                  'files': [os.path.join(OMNI, 'clips', '%s_%d.wav' % (name, i)) for i in (1, 2)]})
+                note = {'levirax': 'ma bardziej ciągnąć końcówki wyrazów, jak mowa gadów', 'gilliam': 'ma być bardziej przerażony'}[v]
+                out.append({'voice': v, 'kind': 'dubbed', 'clips': clips, 'decide': ['Wariant A', 'Wariant B', 'Runda 1', 'Do poprawy'],
+                            'brief': '%s. Uwaga z rundy 1: %s.' % (specs[v]['brief'], note)})
+        else:
+            for v in CHOSEN:
+                out.append({'voice': v, 'kind': 'chosen', 'clips': [{'id': 'orig', 'kind': 'chosen', 'metrics': {},
+                            'label': 'Obecny głos: ' + ('OmniVoice (klon z dubbingu)' if v in ('nekrul', 'xenith') else 'ElevenLabs (E13)'),
+                            'files': [f['file'] for f in lines[v]]}]})
+            for v in NEW:
+                if v not in R2_EL:
+                    best = best_preview(scores, v)
+                    out.append({'voice': v, 'kind': 'chosen', 'clips': [{'id': 'orig', 'kind': 'chosen', 'metrics': {},
+                                'label': 'Wybrany w rundzie 1: ElevenLabs', 'files': [best[0], el_v4(v)]}]})
+            for v in R2_ACCEPTED_VILLAINS:
+                out.append({'voice': v, 'kind': 'chosen', 'clips': [{'id': 'orig', 'kind': 'chosen', 'metrics': {},
+                            'label': 'Wybrany w rundzie 1: OmniVoice (klon z dubbingu)',
+                            'files': [os.path.join(OMNI, 'clips', '%s_%d.wav' % (v, i)) for i in (1, 2)]}]})
+        for entry in out:
+            v = entry['voice']
+            entry.update(name=names.get(v, v), portrait=portrait_rel(v), problems=[], lines=[f['text'] for f in lines[v]])
+            entry.setdefault('brief', '')
+            for c in entry['clips']:
+                files = [f for f in c.pop('files') if f and os.path.exists(f)]
+                c['file'] = glue(files, os.path.join(OUT, 'clips', page, '%s_%s.wav' % (v, c['id']))) if files else ''
+            entry['clips'] = [c for c in entry['clips'] if c['file']]
+        intro = {'r2n': 'Runda 1 to odrzucony wariant (podgląd i eleven_v4), dla porównania. Próbka A to nowy opis po Twojej '
+                        'uwadze; podgląd projektu czyta oba fragmenty. Oceń próbkę A, odsłoń etykiety i wybierz wariant.',
+                 'r2z': 'Oryginał z gry i klon z rundy 1 dla porównania. Warianty A i B to dwa różne sposoby poprawy według Twojej uwagi.',
+                 'r2w': 'Wszystkie głosy już w obsadzie, także zaakceptowane w rundzie 1. Bez ocen.'}[page]
+        pages.append({'page': page, 'title': title, 'intro': intro, 'voices': out,
+                      'footer': 'Barwa wobec referencji: względem projektu OmniVoice (nowe postacie) albo dubbingu (złoczyńcy).'})
+    template = open(os.path.join(ROOT, 'analysis', 'tools', 'voice_compare.html'), encoding='utf-8').read()
+    nav = [{'page': p['page'], 'title': p['title'],
+            'ratable': sum(c['id'] != 'orig' for v in p['voices'] for c in v['clips'])} for p in pages]
+    index = {'title': 'E14 · Obsada, runda 2', 'file': 'e14r2_oceny.json', 'dir': 'analysis/work/compare/e14/',
+             'intro': 'Nowe warianty głosów z uwagami z rundy 1: 5 postaci w ElevenLabs (r2n) i 2 złoczyńców w OmniVoice (r2z). '
+                      'Strona r2w ma wszystkie głosy już w obsadzie.',
+             'notes': ['Postacie bez dubbingu czyta tylko ElevenLabs (D84), więc runda 2 nie ma OmniVoice dla nowych postaci.',
+                       'Nowy wariant zapiszemy na koncie po Twoim wyborze; eleven_v4 sprawdzi go automat w paczce postaci.']}
+    for p in pages:
+        body = json.dumps({'mode': 'page', 'stage': 'E14R2', 'data': p, 'nav': nav}, ensure_ascii=False).replace('</', '<\\/')
+        open(os.path.join(OUT, p['page'] + '.html'), 'w', encoding='utf-8').write(
+            template.replace('__TITLE__', H.escape('E14 · ' + p['title'])).replace('__DATA__', body))
+    body = json.dumps({'mode': 'index', 'stage': 'E14R2', 'nav': nav, 'index': index}, ensure_ascii=False).replace('</', '<\\/')
+    open(os.path.join(OUT, 'runda2.html'), 'w', encoding='utf-8').write(
+        template.replace('__TITLE__', H.escape(index['title'])).replace('__DATA__', body).replace('href="index.html"', 'href="runda2.html"'))
+    print('strony: %d, nagrania: %d -> %s' % (len(pages) + 1, sum(len(v['clips']) for p in pages for v in p['voices']),
+                                               os.path.join(OUT, 'runda2.html')))
+
+
 # --- ElevenLabs, ocena i arkusz ----------------------------------------------------------------------------------------
 
 def el_previews(voice):
@@ -349,7 +532,7 @@ def score():
     from score_samples import median_f0
     path = os.path.join(OUT, 'scores.json')
     scores = load_json(path, {})
-    todo = [t for t in items() if t[0] not in scores]
+    todo = [t for t in items() + items2() if t[0] not in scores]
     if not todo:
         print('ocenione nagrania: %d' % len(scores))
         return
@@ -505,7 +688,8 @@ def sheet():
 
 if __name__ == '__main__':
     commands = {'portrait': portrait, 'context': context, 'pick': pick, 'refs': refs, 'design': design, 'choose': choose,
-                'clone': clone, 'status': status, 'score': score, 'sheet': sheet}
+                'clone': clone, 'status': status, 'score': score, 'sheet': sheet, 'refs2': refs2, 'clone2': clone2,
+                'sheet2': sheet2}
     if len(sys.argv) != 2 or sys.argv[1] not in commands:
         raise SystemExit(__doc__)
     sys.stdout.reconfigure(encoding='utf-8')
