@@ -1,6 +1,6 @@
 # Odtworzenie projektu od zera
 
-Repozytorium nie zawiera treści gry, modeli ani wygenerowanego audio (D75, D76). Gotowe paczki z audio będą w wydaniach GitHub Releases (etap E10). Ta instrukcja pozwala zbudować wszystko samodzielnie w `analysis/work/`, z kopii aplikacji na Twoim komputerze. Komendy uruchamiamy z katalogu głównego repozytorium w Git Bash, chyba że blok mówi inaczej.
+Repozytorium nie zawiera treści gry, modeli ani wygenerowanego audio (D75, D76). Gotowe paczki z audio są w wydaniach GitHub Releases (E10, D82). Ta instrukcja pozwala zbudować wszystko samodzielnie w `analysis/work/`, z kopii aplikacji na Twoim komputerze. Komendy uruchamiamy z katalogu głównego repozytorium w Git Bash, chyba że blok mówi inaczej.
 
 ## Wymagania
 
@@ -146,8 +146,29 @@ powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1
 ```
 
 - Paczka trafia do `analysis/work/dist/`. Doorstop, Python i koła mają sumy w `src/bundle/pins.toml` i `src/bundle/requirements-<platform>.txt`.
-- Gotowe paczki publikujemy w GitHub Releases (D76, etap E10).
 - Instalację w grze opisuje `docs/INSTRUKCJA.md`.
+- Każda paczka ma `LICENSE.md`, `UZNANIE_AUTORSTWA.md` (szablon w `src/bundle/`) i licencję Doorstop w `licencje/`.
+
+### Wydanie w GitHub Releases (E10, D82)
+
+GitHub CLI działa bez instalacji. Pobierz `gh_2.103.3_windows_amd64.zip` z https://github.com/cli/cli/releases/tag/v2.103.3, sprawdź SHA-256 (`98d0cfa794721665d7973dd728c78aff7bd836d58f10f6d7a03568eccb0a22e0`) i rozpakuj do `analysis/work/bin/gh-2.103.3/gh/`. Token leży w `analysis/work/bin/gh-config` (ignorowane w Git). Logowanie (na pytanie o uwierzytelnienie Git odpowiedz `n`):
+
+```bash
+export GH_CONFIG_DIR="$PWD/analysis/work/bin/gh-config" GH="$PWD/analysis/work/bin/gh-2.103.3/gh/bin/gh.exe"
+"$GH" auth login --hostname github.com --git-protocol https --web
+```
+
+Wypchnięcie z pomocnikiem poświadczeń `gh` tylko dla tej komendy:
+
+```bash
+git -c credential.helper= -c "credential.helper=!'$GH' auth git-credential" push origin main --tags
+```
+
+Wydanie z paczkami z `analysis/work/dist/` (opis z zakresem i sumami SHA-256 w pliku w `analysis/work/out/`):
+
+```bash
+"$GH" release create v0.2.0 --repo wiQ1999/descent-lektor-pl --prerelease --title "..." --notes-file analysis/work/out/e10_release_notes.md analysis/work/dist/Descent-Lektor-PL-win.zip analysis/work/dist/Descent-Lektor-PL-mac.zip
+```
 
 ## 8. Opcjonalnie
 

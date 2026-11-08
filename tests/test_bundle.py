@@ -10,6 +10,9 @@ from lektor import bundle as B
 from lektor.companion import config as C
 
 
+NOTICES = ['LICENSE.md', 'UZNANIE_AUTORSTWA.md', 'licencje/doorstop-LICENSE.txt']    # E10
+
+
 @pytest.fixture
 def fake(tmp_path, monkeypatch):
     """Plugin z builda i Doorstop z cache zastąpione małymi plikami w katalogu tymczasowym."""
@@ -23,17 +26,19 @@ def fake(tmp_path, monkeypatch):
         z.writestr('x86/winhttp.dll', b'doorstop x86')
         z.writestr('x86/.doorstop_version', b'4.6.0')
         z.writestr('x64/winhttp.dll', b'doorstop x64')
+        z.writestr('LICENSE', b'LGPL 2.1')
     data = buf.getvalue()
     (tmp_path / 'doorstop.zip').write_bytes(data)
     pin = {'url': 'https://example.invalid/doorstop.zip', 'sha256': hashlib.sha256(data).hexdigest(),
-           'dir': 'doorstop', 'files': ['x86/winhttp.dll', 'x86/.doorstop_version']}
+           'dir': 'doorstop', 'files': ['x86/winhttp.dll', 'x86/.doorstop_version'], 'license': 'LICENSE'}
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, 'w') as z:
         z.writestr('universal/libdoorstop.dylib', b'doorstop universal')
         z.writestr('universal/.doorstop_version', b'4.6.0')
+        z.writestr('LICENSE', b'LGPL 2.1')
     mac_data = buf.getvalue()
     mac = {'url': 'https://example.invalid/doorstop-mac.zip', 'sha256': hashlib.sha256(mac_data).hexdigest(),
-           'dir': 'doorstop', 'files': ['universal/libdoorstop.dylib', 'universal/.doorstop_version']}
+           'dir': 'doorstop', 'files': ['universal/libdoorstop.dylib', 'universal/.doorstop_version'], 'license': 'LICENSE'}
     monkeypatch.setattr(B, 'pins', lambda: {'doorstop': {'win': pin, 'mac': mac}})
     monkeypatch.setattr(B, 'CACHE', str(tmp_path))
     (tmp_path / 'doorstop').mkdir()
@@ -111,7 +116,7 @@ def test_win_bundle_layout_and_line_endings(fake, monkeypatch):
     assert files == sorted(['INSTRUKCJA.md', 'Odinstaluj.cmd', 'Test dźwięku.cmd', 'Ustawienia.cmd', 'Wyłącz lektora.cmd',
                             'Włącz lektora.cmd', 'Zainstaluj.cmd', 'loader/.doorstop_version', 'loader/winhttp.dll',
                             'plugin/LektorPL.Core.dll', 'plugin/LektorPL.Loader.dll', 'skrypty/lektor.ps1',
-                            'skrypty/pliki.sha256', 'ustawienia.toml', 'wersja.txt'] + ['lektor/' + f for f in B.LEKTOR])
+                            'skrypty/pliki.sha256', 'ustawienia.toml', 'wersja.txt'] + NOTICES + ['lektor/' + f for f in B.LEKTOR])
     sums = open(os.path.join(dest, 'skrypty', 'pliki.sha256'), encoding='utf-8').read().splitlines()
     assert len(sums) == len(files) - 1 and all(len(line.split('  ')[0]) == 64 for line in sums)
     assert open(os.path.join(dest, 'loader', 'winhttp.dll'), 'rb').read() == b'doorstop x86'
@@ -131,7 +136,7 @@ def test_mac_bundle_layout_and_unix_scripts(fake, monkeypatch):
     assert sorted(B.files_of(dest)) == sorted(
         ['INSTRUKCJA.md', 'loader/.doorstop_version', 'loader/libdoorstop.dylib', 'plugin/LektorPL.Core.dll',
          'plugin/LektorPL.Loader.dll', 'skrypty/lektor.sh', 'skrypty/pliki.sha256', 'skrypty/start.sh',
-         'ustawienia.toml', 'wersja.txt'] + [c + '.command' for c in commands] + ['lektor/' + f for f in B.LEKTOR])
+         'ustawienia.toml', 'wersja.txt'] + NOTICES + [c + '.command' for c in commands] + ['lektor/' + f for f in B.LEKTOR])
     for rel in [c + '.command' for c in commands] + ['skrypty/lektor.sh', 'skrypty/start.sh']:
         data = open(os.path.join(dest, rel), 'rb').read()
         assert data.startswith(b'#!/bin/bash\n') and b'\r' not in data, rel

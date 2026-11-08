@@ -25,7 +25,7 @@ E1 ──────────────────> E4 companion (z repla
 - Proponowany start to E1. Gdy Ty grasz, E0 może liczyć na GPU.
 - Po każdym etapie robię commit, a decyzje trafiają do `DECISIONS.md`.
 - W `analysis/` nie ma treści gry; audio, logi i próbki leżą w `analysis/work/` (ignorowane).
-- E10 (wydanie w GitHub Releases) idzie po E7, gdy zakres audio jest gotowy.
+- E10 (wydanie w GitHub Releases) poszło po E13, przed E12 (D82).
 - E11 (arkusz porównawczy głosów) idzie teraz. Jego wynik ustala model dla dalszego audio. E12 (katalog treści gry) idzie po nim.
 
 ## E0 · Porządki i porównanie modeli TTS
@@ -358,14 +358,14 @@ Dalszy zakres etapu ustalamy po odsłuchu próbek.
 
 Publiczne wydanie gotowych paczek (D76).
 
-**Status:** zakres zaakceptowany 2026-11-07. Start po etapie porządkowania treści gry.
+**Status:** ukończony 2026-11-08 (D82). Repozytorium `wiQ1999/descent-lektor-pl` jest publiczne, a wydanie `v0.2.0` (pre-release) ma paczki M2 dla Windows i Maca.
 
 **Zakres:**
 - paczki Windows i Mac z kompletem plików jak dotąd: audio WAV, baza kwestii, plugin, loader, companion z Pythonem, skrypty i instrukcja;
 - `LICENSE.md` w każdej paczce (pkt 3 licencji wymaga go w każdej kopii);
 - sprawdzenie licencji modeli przy rozpowszechnianiu audio i uznanie autorstwa: OmniVoice (wagi CC-BY-NC) i tokenizer Higgs Audio 2 (notka o autorstwie);
 - tag wersji i opis wydania: zakres scenariuszy i sumy SHA-256 paczek;
-- publikację (`gh release create` albo strona GitHub) robisz Ty.
+- publikację robi Claude przenośnym `gh` po zalogowaniu użytkownika (D82; pierwotnie: użytkownik).
 
 ## E11 · Arkusz porównawczy głosów
 

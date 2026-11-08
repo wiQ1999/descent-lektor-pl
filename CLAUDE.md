@@ -22,7 +22,9 @@ Gramy na MacBooku Air M5 (arm64). Development robimy na Windows 11 z GTX 1650 Ti
 - Gdy krok wymaga gry, przygotowujemy instrukcję dla użytkownika i czekamy na wynik.
 - Pliki gry (`E:\SteamLibrary\steamapps\common\Legends of the Dark`) i `LocalLow` są tylko do odczytu; pracujemy na kopiach w `analysis/work/`.
 - Treści gry (teksty, grafiki, nagrania, dekompilacja), modeli ani wygenerowanego audio nie commitujemy (D75, D76). Raporty podają klucze, nazwy i liczby, bez pełnych tekstów.
-- Repozytorium trafi publicznie na GitHub. `.gitignore` blokuje treść gry, modele i audio w każdym miejscu, bez Git LFS. Gotowe paczki idą do GitHub Releases (D76, etap E10). Zdalne repozytorium i publikację wydań robi użytkownik. Logowanie do Steam (DepotDownloader) też.
+- Repozytorium jest publiczne: `wiQ1999/descent-lektor-pl` (D82). `.gitignore` blokuje treść gry, modele i audio w każdym miejscu, bez Git LFS. Gotowe paczki idą do GitHub Releases (D76, E10).
+  - Wypchnięcie i wydania robimy przenośnym `gh` z `analysis/work/bin/` (`GH_CONFIG_DIR=analysis/work/bin/gh-config`, pomocnik poświadczeń tylko w `git -c`, bez globalnej konfiguracji Git). Komendy są w `docs/ODTWORZENIE.md` §7.
+  - Do GitHub (`gh auth login`) i Steam (DepotDownloader) loguje się użytkownik.
 - Dokumentacja nie powtarza zastrzeżeń prawnych: opisuje je `LICENSE.md` (D76).
 - Każde nowe narzędzie albo krok przygotowania dopisujemy do [docs/ODTWORZENIE.md](docs/ODTWORZENIE.md), a nowe pakiety `.venv` do `analysis/envs/venv.txt`.
 - Wagi modeli i cache Hugging Face trzymamy w `analysis/work/hf_cache` (ignorowane w Git).
@@ -40,7 +42,7 @@ src/         kod docelowy (plugin, pipeline, companion)
              companion/ (E4: library, director, player, app), bundle (E6: folder paczki)
   plugin/    Core (C#, net472, bez Harmony i BepInEx), Loader (Doorstop 4.6, D58), BepInEx (adapter, zapas deweloperski),
              install/ (lektor-hook.ps1, lektor-companion.ps1, monomod-fix.ps1)
-  bundle/    szablony paczki Descent-Lektor-PL (E6): ustawienia.toml, pins.toml, win/ (.cmd + skrypty/lektor.ps1), mac/
+  bundle/    szablony paczki Descent-Lektor-PL (E6): ustawienia.toml, pins.toml, UZNANIE_AUTORSTWA.md (E10), win/ (.cmd + skrypty/lektor.ps1), mac/
 tests/       pytest dla src/lektor (zdania testowe własne, bez tekstów gry)
 ```
 

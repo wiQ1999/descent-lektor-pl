@@ -4,7 +4,7 @@ Polski lektor do gry *Descent: Legends of the Dark* ze Steama. Czyta okna fabula
 
 ## Co warto wiedzieć
 
-- **Zakres:** ta wersja ma nagrania prologu, pierwszej misji i sceny „Welcome Home” w mieście. W dalszych misjach lektor milczy, a gra działa normalnie. Listy łupu nie są jeszcze czytane.
+- **Zakres:** ta wersja ma nagrania prologu i scenariuszy Q1, Q6, Q7 i Q8 aktu 1 (ze wstępami, zakończeniami i podróżami), wydarzeń kampanii dostępnych po nich, tekstów miasta i list łupu z tych scenariuszy. W pozostałych scenariuszach (m.in. Q2–Q5, Q9 i SQ2) lektor czyta tylko wspólne komunikaty, a resztę pomija. Gra działa wtedy normalnie.
 - **Jak działa:** gra uruchamia lektora sama. Mały dodatek w grze rozpoznaje okna i przekazuje je lektorowi, a lektor odtwarza nagrania przez głośnik komputera. Po wyjściu z gry lektor też się zamyka.
 - **Co zmienia na komputerze:** wszystko leży w folderze `Descent-Lektor-PL`. Instalacja nie potrzebuje hasła administratora i niczego nie instaluje w systemie.
   - Windows: w folderze gry pojawiają się 3 małe pliki.
@@ -22,6 +22,7 @@ Polski lektor do gry *Descent: Legends of the Dark* ze Steama. Czyta okna fabula
 | `Test dźwięku` | odtwarza jedną kwestię narratora |
 | `INSTRUKCJA.md` | ta instrukcja |
 | `wersja.txt` | wersja paczki |
+| `LICENSE.md`, `UZNANIE_AUTORSTWA.md`, `licencje/` | warunki korzystania, autorzy modeli głosu i programów w paczce |
 | `logs/` | dzienniki do zgłaszania problemów |
 | `plugin/`, `loader/`, `python/`, `lektor/`, `dane/`, `skrypty/` | pliki lektora, nie ruszaj ich |
 
@@ -33,7 +34,7 @@ Na Windows pliki do dwukliku mają końcówkę `.cmd`, a na Macu `.command`.
 
 - Windows 10 albo 11 (64-bit).
 - Gra kupiona i zainstalowana w Steam.
-- Ok. 0,5 GB wolnego miejsca.
+- Ok. 2,5 GB wolnego miejsca podczas instalacji: pobrany plik `.zip` ma ok. 1,1 GB, a rozpakowany folder ok. 1,2 GB. Po rozpakowaniu plik `.zip` można usunąć.
 
 ### Instalacja
 
@@ -82,7 +83,7 @@ Przy zamkniętej grze kliknij dwukrotnie `Wyłącz lektora.cmd`. Gra startuje wt
 
 - Mac z procesorem Apple (M1 lub nowszym) i aktualnym macOS.
 - Gra kupiona i zainstalowana w Steam.
-- Ok. 0,5 GB wolnego miejsca.
+- Ok. 2,5 GB wolnego miejsca podczas instalacji: pobrany plik `.zip` ma ok. 1,1 GB, a rozpakowany folder ok. 1,2 GB. Po rozpakowaniu plik `.zip` można usunąć.
 
 ### Instalacja
 

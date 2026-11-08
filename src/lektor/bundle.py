@@ -37,6 +37,9 @@ CACHE = os.path.join(paths.WORK, 'bin')
 DEV = os.path.join(paths.WORK, 'dev-bundle')
 DIST = os.path.join(paths.WORK, 'dist')
 GUIDE = os.path.join(paths.ROOT, 'docs', 'INSTRUKCJA.md')
+# E10: licencja projektu (pkt 3 wymaga jej w każdej kopii) i uznanie autorstwa modeli i programów w paczce
+NOTICES = (os.path.join(paths.ROOT, 'LICENSE.md'), os.path.join(SRC, 'UZNANIE_AUTORSTWA.md'))
+LICENSES = 'licencje'
 LEKTOR = ('__init__.py', 'normalize.py', 'paths.py', 'companion/__init__.py', 'companion/__main__.py',
           'companion/app.py', 'companion/config.py', 'companion/director.py', 'companion/library.py',
           'companion/player.py')     # companion bez modułów E2 i E3
@@ -91,6 +94,10 @@ def copy_loader(platform, dest):
     with zipfile.ZipFile(fetch(pin)) as z:
         for name in pin['files']:
             with z.open(name) as src, open(os.path.join(out, name.rsplit('/', 1)[1]), 'wb') as fh:
+                shutil.copyfileobj(src, fh)
+        if pin.get('license'):
+            os.makedirs(os.path.join(dest, LICENSES), exist_ok=True)
+            with z.open(pin['license']) as src, open(os.path.join(dest, LICENSES, 'doorstop-LICENSE.txt'), 'wb') as fh:
                 shutil.copyfileobj(src, fh)
 
 
@@ -286,6 +293,8 @@ def build(platform='win', dev=False, out=None):
     copy_lektor(dest)
     fragments = copy_data(dest)
     shutil.copy2(GUIDE, os.path.join(dest, 'INSTRUKCJA.md'))
+    for path in NOTICES:
+        shutil.copy2(path, dest)
     with open(os.path.join(dest, 'wersja.txt'), 'w', encoding='utf-8', newline='\n') as fh:
         fh.write(version_text(platform, fragments))
     write_sums(dest)

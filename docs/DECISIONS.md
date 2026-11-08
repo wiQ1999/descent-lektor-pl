@@ -669,7 +669,7 @@ Plan etapów: [PLAN.md](PLAN.md).
 **Decyzja:**
 - Kod, dokumentacja i raporty mają krótką licencję niekomercyjną po polsku i angielsku (`LICENSE.md`, rozstrzyga wersja polska).
 - Korzystać mogą tylko osoby, które legalnie nabyły grę planszową *Descent: Legends of the Dark* (pol. *Descent: Legendy Mroku*, Fantasy Flight Games). Gra wymaga darmowej aplikacji, więc warunek dotyczy gry planszowej.
-- Repozytorium może trafić publicznie na GitHub. Zdalne repozytorium dodaje użytkownik.
+- Repozytorium może trafić publicznie na GitHub. Zdalne repozytorium dodaje użytkownik (zmienione w D82).
 - W Git nie ma treści gry (tekstów, grafik, nagrań, dekompilacji), modeli ani wygenerowanego audio. `.gitignore` blokuje je w każdym miejscu repozytorium, także grafiki, bazy, dzienniki i archiwa.
 - Narzędzia odtwarzają te dane lokalnie z kopii aplikacji użytkownika (`docs/ODTWORZENIE.md`).
 - Wersje pakietów `.venv` są zapisane w `analysis/envs/venv.txt`. Instalacja na sucho w czystym środowisku przechodzi.
@@ -754,6 +754,17 @@ Plan etapów: [PLAN.md](PLAN.md).
 - Limit etapu to zatwierdzony szacunek +20% (ok. 5,9 tys. kredytów), pilnowany opcją `--max-credits`.
 
 **Uzasadnienie:** Wybór użytkownika z QA. Komenda jest wznawialna, liczy koszt jak hook MCP i przyda się przy całej grze. Pilot (11 fragmentów, 303 kredyty) przeszedł automat bez uwag. Wynik: 156 fragmentów w manifestach (M1 16, M2 140), 163 wywołania, 5411 kredytów (0,44 na znak, w tym 7% na ponowne podejścia). Automat zostawił 4 uwagi u Adelynn, wszystkie to fałszywe alarmy Whispera. Szczegóły: `analysis/E13_AUDIO.md`.
+
+### D82 · 2026-11-08 · E10: publiczne repozytorium i wydanie v0.2.0
+**Decyzja:**
+- E10 idzie teraz, po E13 i przed E12. Wydanie obejmuje M2 z głosami postaci bez dubbingu z E13.
+- Repozytorium `wiQ1999/descent-lektor-pl` jest publiczne. Zdalne repozytorium, wypchnięcie i wydanie robi Claude przenośnym GitHub CLI z `analysis/work/bin/` z konfiguracją w `analysis/work/bin/gh-config`, bez zmian w globalnej konfiguracji Git. Loguje się użytkownik (`gh auth login`), Claude nie widzi tokenu. Zmienia D75 (zdalne repozytorium dodaje użytkownik) i zakres E10 (publikację robi użytkownik).
+- Tag `v0.2.0`, wydanie oznaczone jako pre-release: Q9 i SQ2 nie mają jeszcze audio (D69), a sesja przy stole na Macu jest otwarta (D61, E7).
+- Historia Git zostaje bez zmian: z dwoma krótkimi cytatami w starej wersji `analysis/REPORT.md` (D75) i adresem e-mail konta GitHub użytkownika w commitach.
+- Każda paczka ma `LICENSE.md`, `UZNANIE_AUTORSTWA.md` (OmniVoice, Higgs Audio v2, ElevenLabs, dubbing i teksty gry, Doorstop, Python i pakiety) i tekst licencji Doorstop w `licencje/`. Folder `loader/` zostaje bez zmian, bo instalator kopiuje go do gry.
+- Opis wydania podaje zakres scenariuszy, rozmiary i sumy SHA-256 paczek. `INSTRUKCJA.md` ma zakres M2 i miejsce na dysku po rozpakowaniu.
+
+**Uzasadnienie:** Prośba użytkownika po lokalnym teście paczki M2 i wybory z QA. Wagi OmniVoice (CC BY-NC) i tokenizer Higgs Audio v2 (Boson Higgs Audio 2 Community License) wymagają uznania autorstwa, a CC BY-NC także użytku niekomercyjnego. Wydanie jest niekomercyjne, a uznanie autorstwa jest w każdej paczce. Audio ElevenLabs powstało w płatnym planie. Doorstop (LGPL 2.1) wymaga tekstu licencji i dostępu do źródeł, stąd plik w `licencje/` i link do wydania źródłowego. Skan historii (66 commitów, ciągi 5 słów ze wszystkich tekstów gry PL i EN) znalazł tylko dwa cytaty z D75 i żadnych kluczy API ani tokenów.
 
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
