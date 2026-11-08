@@ -833,6 +833,13 @@ Plan etapów: [PLAN.md](PLAN.md).
 
 **Uzasadnienie:** Uwaga użytkownika po rundzie 4: głos ma być głęboki i chropawy, podobny do smoka z filmu „Hobbit”. Taki głos w filmie powstał z obróbki dźwięku. Projekt głosu ElevenLabs przy bardzo niskim tonie daje głos męski (98 Hz w rundzie 2), więc niski ton uzyskujemy też efektem, a nie tylko opisem. Koszt rundy 5: 5 projektów, ok. 1,2 tys. kredytów. Efekt nie kosztuje kredytów, a automat ma po nim CER ≤ 0,4%.
 
+### D90 · 2026-11-08 · E14: Delphyndra, runda 6 bez efektu
+**Decyzja:**
+- Runda 6 dla Delphyndry: pięć opisów `el6`. Każdy zaczyna się od słów „huge, bloodthirsty female dragon” i kilka razy podkreśla kobiecy głos. Efekt smoka z D89 odpada.
+- Arkusz bierze z każdego opisu podgląd z F0 najbliżej 190 Hz i nie niżej niż 160 Hz, bo część głosów z rundy 5 brzmiała jak męska.
+
+**Uzasadnienie:** Uwaga użytkownika po rundzie 5: głosy nie przypominają smoka, a część z nich brzmi jak męska. Prośba, by zapytanie do MCP wprost mówiło o wielkiej, krwiożerczej smoczycy. Każdy opis daje zwykle jeden lub dwa podglądy około 120–150 Hz i jeden powyżej 200 Hz, więc próg 160 Hz odcina głosy podobne do męskich. Koszt rundy 6: 5 projektów, ok. 1,2 tys. kredytów.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

@@ -22,6 +22,8 @@ Runda 4 (D88): pięć opisów `el4` (a–e) Delphyndry do …/delphyndra/design4
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet4     # strona r4n i runda4.html
 Runda 5 (D89): pięć opisów `el5` do …/delphyndra/design5<a–e>/, potem `score`, `fx5` (efekt smoka), znowu `score` i
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet5     # strona r5n i runda5.html
+Runda 6 (D90): pięć opisów `el6` (wielka, krwiożercza smoczyca, bez efektu) do …/delphyndra/design6<a–e>/, `score` i
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet6     # strona r6n i runda6.html
 
 Opisy głosów są w voice_designs_e14.json. Próbki ElevenLabs powstają przez MCP (skill `elevenlabs`):
 text_to_voice z opisem `el` i tekstem `<głos>#design` z lines.json do analysis/work/elevenlabs/audio/e14/<głos>/design/,
@@ -497,8 +499,12 @@ R4_EL = ('delphyndra',)
 R4_VARIANTS = 'abcde'
 R5_EL = ('delphyndra',)
 R5_VARIANTS = 'abcde'
-ROUNDS_EL = ((3, R3_EL, R3_VARIANTS), (4, R4_EL, R4_VARIANTS), (5, R5_EL, R5_VARIANTS))
-ROUND_F0 = {5: (120, 330, 140)}   # runda 5: głos ma być głęboki, więc niżej niż 200 Hz, ale nie męski (98 Hz z rundy 2)
+# Runda 6 (D90): opis wprost „wielka, krwiożercza smoczyca”, bez efektu; część głosów z rundy 5 brzmiała jak męskie.
+R6_EL = ('delphyndra',)
+R6_VARIANTS = 'abcde'
+ROUNDS_EL = ((3, R3_EL, R3_VARIANTS), (4, R4_EL, R4_VARIANTS), (5, R5_EL, R5_VARIANTS), (6, R6_EL, R6_VARIANTS))
+# Zakres i cel F0 (Hz) podglądu: runda 5 głęboko, ale nie męsko (98 Hz z rundy 2); runda 6 wyraźnie kobieco.
+ROUND_F0 = {5: (120, 330, 140), 6: (160, 330, 190)}
 FX = os.path.join(OUT, 'fx')
 DRAGON_FX = {'semitones': -3, 'sub_gain': 0.35, 'sub_hz': 300, 'drive': 3.0, 'grit': 0.35,
              'rt60_s': 1.6, 'reverb': 0.22, 'predelay_s': 0.025}
@@ -607,6 +613,11 @@ DELPHYNDRA_ROUNDS = {
                  'i wybierz wariant albo „Żaden”.',
         'index': 'Delphyndra po rundzie 4: głos ma być głęboki i chropawy jak smok z filmu. Pięć opisów ElevenLabs, każdy także '
                  'z efektem smoka zrobionym lokalnie.'},
+    6: {'variants': R6_VARIANTS, 'qa': ('qa5', 5), 'title': 'Runda 6: Delphyndra, wielka krwiożercza smoczyca',
+        'intro': 'Pięć opisów, które wprost mówią: wielka, krwiożercza smoczyca o kobiecym głosie (A–E, kolejność losowa). '
+                 'Bez efektu. Na górze Levirax dla porównania. Oceń A–E, odsłoń etykiety i wybierz wariant albo „Żaden”.',
+        'index': 'Delphyndra po rundzie 5: głosy nie przypominały smoka, a część brzmiała jak męska. Pięć opisów z „wielką, '
+                 'krwiożerczą smoczycą” wprost w zapytaniu i z wyraźnie kobiecym głosem.'},
 }
 
 
@@ -659,6 +670,10 @@ def sheet4():
 
 def sheet5():
     sheet_delphyndra(5)
+
+
+def sheet6():
+    sheet_delphyndra(6)
 
 
 def sheet3():
@@ -945,7 +960,7 @@ if __name__ == '__main__':
     commands = {'portrait': portrait, 'context': context, 'pick': pick, 'refs': refs, 'design': design, 'choose': choose,
                 'clone': clone, 'status': status, 'score': score, 'sheet': sheet, 'refs2': refs2, 'clone2': clone2,
                 'sheet2': sheet2, 'sheet3': sheet3, 'sheet4': sheet4,
-                'fx5': fx5, 'sheet5': sheet5}
+                'fx5': fx5, 'sheet5': sheet5, 'sheet6': sheet6}
     if len(sys.argv) != 2 or sys.argv[1] not in commands:
         raise SystemExit(__doc__)
     sys.stdout.reconfigure(encoding='utf-8')
