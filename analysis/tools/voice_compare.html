@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>__TITLE__</title>
-<!-- Szablon arkusza E11 (voice_compare.py sheet). Gotowe strony z tekstami i audio gry leżą tylko w analysis/work/. -->
+<!-- Szablon arkusza E11 i E14 (voice_compare.py, voice_compare_e14.py sheet). Gotowe strony z tekstami i audio gry leżą tylko w analysis/work/. -->
 <style>
 :root { --bg: #f6f5f2; --card: #fff; --ink: #1d1d1b; --muted: #6b6a66; --line: #dddad3; --accent: #8a4b16; --ok: #2f6b3a; --bad: #9b2c2c; }
 @media (prefers-color-scheme: dark) { :root { --bg: #1b1a18; --card: #262522; --ink: #ecebe7; --muted: #a3a19b; --line: #3a3833; --accent: #e0a060; --ok: #79c08a; --bad: #e08080; } }
@@ -48,7 +48,8 @@ ul.pages li { margin: 4px 0; }
 <script type="application/json" id="data">__DATA__</script>
 <script>
 const P = JSON.parse(document.getElementById('data').textContent);
-const KEY = 'lektor-e11:';
+const STAGE = P.stage || 'E11';
+const KEY = 'lektor-' + STAGE.toLowerCase() + ':';
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
 function load(page) {
   try { return JSON.parse(localStorage.getItem(KEY + page)) || {ratings: {}, revealed: false}; }
@@ -66,12 +67,12 @@ function rated(page) {
 function allRatings() {
   const out = {};
   for (const n of P.nav) out[n.page] = load(n.page);
-  return {stage: 'E11', exported: new Date().toISOString(), pages: out};
+  return {stage: STAGE, exported: new Date().toISOString(), pages: out};
 }
 function download() {
   const blob = new Blob([JSON.stringify(allRatings(), null, 1)], {type: 'application/json'});
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = 'e11_oceny.json'; a.click();
+  a.href = URL.createObjectURL(blob); a.download = STAGE.toLowerCase() + '_oceny.json'; a.click();
 }
 function copy() {
   const text = JSON.stringify(allRatings());
@@ -108,6 +109,7 @@ function renderPage() {
   for (const v of d.voices) {
     const r = st.ratings[v.voice] || {};
     h += `<section class="voice"><div class="head">${v.portrait ? `<img src="${v.portrait}" alt="">` : ''}<div><h2>${esc(v.name)}</h2>`;
+    if (v.brief) h += `<p class="small muted">${esc(v.brief)}</p>`;
     h += '<ol>' + v.lines.map(t => `<li>${esc(t)}</li>`).join('') + '</ol>';
     if (v.problems.length) h += `<p class="small bad">Automat zgłosił w nagraniu OmniVoice: ${esc(v.problems.join(', '))} (innej kwestii tej postaci w M2 nie ma).</p>`;
     h += '</div></div><div class="clips">';
@@ -127,10 +129,16 @@ function renderPage() {
       h += '<table>' + Object.keys(fmt).filter(k => c.metrics[k] !== undefined).map(k =>
         `<tr><td class="muted">${names[k]}</td><td>${fmt[k](c.metrics[k])}</td></tr>`).join('') + '</table></div></div>';
     }
-    h += '</div></section>';
+    h += '</div>';
+    if (v.decide) {   // wybór silnika po odsłonięciu etykiet (E14)
+      const dv = (r.decision || {}).engine;
+      h += '<div class="reveal"><div class="rate"><span>Wybór</span>' + v.decide.map(o =>
+        `<label><input type="radio" name="${v.voice}-decision" value="${esc(o)}" data-v="${v.voice}" data-c="decision" data-f="engine"${dv === o ? ' checked' : ''}><b>${esc(o)}</b></label>`).join('') + '</div></div>';
+    }
+    h += '</section>';
   }
   h += `<div class="bar"><button class="main" id="reveal">Odsłoń etykiety i wyniki automatu</button><button id="dl">Pobierz oceny (JSON)</button><button id="cp">Kopiuj oceny</button><span id="msg" class="muted small"></span></div>`;
-  h += '<p class="small muted">Barwa wobec referencji: dla postaci z dubbingiem względem oryginału, dla pozostałych względem obecnego głosu OmniVoice. Oceny zapisują się w przeglądarce; przycisk pobierania zbiera oceny ze wszystkich stron.</p>';
+  h += `<p class="small muted">${esc(d.footer || 'Barwa wobec referencji: dla postaci z dubbingiem względem oryginału, dla pozostałych względem obecnego głosu OmniVoice.')} Oceny zapisują się w przeglądarce; przycisk pobierania zbiera oceny ze wszystkich stron.</p>`;
   document.getElementById('main').innerHTML = h;
 
   const update = (el, fn) => {
@@ -139,7 +147,7 @@ function renderPage() {
     fn(s.ratings[v][c]); s.ratings[v][c].blind = !s.revealed && (s.ratings[v][c].blind !== false);
     save(page, s); flash(`Zapisano. Ocenione próbki na tej stronie: ${rated(page)}.`);
   };
-  document.querySelectorAll('.rate input').forEach(el => el.addEventListener('change', () => update(el, o => { o[el.dataset.f] = Number(el.value); })));
+  document.querySelectorAll('.rate input').forEach(el => el.addEventListener('change', () => update(el, o => { o[el.dataset.f] = isNaN(Number(el.value)) ? el.value : Number(el.value); })));
   document.querySelectorAll('input.note').forEach(el => el.addEventListener('change', () => update(el, o => { o.note = el.value; })));
   document.getElementById('reveal').onclick = () => {
     const total = P.nav.find(n => n.page === page).ratable, done = rated(page);
@@ -150,7 +158,20 @@ function renderPage() {
   document.getElementById('cp').onclick = copy;
 }
 
+function renderIndex2() {   // strona startowa E14: opis, kolejność i koszt próbek
+  const x = P.index;
+  let h = `<h1>${esc(x.title)}</h1><p>${esc(x.intro)}</p>`;
+  h += `<ol><li>Słuchaj w słuchawkach, każdą stronę od góry.</li><li>Oceń próbki w skali 1–5, notatka jest opcjonalna.</li><li>Na końcu strony odsłoń etykiety i wybierz silnik dla każdej postaci.</li><li>Po ostatniej stronie kliknij „Pobierz oceny” i zapisz plik <code>${esc(x.file)}</code> w <code>${esc(x.dir)}</code> (albo podaj, gdzie jest).</li></ol>`;
+  h += '<ul class="pages">' + P.nav.map(n => `<li><a href="${n.page}.html">${esc(n.page)} · ${esc(n.title)}</a> <span class="muted small">ocenione ${rated(n.page)} z ${n.ratable}${load(n.page).revealed ? ', odsłonięte' : ''}</span></li>`).join('') + '</ul>';
+  if (x.notes) h += '<h2>Uwagi</h2><ul>' + x.notes.map(t => `<li>${esc(t)}</li>`).join('') + '</ul>';
+  h += '<div class="bar"><button id="dl">Pobierz oceny (JSON)</button><button id="cp">Kopiuj oceny</button><span id="msg" class="muted small"></span></div>';
+  document.getElementById('main').innerHTML = h;
+  document.getElementById('dl').onclick = download;
+  document.getElementById('cp').onclick = copy;
+}
+
 function renderIndex() {
+  if (P.index) return renderIndex2();
   const c = P.costs;
   let h = '<h1>E11 · Arkusz porównawczy głosów</h1>';
   h += '<p>Arkusz ma odpowiedzieć, którego modelu użyć dla narratora, bohaterów z głosem z gry i pozostałych postaci: lokalnego OmniVoice czy ElevenLabs. Strony <b>a1–a3</b> porównują dubbing z OmniVoice. Strony <b>b1–b2</b> porównują obecny głos OmniVoice z trzema wariantami ElevenLabs (na ślepo). Strony <b>c1–c2</b> (runda 2) porównują cztery modele TTS ElevenLabs tym samym głosem (na ślepo).</p>';

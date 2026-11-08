@@ -1,0 +1,137 @@
+{
+ "_info": "E14 (D83): jeden opis głosu na nową postać bez dubbingu, z portretu z gry (d3/storymessagecharacters) i charakteru z jej kwestii. `el` idzie do text_to_voice (MCP), `omni` do projektu OmniVoice (opis płci, wieku i wysokości oraz własne zdanie w stylu postaci, nie tekst gry). Złoczyńcy mają klon OmniVoice z dubbingu, więc tylko `brief`. Głosy mają się różnić od obsady E13 (docs/CASTING.md).",
+ "magrit": {
+  "gender": "female",
+  "brief": "dojrzała baronessa w zbroi i płaszczu z futrem, długi ciemny warkocz, skrzyżowane ręce; dowódczyni lojalistów, rzeczowa i zdecydowana, zmęczona wojną",
+  "el": "Native Polish. Female, 35-45. Studio quality. Persona: battle-hardened baroness and general of the loyalist armies. Emotion: resolute, pragmatic, weary but controlled. Low, slightly rough alto with a firm, steady delivery; brisk, matter-of-fact pace; decisive emphasis, no theatricality.",
+  "omni": {"instruct": "female, middle-aged, low pitch", "ref_cps": 11.0,
+           "style_text": "Nie ma czasu na spory. Zbierzcie ludzi przed świtem, ruszamy, zanim wróg zdąży się okopać."}
+ },
+ "alys": {
+  "gender": "female",
+  "brief": "młoda kobieta o czarnych włosach w szacie z napierśnikiem, z młotem bojowym, dłoń na piersi; przywódczyni Cytadeli, szczera, żarliwa, emocjonalna",
+  "el": "Native Polish. Female, 28-35. Studio quality. Persona: young head of the Citadel, a battle cleric who carries a warhammer and the weight of a kingdom. Emotion: earnest, idealistic, quick to feel. Clear, bright mezzo with warm resonance; lively, expressive intonation; moderate pace, sincere emphasis.",
+  "omni": {"instruct": "female, young adult, moderate pitch", "ref_cps": 11.5,
+           "style_text": "Nie poddamy się. Cytadela przetrwała gorsze czasy i przetrwa także te, jeśli tylko staniemy razem."}
+ },
+ "greigory": {
+  "gender": "male",
+  "brief": "korpulentny starszy baron w zielonym kapeluszu, biały wąs i broda, ręce na biodrach, chytry uśmiech; jowialny, próżny, teatralnie oburzony",
+  "el": "Native Polish. Male, 60-70. Studio quality. Persona: portly, vain old baron and guardian of a neutral city, fond of his own wit. Emotion: jovial, pompous, theatrically indignant. Bright, slightly nasal baritone with an old man's crackle; bouncy, sing-song intonation, comic pauses and exclamations.",
+  "omni": {"instruct": "male, elderly, moderate pitch", "ref_cps": 11.5,
+           "style_text": "Ależ wybornie! Któż by pomyślał, że stary baron jeszcze wszystkich zaskoczy? Ha, nalejcie wina!"}
+ },
+ "button": {
+  "gender": "female",
+  "brief": "drobna rudowłosa gnomka w zielonej kamizelce, z narzędziem za głową, roześmiana; wynalazczyni z gildii, gadatliwa, ciekawska, roztrzepana",
+  "el": "Native Polish. Female, 20-25. Studio quality. Persona: small, cheerful gnome tinkerer and guild craftswoman. Emotion: bubbly, curious, scatterbrained. Light, high, bright voice with a playful lilt; fast, chatty pace, a smile audible in the voice, rising intonation.",
+  "omni": {"instruct": "female, young adult, high pitch", "ref_cps": 13.0,
+           "style_text": "Oj, patrzcie tylko! Jeszcze jedna śrubka, troszkę smaru i ta maszyna będzie latać! No, prawie latać."}
+ },
+ "laurel": {
+  "gender": "female",
+  "brief": "elfka tropicielka z dredami i malunkiem na twarzy, łuk i futrzany płaszcz; przywódczyni Strażników Dziczy, spokojna, cicha, rzeczowa",
+  "el": "Native Polish. Female, 30-40. Studio quality. Persona: elven ranger and leader of the forest wardens, a seasoned tracker. Emotion: calm, grounded, quietly confident. Soft, low, slightly husky mezzo, close and natural; unhurried, measured pace with even, understated intonation.",
+  "omni": {"instruct": "female, young adult, low pitch", "ref_cps": 10.0,
+           "style_text": "Ślady są świeże. Idźcie cicho i trzymajcie się drzew, las powie nam więcej niż niejeden zwiadowca."}
+ },
+ "arden": {
+  "gender": "male",
+  "brief": "elf o niebieskiej skórze i jasnych włosach, w fioletowym płaszczu z pierścieniami, wymowny gest; kupiec z Tamaliru, przymilny, chciwy, gładki w mowie",
+  "el": "Native Polish. Male, 35-45. Studio quality. Persona: flamboyant, smooth-talking merchant from a wealthy southern city. Emotion: ingratiating, eager, greedy charm. Smooth, silky light baritone with a salesman's smile; quick, persuasive patter, elegant articulation, flattering lifts of intonation.",
+  "omni": {"instruct": "male, middle-aged, moderate pitch", "ref_cps": 12.5,
+           "style_text": "Ach, cóż za szczęśliwe spotkanie! Mam dla was ofertę, jakiej nikt inny w mieście nie złoży. Wyjątkową!"}
+ },
+ "veta": {
+  "gender": "female",
+  "brief": "orczyca w czerwonej szacie uczonej, złote ozdoby, upięte warkocze, otwarta księga; mistrzyni runów, uczona z ironią, spokojna, trochę zmęczona",
+  "el": "Native Polish. Female, 50-60. Studio quality. Persona: orc rune mistress and university scholar, mentor to young mages. Emotion: wry, curious, dryly amused, a little tired. Rich, low, slightly gravelly contralto; deliberate lecturing pace, knowing pauses and gentle irony.",
+  "omni": {"instruct": "female, middle-aged, very low pitch", "ref_cps": 10.0,
+           "style_text": "Ciekawe. Bardzo ciekawe. Runy rzadko kłamią, mój drogi, ale lubią ukrywać prawdę między wierszami."}
+ },
+ "trevalyn": {
+  "gender": "male",
+  "brief": "barczysty baron w zbroi z piorunami, długi warkocz, uniesiona dłoń na powitanie; honorowy wojownik, serdeczny, gromki, bohaterski",
+  "el": "Native Polish. Male, 45-55. Studio quality. Persona: honourable warrior baron, a veteran commander loved by his soldiers. Emotion: warm, hearty, heroic resolve. Deep, clear bass-baritone with noble gravitas and strong projection; steady, rousing delivery, open vowels, confident pace.",
+  "omni": {"instruct": "male, middle-aged, very low pitch", "ref_cps": 11.0,
+           "style_text": "Przyjaciele, do mnie! Stańmy ramię w ramię, a nikt nie przejdzie przez te mury, póki żyję!"}
+ },
+ "balthain": {
+  "gender": "male",
+  "brief": "mężczyzna z krótką bródką w skórzanej zbroi, gogle lotnicze na szyi, swobodna poza; rycerz alerionów, uprzejmy, szarmancki, pewny siebie",
+  "el": "Native Polish. Male, 30-40. Studio quality. Persona: dashing knight who commands winged alerion riders, courteous and proud. Emotion: gallant, upbeat, polished courtesy. Smooth, clear, youthful baritone with a confident smile; crisp formal diction, lively pace, buoyant intonation.",
+  "omni": {"instruct": "male, young adult, low pitch", "ref_cps": 12.0,
+           "style_text": "Do usług, pani. Moi rycerze są gotowi, a aleriony aż rwą się do lotu. Wsiadajcie, przyjaciele!"}
+ },
+ "ducard": {
+  "gender": "female",
+  "brief": "dama w średnim wieku z upiętym kokiem, futrzana stuła, splecione dłonie w rękawiczkach; hrabina i nadzorczyni sądu, chłodna, precyzyjna, formalna",
+  "el": "Native Polish. Female, 40-50. Studio quality. Persona: poised countess and court overseer, a stickler for law and protocol. Emotion: cool, composed, precise, with a dry edge. Crisp, clear, slightly thin mezzo-soprano; clipped, exact articulation, measured formal pace, little warmth.",
+  "omni": {"instruct": "female, middle-aged, moderate pitch", "ref_cps": 10.5,
+           "style_text": "Proszę o spokój. Sąd wysłucha obu stron, a potem orzeknie zgodnie z prawem, nie z sympatią."}
+ },
+ "waiqar": {
+  "gender": "male",
+  "brief": "nieumarły władca w zbroi z porożem, blada twarz, białe włosy, fioletowe świecące oczy, topór; nekromanta Zdrajca, uprzejmy, zimny, sardoniczny",
+  "el": "Native Polish. Male, 50-60. Studio quality. Persona: ancient undead necromancer lord, the infamous Betrayer, now a polite and calculating ally. Emotion: cold, courteous, sardonic, utterly calm. Deep, smooth, velvety bass with a faint hollow, breathy chill; slow, deliberate pace, soft menace and dry irony, never raised.",
+  "omni": {"instruct": "male, elderly, very low pitch", "ref_cps": 9.0,
+           "style_text": "Ależ proszę się nie lękać. Śmierć to tylko drobna niedogodność, a ja zawsze dotrzymuję słowa."}
+ },
+ "morant": {
+  "gender": "male",
+  "brief": "mężczyzna z długimi ciemnymi włosami i szyderczym uśmiechem, zbroja i czerwony płaszcz, miecz na plecach; sędzia i inkwizytor, arogancki, porywczy",
+  "el": "Native Polish. Male, 30-40. Studio quality. Persona: zealous knight-judge and ruthless inquisitor, the black sheep of a noble family. Emotion: arrogant, self-righteous, sneering, quick to anger. Sharp, cutting baritone with a nasal edge and strong projection; fast, pointed delivery, sarcastic stress, shouts when crossed.",
+  "omni": {"instruct": "male, young adult, moderate pitch", "ref_cps": 12.0,
+           "style_text": "Cisza! Twoje kłamstwa nikogo tu nie zwiodą. Prawo jest po mojej stronie, a wyrok zapadnie dziś!"}
+ },
+ "pryor": {
+  "gender": "female",
+  "brief": "siwa staruszka z diademem w żółtej sukni, zapraszający gest; baronessa i babcia, ciepła i mądra, stanowcza, gdy trzeba",
+  "el": "Native Polish. Female, 70-80. Studio quality. Persona: elderly baroness and grandmother, ruler of a farming land, kind but iron-willed. Emotion: warm, wise, gently teasing, flashes of steel. Aged, slightly thin and breathy voice with a soft tremor; slow, cosy pace, warm intonation, firm when stern.",
+  "omni": {"instruct": "female, elderly, moderate pitch", "ref_cps": 9.0,
+           "style_text": "Usiądźcie, moi drodzy, herbata jeszcze ciepła. Stara kobieta wiele widziała i niełatwo ją oszukać."}
+ },
+ "delphyndra": {
+  "gender": "female",
+  "brief": "niebieska smoczyca z monoklem i mechaniczną złotą łapą, ślina kapie z pyska; wynalazczyni, ekscentryczna, zimno ciekawa, mimochodem groźna",
+  "el": "Native Polish. Female, ageless. Studio quality. Persona: ancient dragon and eccentric inventor with mechanical prosthetics, who treats mortals like lab specimens. Emotion: aloof, clinical curiosity, whimsical, casually menacing. Deep, resonant contralto with the weight of a large creature; crisp, fussy articulation, abrupt shifts of tempo, amused hums.",
+  "omni": {"instruct": "female, middle-aged, very low pitch", "ref_cps": 9.5,
+           "style_text": "Hmm. Fascynujące. Mały ssak z narzędziami. Zanotuję to, zanim zdecyduję, czy cię zjeść."}
+ },
+ "nara": {
+  "gender": "female",
+  "brief": "uthucka łowczyni smoków z włócznią, czerwona skóra, kolczasta zbroja, rude włosy; twarda, oschła, sarkastyczna opiekunka uchodźców",
+  "el": "Native Polish. Female, 30-40. Studio quality. Persona: tough, scarred dragon hunter and protector of a band of refugees. Emotion: gruff, dry, sardonic, unimpressed. Low, raspy, gravelly voice with a rough edge; terse, clipped phrases, flat deadpan intonation, slightly fast.",
+  "omni": {"instruct": "female, young adult, very low pitch", "ref_cps": 11.5,
+           "style_text": "Smoki? Też mi coś. Długa nuda, potem chwila grozy i znowu nuda. Bierz włócznię i nie marudź."}
+ },
+ "grace": {
+  "gender": "female",
+  "brief": "nastolatka o kręconych włosach upiętych z koralikami, czerwony płaszcz; młoda baronessa po stracie ojca, ciekawska, żarliwa, z nutą smutku",
+  "el": "Native Polish. Female, 18-20. Studio quality. Persona: very young noblewoman who recently inherited her late father's barony. Emotion: curious, earnest, eager, with a thread of quiet sadness. Light, bright, clear youthful voice; quick, excited pace when curious, softer and slower when reflective.",
+  "el_note": "ElevenLabs blokuje opisy głosu z wiekiem poniżej 18 lat (E14), więc opis podaje 18-20.",
+  "omni": {"instruct": "female, teenager, high pitch", "ref_cps": 12.0,
+           "style_text": "Naprawdę? Tajne przejście? Och, pokażcie mi, proszę! Obiecuję, że będę cicha jak myszka."}
+ },
+ "meza": {
+  "gender": "female",
+  "brief": "skrzydlata smocza hybryda o bladym ciele, rogata maska jak czaszka; strażniczka społeczności wygnańców, poważna, czujna, opiekuńcza",
+  "el": "Native Polish. Female, 40-50. Studio quality. Persona: winged dragon-hybrid warden who guards a community of exiles. Emotion: solemn, watchful, protective, calm. Low, dark, resonant voice with a slight rasp and a faint inhuman hiss; slow, steady, grave delivery.",
+  "omni": {"instruct": "female, middle-aged, low pitch", "ref_cps": 9.5,
+           "style_text": "Jesteście tu bezpieczni. Póki trzymam straż, nikt nie skrzywdzi tych, którzy szukają schronienia."}
+ },
+ "drys": {
+  "gender": "male",
+  "brief": "zielona rogata smocza hybryda w cieniu; strażnik osady wygnańców, ostrożny wobec obcych, powściągliwy",
+  "el": "Native Polish. Male, 40-50. Studio quality. Persona: horned dragon-hybrid guardian of an exiled settlement, wary of outsiders. Emotion: cautious, reserved, gruff courtesy. Low, rough, gravelly baritone with a reptilian rasp; slow, careful pace, short sentences.",
+  "omni": {"instruct": "male, middle-aged, low pitch", "ref_cps": 9.5,
+           "style_text": "Ostrożnie, obcy. Wejdźcie, ale pamiętajcie, że tutaj każdy krok ma swoją cenę."}
+ },
+ "zachareth": {"gender": "male", "brief": "potężny baron z długimi czarnymi włosami i brodą, płonące runy na naramiennikach, futro; dumny, gniewny przywódca rebeliantów. Klon z monologu z dubbingu"},
+ "reneyr": {"gender": "male", "brief": "szczupły arystokrata w fioletowym wamsie z kryzą, drugi portret to jego cień; uprzejmy hrabia-wampir, rozdarty, tragiczny. Klon z monologu z dubbingu"},
+ "levirax": {"gender": "female", "brief": "turkusowa smoczyca z rogami i rozwartą paszczą; smocza władczyni, pogardliwa, wściekła. Klon z monologu z dubbingu"},
+ "greysdon": {"gender": "male", "brief": "rudowłosy czarodziej w szarej szacie z piórami, teatralny gest; szalony, szyderczy uczony. Klon z okrzyków"},
+ "navoth": {"gender": "female", "brief": "skrzydlata smocza hybryda obwieszona dzwonami, jasne włosy, rogi; fanatyczna dzwonniczka smoczej władczyni. Klon z okrzyków"},
+ "vraskhar": {"gender": "female", "brief": "uthucka złodziejka z łukiem, kościane rogi, czerwone szaty; dumna, drapieżna, kpiąca. Klon z okrzyków"},
+ "gilliam": {"gender": "male", "brief": "szczupły baron w ciemnej szacie, złożone dłonie, drugi portret jako wampir; nerwowy, przymilny, wystraszony. Klon z okrzyków"}
+}

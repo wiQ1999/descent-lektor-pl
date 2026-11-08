@@ -178,6 +178,8 @@ Wydanie z paczkami z `analysis/work/dist/` (opis z zakresem i sumami SHA-256 w p
   - Podglądy losują głos, więc nowe próbki brzmią inaczej niż w naszej ocenie.
   - Runda 2 (D79): wybrany podgląd zapisuje `create_voice_from_preview`, a `text_to_speech` czyta tekst `<głos>#design` modelami z `R2_MODELS` do `analysis/work/elevenlabs/audio/e11r2/<głos>/<model>/`. Głosy i warianty są w `R2_VOICES` w `voice_compare.py`.
 - Szacunek postaci bez dubbingu w całej grze (E14): `.venv/Scripts/python -I analysis/tools/no_dub_scope.py` czyta wszystkie grafy z kopii gry i bazę `m2.sqlite`. Kwestie z tekstem zapisuje w `analysis/work/out/no_dub_lines.jsonl`, a liczby według mówcy, aktu i źródła w `no_dub_summary.json` i na konsoli (raport `analysis/E14_NO_DUB_SCOPE.md`).
+- Arkusz obsady E14 (D83): `analysis/tools/voice_compare_e14.py` z poleceniami `portrait`, `context`, `pick`, `refs`, `choose`, `status`, `score` i `sheet` w `.venv` oraz `design` i `clone` w środowisku OmniVoice (kolejność w nagłówku skryptu). Opisy głosów są w `analysis/tools/voice_designs_e14.json`, wyniki w `analysis/work/compare/e14/`.
+  - Próbki ElevenLabs powstają przez MCP według skilla: `text_to_voice` z opisem `el` i tekstem `<głos>#design` z `lines.json` do `analysis/work/elevenlabs/audio/e14/<głos>/design/` (katalog trzeba utworzyć wcześniej), potem `create_voice_from_preview` z podglądu wskazanego przez `status` i `text_to_speech` eleven_v4 drugiego fragmentu do `…/<głos>/v4/`.
 - Build macOS do analizy (DepotDownloader, logujesz się sam): `analysis/MAC_REPORT.md`.
 - Testy w grze i replay dzienników: `docs/E1_PLAYTEST.md`, `docs/E5_PLAYTEST.md`, `docs/E7_MAC_SESSION.md`.
 

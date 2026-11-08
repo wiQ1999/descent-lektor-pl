@@ -67,7 +67,8 @@ Cennik API (2026-11) podaje 0,08 USD za 1000 znaków dla v4, v3 i Multilingual v
 
 ## 4. Parametry wywołań
 
-- `output_directory`: ścieżka absolutna w `analysis/work/elevenlabs/audio/<zadanie>/`. Audio nie trafia do Git (D76). Katalog załóż przed wywołaniem: `text_to_speech` odrzuca nieistniejący katalog („not writeable”, bez kosztu).
+- `output_directory`: ścieżka absolutna w `analysis/work/elevenlabs/audio/<zadanie>/`. Audio nie trafia do Git (D76).
+  - Katalog musi istnieć przed wywołaniem (`mkdir -p`). Serwer 0.12.2 najpierw generuje i pobiera kredyty, a dopiero potem sprawdza katalog. W E14 przepadło tak 6 podglądów (ok. 890 kr.). Katalog załóż przed wywołaniem: `text_to_speech` odrzuca nieistniejący katalog („not writeable”, bez kosztu).
 - `text`: tekst do syntezy po normalizacji z bazy wydania (`fragments.text` albo `lines.text_norm` w `analysis/work/lektor/m2.sqlite`). Jest w nim zapis fonetyczny (D70), liczby słowami i ikony słowami. Surowego tekstu okna nie wysyłaj.
 - `model_id`: podawaj zawsze. Modele i obsługę polskiego sprawdzisz bezpłatnie w `list_models`.
 - `language`: `pl`. Serwer 0.12.2 nie przekazuje go do API, model rozpoznaje język z tekstu.
@@ -84,6 +85,7 @@ Cennik API (2026-11) podaje 0,08 USD za 1000 znaków dla v4, v3 i Multilingual v
 - Opis głosu piszemy według wzoru ElevenLabs: „Native Polish. <płeć>, <wiek>. <jakość>.”, potem „Persona: … Emotion: …” i 1–2 zdania o barwie, tempie i sposobie mówienia. Słowo „accent” zostawiamy dla dialektu, a do intonacji używamy słów „intonation” i „emphasis”.
 - Parametry `text_to_speech` (`stability`, `similarity_boost`, `style`, `speed`) zmieniają sposób czytania, nie barwę głosu. Barwę wybiera opis albo klon.
 - Opis głosu postaci bez dubbingu budujemy z portretu i charakteru z `docs/CASTING.md` (D41). Warianty mają się wyraźnie różnić.
+- Opis z wiekiem poniżej 18 lat `text_to_voice` odrzuca (403 `blocked_generation`). Młode postacie opisujemy jako 18–20 lat.
 - `voice_clone` (klon natychmiastowy) bierze tylko referencje z `analysis/work/lektor/refs/` i tylko po zgodzie użytkownika w QA. Regulamin ElevenLabs wymaga praw do klonowanego głosu.
 - Głosy testowe usuwamy albo zostawiamy według decyzji użytkownika. Stan zapisujemy w `docs/DECISIONS.md`.
 

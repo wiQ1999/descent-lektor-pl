@@ -418,6 +418,7 @@ Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci 
   - arkusz porównawczy: portret, opis i 2 fragmenty każdej postaci, a obok dotychczasowe głosy (11 postaci ElevenLabs z E13 oraz Ne’Krul i Xenith w OmniVoice) z 2 fragmentami;
   - Twoja ocena: akceptacja, poprawka opisu albo zmiana silnika (ElevenLabs albo OmniVoice dla każdej postaci). Wynik w `docs/CASTING.md`.
   - Koszt obsady: ok. 5–6 tys. kredytów.
+  - Arkusz gotowy 2026-11-08 (`analysis/tools/voice_compare_e14.py`, opisy w `voice_designs_e14.json`): 18 głosów „Lektor PL - <postać> E14” zapisanych na koncie (30 z 30 miejsc), próbki ok. 4,5 tys. kredytów, w tym ok. 0,9 tys. straty na podglądach bez katalogu wyjściowego. Złoczyńcy Zachareth, Reneyr i Levirax mają referencję z monologu, pozostali z okrzyków. Czeka na Twoją ocenę.
 
 **Faza B: generowanie paczkami z postępem**
 - B1: ElevenLabs: paczka na postać (11 głosów z E13 i 18 nowych, 101,6 tys. znaków, ok. 48 tys. kredytów z ponownymi). Po każdej paczce automat E3 i ponowne podejścia tej postaci. Limit `--max-credits`: zatwierdzony szacunek +20%.
