@@ -19,18 +19,8 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, 'src'))
+from lektor.build import INSERT as SPAN, insert_kind as kind  # noqa: E402
 from lektor.normalize import clean_markup  # noqa: E402
-
-SPAN = re.compile(r'\(([^()]{1,120})\)|\*([^*\n]{1,120})\*')
-LOWER = re.compile(r'^[a-ząćęłńóśźż]')
-
-
-def kind(inner, text, start):
-    """'wstawka' albo 'inne' dla tekstu w nawiasie lub gwiazdkach."""
-    if re.search(r'\d|\{\d\}', inner) or len(inner.split()) > 8:
-        return 'inne'
-    at_start = not text[:start].strip() or re.search(r'[.!?…:–-]\s*$', text[:start])
-    return 'wstawka' if LOWER.match(inner.strip()) and (at_start or len(inner.split()) <= 3) else 'inne'
 
 
 def scan(db):
@@ -55,7 +45,9 @@ def report(found, release, path):
     by_kind = collections.Counter((f['kind'], f['voice'] != 'narrator') for f in found)
     lines = ['# Wstawki sceniczne w kwestiach (%s)' % release.upper(), '',
              'Wynik `analysis/tools/inserts_scan.py --release %s`. Teksty są tylko w `analysis/work/out/%s_inserts.jsonl`.' % (release, release),
-             'Wstawka to krótki opis zachowania w nawiasie albo gwiazdkach, od małej litery, bez liczb i luk.', '',
+             'Wstawka to krótki opis zachowania w nawiasie albo gwiazdkach, od małej litery, bez liczb i luk.',
+             'Skan czyta tekst z gry. Od D95 `build` wycina z kwestii postaci wstawki na początku zdania, a krótkie '
+             'wtrącenie w środku zdania zostaje jako mowa postaci.', '',
              '| Rodzaj | Kwestie postaci | Kwestie narratora |', '|---|---:|---:|']
     for k in ('wstawka', 'inne'):
         lines.append('| %s | %d | %d |' % (k, by_kind[k, True], by_kind[k, False]))

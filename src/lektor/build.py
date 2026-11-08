@@ -21,11 +21,23 @@ DIRECTION = re.compile(r'\bWYBIERA\b')
 ROMAN_VALUES = {'II': 2, 'III': 3, 'IV': 4, 'VI': 6}
 ROMAN = re.compile(r'\b(%s)\b' % '|'.join(sorted(ROMAN_VALUES, key=len, reverse=True)))
 LOOT_NUMBERS = range(0, 100)
+# Wstawka sceniczna (D86): krótki opis zachowania w nawiasie albo gwiazdkach, od małej litery, bez liczb i luk.
+INSERT = re.compile(r'\(([^()]{1,120})\)|\*([^*\n]{1,120})\*')
+INSERT_LOWER = re.compile(r'^[a-ząćęłńóśźż]')
 
 
 def load_refs():
     p = os.path.join(paths.REFS, 'refs.json')
     return json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
+
+
+def voice_tag(voice, refs):
+    """Głos w kluczu fragmentu: nazwa, SHA referencji i styl klonu (mnożnik tempa, instrukcja OmniVoice; D94)."""
+    r = refs.get(voice)
+    if not r:
+        return voice
+    style = r.get('style')
+    return voice + '@' + r['sha'][:8] + ('~' + json.dumps(style, sort_keys=True) if style else '')
 
 
 def choice_hero(key):
@@ -48,6 +60,31 @@ def system_tail(raw):
     if SYSTEM_NOTICE.match(last) or (last.isupper() and len(last.split()) >= 3):
         return '\n\n'.join(paras[:-1]), last.strip('*').strip()
     return None
+
+
+def insert_kind(inner, text, start):
+    """'wstawka' albo 'inne' dla tekstu w nawiasie lub gwiazdkach zaczynającego się w `text` od `start`."""
+    if re.search(r'\d|\{\d\}', inner) or len(inner.split()) > 8:
+        return 'inne'
+    return 'wstawka' if INSERT_LOWER.match(inner.strip()) and (sentence_start(text, start) or len(inner.split()) <= 3) \
+        else 'inne'
+
+
+def sentence_start(text, start):
+    return not text[:start].strip() or bool(re.search(r'[.!?…:–-]\s*$', text[:start]))
+
+
+def drop_inserts(text):
+    """Kwestia postaci bez wstawek scenicznych na początku zdania (D95): w obu wariantach E15 postać ich nie czyta.
+    Krótkie wtrącenie w środku zdania („golema (na wszelki wypadek), …”) to mowa postaci i zostaje."""
+    def cut(m):
+        inner = m.group(1) or m.group(2)
+        return '' if insert_kind(inner, text, m.start()) == 'wstawka' and sentence_start(text, m.start()) else m.group(0)
+    out = INSERT.sub(cut, text)
+    if out == text:
+        return text
+    out = re.sub(r'[ \t]+([,.!?…:;])', r'\1', re.sub(r'[ \t]{2,}', ' ', out))
+    return re.sub(r'^[ \t]*[,;:–-]?[ \t]*', '', out, flags=re.M).strip()
 
 
 def caps_to_speech(text):
@@ -84,12 +121,16 @@ def line_parts(r, release='m1'):
     """Części kwestii: (rodzaj, głos, tekst albo dane luki).
 
     W m3 (uwagi z QA E14) komunikat gry doklejony do kwestii postaci czyta narrator, a tekst WIELKIMI literami
-    czytamy zwykłą pisownią zamiast go wycinać. M1 i M2 bez zmian."""
+    czytamy zwykłą pisownią zamiast go wycinać. Postać nie czyta wstawek scenicznych (D95). M1 i M2 bez zmian."""
     if release in ('m1', 'm2'):
         return speech_parts(r, release)
+    character = r['voice'] != 'narrator' and r['category'] != 'opcja_wyboru'
     tail = system_tail(r['text_raw']) if r['category'] == 'dialog' and r['voice'] != 'narrator' else None
-    copies = [spoken(r, caps_to_speech(clean_markup(t)), v) for t, v in zip(tail, (None, 'narrator'))] if tail \
-        else [spoken(r, caps_to_speech(clean_markup(r['text_raw'])))]
+
+    def say(text, voice=None):
+        text = clean_markup(text)
+        return spoken(r, caps_to_speech(drop_inserts(text) if character and voice is None else text), voice)
+    copies = [say(t, v) for t, v in zip(tail, (None, 'narrator'))] if tail else [say(r['text_raw'])]
     parts = [p for c in copies for p in speech_parts(c, release)]
     if not tail:
         r['voice'] = copies[0]['voice']     # opcja wyboru: narrator (D20)
@@ -159,8 +200,7 @@ def build(path=None, release='m1', only=None):
 
     def frag(voice, text, speed, kind):
         text = text if release == 'm1' else pronounce(text)
-        tag = voice + ('@' + refs[voice]['sha'][:8] if voice in refs else '')
-        fid = D.fragment_id(tag, text, speed)
+        fid = D.fragment_id(voice_tag(voice, refs), text, speed)
         fragments.setdefault(fid, {'id': fid, 'voice': voice, 'speed': speed, 'text': text, 'kind': kind})
         return fid
 

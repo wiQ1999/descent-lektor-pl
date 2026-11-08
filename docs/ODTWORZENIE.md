@@ -131,6 +131,34 @@ Postacie bez dubbingu (D80, E13) czyta ElevenLabs. Ich fragmenty generuje płatn
 - Całe M2 to ok. 16 h GPU na GTX 1650 Ti. Każdy krok jest wznawialny.
 - M1 buduje się tak samo, z `--release m1`.
 
+Cała gra M3 (E14, D95). Najpierw klony E14 trafiają do bazy referencji (kopia poprzedniej bazy to `refs.before_e14.json`), potem budujemy bazę:
+
+```bash
+.venv/Scripts/python -I analysis/tools/voice_compare_e14.py adopt
+```
+
+```bash
+.venv/Scripts/python -I -m lektor build --release m3
+```
+
+Całe generowanie prowadzi jeden skrypt, uruchamiany w aplikacji Claude, bo tylko w niej działa środowisko OmniVoice:
+- ElevenLabs i OmniVoice idą naraz, w kolejności gry;
+- potem ocena i do 3 rund ponownych podejść;
+- na końcu `finalize` i `audio-report`.
+
+Skrypt jest wznawialny, a dzienniki zapisuje w `analysis/work/audio/m3/logs/`.
+
+```bash
+bash analysis/tools/e14_run.sh
+```
+
+```bash
+.venv/Scripts/python -I -m lektor progress --release m3
+```
+
+- `--all` pokazuje wszystkie paczki. Ten sam raport skrypt co 10 min zapisuje do `analysis/work/audio/m3/progress.md`.
+- `MAX_CREDITS` (domyślnie 58000) ogranicza kredyty ElevenLabs całego wydania.
+
 ## 7. Plugin i paczka
 
 ```bash
@@ -178,7 +206,7 @@ Wydanie z paczkami z `analysis/work/dist/` (opis z zakresem i sumami SHA-256 w p
   - Podglądy losują głos, więc nowe próbki brzmią inaczej niż w naszej ocenie.
   - Runda 2 (D79): wybrany podgląd zapisuje `create_voice_from_preview`, a `text_to_speech` czyta tekst `<głos>#design` modelami z `R2_MODELS` do `analysis/work/elevenlabs/audio/e11r2/<głos>/<model>/`. Głosy i warianty są w `R2_VOICES` w `voice_compare.py`.
 - Szacunek postaci bez dubbingu w całej grze (E14): `.venv/Scripts/python -I analysis/tools/no_dub_scope.py` czyta wszystkie grafy z kopii gry i bazę `m2.sqlite`. Kwestie z tekstem zapisuje w `analysis/work/out/no_dub_lines.jsonl`, a liczby według mówcy, aktu i źródła w `no_dub_summary.json` i na konsoli (raport `analysis/E14_NO_DUB_SCOPE.md`).
-- Arkusz obsady E14 (D83): `analysis/tools/voice_compare_e14.py` z poleceniami `portrait`, `context`, `pick`, `refs`, `choose`, `status`, `score` i `sheet` w `.venv` oraz `design` i `clone` w środowisku OmniVoice (kolejność w nagłówku skryptu). Opisy głosów są w `analysis/tools/voice_designs_e14.json`, wyniki w `analysis/work/compare/e14/`. Runda 2 (D84): `refs2` i `score` w `.venv`, `clone2` w środowisku OmniVoice, potem `sheet2` (strona `runda2.html`). Runda 3 (D87): podglądy z opisów `el3` (a, b, c) przez MCP do `…/<głos>/design3<a|b|c>/`, potem `score` i `sheet3` (strona `runda3.html`). Runda 4 (D88) tak samo z opisami `el4` (a–e) Delphyndry i `sheet4` (strona `runda4.html`). Runda 5 (D89): opisy `el5`, `score`, `fx5` (efekt smoka, lokalnie), znowu `score`, potem `sheet5` (strona `runda5.html`). Runda 6 (D90): opisy `el6`, `score` i `sheet6` (strona `runda6.html`). Runda 7 (D91): `refs7` w `.venv`, `clone7` w środowisku OmniVoice, `score`, w razie błędów `retake7` (OmniVoice), `score` i `pick7`, potem `sheet7` (strona `runda7.html`). Runda 8 (D92): podglądy z opisu `el8` przez MCP do `…/delphyndra/design8a/`, `refs8` w `.venv`, `clone8` w środowisku OmniVoice, `score`, w razie błędów `retake8`, `score` i `pick8`, potem `sheet8` (strona `runda8.html`). Runda 9 (D93): `refs9` w `.venv`, `clone9` w środowisku OmniVoice, `score`, w razie błędów `retake9`, `score` i `pick9`, potem `eq9` (barwa jak B, korektor na nagraniach), `score` i `sheet9` (strona `runda9.html`).
+- Arkusz obsady E14 (D83): `analysis/tools/voice_compare_e14.py` z poleceniami `portrait`, `context`, `pick`, `refs`, `choose`, `status`, `score` i `sheet` w `.venv` oraz `design` i `clone` w środowisku OmniVoice (kolejność w nagłówku skryptu). Opisy głosów są w `analysis/tools/voice_designs_e14.json`, wyniki w `analysis/work/compare/e14/`. Runda 2 (D84): `refs2` i `score` w `.venv`, `clone2` w środowisku OmniVoice, potem `sheet2` (strona `runda2.html`). Runda 3 (D87): podglądy z opisów `el3` (a, b, c) przez MCP do `…/<głos>/design3<a|b|c>/`, potem `score` i `sheet3` (strona `runda3.html`). Runda 4 (D88) tak samo z opisami `el4` (a–e) Delphyndry i `sheet4` (strona `runda4.html`). Runda 5 (D89): opisy `el5`, `score`, `fx5` (efekt smoka, lokalnie), znowu `score`, potem `sheet5` (strona `runda5.html`). Runda 6 (D90): opisy `el6`, `score` i `sheet6` (strona `runda6.html`). Runda 7 (D91): `refs7` w `.venv`, `clone7` w środowisku OmniVoice, `score`, w razie błędów `retake7` (OmniVoice), `score` i `pick7`, potem `sheet7` (strona `runda7.html`). Runda 8 (D92): podglądy z opisu `el8` przez MCP do `…/delphyndra/design8a/`, `refs8` w `.venv`, `clone8` w środowisku OmniVoice, `score`, w razie błędów `retake8`, `score` i `pick8`, potem `sheet8` (strona `runda8.html`). Runda 9 (D93): `refs9` w `.venv`, `clone9` w środowisku OmniVoice, `score`, w razie błędów `retake9`, `score` i `pick9`, potem `eq9` (barwa jak B, korektor na nagraniach), `score` i `sheet9` (strona `runda9.html`). Na koniec `adopt` kopiuje wybrane klony do bazy referencji (D95).
 - Wstawki sceniczne (D86): `.venv/Scripts/python -I analysis/tools/inserts_scan.py [--release m3]` zapisuje listę z tekstami w `analysis/work/out/m3_inserts.jsonl` i raport `analysis/E14_INSERTS.md`.
   - Próbki ElevenLabs powstają przez MCP według skilla: `text_to_voice` z opisem `el` i tekstem `<głos>#design` z `lines.json` do `analysis/work/elevenlabs/audio/e14/<głos>/design/` (katalog trzeba utworzyć wcześniej), potem `create_voice_from_preview` z podglądu wskazanego przez `status` i `text_to_speech` eleven_v4 drugiego fragmentu do `…/<głos>/v4/`.
 - Build macOS do analizy (DepotDownloader, logujesz się sam): `analysis/MAC_REPORT.md`.

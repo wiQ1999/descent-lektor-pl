@@ -1,4 +1,5 @@
-"""python -I -m lektor build | refs | report | generate | eleven | evaluate | select | finalize | audio-report | companion | bundle"""
+"""python -I -m lektor build | refs | report | generate | eleven | evaluate | select | finalize | audio-report | progress |
+companion | bundle"""
 import argparse
 import sys
 
@@ -36,6 +37,9 @@ def main(argv=None):
     f.add_argument('--listen-engine', choices=('omnivoice', 'elevenlabs'), help='odsłuch tylko głosów tego silnika')
     q = sub.add_parser('audio-report', parents=[rel], help='raport audio (analysis/E3_AUDIO.md, M2: E7_AUDIO.md)')
     q.add_argument('--db')
+    s = sub.add_parser('progress', parents=[rel], help='postęp generowania według paczek i aktów (E14; bez GPU i sieci)')
+    s.add_argument('--all', action='store_true', help='wszystkie paczki, nie tylko bieżące')
+    s.add_argument('--mark', help='zapisz krok skryptu generowania (run_state.json) i zakończ')
     c = sub.add_parser('companion', help='companion lektora (serwer TCP dla pluginu) albo replay dziennika E1')
     from .companion.app import add_args
     add_args(c)
@@ -74,6 +78,12 @@ def main(argv=None):
     elif a.cmd == 'audio-report':
         from .report import audio_report
         print(paths.rel(audio_report(a.db)))
+    elif a.cmd == 'progress':
+        from . import progress
+        if a.mark:
+            progress.mark(a.mark)
+        else:
+            print(progress.report(a.all))
     elif a.cmd == 'companion':
         from .companion import app
         app.main(a)

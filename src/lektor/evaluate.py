@@ -284,8 +284,9 @@ def select():
                        'cer': best['cer'], 'sim': best['sim'], 'cps': best['cps'], 'takes': len(es)}
         if best['problems'] and own_engine(best) and len(es) < takes_for(best['voice']) + RETAKES:
             speed = best['speed']
-            if 'koncowka' in best['problems']:
-                speed = round(max(0.9, (speed or 1.0) - RETAKE_SLOWER), 2)
+            if 'koncowka' in best['problems']:     # wolniej, ale nie szybciej niż głos ze stylem wolniejszym od 0,9
+                s = speed or 1.0
+                speed = round(max(min(0.9, s), s - RETAKE_SLOWER), 2)
             retake[fid] = [max(e['take'] for e in es) + 1, speed]
     for fid, c in inherited().items():     # fragmenty z poprzedniego wydania zostają takie, jak je wybrano
         if fid in texts and (own_engine(c) or fid not in choice):

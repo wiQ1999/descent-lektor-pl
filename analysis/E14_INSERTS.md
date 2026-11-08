@@ -2,6 +2,7 @@
 
 Wynik `analysis/tools/inserts_scan.py --release m3`. Teksty są tylko w `analysis/work/out/m3_inserts.jsonl`.
 Wstawka to krótki opis zachowania w nawiasie albo gwiazdkach, od małej litery, bez liczb i luk.
+Skan czyta tekst z gry. Od D95 `build` wycina z kwestii postaci wstawki na początku zdania, a krótkie wtrącenie w środku zdania zostaje jako mowa postaci.
 
 | Rodzaj | Kwestie postaci | Kwestie narratora |
 |---|---:|---:|

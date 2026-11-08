@@ -41,6 +41,8 @@ Runda 9 (D93): klon B z rundy 8 poprawiony (przepróbkowanie zamiast wokodera, i
     <omni> -I analysis/tools/voice_compare_e14.py clone9                    # potem score, retake9, score, pick9
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py eq9        # barwa jak B: korektor na nagraniach, potem score
     .venv/Scripts/python -I analysis/tools/voice_compare_e14.py sheet9     # strona r9n i runda9.html
+Produkcja (D94): referencje złoczyńców i Delphyndry do analysis/work/lektor/refs/ (potem build --release m3):
+    .venv/Scripts/python -I analysis/tools/voice_compare_e14.py adopt
 
 Opisy głosów są w voice_designs_e14.json. Próbki ElevenLabs powstają przez MCP (skill `elevenlabs`):
 text_to_voice z opisem `el` i tekstem `<głos>#design` z lines.json do analysis/work/elevenlabs/audio/e14/<głos>/design/,
@@ -1472,6 +1474,34 @@ def sheet():
     print('strony: %d, nagrania: %d -> %s' % (len(pages) + 1, clips, os.path.join(OUT, 'index.html')))
 
 
+# --- przekazanie obsady do produkcji (E14 B2, D94) ------------------------------------------------------------------------
+# Głos OmniVoice → (plik referencji arkusza, wariant). Tempo wariantu i wydłużenie referencji dają mnożnik `style.speed`,
+# a instrukcja OmniVoice trafia do `style.instruct`; styl wchodzi do klucza fragmentu (build.voice_tag).
+ADOPT = {'zachareth': ('refs.json', 'zachareth'), 'reneyr': ('refs.json', 'reneyr'), 'greysdon': ('refs.json', 'greysdon'),
+         'navoth': ('refs.json', 'navoth'), 'vraskhar': ('refs.json', 'vraskhar'), 'levirax': ('refs2.json', 'levirax_v2a'),
+         'gilliam': ('refs2.json', 'gilliam_v2b'), 'delphyndra': ('refs9.json', 'delph_b_jasniej')}
+
+
+def adopt():
+    """Wybrane referencje złoczyńców i Delphyndry → analysis/work/lektor/refs/ i refs.json produkcji."""
+    import hashlib
+    import shutil
+    import soundfile as sf
+    path = os.path.join(paths.REFS, 'refs.json')
+    refs_ = load_json(path)
+    for voice, (src_file, name) in ADOPT.items():
+        r = load_json(os.path.join(OMNI, src_file))[name]
+        wav = os.path.join(paths.REFS, voice + '.wav')
+        shutil.copyfile(os.path.join(ROOT, r['wav']), wav)
+        speed = round(r.get('tempo', 1.0) * r.get('ref_stretch', 1.0), 4)
+        style = {k: v for k, v in (('speed', speed if speed != 1.0 else None), ('instruct', r.get('instruct'))) if v}
+        refs_[voice] = {'wav': paths.rel(wav), 'text': r['text'], 'seconds': round(sf.info(wav).duration, 2),
+                        'source': 'arkusz E14: %s z %s' % (name, src_file), 'sha': hashlib.sha1(open(wav, 'rb').read()).hexdigest(),
+                        **({'style': style} if style else {})}
+        print('%-10s %-16s %5.1f s %s' % (voice, name, refs_[voice]['seconds'], style or ''))
+    save_json(path, refs_)
+
+
 if __name__ == '__main__':
     commands = {'portrait': portrait, 'context': context, 'pick': pick, 'refs': refs, 'design': design, 'choose': choose,
                 'clone': clone, 'status': status, 'score': score, 'sheet': sheet, 'refs2': refs2, 'clone2': clone2,
@@ -1479,7 +1509,7 @@ if __name__ == '__main__':
                 'fx5': fx5, 'sheet5': sheet5, 'sheet6': sheet6, 'refs7': refs7, 'clone7': clone7, 'retake7': retake7,
                 'pick7': pick7, 'sheet7': sheet7, 'refs8': refs8, 'clone8': clone8, 'retake8': retake8, 'pick8': pick8,
                 'sheet8': sheet8, 'refs9': refs9, 'clone9': clone9,
-                'retake9': retake9, 'pick9': pick9, 'eq9': eq9, 'sheet9': sheet9}
+                'retake9': retake9, 'pick9': pick9, 'eq9': eq9, 'sheet9': sheet9, 'adopt': adopt}
     if len(sys.argv) != 2 or sys.argv[1] not in commands:
         raise SystemExit(__doc__)
     sys.stdout.reconfigure(encoding='utf-8')

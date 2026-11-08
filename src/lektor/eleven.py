@@ -4,8 +4,8 @@
 
 Głosy i model: direction.ELEVEN_VOICES i ELEVEN_MODEL, ustawienia domyślne jak w ocenie E11. Wynik w PCM 24 kHz
 (próbkowanie manifestu) trafia do takes/<id>_t101.wav, a ponowne podejścia do t102 i dalej, obok podejść OmniVoice.
-Stan po każdym wywołaniu idzie do takes.jsonl, więc przerwany wsad wznawia się tą samą komendą. M2 przejmuje z M1
-wybrane podejścia ElevenLabs fragmentów o tym samym id.
+Stan po każdym wywołaniu idzie do takes_eleven.jsonl (do E13 takes.jsonl), więc przerwany wsad wznawia się tą samą
+komendą. M2 przejmuje z M1 wybrane podejścia ElevenLabs fragmentów o tym samym id.
 
 Klucz API leży w nieśledzonym .env.elevenlabs.local i nie trafia do logów ani na konsolę. Każde wywołanie trafia
 do logu zużycia ElevenLabs (D73) z kosztem z historii konta; log ma tylko SHA-1 i długość tekstu.
@@ -22,7 +22,7 @@ from datetime import datetime, timezone
 
 from . import db, paths
 from . import direction as D
-from .synth import inherit, load_state, seed_for, take_path
+from .synth import inherit, load_state, seed_for, take_log, take_path
 
 API = 'https://api.elevenlabs.io'
 KEY_FILE = '.env.elevenlabs.local'
@@ -38,6 +38,7 @@ HISTORY_WAITS = (0, 2, 5)
 TOOL = 'lektor_eleven'
 USAGE_LOG = os.path.join(paths.WORK, 'elevenlabs', 'usage', 'elevenlabs.jsonl')
 REF_DIR = os.path.join(paths.WORK, 'elevenlabs', 'audio', 'e11r2')    # nagrania v4 z oceny E11: referencja barwy
+REF_DIR_E14 = os.path.join(paths.WORK, 'elevenlabs', 'audio', 'e14')  # E14: podgląd projektu o id zapisanego głosu
 REF_PREFIX = 'elevenlabs:'
 
 
@@ -143,12 +144,13 @@ def append_usage(record):
 
 def refs():
     """Referencje barwy głosów ElevenLabs dla automatu: {'elevenlabs:<głos>': {'wav': ścieżka}}."""
+    import glob
     out = {}
-    for voice in D.ELEVEN_VOICES:
+    for voice, voice_id in D.ELEVEN_VOICES.items():
         folder = os.path.join(REF_DIR, voice, D.ELEVEN_MODEL)
-        files = sorted(f for f in os.listdir(folder) if f.endswith('.mp3')) if os.path.isdir(folder) else []
+        files = sorted(glob.glob(os.path.join(folder, '*.mp3'))) or             sorted(glob.glob(os.path.join(REF_DIR_E14, voice, '*', 'voice_design_%s_*.mp3' % voice_id)))
         if files:
-            out[REF_PREFIX + voice] = {'wav': paths.rel(os.path.join(folder, files[0]))}
+            out[REF_PREFIX + voice] = {'wav': paths.rel(files[0])}
     return out
 
 
@@ -184,8 +186,9 @@ def generate(limit=None, voices=None, retake_file=None, dry_run=False, max_credi
     if limit:
         todo = todo[:limit]
     chars = sum(len(j[2]) for j in todo)
-    print('do wygenerowania: %d podejść, %d znaków, ok. %d kredytów; przejęte z M1: %d' % (
-        len(todo), chars, round(chars * RATE), len(done)), file=sys.stderr, flush=True)
+    print('do wygenerowania: %d podejść, %d znaków, ok. %d kredytów; przejęte z %s: %d' % (
+        len(todo), chars, round(chars * RATE), paths.PREVIOUS.get(paths.RELEASE, '-').upper(), len(done)),
+        file=sys.stderr, flush=True)
     if not todo or dry_run:
         return todo
     key = api_key()
@@ -193,7 +196,7 @@ def generate(limit=None, voices=None, retake_file=None, dry_run=False, max_credi
         sys.exit('Brak %s w %s' % (KEY_NAME, KEY_FILE))
     sub = get_json(key, '/v1/user/subscription')
     os.makedirs(os.path.join(paths.AUDIO, 'takes'), exist_ok=True)
-    log = open(os.path.join(paths.AUDIO, 'takes.jsonl'), 'a', encoding='utf-8')
+    log = open(take_log('elevenlabs'), 'a', encoding='utf-8')
     spent = 0
     for n, (fid, take, text, voice, speed) in enumerate(todo, 1):
         if max_credits is not None and spent + len(text) * RATE > max_credits:

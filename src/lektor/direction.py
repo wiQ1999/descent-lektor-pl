@@ -12,6 +12,14 @@ ELEVEN_VOICES = {'adelynn': 'dH4FrDMHSw1B31tzWOPw', 'ronan': '7ScqSXmT0oXvHenzw9
                  'kathryn': 'JZzQvOujFtUu9vpAsm2q', 'ltrand': 'OLeMFzYjewG73PEGvePC', 'bruli': 'UDpt5qLmStrzpqQQZI9G',
                  'herbie': 'BFwE7UC8qCq4bda0mhyE', 'mok': 'SQ2Rf1tdmOCUqClP6qJ4', 'outlaw': '6yCDeMiG8Fnpn0gPqxz3',
                  'flint': 'gfzrH3j2kaDI5cNZuaPW', 'galgoraz': 'Quk21RWppOlJmKTYBeGr'}
+# E14 (D84, D87, D88): nowe postacie bez dubbingu z arkusza obsady; Delphyndra jest klonem OmniVoice (D94).
+ELEVEN_VOICES_E14 = {'magrit': '4z2ttMe9kFzyBLgroafB', 'alys': 'PzYUKC9HYBoJ4OGyP1QE', 'greigory': '1iufCs0OK7CV8njHiko7',
+                     'button': 'RMWgUKFzzgxce9riuhEC', 'laurel': 'YpSjl2k2ogKW014dXeX3', 'arden': 'jl1qd5mvirQo588r4kkX',
+                     'veta': '0rtBIPGtLS4yt8kPC7Cs', 'trevalyn': 'PnphcFpQiiZTzbeOcbxp', 'balthain': '9CdwdaxrlepOclY1rmY5',
+                     'ducard': 'm5FL5XfqLXQEY9dOd5GJ', 'pryor': '6gJmPw2772iK66WdPEKX', 'grace': '7nGRsoaWpcG4aZ7JLbJW',
+                     'drys': 'UrUMN6EMRqqvJz3oDHD1', 'waiqar': 'IQY1bvB4YbPVoS6Go9q3', 'morant': '3CNDe9njN2kEBkgjZlEi',
+                     'nara': 'peH5NmVUWPLR3C6OwCIg', 'meza': '6QqpmxamtHSBJVCpfj8E'}
+ELEVEN_VOICES.update(ELEVEN_VOICES_E14)
 ELEVEN_TAKE0 = 100      # podejścia ElevenLabs mają numery od 101; podejścia OmniVoice tych głosów zostają jako zapas
 
 

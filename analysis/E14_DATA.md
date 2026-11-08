@@ -1,6 +1,6 @@
 # E14: baza kwestii całej gry (M3)
 
-Wygenerowano przez `python -I -m lektor report` z `analysis/work/lektor/m3.sqlite` (zbudowana 2026-11-08T14:23:04, pakiet 0.1.0, model `omnivoice-08be0b4-fp32-s32-cfg2.0`, manifest gry `fddf8aedeb14`). Raport zawiera tylko liczby i klucze techniczne.
+Wygenerowano przez `python -I -m lektor report` z `analysis/work/lektor/m3.sqlite` (zbudowana 2026-11-09T00:10:15, pakiet 0.1.0, model `omnivoice-08be0b4-fp32-s32-cfg2.0`, manifest gry `fddf8aedeb14`). Raport zawiera tylko liczby i klucze techniczne.
 
 ## Kwestie
 
@@ -199,7 +199,7 @@ Wrogowie w zakresie: `A2Q01_VRASKHAR`, `A2Q02_ENEMY_MORANT`, `ENEMY_A2Q11_LEVIRA
 | quote | 134 |
 | desc | 5 |
 
-Unikalnych fragmentów do syntezy: **17968** (text 16587, value 1242, quote 134, desc 5), znaków: 1502835.
+Unikalnych fragmentów do syntezy: **17956** (text 16575, value 1242, quote 134, desc 5), znaków: 1500920.
 
 Najdłuższy fragment: 434 znaków.
 
@@ -495,57 +495,57 @@ Opcje wyboru z cytatem bez rozpoznanego bohatera (cytat głosem narratora): 53.
 - `TANGERINE_EVENT_8B_THE_GATES_OF_THELGRIM_13F_I14F`
 - `TANGERINE_EVENT_8B_THE_GATES_OF_THELGRIM_13F_R14F`
 
-Głosy fragmentów bez referencji w bazie: `alys`, `arden`, `balthain`, `button`, `delphyndra`, `drys`, `ducard`, `gilliam`, `grace`, `greigory`, `greysdon`, `laurel`, `levirax`, `magrit`, `meza`, `morant`, `nara`, `navoth`, `pryor`, `reneyr`, `trevalyn`, `veta`, `vraskhar`, `waiqar`, `zachareth`.
+Głosy fragmentów bez referencji w bazie: `alys`, `arden`, `balthain`, `button`, `drys`, `ducard`, `grace`, `greigory`, `laurel`, `magrit`, `meza`, `morant`, `nara`, `pryor`, `trevalyn`, `veta`, `waiqar`.
 
 ## Szacunek generowania
 
-Z M2 przejęte 3917 fragmentów. Nowe: **14051** (1219801 znaków).
+Z M2 przejęte 3915 fragmentów. Nowe: **14041** (1218009 znaków).
 
 | głos | silnik | fragmenty | znaki | podejścia |
 |---|---|---|---|---|
 | adelynn | elevenlabs | 17 | 1710 | 1 |
-| alys | omnivoice | 98 | 10467 | 1 |
-| arden | omnivoice | 42 | 4674 | 1 |
+| alys | elevenlabs | 98 | 10467 | 1 |
+| arden | elevenlabs | 42 | 4674 | 1 |
 | astarra | elevenlabs | 37 | 3105 | 1 |
-| balthain | omnivoice | 38 | 4002 | 1 |
+| balthain | elevenlabs | 38 | 4002 | 1 |
 | bruli | elevenlabs | 57 | 4760 | 1 |
-| brynn | omnivoice | 770 | 53914 | 3 |
-| button | omnivoice | 62 | 5581 | 1 |
-| chance | omnivoice | 574 | 35012 | 3 |
+| brynn | omnivoice | 769 | 53728 | 3 |
+| button | elevenlabs | 62 | 5581 | 1 |
+| chance | omnivoice | 573 | 34835 | 3 |
 | delphyndra | omnivoice | 16 | 1675 | 1 |
-| drys | omnivoice | 3 | 244 | 1 |
-| ducard | omnivoice | 41 | 3876 | 1 |
+| drys | elevenlabs | 3 | 244 | 1 |
+| ducard | elevenlabs | 41 | 3876 | 1 |
 | flint | elevenlabs | 19 | 1749 | 1 |
-| galaden | omnivoice | 609 | 39977 | 3 |
+| galaden | omnivoice | 607 | 39362 | 3 |
 | galgoraz | elevenlabs | 49 | 4095 | 1 |
 | gilliam | omnivoice | 25 | 3321 | 1 |
-| grace | omnivoice | 15 | 1233 | 1 |
-| greigory | omnivoice | 65 | 6584 | 1 |
+| grace | elevenlabs | 15 | 1233 | 1 |
+| greigory | elevenlabs | 65 | 6584 | 1 |
 | greysdon | omnivoice | 27 | 2786 | 1 |
 | herbie | elevenlabs | 5 | 526 | 1 |
 | kathryn | elevenlabs | 12 | 1120 | 1 |
-| kehli | omnivoice | 614 | 41838 | 3 |
-| laurel | omnivoice | 62 | 4919 | 1 |
+| kehli | omnivoice | 613 | 41689 | 3 |
+| laurel | elevenlabs | 62 | 4828 | 1 |
 | levirax | omnivoice | 26 | 2580 | 1 |
 | ltrand | elevenlabs | 15 | 1219 | 1 |
-| magrit | omnivoice | 150 | 15168 | 1 |
-| meza | omnivoice | 4 | 448 | 1 |
+| magrit | elevenlabs | 150 | 15168 | 1 |
+| meza | elevenlabs | 4 | 448 | 1 |
 | mok | elevenlabs | 23 | 2301 | 1 |
-| morant | omnivoice | 27 | 2589 | 1 |
-| nara | omnivoice | 15 | 1562 | 1 |
+| morant | elevenlabs | 27 | 2589 | 1 |
+| nara | elevenlabs | 15 | 1562 | 1 |
 | narrator | omnivoice | 8975 | 835518 | 1 |
 | navoth | omnivoice | 25 | 2771 | 1 |
 | nekrul | omnivoice | 10 | 632 | 1 |
 | outlaw | elevenlabs | 4 | 189 | 1 |
-| pryor | omnivoice | 12 | 1812 | 1 |
+| pryor | elevenlabs | 12 | 1812 | 1 |
 | reneyr | omnivoice | 77 | 7679 | 1 |
 | ronan | elevenlabs | 55 | 4624 | 1 |
-| syrus | omnivoice | 638 | 45839 | 3 |
-| trevalyn | omnivoice | 39 | 4145 | 1 |
-| vaerix | omnivoice | 554 | 38227 | 3 |
-| veta | omnivoice | 38 | 4405 | 1 |
-| vraskhar | omnivoice | 10 | 821 | 1 |
-| waiqar | omnivoice | 23 | 2666 | 1 |
+| syrus | omnivoice | 636 | 45484 | 3 |
+| trevalyn | elevenlabs | 39 | 4145 | 1 |
+| vaerix | omnivoice | 551 | 38029 | 3 |
+| veta | elevenlabs | 38 | 4405 | 1 |
+| vraskhar | omnivoice | 10 | 800 | 1 |
+| waiqar | elevenlabs | 23 | 2666 | 1 |
 | zachareth | omnivoice | 74 | 7438 | 1 |
 
-OmniVoice: ok. **111.2 h** GPU bez ponownych podejść, przy 0.235 s na znak (E3). ElevenLabs: 25398 znaków, ok. **11175** kredytów (0.44 na znak, bez ponownych).
+OmniVoice: ok. **106.0 h** GPU bez ponownych podejść, przy 0.235 s na znak (E3). ElevenLabs: 99682 znaków, ok. **43860** kredytów (0.44 na znak, bez ponownych).

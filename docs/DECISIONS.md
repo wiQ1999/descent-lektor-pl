@@ -909,6 +909,33 @@ Najniższe głosy mogą brzmieć męsko, a o tym rozstrzyga odsłuch.
 
 **Uzasadnienie:** Ostateczny wybór użytkownika po rundzie 9. Żaden z 6 rund opisów ElevenLabs nie dał głosu smoczycy, a klon Leviraxa z kobiecym charakterem tak.
 
+### D95 · 2026-11-09 · E14: start fazy B
+**Decyzja:**
+- Głos ElevenLabs Delphyndry z rundy 1 (`1sr70RNkbV4TmYCh7tKG`) usunięty z konta: 28 z 30 miejsc.
+- Wstawki sceniczne wycinamy z kwestii postaci już teraz (`build.drop_inserts`), przed generowaniem:
+  - znika wstawka na początku zdania: 263 kwestie, wszystkie z jedną wstawką o mruganiu;
+  - krótkie wtrącenie w środku zdania zostaje, bo to mowa postaci (1 kwestia);
+  - w obu wariantach E15 postać wstawki nie czyta, więc E15 zmieni tylko kwestie narratora albo dołoży narratora przed kwestią (D86).
+- B1 zatwierdzone w całości: 28 głosów, 1027 fragmentów, 99,7 tys. znaków, ok. 44 tys. kredytów, z ponownymi ok. 48 tys. Limit to 58 tys. kredytów na całe wydanie (`MAX_CREDITS` w `analysis/tools/e14_run.sh`), liczony od nowa przed każdym wsadem.
+- B2 obejmuje całość w kolejności gry: akt 1, akt 2, potem części wspólne (wydarzenia, sprzęt, wrogowie, system). Fragment należy do pierwszej paczki, w której występuje (`lektor.progress`). Użytkownik nie sprawdza paczek po drodze.
+- Postęp pokazuje `lektor progress --release m3`: części i paczki, znaki, godziny GPU, kredyty, czas do końca. Skrypt co 10 min zapisuje go do `analysis/work/audio/m3/progress.md`.
+- Klony E14 w bazie referencji (`voice_compare_e14.py adopt`): 8 głosów.
+  - Levirax ma styl z tempem 0,85.
+  - Delphyndra ma instrukcję „female” i tempo 1,0108 (0,85 × wydłużenie referencji 1,189).
+  - Styl wchodzi do klucza fragmentu (`build.voice_tag`). `synth` mnoży przez niego tempo pierwszych podejść i przekazuje instrukcję, a ponowne podejścia biorą tempo z zapisanego podejścia.
+- ElevenLabs zapisuje stan w `takes_eleven.jsonl`, bo oba silniki działają naraz. `load_state` czyta oba dzienniki i pomija urwany wiersz.
+- Baza `m3` po zmianach ma 17 956 fragmentów, z czego 3915 przejmujemy z M2. Do zrobienia zostaje:
+  - OmniVoice: 13 014 fragmentów, 20 512 podejść, 1,62 mln znaków, ok. 107 h GPU bez ponownych podejść;
+  - ElevenLabs: 1027 fragmentów.
+
+**Uzasadnienie:** QA 2026-11-09 przyniosło cztery decyzje:
+- usunięcie starego głosu;
+- wycięcie wstawek teraz;
+- zatwierdzenie całego B1;
+- B2 w kolejności gry, akt po akcie, bez sprawdzania przez użytkownika, z postępem zwracanym przez skrypt.
+
+Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

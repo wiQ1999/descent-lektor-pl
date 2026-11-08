@@ -91,6 +91,13 @@ Cała gra M3 (E14): `--release m3`, baza `m3.sqlite`, audio `audio/m3/`, raporty
 W m3 komunikat gry po pustym wierszu w kwestii postaci czyta narrator, a tekst WIELKIMI literami czytamy zwykłą pisownią (`build.line_parts`, D85). Wstawki w nawiasach czekają na E15 (D86).
 
 - `build --release m2 --only event_e5b map` buduje tylko wybrane grupy spoza M1.
+- Fazę B E14 prowadzi `bash analysis/tools/e14_run.sh` (D95). Skrypt jest wznawialny i działa w aplikacji Claude:
+  - ElevenLabs i OmniVoice idą naraz, w kolejności gry;
+  - potem ocena, ponowne podejścia i `finalize`;
+  - dzienniki zapisuje w `audio/m3/logs/`.
+- Postęp: `progress --release m3 [--all]`, a co 10 min także plik `audio/m3/progress.md`.
+- ElevenLabs zapisuje stan w `takes_eleven.jsonl`.
+- Styl klonu w `refs.json` (`style.speed`, `style.instruct`) wchodzi do klucza fragmentu i do `synth`.
 - Postacie bez dubbingu (D80, E13) czyta ElevenLabs `eleven_v4`: `eleven --release m1|m2 [--dry-run] [--retake] [--max-credits N]` w `.venv` (płatne, wznawialne). Głosy i `voice_id` są w `direction.ELEVEN_VOICES`. Podejścia mają numery od 101 obok podejść OmniVoice, `select` bierze dla głosu tylko jego silnik. M1 generujemy przed M2, bo M2 przejmuje z M1 fragmenty o tym samym id.
 - `generate --release m2` przejmuje z `audio/m1` fragmenty o tym samym id i liczy resztę.
 - Po `select` powtarzamy `generate --retake`, `evaluate`, `select` do trzech razy, potem `finalize`.

@@ -45,12 +45,26 @@ def take_path(fid, take):
     return os.path.join(paths.AUDIO, 'takes', '%s_t%d.wav' % (fid, take))
 
 
+TAKE_LOGS = {'omnivoice': 'takes.jsonl', 'elevenlabs': 'takes_eleven.jsonl'}   # osobne pliki: oba silniki działają naraz
+
+
+def take_log(engine='omnivoice'):
+    return os.path.join(paths.AUDIO, TAKE_LOGS[engine])
+
+
 def load_state():
-    p = os.path.join(paths.AUDIO, 'takes.jsonl')
+    """{(fragment, podejście): wpis} z dzienników obu silników (M1 i M2 mają podejścia ElevenLabs w takes.jsonl).
+    Urwany ostatni wiersz po przerwaniu procesu pomijamy: to podejście powstanie jeszcze raz."""
     out = {}
-    if os.path.exists(p):
+    for name in TAKE_LOGS.values():
+        p = os.path.join(paths.AUDIO, name)
+        if not os.path.exists(p):
+            continue
         for line in open(p, encoding='utf-8'):
-            r = json.loads(line)
+            try:
+                r = json.loads(line)
+            except ValueError:
+                continue
             out[r['fragment'], r['take']] = r
     return out
 
@@ -156,6 +170,7 @@ class Synth:
         self.sr = self.model.sampling_rate
         self.prompts = {v: self.model.create_voice_clone_prompt(os.path.join(paths.ROOT, refs[v]['wav']), refs[v]['text'])
                         for v in voices}
+        self.instruct = {v: style(refs[v]).get('instruct') for v in voices}      # instrukcja obok klonu (D94)
         if baseline:
             return
         self.model.audio_tokenizer.to('cpu')
@@ -167,15 +182,31 @@ class Synth:
         import numpy as np
         import torch
         torch.manual_seed(seed)
+        kw = {'instruct': self.instruct[voice]} if self.instruct.get(voice) else {}
         wav = self.model.generate(text=text, language='pl', voice_clone_prompt=self.prompts[voice], speed=speed,
-                                  num_step=D.MODEL['num_step'], guidance_scale=D.MODEL['guidance_scale'])[0]
+                                  num_step=D.MODEL['num_step'], guidance_scale=D.MODEL['guidance_scale'], **kw)[0]
         return np.asarray(wav, dtype=np.float32).reshape(-1)
 
 
-def jobs(con, voices=None, retake=None):
-    """(fragment, podejście, tekst, głos, tempo) do wygenerowania. retake: {fragment: (podejście, tempo)}.
-    Głosy ElevenLabs (D80) generuje lektor.eleven."""
+def style(ref):
+    return (ref or {}).get('style') or {}
+
+
+def styled_speed(speed, ref):
+    """Tempo podejścia: tempo fragmentu × mnożnik stylu klonu (D94). Mnożnik łączy tempo postaci i wydłużenie
+    referencji, bo OmniVoice liczy długość wyniku z tempa referencji. Bez stylu tempo zostaje bez zmian."""
+    f = style(ref).get('speed')
+    return speed if not f else round((speed or 1.0) * f, 2)
+
+
+def jobs(con, voices=None, retake=None, refs=None, order=None):
+    """(fragment, podejście, tekst, głos, tempo) do wygenerowania. retake: {fragment: (podejście, tempo)}; tempo
+    ponownego podejścia pochodzi z zapisanego podejścia, więc styl już w nim jest. order: {fragment: klucz
+    kolejności} (m3: kolejność gry, lektor.progress), domyślnie głos i id. Głosy ElevenLabs (D80) generuje lektor.eleven."""
+    refs = refs or {}
     rows = con.execute('SELECT id, voice, speed, text FROM fragments ORDER BY voice, id').fetchall()
+    if order:
+        rows.sort(key=lambda r: order.get(r['id'], (99,)))
     for r in rows:
         if D.engine(r['voice']) != 'omnivoice' or voices and r['voice'] not in voices:
             continue
@@ -185,7 +216,7 @@ def jobs(con, voices=None, retake=None):
                 yield r['id'], take, r['text'], r['voice'], speed
             continue
         for take in range(1, takes_for(r['voice']) + 1):
-            yield r['id'], take, r['text'], r['voice'], r['speed']
+            yield r['id'], take, r['text'], r['voice'], styled_speed(r['speed'], refs.get(r['voice']))
 
 
 def generate(limit=None, voices=None, retake_file=None):
@@ -198,7 +229,11 @@ def generate(limit=None, voices=None, retake_file=None):
         retake = {k: tuple(v) for k, v in json.load(open(retake_file, encoding='utf-8')).items()}
     state = load_state()
     done = inherit(con) if paths.RELEASE in paths.PREVIOUS else {}
-    todo = [j for j in jobs(con, voices, retake) if (j[0], j[1]) not in state and j[0] not in done]
+    order = None
+    if paths.RELEASE == 'm3':
+        from . import progress
+        order = {f: progress.rank(g) for f, g in progress.packages(con).items()}
+    todo = [j for j in jobs(con, voices, retake, refs, order) if (j[0], j[1]) not in state and j[0] not in done]
     if limit:
         todo = todo[:limit]
     print('do wygenerowania: %d podejść, %d znaków' % (len(todo), sum(len(j[2]) for j in todo)), file=sys.stderr, flush=True)
@@ -206,7 +241,7 @@ def generate(limit=None, voices=None, retake_file=None):
         return
     os.makedirs(os.path.join(paths.AUDIO, 'takes'), exist_ok=True)
     synth = Synth(sorted({j[3] for j in todo}), refs)
-    log = open(os.path.join(paths.AUDIO, 'takes.jsonl'), 'a', encoding='utf-8')
+    log = open(take_log(), 'a', encoding='utf-8')
     slow, t_start, done_chars = 0, time.perf_counter(), 0
     for n, (fid, take, text, voice, speed) in enumerate(todo, 1):
         torch.cuda.reset_peak_memory_stats()

@@ -32,7 +32,7 @@ class Response(io.BytesIO):
 def test_engine_mapping():
     assert D.engine('adelynn') == 'elevenlabs' and D.engine('narrator') == 'omnivoice' and D.engine('brynn') == 'omnivoice'
     assert D.take_engine(1) == 'omnivoice' and D.take_engine(D.ELEVEN_TAKE0 + 1) == 'elevenlabs'
-    assert len(D.ELEVEN_VOICES) == 11
+    assert len(D.ELEVEN_VOICES) == 28 and len(D.ELEVEN_VOICES_E14) == 17     # E13: 11, E14: 17 nowych (D95)
 
 
 def test_jobs_split_between_engines(tmp_path):

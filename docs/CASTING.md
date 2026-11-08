@@ -59,7 +59,7 @@ Głosy z opisów w `analysis/tools/voice_designs_e14.json` (`text_to_voice`, jed
 | `drys` | `DRYS` | `UrUMN6EMRqqvJz3oDHD1` | przyjęty w rundzie 1 |
 | `waiqar` | `WAIQAR` | `IQY1bvB4YbPVoS6Go9q3` | przyjęty w rundzie 2 (opis `el2`: doświadczony wojownik), głos z rundy 1 usunięty |
 | `morant` | `MORANT` | `3CNDe9njN2kEBkgjZlEi` | przyjęty w rundzie 2 (opis `el2`), głos z rundy 1 usunięty |
-| `delphyndra` | `DELPHYNDRA` | `1sr70RNkbV4TmYCh7tKG` (runda 1) | przyjęta w rundzie 9 (próbka A): klon OmniVoice `delph_b_jasniej` z `refs9.json`, monolog Leviraxa 3 półtony niżej, instrukcja „female”, tempo 0,85 (D94); głos ElevenLabs z rundy 1 jeszcze na koncie |
+| `delphyndra` | `DELPHYNDRA` | – (OmniVoice) | przyjęta w rundzie 9 (próbka A): klon OmniVoice `delph_b_jasniej` z `refs9.json`, monolog Leviraxa 3 półtony niżej, instrukcja „female”, tempo 0,85 (D94); głos ElevenLabs z rundy 1 usunięty (D95) |
 | `nara` | `NARA` | `peH5NmVUWPLR3C6OwCIg` | przyjęta w rundzie 3 (opis `el3` c: stara orczyca), głos z rundy 1 usunięty |
 | `meza` | `MEZA` | `6QqpmxamtHSBJVCpfj8E` | przyjęta w rundzie 3 (opis `el3` a: lodowaty szept), głos z rundy 1 usunięty |
 
@@ -67,7 +67,7 @@ Postać z wybranym nowym wariantem dostaje nowy głos na koncie, a głos z rundy
 
 ## E14: złoczyńcy z okrzykami dubbingu w OmniVoice (D83, D84)
 
-Klony OmniVoice z okrzyków albo monologów z gry, jak Ne’Krul i Xenith (D19). Referencje do 10 s w `analysis/work/compare/e14/omni/refs.json`; do bazy referencji trafią przed generowaniem.
+Klony OmniVoice z okrzyków albo monologów z gry, jak Ne’Krul i Xenith (D19). Referencje do 10 s w `analysis/work/compare/e14/omni/refs.json`. Od 2026-11-09 są w bazie referencji (`voice_compare_e14.py adopt`, D95), razem z Delphyndrą.
 
 | Głos | Mówca w grze | Źródło referencji | Długość | Stan |
 |---|---|---|---|---|

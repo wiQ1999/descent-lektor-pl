@@ -405,7 +405,7 @@ Pytanie etapu: jak przegenerować fragmenty postaci bez dubbingu głosami z D80,
 
 Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci bez dubbingu w ElevenLabs, potem lokalnie w OmniVoice narrator, bohaterowie i złoczyńcy. Szacunek: `analysis/E14_NO_DUB_SCOPE.md`. Decyzje z QA: D83.
 
-**Status:** plan zaakceptowany 2026-11-08, z głosami OmniVoice nowych postaci w arkuszu. Trwa faza A.
+**Status:** plan zaakceptowany 2026-11-08, z głosami OmniVoice nowych postaci w arkuszu. Faza A zamknięta, faza B trwa od 2026-11-09 (D95).
 
 **Faza A: przygotowanie**
 - A1: baza całej gry `m3`: zakres wszystkich scenariuszy, wydarzeń, podróży i miasta aktów 1 i 2, łup i wrogowie aktu 2. Fragmenty o tym samym id przejmujemy z M2. Raport liczności jak `E7_DATA.md`.
@@ -431,12 +431,17 @@ Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci 
   - Runda 8 gotowa 2026-11-08 (`runda8.html`, oceny w `e14r8_oceny.json`, D92): nowy profil Delphyndry z portretu (bestia), jeden opis ElevenLabs (3 podglądy, 243 kredyty) i trzy różne klony Leviraxa w OmniVoice. Wybrana próbka B (olbrzymka) do poprawek.
   - Runda 9 gotowa 2026-11-08 (`runda9.html`, oceny w `e14r9_oceny.json`, D93): pięć poprawek klonu B: bez robotycznego brzmienia, z kobiecym charakterem albo barwą dopasowaną do B. Wybrana próbka A: Delphyndra w OmniVoice (D94). Obsada A3 zamknięta.
 - A4: komunikaty gry w kwestiach postaci czyta narrator, a tekst wielkimi literami nie znika (D85). Baza `m3` przebudowana: 126 kwestii zmienionych, 17 968 fragmentów.
-- A5: wstawki sceniczne w kwestiach zebrane do E15 (D86, `analysis/E14_INSERTS.md`).
+- A5: wstawki sceniczne w kwestiach zebrane do E15 (D86, `analysis/E14_INSERTS.md`). Wstawki na początku zdania w kwestiach postaci wycięte przed fazą B: 263 kwestie (D95). Baza `m3` ma 17 956 fragmentów, w tym 3915 z M2.
 
 **Faza B: generowanie paczkami z postępem**
 - B1: ElevenLabs: paczka na postać (11 głosów z E13 i 18 nowych, 101,6 tys. znaków, ok. 48 tys. kredytów z ponownymi). Po każdej paczce automat E3 i ponowne podejścia tej postaci. Limit `--max-credits`: zatwierdzony szacunek +20%.
 - B2: OmniVoice: paczka na misję (scenariusz, wydarzenie, podróże, miasto, system), narrator, bohaterowie i złoczyńcy razem. Szacunek z bazy `m3`: ok. 105 h GPU bez ponownych podejść (narrator 830 tys. znaków, bohaterowie 255 tys. po 3 podejścia, D38).
 - Komenda postępu: dla każdej paczki stan (gotowe, w toku, czeka), fragmenty i znaki zrobione i pozostałe, kredyty albo godziny GPU oraz przewidywany czas do końca z tempa dotychczasowych paczek.
+- Start 2026-11-09 (D95), skrypt `analysis/tools/e14_run.sh`:
+  - B1 i B2 idą naraz: ElevenLabs ma 1027 fragmentów i limit 58 tys. kredytów, OmniVoice 20 512 podejść (1,62 mln znaków, ok. 107 h GPU);
+  - kolejność gry: akt 1, akt 2, części wspólne;
+  - potem ocena i do 3 rund ponownych podejść obu silników, `finalize` i `audio-report`;
+  - postęp pokazuje `lektor progress --release m3`.
 
 **Faza C: odbiór**
 - `select` i `finalize` dla `m3`, raporty `analysis/E14_DATA.md` i `analysis/E14_AUDIO.md`, odsłuch do ok. 30 fragmentów (osobno ElevenLabs i OmniVoice), paczki Windows i Mac, wydanie na GitHub po Twoim teście w grze.

@@ -127,6 +127,26 @@ def test_line_parts_caps_notice_read_by_narrator_in_m3():
                                                ('text', 'narrator', 'Zyskujecie zaufanie kupców z miasta.')]
 
 
+@pytest.mark.parametrize('text, expected', [
+    ('(kiwa głową) Chodźmy już.', 'Chodźmy już.'),
+    ('Dość tego. (wzdycha) Idziemy dalej.', 'Dość tego. Idziemy dalej.'),
+    ('*uśmiecha się* Witaj w domu.', 'Witaj w domu.'),
+    ('Weźmiemy linę (na wszelki wypadek), potem ruszymy.', 'Weźmiemy linę (na wszelki wypadek), potem ruszymy.'),
+    ('Mamy (2) pochodnie.', 'Mamy (2) pochodnie.'),
+    ('Bez wstawek.', 'Bez wstawek.'),
+])
+def test_drop_inserts(text, expected):
+    assert build.drop_inserts(text) == expected
+
+
+def test_line_parts_insert_dropped_for_character_in_m3():
+    r = line('E_TEST_15', 'dialog', '(kiwa głową) Chodźmy już.', voice='kehli')
+    assert build.line_parts(dict(r), 'm2') != [('text', 'kehli', 'Chodźmy już.')]    # M2 bez zmian
+    assert build.line_parts(dict(r), 'm3') == [('text', 'kehli', 'Chodźmy już.')]
+    n = line('E_TEST_16', 'narracja_fabularna', '(kiwa głową) Drzwi się otwierają.')
+    assert 'kiwa' in build.line_parts(dict(n), 'm3')[0][2]     # narrator: decyzja w E15 (D86)
+
+
 def test_line_parts_direction_still_dropped_in_m3():
     r = line('E_TEST_14', 'narracja_fabularna', 'Drzwi się otwierają. GRUPA WYBIERA…')
     assert build.line_parts(dict(r), 'm3') == [('text', 'narrator', 'Drzwi się otwierają.')]
