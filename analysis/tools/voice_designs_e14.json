@@ -1,5 +1,5 @@
 {
- "_info": "E14 (D83): jeden opis głosu na nową postać bez dubbingu, z portretu z gry (d3/storymessagecharacters) i charakteru z jej kwestii. `el` idzie do text_to_voice (MCP), `omni` do projektu OmniVoice (opis płci, wieku i wysokości oraz własne zdanie w stylu postaci, nie tekst gry). Złoczyńcy mają klon OmniVoice z dubbingu, więc tylko `brief`. Głosy mają się różnić od obsady E13 (docs/CASTING.md). Runda 2 (QA 2026-11-08): `el2` to nowy opis po uwadze z arkusza (`qa1`). Runda 3 (QA 2026-11-08): `el3` to trzy wyraźnie różne opisy (a, b, c) po uwadze z rundy 2 (`qa2`); wybrany głos z rundy 2 zapisuje `voice_r2`, wariant złoczyńcy `variant`. Runda 4: `el4` to pięć opisów (a–e) dla Delphyndry (`qa3`). Runda 5: `el5` to pięć opisów głosu głębokiego i chropawego (`qa4`), każdy też z efektem smoka. Runda 6: `el6` to pięć opisów z „wielką, krwiożerczą smoczycą” wprost i kobiecym głosem (`qa5`), bez efektu. Runda 7: mieszanki OmniVoice z Leviraxa i próbki C rundy 6 (`qa6`, refs7.json). Runda 8: nowy profil `brief` z portretu (bestia zamiast ekscentrycznej damy, poprzedni w `brief_r1`), z niego jeden opis `el8` (`qa7`).",
+ "_info": "E14 (D83): jeden opis głosu na nową postać bez dubbingu, z portretu z gry (d3/storymessagecharacters) i charakteru z jej kwestii. `el` idzie do text_to_voice (MCP), `omni` do projektu OmniVoice (opis płci, wieku i wysokości oraz własne zdanie w stylu postaci, nie tekst gry). Złoczyńcy mają klon OmniVoice z dubbingu, więc tylko `brief`. Głosy mają się różnić od obsady E13 (docs/CASTING.md). Runda 2 (QA 2026-11-08): `el2` to nowy opis po uwadze z arkusza (`qa1`). Runda 3 (QA 2026-11-08): `el3` to trzy wyraźnie różne opisy (a, b, c) po uwadze z rundy 2 (`qa2`); wybrany głos z rundy 2 zapisuje `voice_r2`, wariant złoczyńcy `variant`. Runda 4: `el4` to pięć opisów (a–e) dla Delphyndry (`qa3`). Runda 5: `el5` to pięć opisów głosu głębokiego i chropawego (`qa4`), każdy też z efektem smoka. Runda 6: `el6` to pięć opisów z „wielką, krwiożerczą smoczycą” wprost i kobiecym głosem (`qa5`), bez efektu. Runda 7: mieszanki OmniVoice z Leviraxa i próbki C rundy 6 (`qa6`, refs7.json). Runda 8: nowy profil `brief` z portretu (bestia zamiast ekscentrycznej damy, poprzedni w `brief_r1`), z niego jeden opis `el8` (`qa7`). Runda 9: poprawki klonu B (olbrzymka) z rundy 8 (`qa8`), referencje w `refs9.json`.",
  "magrit": {
   "gender": "female",
   "brief": "dojrzała baronessa w zbroi i płaszczu z futrem, długi ciemny warkocz, skrzyżowane ręce; dowódczyni lojalistów, rzeczowa i zdecydowana, zmęczona wojną",
@@ -211,7 +211,8 @@
   "el8_label": {
    "a": "bestia z portretu: mokry, gardłowy warkot, ślina, sapanie i syk przez zęby"
   },
-  "qa7": "głos wciąż kompletnie nie pasuje do postaci; przepisać profil od portretu, głos bardziej zwierzęcy i mroczny; do tego trzy mocno różne klony Leviraxa w OmniVoice"
+  "qa7": "głos wciąż kompletnie nie pasuje do postaci; przepisać profil od portretu, głos bardziej zwierzęcy i mroczny; do tego trzy mocno różne klony Leviraxa w OmniVoice",
+  "qa8": "wybrana próbka B (olbrzymka, klon Leviraxa 4 półtony niżej); momentami brzmi robotycznie, co trzeba usunąć; niska barwa pasuje do smoka, ale głos ma dostać trochę kobiecego charakteru przy tej samej barwie"
  },
  "nara": {
   "gender": "female",

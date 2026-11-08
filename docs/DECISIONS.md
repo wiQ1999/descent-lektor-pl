@@ -877,6 +877,25 @@ Wyniki automatu: wszystkie sześć wariantów ma CER 0 i nie ma uciętych końc�
 
 Najniższe głosy mogą brzmieć męsko, a o tym rozstrzyga odsłuch.
 
+### D93 · 2026-11-08 · E14: Delphyndra, runda 9 z poprawkami klonu B
+**Decyzja:**
+- W rundzie 8 wygrała próbka B, czyli olbrzymka: klon Leviraxa 4 półtony niżej. Runda 9 ją poprawia.
+- Źródło robotycznego brzmienia: `librosa.effects.pitch_shift` to wokoder fazowy. Rozciąga czas i zostawia w referencji metaliczny pogłos, a klon go przejmuje.
+- Ton obniżamy teraz samym przepróbkowaniem, jak wolniejsza taśma. Ton i formanty spadają razem, bez artefaktów, a referencja wydłuża się o 2^(n/12).
+- Wydłużenie wyrównuje mnożnik `speed`, bo OmniVoice liczy długość nagrania z tempa referencji (`clone_kw`).
+- PSOLA odrzuciliśmy po próbie: pYIN uznaje za dźwięczną tylko połowę ramek chropawego głosu Leviraxa, więc zmiana tonu działała tylko częściowo.
+- Pięć wariantów, wszystkie z monologu Leviraxa w tempie 0,85:
+  - bez artefaktów: ton i gardło jak w B;
+  - to samo z instrukcją OmniVoice „female” obok klonu;
+  - 3 półtony niżej zamiast 4, z instrukcją „female”;
+  - jak bez artefaktów, z miękkim tchnieniem w referencji;
+  - barwa jak B: te same nagrania co „bez artefaktów”, z korektorem liniowo-fazowym (najwyżej ±12 dB, wygładzenie 1/3 oktawy) z ich widma do widma nagrań B (`eq9`).
+- Piąty wariant jest potrzebny, bo klon z przepróbkowanej referencji wychodzi ciemniejszy od B (środek widma ok. 1600 zamiast 2340 Hz), choć same referencje mają podobną jasność. Korektor na referencji tego nie zmienił, a na nagraniach przywraca rozkład pasm B.
+- Dla porównania arkusz ma Leviraxa i B z rundy 8.
+- Wyniki automatu: wszystkie warianty bez uciętych końcówek. CER wynosi 0, poza tchnieniem z 6% we fragmencie 2 (poniżej progu 10%). Długość nagrań jest jak w B, więc wyrównanie tempa działa. Mediana F0 81–91 Hz (B: 90 Hz).
+
+**Uzasadnienie:** Uwaga użytkownika: B momentami brzmi robotycznie. Niska barwa pasuje, ale głos ma dostać trochę kobiecego charakteru przy tej samej barwie. Przepróbkowanie usuwa przyczynę, zamiast ją maskować. Instrukcja „female” to jedyny sposób w OmniVoice, żeby nadać kobiecy charakter bez zmiany referencji. Model przyjmuje ją razem z klonem, bo opis stylu i referencja to osobne części wejścia.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
