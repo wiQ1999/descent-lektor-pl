@@ -66,7 +66,9 @@ Wszystkie cztery to najpewniej fałszywe alarmy automatu: zapis nazwy przez Whis
 
 ## Odsłuch
 
-Strona `analysis/work/audio/m2/listen/index.html` ma 30 losowych fragmentów ElevenLabs bez uwag automatu, z każdej z 11 postaci (`finalize --listen-engine elevenlabs`). Wynik odsłuchu dopiszemy tutaj.
+Strona `analysis/work/audio/m2/listen/index.html` ma 30 losowych fragmentów ElevenLabs bez uwag automatu, z każdej z 11 postaci (`finalize --listen-engine elevenlabs`).
+
+Wynik (użytkownik, 2026-11-08): 30 z 30 fragmentów „dobrze”, bez uwag. Oceny są w `listen/odsluch_e3.csv`, razem ze starszymi ocenami z E3.
 
 ## Wynik
 

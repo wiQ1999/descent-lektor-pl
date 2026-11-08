@@ -388,7 +388,7 @@ Pytanie etapu: którego modelu użyć (lokalny OmniVoice czy ElevenLabs przez MC
 
 Pytanie etapu: jak przegenerować fragmenty postaci bez dubbingu głosami z D80, żeby trafiły do paczki M2 tak jak audio OmniVoice.
 
-**Status:** audio gotowe 2026-11-07, czeka na odsłuch użytkownika. D81: własna komenda `lektor eleven`, M1 i M2, jedno podejście i ponowne przy uwagach, pilot przed resztą. Wynik w `analysis/E13_AUDIO.md`: 156 fragmentów z `eleven_v4`, 5411 kredytów, paczki win i mac przebudowane.
+**Status:** ukończony 2026-11-08. Odsłuch: 30 z 30 fragmentów bez uwag. D81: własna komenda `lektor eleven`, M1 i M2, jedno podejście i ponowne przy uwagach, pilot przed resztą. Wynik w `analysis/E13_AUDIO.md`: 156 fragmentów z `eleven_v4`, 5411 kredytów, paczki win i mac przebudowane.
 
 **Zakres:**
 - silnik głosu przypisany w `direction.py`: 11 postaci bez dubbingu → ElevenLabs `eleven_v4` z `voice_id` z `docs/CASTING.md`, reszta bez zmian;
