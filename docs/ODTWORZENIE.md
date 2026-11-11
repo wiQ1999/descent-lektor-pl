@@ -175,7 +175,9 @@ Wydanie częściowe (D96): akt 1 i części wspólne, z oceną dopasowaną do te
 
 - `--acts` ogranicza krok do części gry: 1 akt 1, 2 akt 2, 3 części wspólne.
 - `--no-asr` to szybka ocena bez Whispera na CPU (cisza, tempo, końcówka z energii, barwa, pauzy) do `evals_quick.jsonl`. `select` bierze ją dla fragmentów bez pełnej oceny.
-- `--fp32` liczy Whispera w fp32, a `--until HH:MM` kończy ocenę o tej godzinie. W m3 Whisper ocenia najpierw pierwsze podejścia w kolejności gry.
+- `--fp32` liczy Whispera w fp32 (ok. 2,3 s na podejście wobec ok. 7,6 s w fp16), a `--until HH:MM` kończy ocenę o tej godzinie.
+- W m3 Whisper ocenia najpierw ponowne podejścia, potem pierwsze podejścia w kolejności gry, na końcu pozostałe podejścia bohaterów. `--later <grupy>` przesuwa grupy na koniec (misje już rozegrane w zapisie gry).
+- `select` łączy obie oceny podejścia. Przy tych samych uwagach wygrywa podejście sprawdzone Whisperem.
 - Potem `select`, `finalize` i `audio-report` jak wyżej. Pokrycie kwestii z wybranych części gry sprawdza:
 
 ```bash

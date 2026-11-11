@@ -219,10 +219,11 @@ def load_evals(name='evals.jsonl'):
     return out
 
 
-def evaluate(acts=None, fp32=False, asr=True, until=None):
+def evaluate(acts=None, fp32=False, asr=True, until=None, later=()):
     """acts: tylko fragmenty z tych części gry (lektor.progress.in_acts, wydanie częściowe D96). asr=False: szybka
     ocena bez Whispera do evals_quick.jsonl. until: czas (epoch), po którym ocena kończy się po bieżącym podejściu.
-    W m3 kolejność to najpierw pierwsze podejścia w kolejności gry, potem pozostałe podejścia bohaterów."""
+    W m3 kolejność to najpierw pierwsze podejścia w kolejności gry, potem pozostałe podejścia bohaterów. later: grupy
+    na koniec kolejki (misje już rozegrane w zapisie gry, D96)."""
     import time
     con = db.connect(paths.DB)
     texts = {r['id']: r['text'] for r in con.execute('SELECT id, text FROM fragments')}
@@ -237,8 +238,11 @@ def evaluate(acts=None, fp32=False, asr=True, until=None):
     if paths.RELEASE == 'm3':
         from . import progress
         pkg = progress.packages(con)
-        todo.sort(key=lambda t: (t['take'] not in (1, D.ELEVEN_TAKE0 + 1), progress.rank(pkg.get(t['fragment'], 'system')),
-                                 t['fragment'], t['take']))
+        def first(t):   # 0: ponowne podejście, 1: pierwsze podejście, 2: pozostałe podejścia bohaterów
+            extra = t['take'] > (D.ELEVEN_TAKE0 + 1 if D.take_engine(t['take']) == 'elevenlabs' else takes_for(t['voice']))
+            return 0 if extra else 1 if t['take'] in (1, D.ELEVEN_TAKE0 + 1) else 2
+        todo.sort(key=lambda t: (first(t), pkg.get(t['fragment'], 'system') in later,
+                                 progress.rank(pkg.get(t['fragment'], 'system')), t['fragment'], t['take']))
     print('do oceny: %d podejść%s' % (len(todo), '' if asr else ' (bez ASR)'), file=sys.stderr, flush=True)
     if not todo:
         return
@@ -293,9 +297,8 @@ def select():
     con = db.connect(paths.DB)
     texts = {r['id']: r['text'] for r in con.execute('SELECT id, text FROM fragments')}
     evals = {k: e for k, e in load_evals().items() if e['fragment'] in texts}   # bez fragmentów usuniętych z bazy
-    full = {e['fragment'] for e in evals.values()}
-    for k, e in load_evals(QUICK).items():   # fragment bez pełnej oceny: ocena bez ASR (D96)
-        if e['fragment'] in texts and e['fragment'] not in full:
+    for k, e in load_evals(QUICK).items():   # podejście bez pełnej oceny: ocena bez ASR (D96)
+        if e['fragment'] in texts and k not in evals:
             evals[k] = e
     by_frag = {}
     for e in evals.values():    # reguły tekstowe liczone od nowa z zapisanej transkrypcji (bez ponownego ASR)
@@ -313,7 +316,9 @@ def select():
     for fid, es in by_frag.items():
         for e in es:
             e['problems'] = problems(e, sim_median)
-        best = min(es, key=lambda e: (len(e['problems']) > 0, round(e['cer'] / 0.02), -(e['sim'] or 0), e['take']))
+        # Przy tych samych uwagach wygrywa podejście sprawdzone Whisperem (D96).
+        best = min(es, key=lambda e: (len(e['problems']) > 0, e.get('asr') is None, round(e['cer'] / 0.02),
+                                      -(e['sim'] or 0), e['take']))
         choice[fid] = {'take': best['take'], 'voice': best['voice'], 'speed': best['speed'], 'problems': best['problems'],
                        'cer': best['cer'], 'sim': best['sim'], 'cps': best['cps'], 'takes': len(es),
                        'asr': best.get('asr') is not None}

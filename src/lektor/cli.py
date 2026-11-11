@@ -37,6 +37,7 @@ def main(argv=None):
     v.add_argument('--fp32', action='store_true', help='Whisper w fp32 (szybciej na GTX 1650 Ti, więcej VRAM)')
     v.add_argument('--no-asr', action='store_true', help='szybka ocena bez Whispera (CPU) do evals_quick.jsonl (D96)')
     v.add_argument('--until', help='godzina HH:MM, po której ocena się kończy (wznowienie tą samą komendą)')
+    v.add_argument('--later', nargs='*', default=(), help='grupy na koniec kolejki (np. misje rozegrane w zapisie gry)')
     sub.add_parser('select', parents=[rel], help='wybór podejść i lista ponownych (choice.json, retake.json)')
     f = sub.add_parser('finalize', parents=[rel], help='pliki końcowe, manifest i strona odsłuchu (.venv)')
     f.add_argument('--listen-engine', choices=('omnivoice', 'elevenlabs'), help='odsłuch tylko głosów tego silnika')
@@ -76,7 +77,7 @@ def main(argv=None):
             import datetime
             h, m = map(int, a.until.split(':'))
             until = datetime.datetime.now().replace(hour=h, minute=m, second=0).timestamp()
-        evaluate.evaluate(a.acts, a.fp32, not a.no_asr, until)
+        evaluate.evaluate(a.acts, a.fp32, not a.no_asr, until, set(a.later))
     elif a.cmd == 'select':
         from . import evaluate
         evaluate.select()

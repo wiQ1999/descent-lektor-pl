@@ -946,8 +946,8 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - ElevenLabs: klucz API ma własny limit 60 tys. kredytów i wyczerpał go po 804 z 1027 fragmentów (33 813 kredytów). 223 fragmenty zostają bez głosu, w tym ok. 35 w akcie 1 (Q10, Q11, wydarzenia 9A i 10A, dwie sceny). Companion czyta tam resztę kwestii albo ją pomija.
 - Ocena dopasowana do terminu (13:00):
   - wszystkie podejścia aktu 1 i części wspólnych przechodzą szybką ocenę bez Whispera: cisza, tempo, końcówka z energii, barwa, pauzy (`evaluate --no-asr`, `evals_quick.jsonl`);
-  - Whisper w fp32 ocenia w kolejności gry do 11:05, najpierw pierwsze podejścia (`evaluate --fp32 --until`);
-  - `select` bierze pełną ocenę, a bez niej szybką; `choice.json` ma pole `asr`;
+  - Whisper w fp32 ocenia ok. 2,3 s na podejście, 3× szybciej niż fp16 (`evaluate --fp32 --until`). Kolejność: ponowne podejścia, pierwsze podejścia od zapisu w kolejności gry, misje i wydarzenia już rozegrane w zapisie (`--later`), pozostałe podejścia bohaterów;
+  - `select` łączy obie oceny, a przy tych samych uwagach wygrywa podejście sprawdzone Whisperem; `choice.json` ma pole `asr`;
   - jedna runda ponownych podejść dla odrzuconych fragmentów, jeśli zmieści się w czasie.
 - Paczki mają audio w FLAC (bezstratnie). WAV dałby ok. 2,9 GB i przekroczył limit 2 GiB pliku w GitHub Releases.
 - Paczki Windows i Mac.
