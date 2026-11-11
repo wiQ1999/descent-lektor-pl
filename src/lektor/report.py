@@ -239,6 +239,11 @@ def audio_report(path=None):
     s += ['Fragmentów: **%d**. Z ponownym podejściem: %d. Bez zaakceptowanego podejścia po ponownym: **%d** (%s).' % (
         len(choice), retaken, sum(1 for c in choice.values() if c['problems']),
         ', '.join('%s %d' % kv for kv in reasons.most_common()) or 'brak'), '']
+    quick = sum(1 for c in choice.values() if c.get('asr') is False)
+    if quick:     # wydanie częściowe (D96): część wyborów tylko z szybkiej oceny bez Whispera
+        checked = sum(1 for c in choice.values() if c.get('asr') is not False)
+        s += ['Wybrane podejścia sprawdzone Whisperem (z przejętymi): **%d** z %d. Pozostałe %d mają tylko szybką ocenę bez '
+              'ASR (cisza, tempo, końcówka, barwa, pauzy; D96), więc ich CER w tabeli wynosi 0.' % (checked, len(choice), quick), '']
     rows = []
     for v in sorted({c['voice'] for c in choice.values()}):
         cs = [c for c in choice.values() if c['voice'] == v]
