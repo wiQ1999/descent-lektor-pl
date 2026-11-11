@@ -98,3 +98,12 @@ def test_listen_list_is_short_covers_voices_and_skips_rejected():
     sample = finalize.listen_list(choice)
     assert len(sample) == finalize.LISTEN_MAX and 'bad' not in sample
     assert {choice[f]['voice'] for f in sample} == set('abc')
+
+
+def test_text_checks_without_asr_pass():
+    """Szybka ocena bez Whispera (D96): reguły tekstowe nie odrzucają podejścia, zostają akustyczne."""
+    from lektor import evaluate as E
+    assert E.text_checks('Idziemy dalej.', None) == {'cer': 0.0, 'tail_cut': False, 'missing': 0, 'lost': 0}
+    e = {'speech_s': 2.0, 'chars': 14, 'voice': 'narrator', 'take': 1, 'sim': None, 'cps_ratio': 1.0,
+         'end_rms': 0.0, 'end_gap': 1.0, 'pause': 0.1, **E.text_checks('Idziemy dalej.', None)}
+    assert E.problems(e, {}) == []

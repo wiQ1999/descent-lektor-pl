@@ -46,7 +46,16 @@ def finalize():
     out_dir = os.path.join(paths.AUDIO, 'final')
     os.makedirs(out_dir, exist_ok=True)
     frags, rates = {}, set()
+    mp = os.path.join(paths.AUDIO, 'manifest.json')
+    old = json.load(open(mp, encoding='utf-8'))['fragments'] if os.path.exists(mp) else {}
     for fid, c in sorted(choice.items()):
+        prev = old.get(fid)
+        prev_file = prev and os.path.join(paths.AUDIO, prev['file'])
+        if prev and prev['take'] == c['take'] and os.path.exists(prev_file) and \
+                os.path.getmtime(prev_file) >= os.path.getmtime(take_path(fid, c['take'])):
+            frags[fid] = {**prev, 'problems': c['problems']}     # to samo podejście: plik końcowy bez zmian (D96)
+            rates.add(sf.info(prev_file).samplerate)
+            continue
         y, sr = sf.read(take_path(fid, c['take']), dtype='float32')
         rates.add(sr)
         y, loud = level(trim(y, sr), sr)
@@ -56,6 +65,7 @@ def finalize():
                       'model': D.ELEVEN_MODEL if D.take_engine(c['take']) == 'elevenlabs' else D.MODEL_ID}
     if len(rates) > 1:
         raise ValueError('Podejścia mają różne próbkowanie: %s' % sorted(rates))
+    sr = next(iter(rates))
     manifest = {'model': D.MODEL_ID, 'sample_rate': sr, 'lufs': LUFS, 'category_gain_db': CATEGORY_GAIN_DB,
                 'fragments': frags}
     json.dump(manifest, open(os.path.join(paths.AUDIO, 'manifest.json'), 'w', encoding='utf-8'), indent=1)

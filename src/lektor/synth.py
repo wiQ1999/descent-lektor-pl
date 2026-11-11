@@ -219,7 +219,7 @@ def jobs(con, voices=None, retake=None, refs=None, order=None):
             yield r['id'], take, r['text'], r['voice'], styled_speed(r['speed'], refs.get(r['voice']))
 
 
-def generate(limit=None, voices=None, retake_file=None):
+def generate(limit=None, voices=None, retake_file=None, acts=None):
     import soundfile as sf
     import torch
     con = db.connect(paths.DB)
@@ -234,6 +234,10 @@ def generate(limit=None, voices=None, retake_file=None):
         from . import progress
         order = {f: progress.rank(g) for f, g in progress.packages(con).items()}
     todo = [j for j in jobs(con, voices, retake, refs, order) if (j[0], j[1]) not in state and j[0] not in done]
+    if acts:
+        from . import progress
+        keep = progress.in_acts(con, acts)
+        todo = [j for j in todo if j[0] in keep]
     if limit:
         todo = todo[:limit]
     print('do wygenerowania: %d podejść, %d znaków' % (len(todo), sum(len(j[2]) for j in todo)), file=sys.stderr, flush=True)

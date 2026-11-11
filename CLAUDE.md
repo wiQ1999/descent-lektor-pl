@@ -97,6 +97,11 @@ W m3 komunikat gry po pustym wierszu w kwestii postaci czyta narrator, a tekst W
   - dzienniki zapisuje w `audio/m3/logs/`.
 - Postęp: `progress --release m3 [--all]`, a co 10 min także plik `audio/m3/progress.md`.
 - ElevenLabs zapisuje stan w `takes_eleven.jsonl`.
+- Wydanie częściowe (D96): `generate` i `evaluate` przyjmują `--acts 1 3` (akt 1 i części wspólne).
+  - `evaluate --no-asr` robi szybką ocenę bez Whispera do `evals_quick.jsonl`.
+  - `evaluate --fp32 --until HH:MM` liczy Whispera w fp32 do podanej godziny.
+  - Pokrycie kwestii sprawdza `analysis/tools/release_coverage.py`.
+- Paczka ma audio w FLAC (D96).
 - Styl klonu w `refs.json` (`style.speed`, `style.instruct`) wchodzi do klucza fragmentu i do `synth`.
 - Postacie bez dubbingu (D80, E13) czyta ElevenLabs `eleven_v4`: `eleven --release m1|m2 [--dry-run] [--retake] [--max-credits N]` w `.venv` (płatne, wznawialne). Głosy i `voice_id` są w `direction.ELEVEN_VOICES`. Podejścia mają numery od 101 obok podejść OmniVoice, `select` bierze dla głosu tylko jego silnik. M1 generujemy przed M2, bo M2 przejmuje z M1 fragmenty o tym samym id.
 - `generate --release m2` przejmuje z `audio/m1` fragmenty o tym samym id i liczy resztę.

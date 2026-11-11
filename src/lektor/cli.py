@@ -25,13 +25,18 @@ def main(argv=None):
     g.add_argument('--limit', type=int)
     g.add_argument('--voices', nargs='*')
     g.add_argument('--retake', action='store_true', help='ponowne podejścia z retake.json (po select)')
+    g.add_argument('--acts', type=int, nargs='*', help='tylko części gry: 1 akt 1, 2 akt 2, 3 wspólne (m3, D96)')
     e = sub.add_parser('eleven', parents=[rel], help='podejścia głosów ElevenLabs (D80, .venv, płatne; wznawialne)')
     e.add_argument('--limit', type=int)
     e.add_argument('--voices', nargs='*')
     e.add_argument('--retake', action='store_true', help='ponowne podejścia z retake.json (po select)')
     e.add_argument('--dry-run', action='store_true', help='tylko liczba podejść, znaków i szacunek kredytów')
     e.add_argument('--max-credits', type=int, help='zatrzymaj wsad przed przekroczeniem tylu kredytów')
-    sub.add_parser('evaluate', parents=[rel], help='ocena podejść: ASR, barwa, tempo (.venv, GPU; wznawialne)')
+    v = sub.add_parser('evaluate', parents=[rel], help='ocena podejść: ASR, barwa, tempo (.venv, GPU; wznawialne)')
+    v.add_argument('--acts', type=int, nargs='*', help='tylko części gry: 1 akt 1, 2 akt 2, 3 wspólne (m3, D96)')
+    v.add_argument('--fp32', action='store_true', help='Whisper w fp32 (szybciej na GTX 1650 Ti, więcej VRAM)')
+    v.add_argument('--no-asr', action='store_true', help='szybka ocena bez Whispera (CPU) do evals_quick.jsonl (D96)')
+    v.add_argument('--until', help='godzina HH:MM, po której ocena się kończy (wznowienie tą samą komendą)')
     sub.add_parser('select', parents=[rel], help='wybór podejść i lista ponownych (choice.json, retake.json)')
     f = sub.add_parser('finalize', parents=[rel], help='pliki końcowe, manifest i strona odsłuchu (.venv)')
     f.add_argument('--listen-engine', choices=('omnivoice', 'elevenlabs'), help='odsłuch tylko głosów tego silnika')
@@ -58,7 +63,7 @@ def main(argv=None):
     elif a.cmd == 'generate':
         import os
         from . import synth
-        synth.generate(a.limit, a.voices, os.path.join(paths.AUDIO, 'retake.json') if a.retake else None)
+        synth.generate(a.limit, a.voices, os.path.join(paths.AUDIO, 'retake.json') if a.retake else None, a.acts)
     elif a.cmd == 'eleven':
         import os
         from . import eleven
@@ -66,7 +71,12 @@ def main(argv=None):
                         a.max_credits)
     elif a.cmd == 'evaluate':
         from . import evaluate
-        evaluate.evaluate()
+        until = None
+        if a.until:
+            import datetime
+            h, m = map(int, a.until.split(':'))
+            until = datetime.datetime.now().replace(hour=h, minute=m, second=0).timestamp()
+        evaluate.evaluate(a.acts, a.fp32, not a.no_asr, until)
     elif a.cmd == 'select':
         from . import evaluate
         evaluate.select()

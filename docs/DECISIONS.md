@@ -936,6 +936,29 @@ Najniższe głosy mogą brzmieć męsko, a o tym rozstrzyga odsłuch.
 
 Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
+### D96 · 2026-11-11 · E14: wydanie częściowe na partię ze znajomymi
+**Decyzja:**
+- Wydanie v0.3.0 obejmuje akt 1 i części wspólne (sprzęt, wrogowie, system).
+  - Zapis gry ze slotu 5 to akt 1 po scenariuszach Q1–Q5 i SQ1, z aktywnymi Q6–Q8, EC1 i EC3.
+  - Akt 2 i reszta gry przyjdą w następnym wydaniu, po uwagach z partii.
+- Generowanie aktu 2 zatrzymane 2026-11-10 przy 11 723 z 20 511 podejść. Akt 1 był gotowy w całości. Podejścia aktu 2 zostają na następne wydanie.
+- Części wspólne dogenerowane: 207 podejść (`generate --acts 3`).
+- ElevenLabs: klucz API ma własny limit 60 tys. kredytów i wyczerpał go po 804 z 1027 fragmentów (33 813 kredytów). 223 fragmenty zostają bez głosu, w tym ok. 35 w akcie 1 (Q10, Q11, wydarzenia 9A i 10A, dwie sceny). Companion czyta tam resztę kwestii albo ją pomija.
+- Ocena dopasowana do terminu (13:00):
+  - wszystkie podejścia aktu 1 i części wspólnych przechodzą szybką ocenę bez Whispera: cisza, tempo, końcówka z energii, barwa, pauzy (`evaluate --no-asr`, `evals_quick.jsonl`);
+  - Whisper w fp32 ocenia w kolejności gry do 11:05, najpierw pierwsze podejścia (`evaluate --fp32 --until`);
+  - `select` bierze pełną ocenę, a bez niej szybką; `choice.json` ma pole `asr`;
+  - jedna runda ponownych podejść dla odrzuconych fragmentów, jeśli zmieści się w czasie.
+- Paczki mają audio w FLAC (bezstratnie). WAV dałby ok. 2,9 GB i przekroczył limit 2 GiB pliku w GitHub Releases.
+- Paczki Windows i Mac.
+
+**Uzasadnienie:**
+- Użytkownik prosił 2026-11-10 o skrócenie prac do terminu, z oceną, ponownymi podejściami i raportem.
+- Paczka ma w pełni obsłużyć partię od zapisu w slocie 5, a pozostałe dialogi powstaną później.
+- QA 2026-11-10 przyniosło trzy decyzje: zakres akt 1 i części wspólne, brakujące kwestie ElevenLabs bez głosu, paczki Windows i Mac.
+- Termin przesunięty po restarcie laptopa na 2026-11-11 13:00.
+- Pełna ocena Whisperem w fp16 trwa ok. 7,6 s na podejście, czyli ok. 18 h dla aktu 1, więc się nie mieści.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

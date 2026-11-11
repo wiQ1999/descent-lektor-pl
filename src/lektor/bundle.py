@@ -30,7 +30,7 @@ from . import paths
 
 NAME = 'Descent-Lektor-PL'
 SCOPES = {'m1': 'M1 (prolog i Q1)', 'm2': 'M2 (prolog, Q1, Q6–Q8, wydarzenia kampanii, podróże aktu 1, miasto)',
-          'm3': 'M3 (cała gra: akty 1 i 2)'}
+          'm3': 'M3 (akt 1 z wydarzeniami, podróżami i miastem; akt 2 w kolejnym wydaniu, D96)'}
 SRC = os.path.join(paths.ROOT, 'src', 'bundle')
 PLUGIN_BIN = os.path.join(paths.ROOT, 'build', 'plugin', 'LektorPL.Loader', 'bin', 'Release')
 PLUGIN_FILES = ('LektorPL.Loader.dll', 'LektorPL.Core.dll')
@@ -176,17 +176,33 @@ def copy_lektor(dest):
 
 
 def copy_data(dest):
-    """Baza wydania i audio z manifestu (tylko pliki, które manifest wskazuje)."""
+    """Baza wydania i audio z manifestu (tylko pliki, które manifest wskazuje).
+
+    Audio idzie w FLAC: bezstratnie i ok. połowy rozmiaru WAV, bo paczka M3 w WAV przekroczyłaby limit 2 GiB na plik
+    w GitHub Releases (D96). Companion czyta FLAC przez soundfile tak samo jak WAV. Kopie FLAC leżą w audio/<wydanie>/flac
+    i powstają od nowa tylko po zmianie pliku końcowego."""
+    import soundfile as sf
     out = os.path.join(dest, 'dane')
     os.makedirs(out, exist_ok=True)
     shutil.copy2(paths.DB, os.path.join(out, paths.RELEASE + '.sqlite'))
     with open(os.path.join(paths.AUDIO, 'manifest.json'), encoding='utf-8') as fh:
         manifest = json.load(fh)
+    cache = os.path.join(paths.AUDIO, 'flac')
+    os.makedirs(cache, exist_ok=True)
     for m in manifest['fragments'].values():
+        src = os.path.join(paths.AUDIO, m['file'])
+        name = os.path.splitext(os.path.basename(m['file']))[0] + '.flac'
+        flac = os.path.join(cache, name)
+        if not os.path.exists(flac) or os.path.getmtime(flac) < os.path.getmtime(src):
+            y, sr = sf.read(src, dtype='int16')
+            sf.write(flac + '.tmp', y, sr, format='FLAC', subtype='PCM_16')
+            os.replace(flac + '.tmp', flac)
+        m['file'] = 'final/' + name
         dst = os.path.join(out, m['file'])
         os.makedirs(os.path.dirname(dst), exist_ok=True)
-        shutil.copy2(os.path.join(paths.AUDIO, m['file']), dst)
-    shutil.copy2(os.path.join(paths.AUDIO, 'manifest.json'), out)
+        shutil.copy2(flac, dst)
+    with open(os.path.join(out, 'manifest.json'), 'w', encoding='utf-8') as fh:
+        json.dump(manifest, fh, indent=1)
     return len(manifest['fragments'])
 
 

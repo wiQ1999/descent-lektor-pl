@@ -9,6 +9,9 @@
 # potem evaluate i select, do ROUNDS rund ponownych podejść obu silników, ocena końcowa, finalize i audio-report.
 # Strażnik generate (D12) przerywa wsad przy spadaniu do pamięci systemowej: skrypt wznawia go po minucie,
 # dopóki przybywa podejść. Dzienniki: analysis/work/audio/m3/logs/.
+#
+# Wydanie częściowe (D96): ACTS="1 3" ogranicza generowanie i ocenę do aktu 1 i części wspólnych, ELEVEN=0 pomija
+# ElevenLabs, ASR_FP32=1 liczy Whispera w fp32, ROUNDS ustala liczbę rund ponownych podejść.
 set -u
 cd "$(dirname "$0")/../.."
 REL=m3
@@ -19,6 +22,13 @@ LOGS=$AUDIO/logs
 MAX_CREDITS=${MAX_CREDITS:-58000}       # zatwierdzone w QA B1 (D95): ok. 44 tys. + ponowne podejścia
 ROUNDS=${ROUNDS:-3}
 SNAPSHOT_S=${SNAPSHOT_S:-600}
+ACTS=${ACTS:-}
+ELEVEN=${ELEVEN:-1}
+ASR_FP32=${ASR_FP32:-0}
+ACT_ARGS=()
+[ -n "$ACTS" ] && ACT_ARGS=(--acts $ACTS)
+EVAL_ARGS=("${ACT_ARGS[@]}")
+[ "$ASR_FP32" = 1 ] && EVAL_ARGS+=(--fp32)
 mkdir -p "$LOGS"
 
 log() { echo "$(date '+%F %T') $*" | tee -a "$LOGS/run.log"; }
@@ -37,7 +47,7 @@ omni() {    # generate z wznawianiem po strażniku; trzy przerwy z rzędu bez no
     local stuck=0 before code
     while [ $stuck -lt 3 ]; do
         before=$(lines "$AUDIO/takes.jsonl")
-        "$OMNI" -I -m lektor generate --release $REL "$@" >> "$LOGS/generate.log" 2>&1 && return 0
+        "$OMNI" -I -m lektor generate --release $REL "$@" "${ACT_ARGS[@]}" >> "$LOGS/generate.log" 2>&1 && return 0
         code=$?
         log "generate $*: kod $code, wznowienie za 60 s"
         if [ "$(lines "$AUDIO/takes.jsonl")" -gt "$before" ]; then stuck=0; else stuck=$((stuck + 1)); fi
@@ -60,15 +70,15 @@ eleven() {  # budżet liczony od nowa przed każdym wsadem: suma kredytów podej
 }
 
 step() {    # krok w .venv; błąd kończy skrypt (wznowienie tą samą komendą)
-    "$PY" -I -m lektor "$1" --release $REL >> "$LOGS/$1.log" 2>&1 || { mark "przerwane: $1"; exit 1; }
+    "$PY" -I -m lektor "$1" --release $REL "${@:2}" >> "$LOGS/$1.log" 2>&1 || { mark "przerwane: $1"; exit 1; }
 }
 
 both() {    # ElevenLabs w tle, OmniVoice na pierwszym planie; GPU zwalnia się dopiero po obu
-    eleven "$@" &
-    local el=$!
+    local el=
+    if [ "$ELEVEN" = 1 ]; then eleven "$@" & el=$!; fi
     omni "$@"
     local om=$?
-    wait $el || log "eleven $*: niedokończone (szczegóły w logs/eleven.log)"
+    [ -z "$el" ] || wait $el || log "eleven $*: niedokończone (szczegóły w logs/eleven.log)"
     [ $om -eq 0 ] || { mark "przerwane: generate $*"; exit 1; }
 }
 
@@ -76,12 +86,12 @@ both() {    # ElevenLabs w tle, OmniVoice na pierwszym planie; GPU zwalnia się 
 SNAP=$!
 trap 'kill $SNAP 2>/dev/null' EXIT
 
-log "start: budżet ElevenLabs $(budget) z $MAX_CREDITS kr."
+log "start: części ${ACTS:-wszystkie}, ElevenLabs $ELEVEN (budżet $(budget) z $MAX_CREDITS kr.), Whisper fp32 $ASR_FP32, rundy $ROUNDS"
 mark "pierwsze podejścia: ElevenLabs i OmniVoice"
 both
 for r in $(seq 1 "$ROUNDS"); do
     mark "ocena przed rundą $r ponownych podejść"
-    step evaluate
+    step evaluate "${EVAL_ARGS[@]}"
     step select
     n=$(retakes)
     log "do ponownego podejścia: $n fragmentów"
@@ -90,7 +100,7 @@ for r in $(seq 1 "$ROUNDS"); do
     both --retake
 done
 mark "ocena końcowa"
-step evaluate
+step evaluate "${EVAL_ARGS[@]}"
 step select
 mark "finalize"
 "$PY" -I -m lektor finalize --release $REL >> "$LOGS/finalize.log" 2>&1 || { mark "przerwane: finalize"; exit 1; }

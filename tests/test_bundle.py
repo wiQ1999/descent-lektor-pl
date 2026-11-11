@@ -192,3 +192,26 @@ def test_dev_settings_follow_release(tmp_path):
         assert not bundle.keep_settings(str(path), True)
     finally:
         paths.use(old)
+
+
+def test_copy_data_writes_flac_and_manifest(tmp_path, monkeypatch):
+    """Audio paczki w FLAC (D96): te same próbki, manifest wskazuje pliki .flac."""
+    import json as _json
+    import numpy as np
+    import soundfile as sf
+    audio, dest = tmp_path / 'audio', tmp_path / 'paczka'
+    (audio / 'final').mkdir(parents=True)
+    y = (np.sin(np.linspace(0, 200, 2400)) * 8000).astype('int16')
+    sf.write(audio / 'final' / 'abc.wav', y, 24000, subtype='PCM_16')
+    (audio / 'manifest.json').write_text(_json.dumps({'sample_rate': 24000, 'fragments': {'abc': {'file': 'final/abc.wav'}}}),
+                                         encoding='utf-8')
+    db = tmp_path / 'm3.sqlite'
+    db.write_bytes(b'')
+    monkeypatch.setattr(B.paths, 'AUDIO', str(audio))
+    monkeypatch.setattr(B.paths, 'DB', str(db))
+    monkeypatch.setattr(B.paths, 'RELEASE', 'm3')
+    assert B.copy_data(str(dest)) == 1
+    m = _json.loads((dest / 'dane' / 'manifest.json').read_text(encoding='utf-8'))
+    assert m['fragments']['abc']['file'] == 'final/abc.flac'
+    back, sr = sf.read(dest / 'dane' / 'final' / 'abc.flac', dtype='int16')
+    assert sr == 24000 and (back == y).all()

@@ -443,6 +443,13 @@ Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci 
   - potem ocena i do 3 rund ponownych podejść obu silników, `finalize` i `audio-report`;
   - postęp pokazuje `lektor progress --release m3`.
 
+- Wydanie częściowe 2026-11-11 (D96), na partię ze znajomymi z zapisu w akcie 1:
+  - generowanie aktu 2 zatrzymane 2026-11-10 przy ok. 57% podejść; akt 1 gotowy, części wspólne dogenerowane;
+  - limit klucza API ElevenLabs wyczerpany, 223 fragmenty bez głosu, w tym ok. 35 w akcie 1;
+  - ocena do terminu: szybka bez Whispera dla wszystkich podejść aktu 1, Whisper w kolejności gry do 11:05, bez rund ponownych podejść;
+  - paczki Windows i Mac z audio FLAC, wydanie v0.3.0.
+- Po partii: uwagi z gry, dokończenie aktu 2, ElevenLabs po podniesieniu limitu klucza, pełna ocena i ponowne podejścia, wydanie całej gry.
+
 **Faza C: odbiór**
 - `select` i `finalize` dla `m3`, raporty `analysis/E14_DATA.md` i `analysis/E14_AUDIO.md`, odsłuch do ok. 30 fragmentów (osobno ElevenLabs i OmniVoice), paczki Windows i Mac, wydanie na GitHub po Twoim teście w grze.
 

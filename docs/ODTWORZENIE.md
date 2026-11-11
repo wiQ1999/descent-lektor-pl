@@ -159,6 +159,29 @@ bash analysis/tools/e14_run.sh
 - `--all` pokazuje wszystkie paczki. Ten sam raport skrypt co 10 min zapisuje do `analysis/work/audio/m3/progress.md`.
 - `MAX_CREDITS` (domyślnie 58000) ogranicza kredyty ElevenLabs całego wydania.
 
+Wydanie częściowe (D96): akt 1 i części wspólne, z oceną dopasowaną do terminu.
+
+```bash
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I -m lektor generate --release m3 --acts 3
+```
+
+```bash
+.venv/Scripts/python -I -m lektor evaluate --release m3 --acts 1 3 --no-asr
+```
+
+```bash
+.venv/Scripts/python -I -m lektor evaluate --release m3 --acts 1 3 --fp32 --until 11:05
+```
+
+- `--acts` ogranicza krok do części gry: 1 akt 1, 2 akt 2, 3 części wspólne.
+- `--no-asr` to szybka ocena bez Whispera na CPU (cisza, tempo, końcówka z energii, barwa, pauzy) do `evals_quick.jsonl`. `select` bierze ją dla fragmentów bez pełnej oceny.
+- `--fp32` liczy Whispera w fp32, a `--until HH:MM` kończy ocenę o tej godzinie. W m3 Whisper ocenia najpierw pierwsze podejścia w kolejności gry.
+- Potem `select`, `finalize` i `audio-report` jak wyżej. Pokrycie kwestii z wybranych części gry sprawdza:
+
+```bash
+.venv/Scripts/python -I analysis/tools/release_coverage.py --release m3 --acts 1 3
+```
+
 ## 7. Plugin i paczka
 
 ```bash
@@ -174,6 +197,7 @@ powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1
 ```
 
 - Paczka trafia do `analysis/work/dist/`. Doorstop, Python i koła mają sumy w `src/bundle/pins.toml` i `src/bundle/requirements-<platform>.txt`.
+- Audio w paczce jest w FLAC (D96). Kopie FLAC plików końcowych leżą w `analysis/work/audio/<wydanie>/flac/`.
 - Instalację w grze opisuje `docs/INSTRUKCJA.md`.
 - Każda paczka ma `LICENSE.md`, `UZNANIE_AUTORSTWA.md` (szablon w `src/bundle/`) i licencję Doorstop w `licencje/`.
 

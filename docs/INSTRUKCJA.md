@@ -4,7 +4,7 @@ Polski lektor do gry *Descent: Legends of the Dark* ze Steama. Czyta okna fabula
 
 ## Co warto wiedzieć
 
-- **Zakres:** ta wersja ma nagrania prologu i scenariuszy Q1, Q6, Q7 i Q8 aktu 1 (ze wstępami, zakończeniami i podróżami), wydarzeń kampanii dostępnych po nich, tekstów miasta i list łupu z tych scenariuszy. W pozostałych scenariuszach (m.in. Q2–Q5, Q9 i SQ2) lektor czyta tylko wspólne komunikaty, a resztę pomija. Gra działa wtedy normalnie.
+- **Zakres:** ta wersja ma nagrania całego aktu 1: prologu, wszystkich scenariuszy głównych i pobocznych ze wstępami i zakończeniami, wydarzeń kampanii, podróży, tekstów miasta i list łupu. W kilku kwestiach postaci bez polskiego dubbingu (scenariusze Q10 i Q11, wydarzenia 9A i 10A, dwie sceny) brakuje nagrań: lektor czyta tam resztę kwestii albo ją pomija. Akt 2 przyjdzie w kolejnej wersji; do tego czasu lektor czyta w nim tylko wspólne komunikaty. Gra działa wtedy normalnie.
 - **Jak działa:** gra uruchamia lektora sama. Mały dodatek w grze rozpoznaje okna i przekazuje je lektorowi, a lektor odtwarza nagrania przez głośnik komputera. Po wyjściu z gry lektor też się zamyka.
 - **Co zmienia na komputerze:** wszystko leży w folderze `Descent-Lektor-PL`. Instalacja nie potrzebuje hasła administratora i niczego nie instaluje w systemie.
   - Windows: w folderze gry pojawiają się 3 małe pliki.

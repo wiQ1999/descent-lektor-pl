@@ -143,6 +143,8 @@ def expected_cps(speed, engine='omnivoice'):
 
 
 def text_checks(text, hyp):
+    if hyp is None:     # szybka ocena bez ASR (D96): tylko reguły akustyczne
+        return {'cer': 0.0, 'tail_cut': False, 'missing': 0, 'lost': 0}
     ref_w, hyp_w = words(text), words(hyp)
     ref_c, hyp_c = ' '.join(ref_w), ' '.join(hyp_w)
     missing = missing_run(ref_w, hyp_w)
@@ -151,7 +153,7 @@ def text_checks(text, hyp):
 
 
 class Scorer:
-    def __init__(self, refs):
+    def __init__(self, refs, fp32=False, asr=True):
         import numpy as np
         import torch
         from huggingface_hub import hf_hub_download
@@ -159,7 +161,9 @@ class Scorer:
         from chatterbox.models.voice_encoder import VoiceEncoder
         os.environ.setdefault('HF_HOME', paths.HF_HOME)
         self.np = np
-        self.asr = pipeline('automatic-speech-recognition', model=ASR_MODEL, dtype=torch.float16, device='cuda')
+        # fp32: GTX 1650 Ti liczy fp16 kilka razy wolniej (jak OmniVoice, lektor.synth); fp16 zostaje domyślne (D96)
+        self.asr = pipeline('automatic-speech-recognition', model=ASR_MODEL, dtype=torch.float32 if fp32 else torch.float16,
+                            device='cuda') if asr else None     # bez ASR: barwa na CPU, reguły akustyczne (D96)
         self.ve = VoiceEncoder()
         self.ve.load_state_dict(torch.load(hf_hub_download('ResembleAI/chatterbox', 've.pt'), map_location='cpu',
                                            weights_only=True))
@@ -182,9 +186,12 @@ class Scorer:
         y = self.load(path)
         speech = librosa.effects.trim(y, top_db=40)[0].size / 16000 if y.size > 1600 else y.size / 16000
         long_form = {'return_timestamps': True} if y.size > ASR_WINDOW_S * 16000 else {}    # Whisper bez tego odrzuca nagranie
-        hyp = '' if speech < MIN_SPEECH_S else self.asr(   # Whisper na ciszy zmyśla zdanie
-            {'raw': y, 'sampling_rate': 16000}, generate_kwargs={'language': 'polish', 'task': 'transcribe'}, **long_form)['text']
-        out = {'asr': hyp.strip(), **text_checks(text, hyp), 'speech_s': round(speech, 2),
+        if self.asr is None:
+            hyp = None
+        else:
+            hyp = '' if speech < MIN_SPEECH_S else self.asr(   # Whisper na ciszy zmyśla zdanie
+                {'raw': y, 'sampling_rate': 16000}, generate_kwargs={'language': 'polish', 'task': 'transcribe'}, **long_form)['text']
+        out = {'asr': None if hyp is None else hyp.strip(), **text_checks(text, hyp), 'speech_s': round(speech, 2),
                'cps': round(len(text) / max(speech, 0.05), 1),
                'cps_ratio': round(len(text) / max(speech, 0.05) / expected_cps(speed, engine), 2)}
         ref = self.refs.get(ref_key(voice, engine))
@@ -199,8 +206,11 @@ def ref_key(voice, engine):
     return voice if engine == 'omnivoice' else eleven.REF_PREFIX + voice
 
 
-def load_evals():
-    p = os.path.join(paths.AUDIO, 'evals.jsonl')
+QUICK = 'evals_quick.jsonl'     # ocena bez ASR (D96): zapas dla fragmentów bez pełnej oceny
+
+
+def load_evals(name='evals.jsonl'):
+    p = os.path.join(paths.AUDIO, name)
     out = {}
     if os.path.exists(p):
         for line in open(p, encoding='utf-8'):
@@ -209,25 +219,45 @@ def load_evals():
     return out
 
 
-def evaluate():
+def evaluate(acts=None, fp32=False, asr=True, until=None):
+    """acts: tylko fragmenty z tych części gry (lektor.progress.in_acts, wydanie częściowe D96). asr=False: szybka
+    ocena bez Whispera do evals_quick.jsonl. until: czas (epoch), po którym ocena kończy się po bieżącym podejściu.
+    W m3 kolejność to najpierw pierwsze podejścia w kolejności gry, potem pozostałe podejścia bohaterów."""
+    import time
     con = db.connect(paths.DB)
     texts = {r['id']: r['text'] for r in con.execute('SELECT id, text FROM fragments')}
     refs = json.load(open(os.path.join(paths.REFS, 'refs.json'), encoding='utf-8'))
-    done = load_evals()
-    todo = [t for k, t in load_state().items() if k not in done]
-    print('do oceny: %d podejść' % len(todo), file=sys.stderr, flush=True)
+    name = 'evals.jsonl' if asr else QUICK
+    done = load_evals(name)
+    todo = [t for k, t in load_state().items() if k not in done and t['fragment'] in texts]
+    if acts:
+        from . import progress
+        keep = progress.in_acts(con, acts)
+        todo = [t for t in todo if t['fragment'] in keep]
+    if paths.RELEASE == 'm3':
+        from . import progress
+        pkg = progress.packages(con)
+        todo.sort(key=lambda t: (t['take'] not in (1, D.ELEVEN_TAKE0 + 1), progress.rank(pkg.get(t['fragment'], 'system')),
+                                 t['fragment'], t['take']))
+    print('do oceny: %d podejść%s' % (len(todo), '' if asr else ' (bez ASR)'), file=sys.stderr, flush=True)
     if not todo:
         return
-    score = Scorer(refs)
-    with open(os.path.join(paths.AUDIO, 'evals.jsonl'), 'a', encoding='utf-8') as log:
+    score = Scorer(refs, fp32, asr)
+    t0 = time.perf_counter()
+    with open(os.path.join(paths.AUDIO, name), 'a', encoding='utf-8') as log:
         for n, t in enumerate(todo, 1):
+            if until and time.time() > until:
+                print('limit czasu: ocenione %d z %d' % (n - 1, len(todo)), file=sys.stderr, flush=True)
+                break
             r = {'fragment': t['fragment'], 'take': t['take'], 'voice': t['voice'], 'speed': t['speed'], 'chars': t['chars'],
                  **score(take_path(t['fragment'], t['take']), texts[t['fragment']], t['voice'], t['speed'],
                          D.take_engine(t['take']))}
             log.write(json.dumps(r, ensure_ascii=False) + '\n')
             log.flush()
             if n % 50 == 0:
-                print('ocena %d/%d' % (n, len(todo)), file=sys.stderr, flush=True)
+                per = (time.perf_counter() - t0) / n
+                print('ocena %d/%d, %.1f s na podejście, zostało ok. %.1f h' % (n, len(todo), per, per * (len(todo) - n) / 3600),
+                      file=sys.stderr, flush=True)
 
 
 def problems(e, sim_median):
@@ -263,6 +293,10 @@ def select():
     con = db.connect(paths.DB)
     texts = {r['id']: r['text'] for r in con.execute('SELECT id, text FROM fragments')}
     evals = {k: e for k, e in load_evals().items() if e['fragment'] in texts}   # bez fragmentów usuniętych z bazy
+    full = {e['fragment'] for e in evals.values()}
+    for k, e in load_evals(QUICK).items():   # fragment bez pełnej oceny: ocena bez ASR (D96)
+        if e['fragment'] in texts and e['fragment'] not in full:
+            evals[k] = e
     by_frag = {}
     for e in evals.values():    # reguły tekstowe liczone od nowa z zapisanej transkrypcji (bez ponownego ASR)
         e.update(text_checks(texts[e['fragment']], e['asr']))
@@ -281,7 +315,8 @@ def select():
             e['problems'] = problems(e, sim_median)
         best = min(es, key=lambda e: (len(e['problems']) > 0, round(e['cer'] / 0.02), -(e['sim'] or 0), e['take']))
         choice[fid] = {'take': best['take'], 'voice': best['voice'], 'speed': best['speed'], 'problems': best['problems'],
-                       'cer': best['cer'], 'sim': best['sim'], 'cps': best['cps'], 'takes': len(es)}
+                       'cer': best['cer'], 'sim': best['sim'], 'cps': best['cps'], 'takes': len(es),
+                       'asr': best.get('asr') is not None}
         if best['problems'] and own_engine(best) and len(es) < takes_for(best['voice']) + RETAKES:
             speed = best['speed']
             if 'koncowka' in best['problems']:     # wolniej, ale nie szybciej niż głos ze stylem wolniejszym od 0,9

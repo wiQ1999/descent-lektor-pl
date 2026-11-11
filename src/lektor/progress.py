@@ -38,6 +38,12 @@ def packages(con):
     return groups
 
 
+def in_acts(con, acts):
+    """Fragmenty, których paczka należy do podanych części (1: akt 1, 2: akt 2, 3: wspólne). Wydanie częściowe (D96)."""
+    pkg = packages(con)
+    return {r['id'] for r in con.execute('SELECT id FROM fragments') if act(pkg.get(r['id'], 'system')) in acts}
+
+
 def needed(voice):
     """Numery podejść, które musi mieć fragment (OmniVoice: 1 albo 3, ElevenLabs: pierwsze od 101)."""
     from .synth import takes_for
