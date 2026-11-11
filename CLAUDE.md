@@ -191,5 +191,6 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 | [analysis/E11_VOICES.md](analysis/E11_VOICES.md) | arkusz głosów (E11): dubbing wobec OmniVoice, warianty ElevenLabs, cztery modele TTS, oceny, stawki, koszt na grupę głosów |
 | [analysis/E13_AUDIO.md](analysis/E13_AUDIO.md) | postacie bez dubbingu w ElevenLabs (E13): koszt, wyniki automatu, ponowne podejścia, porównanie z OmniVoice |
 | [analysis/E14_DATA.md](analysis/E14_DATA.md) | baza kwestii całej gry M3 (E14): liczności według grupy, kategorii i głosu, luki `{n}`, szacunek generowania |
+| [analysis/E14_AUDIO.md](analysis/E14_AUDIO.md) | audio M3 (E14, wydanie częściowe D96): czas generowania, wyniki automatu, udział oceny Whisperem |
 | [analysis/E14_NO_DUB_SCOPE.md](analysis/E14_NO_DUB_SCOPE.md) | postacie bez dubbingu w całej grze (E14): kwestie poza M2 według mówcy i aktu, koszt ElevenLabs, miejsca na głosy |
 | [analysis/E14_INSERTS.md](analysis/E14_INSERTS.md) | wstawki sceniczne w nawiasach (D86, do E15): liczby według głosu i grupy, klucze |

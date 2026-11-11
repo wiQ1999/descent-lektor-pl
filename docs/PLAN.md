@@ -445,8 +445,8 @@ Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci 
 
 - Wydanie częściowe 2026-11-11 (D96), na partię ze znajomymi z zapisu w akcie 1:
   - generowanie aktu 2 zatrzymane 2026-11-10 przy ok. 57% podejść; akt 1 gotowy, części wspólne dogenerowane;
-  - limit klucza API ElevenLabs wyczerpany, 223 fragmenty bez głosu, w tym ok. 35 w akcie 1;
-  - ocena do terminu: szybka bez Whispera dla wszystkich podejść aktu 1, Whisper w kolejności gry do 11:05, bez rund ponownych podejść;
+  - limit klucza API ElevenLabs wyczerpany, 223 fragmenty bez głosu, w tym 43 w akcie 1;
+  - ocena do terminu: szybka bez Whispera dla wszystkich podejść aktu 1, Whisper w kolejności gry do 11:05, jedna runda ponownych podejść (73) i Whisper do 11:45;
   - paczki Windows i Mac z audio FLAC, wydanie v0.3.0.
 - Po partii: uwagi z gry, dokończenie aktu 2, ElevenLabs po podniesieniu limitu klucza, pełna ocena i ponowne podejścia, wydanie całej gry.
 

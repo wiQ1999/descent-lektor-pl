@@ -943,14 +943,18 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
   - Akt 2 i reszta gry przyjdą w następnym wydaniu, po uwagach z partii.
 - Generowanie aktu 2 zatrzymane 2026-11-10 przy 11 723 z 20 511 podejść. Akt 1 był gotowy w całości. Podejścia aktu 2 zostają na następne wydanie.
 - Części wspólne dogenerowane: 207 podejść (`generate --acts 3`).
-- ElevenLabs: klucz API ma własny limit 60 tys. kredytów i wyczerpał go po 804 z 1027 fragmentów (33 813 kredytów). 223 fragmenty zostają bez głosu, w tym ok. 35 w akcie 1 (Q10, Q11, wydarzenia 9A i 10A, dwie sceny). Companion czyta tam resztę kwestii albo ją pomija.
+- ElevenLabs: klucz API ma własny limit 60 tys. kredytów i wyczerpał go po 804 z 1027 fragmentów (33 813 kredytów). 223 fragmenty zostają bez głosu, w tym 43 w akcie 1 (Q10, Q11, wydarzenia 9A i 10A, dwie sceny). Companion czyta tam resztę kwestii albo ją pomija.
 - Ocena dopasowana do terminu (13:00):
   - wszystkie podejścia aktu 1 i części wspólnych przechodzą szybką ocenę bez Whispera: cisza, tempo, końcówka z energii, barwa, pauzy (`evaluate --no-asr`, `evals_quick.jsonl`);
   - Whisper w fp32 ocenia ok. 2,3 s na podejście, 3× szybciej niż fp16 (`evaluate --fp32 --until`). Kolejność: ponowne podejścia, pierwsze podejścia od zapisu w kolejności gry, misje i wydarzenia już rozegrane w zapisie (`--later`), pozostałe podejścia bohaterów;
   - `select` łączy obie oceny, a przy tych samych uwagach wygrywa podejście sprawdzone Whisperem; `choice.json` ma pole `asr`;
-  - jedna runda ponownych podejść dla odrzuconych fragmentów, jeśli zmieści się w czasie.
+  - jedna runda ponownych podejść: 73 fragmenty OmniVoice odrzucone po pierwszej ocenie (2 fragmenty ElevenLabs czekają na limit), ocena nowych podejść szybka i Whisperem, a potem Whisper dalej w kolejności gry do 11:45.
 - Paczki mają audio w FLAC (bezstratnie). WAV dałby ok. 2,9 GB i przekroczył limit 2 GiB pliku w GitHub Releases.
 - Paczki Windows i Mac.
+- Wynik:
+  - paczka ma 9779 fragmentów; 6559 z 6602 kwestii aktu 1 i części wspólnych ma pełne nagranie, brakuje tylko 43 kwestii ElevenLabs (`release_coverage.py`);
+  - po rundzie ponownych podejść automat odrzuca 79 fragmentów (przed nią 122); paczka bierze dla nich najlepsze podejście;
+  - Whisper sprawdził 5401 z 9779 wybranych podejść, razem z przejętymi z M2 (Q1, Q6–Q8); z nowych to Q9–Q11 i część Q12.
 
 **Uzasadnienie:**
 - Użytkownik prosił 2026-11-10 o skrócenie prac do terminu, z oceną, ponownymi podejściami i raportem.

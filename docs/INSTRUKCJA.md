@@ -34,7 +34,7 @@ Na Windows pliki do dwukliku mają końcówkę `.cmd`, a na Macu `.command`.
 
 - Windows 10 albo 11 (64-bit).
 - Gra kupiona i zainstalowana w Steam.
-- Ok. 2,5 GB wolnego miejsca podczas instalacji: pobrany plik `.zip` ma ok. 1,1 GB, a rozpakowany folder ok. 1,2 GB. Po rozpakowaniu plik `.zip` można usunąć.
+- Ok. 4 GB wolnego miejsca podczas instalacji: pobrany plik `.zip` ma ok. 1,7 GB, a rozpakowany folder ok. 1,8 GB. Po rozpakowaniu plik `.zip` można usunąć.
 
 ### Instalacja
 
@@ -83,7 +83,7 @@ Przy zamkniętej grze kliknij dwukrotnie `Wyłącz lektora.cmd`. Gra startuje wt
 
 - Mac z procesorem Apple (M1 lub nowszym) i aktualnym macOS.
 - Gra kupiona i zainstalowana w Steam.
-- Ok. 2,5 GB wolnego miejsca podczas instalacji: pobrany plik `.zip` ma ok. 1,1 GB, a rozpakowany folder ok. 1,2 GB. Po rozpakowaniu plik `.zip` można usunąć.
+- Ok. 4 GB wolnego miejsca podczas instalacji: pobrany plik `.zip` ma ok. 1,7 GB, a rozpakowany folder ok. 1,8 GB. Po rozpakowaniu plik `.zip` można usunąć.
 
 ### Instalacja
 
