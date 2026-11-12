@@ -291,10 +291,19 @@ def test_window_closed_while_waiting_is_logged(run):
     run(msg(2, 'HELLO'))
     run(msg(3, 'GOAL'), 0.1)
     d = run(close(3), 0.2)
-    assert playing(d) == 'CHOICE_A' and d.pending is None
     dropped = [(r['key'], r['reason'], r['reply']) for r in run.log if r['ev'] == 'porzucone']
     assert dropped == [('HELLO', 'nowe_okno', 'CHOICE_A'), ('GOAL', 'zamknięte', 'CHOICE_A')]
     assert d.summary()['dropped_windows'] == {'nowe_okno': 1, 'zamknięte': 1}
+
+
+def test_skipping_waiting_window_stops_reply_and_reads_next(run):
+    run(msg(1, 'HELLO'))
+    run(close(1, choice_key='CHOICE_A'), 0.3)
+    run(msg(2, 'GOAL'))
+    d = run(close(2), 0.2)          # gracz pomija okno testu przed końcem opcji (D100)
+    assert playing(d) is None and d.pending is None
+    d = run(msg(3, 'GOAL2'))
+    assert playing(d) == 'GOAL2' and d.trigger[d.current.token][1]
 
 
 def test_answer_repeated_by_next_line_is_read_once(run):

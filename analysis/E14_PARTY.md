@@ -156,6 +156,8 @@ Sytuacja nie pochodzi ze zrzutu. Jest w dziennikach krótkiej sesji testowej na 
 
 Oba okna po wyborze przepadły, bo gracz zamknął je, zanim skończyła się czytana opcja. W partii na Macu nie zdarzyło się to ani razu.
 
+Zmiana (D100): zamknięcie czekającego okna ucina opcję. W tym przykładzie okno testu nadal przepada, ale wynik zagra od 3,2 s.
+
 ## Okno ataku: zdolności przedmiotów
 
 Okno ataku (`UIHeroAttackDialog`) po potwierdzeniu trafień pokazuje listę aktywowanych zdolności. Każdą pozycję wypełnia `UIAbilityTrigger.SyncTo(klucz nazwy, klucz opisu[, klucz dodatku])`: nagłówek `WEAPON_ABILITY_TRIGGER` z nazwą zdolności i opis pod nim. Źródła:

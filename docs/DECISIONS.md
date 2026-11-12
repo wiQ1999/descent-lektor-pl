@@ -995,6 +995,16 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** Zgoda użytkownika 2026-11-12 na wnioski 1–2 z `analysis/E14_PARTY.md`. Cisza zamierzona i cisza z błędu wyglądały w dzienniku tak samo, a porzucone okno nie zostawiało śladu.
 
+### D100 · 2026-11-12 · E14: pomijanie okna po wyborze, okno ataku
+**Decyzja:**
+- D48 zostaje z jedną zmianą: gdy gracz zamknie okno czekające na koniec czytanej opcji, lektor ucina opcję, a następne okno czyta od razu (`director._close`).
+- Okno ataku: lektor czyta nazwę i opis każdej aktywowanej zdolności broni i talizmanu (D97), bez liczb. Wymaga hooka na `UIAbilityTrigger.SyncTo` w pluginie, nowych kwestii w bazie i testu w grze na Windows i Macu.
+- Zdolności mają własny przełącznik `zdolności`, domyślnie włączony.
+
+**Uzasadnienie:** QA 2026-11-12 po wyjaśnieniu w `analysis/E14_PARTY.md`.
+- D48: przy studni w Q1 wynik testu zagrałby od 3,2 s zamiast przepaść. Bez zmiany dla graczy, którzy czekają na koniec opcji.
+- Okno ataku: opis mówi, co zrobiła zdolność. Ataki są częste, więc osobny przełącznik pozwala wyłączyć same zdolności.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

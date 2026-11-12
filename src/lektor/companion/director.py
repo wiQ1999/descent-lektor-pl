@@ -185,6 +185,8 @@ class Director:
         self.story_open.pop(wid, None)
         if self.pending is not None and self.pending.wid == wid:
             self._drop_pending('zamknięte', recv)
+            if self.current is not None and self.current.src == 'choice':
+                self._stop(recv)        # gracz pomija: opcja milknie, następne okno gra od razu (D100)
         if self.current is not None and self.current.src == kind and self.current.wid == wid:
             self._stop(recv)
         if ev.get('choice_key') and not ev.get('back') and ev['choice_key'] not in self.lib.generic:

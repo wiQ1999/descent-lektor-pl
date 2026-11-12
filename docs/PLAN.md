@@ -449,7 +449,9 @@ Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci 
   - ocena do terminu: szybka bez Whispera dla wszystkich podejść aktu 1, Whisper w kolejności gry do 11:05, jedna runda ponownych podejść (73) i Whisper do 11:45;
   - paczki Windows i Mac z audio FLAC, wydanie v0.3.0.
 - Uwagi z partii 2026-11-11 (D97): przyczyny i lista pominiętych treści w `analysis/E14_PARTY.md`.
-- Baza `m3` poprawiona 2026-11-12 (D98): podglądy obiektów, luki `ListOfKeys`, opisy obrony wrogów, nowsza tabela tekstów. 306 nowych fragmentów narratora czeka na generowanie (ok. 40 min GPU na podejście). Okno ataku (plugin) i zachowanie po wyborze (D48) do decyzji.
+- Baza `m3` poprawiona 2026-11-12 (D98): podglądy obiektów, luki `ListOfKeys`, opisy obrony wrogów, nowsza tabela tekstów. 306 nowych fragmentów narratora czeka na generowanie (ok. 40 min GPU na podejście).
+- Companion (D99, D100): wpisy `porzucone` i `pusta`, pominięcie okna po wyborze ucina czytaną opcję.
+- Okno ataku (D100), do startu po akceptacji: hook `UIAbilityTrigger.SyncTo` w pluginie, kwestie zdolności broni i talizmanów w bazie `m3` (705 tekstów, ok. 65 tys. znaków, ok. 70 min GPU), przełącznik `zdolności`, test w grze na Windows i Macu.
 - Po partii: uwagi z gry, dokończenie aktu 2, ElevenLabs po podniesieniu limitu klucza, pełna ocena i ponowne podejścia, wydanie całej gry.
 
 **Faza C: odbiór**
