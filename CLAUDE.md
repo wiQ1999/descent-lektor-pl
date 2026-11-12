@@ -194,3 +194,4 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 | [analysis/E14_AUDIO.md](analysis/E14_AUDIO.md) | audio M3 (E14, wydanie częściowe D96): czas generowania, wyniki automatu, udział oceny Whisperem |
 | [analysis/E14_NO_DUB_SCOPE.md](analysis/E14_NO_DUB_SCOPE.md) | postacie bez dubbingu w całej grze (E14): kwestie poza M2 według mówcy i aktu, koszt ElevenLabs, miejsca na głosy |
 | [analysis/E14_INSERTS.md](analysis/E14_INSERTS.md) | wstawki sceniczne w nawiasach (D86, do E15): liczby według głosu i grupy, klucze |
+| [analysis/E14_PARTY.md](analysis/E14_PARTY.md) | partia ze znajomymi (v0.3.0): przyczyny ciszy i braków według zrzutów i dzienników, wnioski do poprawki |

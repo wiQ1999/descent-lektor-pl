@@ -963,6 +963,17 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - Termin przesunięty po restarcie laptopa na 2026-11-11 13:00.
 - Pełna ocena Whisperem w fp16 trwa ok. 7,6 s na podejście, czyli ok. 18 h dla aktu 1, więc się nie mieści.
 
+### D97 · 2026-11-11 · E14: uwagi z partii, okno ataku
+**Decyzja:**
+- Przyczyny ciszy i błędów z partii zapisujemy w `analysis/E14_PARTY.md`: co lektor pomija, ile, dlaczego i gdzie w kodzie.
+- W oknie ataku lektor czyta tylko aktywację zdolności przedmiotu: nazwę i opis, bez liczby obrażeń.
+- Kolejność poprawek i zakres ponownego generowania (całość od początku albo od konkretnej misji) użytkownik ustali później.
+- Okno otwarte w trakcie odpowiedzi bohatera po wyborze (D48) czeka na wyjaśnienie z przykładem z sesji testowej. W partii na Macu nie zgubiło żadnego okna.
+
+**Uzasadnienie:** QA 2026-11-11 po partii ze znajomymi.
+- Okno ataku: opis zdolności to tekst do przeczytania, a liczby gracze widzą na ekranie.
+- Zrzut 4: użytkownik słyszał inną nazwę wroga niż na kartach. Przyczyna to starsza tabela tekstów w naszej bazie.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

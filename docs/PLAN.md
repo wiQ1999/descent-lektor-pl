@@ -448,6 +448,7 @@ Pytanie etapu: jak nagrać całą resztę gry poza M2. Najpierw kwestie postaci 
   - limit klucza API ElevenLabs wyczerpany, 223 fragmenty bez głosu, w tym 43 w akcie 1;
   - ocena do terminu: szybka bez Whispera dla wszystkich podejść aktu 1, Whisper w kolejności gry do 11:05, jedna runda ponownych podejść (73) i Whisper do 11:45;
   - paczki Windows i Mac z audio FLAC, wydanie v0.3.0.
+- Uwagi z partii 2026-11-11 (D97): przyczyny i lista pominiętych treści w `analysis/E14_PARTY.md`. Zakres poprawek do decyzji.
 - Po partii: uwagi z gry, dokończenie aktu 2, ElevenLabs po podniesieniu limitu klucza, pełna ocena i ponowne podejścia, wydanie całej gry.
 
 **Faza C: odbiór**
