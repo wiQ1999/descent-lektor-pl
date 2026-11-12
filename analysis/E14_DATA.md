@@ -1,45 +1,45 @@
 # E14: baza kwestii całej gry (M3)
 
-Wygenerowano przez `python -I -m lektor report` z `analysis/work/lektor/m3.sqlite` (zbudowana 2026-11-09T00:10:15, pakiet 0.1.0, model `omnivoice-08be0b4-fp32-s32-cfg2.0`, manifest gry `fddf8aedeb14`). Raport zawiera tylko liczby i klucze techniczne.
+Wygenerowano przez `python -I -m lektor report` z `analysis/work/lektor/m3.sqlite` (zbudowana 2026-11-12T22:25:40, pakiet 0.1.0, model `omnivoice-08be0b4-fp32-s32-cfg2.0`, manifest gry `fddf8aedeb14`). Raport zawiera tylko liczby i klucze techniczne.
 
 ## Kwestie
 
-Kluczy: **12622**, z tego do syntezy **12608** (pozostałe to napisy przerywników z dubbingiem, D14).
+Kluczy: **12867**, z tego do syntezy **12853** (pozostałe to napisy przerywników z dubbingiem, D14).
 Wrogowie w zakresie: `A2Q01_VRASKHAR`, `A2Q02_ENEMY_MORANT`, `ENEMY_A2Q11_LEVIRAX_A`, `ENEMY_A2Q11_LEVIRAX_B`, `ENEMY_A2Q11_LEVIRAX_C`, `ENEMY_BACKBREAKER_1`, `ENEMY_BANDIT_BARONIAL_1`, `ENEMY_BANDIT_BARONIAL_ARBALESTER_1`, `ENEMY_BANDIT_CRAZED_1`, `ENEMY_BANDIT_RUNEBLADE_1`, `ENEMY_BANDIT_SHADOWALK_1`, `ENEMY_BANDIT_SNIPER_1`, `ENEMY_BERSERKER_0`, `ENEMY_BERSERKER_1`, `ENEMY_BERSERKER_FLAYED`, `ENEMY_BLOOD_SISTER_1`, `ENEMY_BLOOD_SISTER_NIGHT`, `ENEMY_BLOOD_SISTER_UNDEAD`, `ENEMY_BOSS_ATHROK`, `ENEMY_BOSS_EURTH`, `ENEMY_BOSS_GREYSDON`, `ENEMY_BOSS_HOARY_FOX`, `ENEMY_BOSS_KHAMPANAX`, `ENEMY_BOSS_NAZGESH`, `ENEMY_BOSS_ONE_FANG`, `ENEMY_BOSS_ORBAN`, `ENEMY_BOSS_VRASKHAR`, `ENEMY_BOSS_XAIN`, `ENEMY_BOSS_ZADIE`, `ENEMY_CENTURIAN_3`, `ENEMY_CENTURIAN_VANGUARD_1`, `ENEMY_DELPHYNDRAS_MISTAKE`, `ENEMY_DOOMCALLER_1`, `ENEMY_DRAGON_1`, `ENEMY_DRAGON_ELDER`, `ENEMY_DRAGON_SCULPT`, `ENEMY_EVIL_BRYNN`, `ENEMY_EVIL_CHANCE`, `ENEMY_EVIL_GALADEN`, `ENEMY_EVIL_KEHLI`, `ENEMY_EVIL_SYRUS`, `ENEMY_EVIL_VAERIX`, `ENEMY_FAE_1`, `ENEMY_FAE_A2_NAMED`, `ENEMY_FAE_HEATH_SPAWN`, `ENEMY_FAE_MIST_SPAWN`, `ENEMY_FAE_RU_SPAWN`, `ENEMY_FIREBREATHER`, `ENEMY_GILLIAM_1`, `ENEMY_GILLIAM_2`, `ENEMY_GOLEM_1`, `ENEMY_GOLEM_A2_NAMED`, `ENEMY_GOLEM_BARONIAL_1`, `ENEMY_GOLEM_MISTWALKER_1`, `ENEMY_GOLEM_Q2`, `ENEMY_GOLEM_RAGESTONE_1`, `ENEMY_GOLEM_RUNEBOUND_1`, `ENEMY_HARBINGER_1`, `ENEMY_HARBINGER_BARONIAL_1`, `ENEMY_HARBINGER_SELLSWORD`, `ENEMY_HARBINGER_VANGUARD_1`, `ENEMY_INTRO_BOSS`, `ENEMY_LT_DRYS`, `ENEMY_LT_EIZ`, `ENEMY_LT_ZERAI`, `ENEMY_MERCENARY_1`, `ENEMY_MERCENARY_BARONIAL_1`, `ENEMY_MERCENARY_BLOODTHIRSTY`, `ENEMY_MERCENARY_FALLEN`, `ENEMY_MERCENARY_TARNISHED`, `ENEMY_MERCENARY_WYRMBOUND`, `ENEMY_MISTWITCH`, `ENEMY_NAVOTH_1`, `ENEMY_Q11_OUTLAW_PRINCE`, `ENEMY_Q12_NE_KRUL_1`, `ENEMY_Q12_NE_KRUL_2`, `ENEMY_Q12_SPECTER`, `ENEMY_Q13_XENITH`, `ENEMY_Q14_XENITH`, `ENEMY_Q4_HERMIT`, `ENEMY_Q4_IGOR`, `ENEMY_Q4_VAGABOND`, `ENEMY_Q7_BANDIT_SNIPER`, `ENEMY_Q7_XENITH`, `ENEMY_Q8_BOSS_NE'KRUL`, `ENEMY_Q8_E2_BOSS_UTHUK`, `ENEMY_Q8_XENITH`, `ENEMY_Q9_NEKRUL`, `ENEMY_REANIMATE_1`, `ENEMY_REANIMATE_FAMILIAR`, `ENEMY_RENEYR_1`, `ENEMY_S2_GOLEM`, `ENEMY_S2_NECROMANCER`, `ENEMY_SALAMANDER_1`, `ENEMY_SALAMANDER_MOLTEN`, `ENEMY_SPECTER_1`, `ENEMY_SPECTER_A2_NAMED`, `ENEMY_SPECTER_DEATHBORN`, `ENEMY_SPECTER_RUNEMARKED`, `ENEMY_SUMMONED_SPECTER`, `ENEMY_SUMMONED_WOLF`, `ENEMY_THE_BAILIFF`, `ENEMY_VAMPIRE_1`, `ENEMY_VAMPIRE_NAMED`, `ENEMY_VIPER_1`, `ENEMY_WARY_BANDIT_1`, `ENEMY_WIGHT_1`, `ENEMY_WIGHT_BLOODGUARD`, `ENEMY_WOLF_1`, `ENEMY_WOLF_BARONIAL_1`, `ENEMY_WOLF_ELDERBONE`, `ENEMY_WOLF_PUTRID`, `ENEMY_WOLF_RED_EYED`, `ENEMY_WOLF_S2`, `ENEMY_WRATHFUL_SPECTER`, `ENEMY_ZACHARETH_1`, `ENEMY_ZEALOT_1`, `ENEMY_ZEALOT_A2_NAMED`, `ENEMY_ZEALOT_BARONIAL_1`, `ENEMY_ZEALOT_CRIMSON_1`, `ENEMY_ZEALOT_DREAD_1`, `ENEMY_ZEALOT_PALE_1`, `ENEMY_ZEALOT_RUNE_OF_BLADES`, `ENEMY_ZEALOT_SQ2`, `Q13_ENEMY_FLAME_ZEALOT`, `Q13_ENEMY_GREYSDON`, `Q8_GYLDREN`, `UNUSED_ENEMY_Q14_XENITH`. Grafy Q1: 93. Klucze przerywnika: 14.
 
 ### Grupa zakresu
 
 | grupa zakresu | klucze | do syntezy | znaki |
 |---|---|---|---|
-| a2_q10 | 584 | 584 | 60591 |
-| a2_q1 | 548 | 548 | 76150 |
-| a1_q14 | 517 | 517 | 77726 |
-| a2_q2 | 434 | 434 | 62568 |
-| a2_q3 | 422 | 422 | 53650 |
+| a2_q10 | 593 | 593 | 61843 |
+| a2_q1 | 557 | 557 | 76992 |
+| a1_q14 | 530 | 530 | 78838 |
+| a2_q2 | 451 | 451 | 64299 |
+| a2_q3 | 435 | 435 | 55244 |
 | a2_q8 | 392 | 392 | 67694 |
-| scene_q1 | 365 | 365 | 49526 |
-| a2_q11 | 358 | 358 | 66638 |
-| a1_q10 | 344 | 344 | 46977 |
-| a1_q5 | 344 | 344 | 32420 |
+| scene_q1 | 376 | 376 | 50828 |
+| a2_q11 | 367 | 367 | 68099 |
+| a1_q10 | 359 | 359 | 48155 |
+| a1_q5 | 358 | 358 | 34086 |
+| a2_q5 | 340 | 340 | 47283 |
 | a2_q9 | 340 | 340 | 45205 |
-| a2_q5 | 336 | 336 | 46960 |
-| a1_q13 | 323 | 323 | 41076 |
-| a1_q12 | 318 | 318 | 46623 |
-| a1_q4 | 307 | 307 | 36317 |
-| a2_q4 | 293 | 293 | 29608 |
-| q8 | 293 | 293 | 26884 |
-| a1_q2 | 291 | 291 | 21793 |
-| a1_q3 | 280 | 280 | 33112 |
+| a1_q12 | 334 | 334 | 48233 |
+| a1_q13 | 329 | 329 | 41560 |
+| a1_q4 | 319 | 319 | 37734 |
+| a1_q2 | 298 | 298 | 22248 |
+| q8 | 297 | 297 | 27324 |
+| a2_q4 | 295 | 295 | 29806 |
+| a1_q3 | 294 | 294 | 34709 |
+| a2_q7 | 280 | 280 | 34821 |
 | enemies | 278 | 278 | 42366 |
-| a2_q7 | 274 | 274 | 33940 |
-| a1_q9 | 265 | 265 | 23858 |
-| a2_q6 | 264 | 264 | 34250 |
-| q6 | 261 | 261 | 35081 |
-| a1_q11 | 228 | 228 | 31408 |
-| q7 | 215 | 215 | 26709 |
-| a1_sq1 | 208 | 208 | 25852 |
+| a1_q9 | 276 | 276 | 24801 |
+| a2_q6 | 272 | 272 | 35031 |
+| q6 | 270 | 270 | 36175 |
+| a1_q11 | 243 | 243 | 32448 |
+| q7 | 219 | 219 | 27095 |
+| a1_sq1 | 217 | 217 | 26551 |
 | a2_q0 | 167 | 167 | 20478 |
-| a1_sq2 | 149 | 149 | 13091 |
+| a1_sq2 | 152 | 152 | 13219 |
 | a2_ss03 | 143 | 143 | 14415 |
 | map | 138 | 138 | 13542 |
 | a2_ss05 | 120 | 120 | 9554 |
@@ -92,13 +92,13 @@ Wrogowie w zakresie: `A2Q01_VRASKHAR`, `A2Q02_ENEMY_MORANT`, `ENEMY_A2Q11_LEVIRA
 | a1_event_pre9a | 33 | 33 | 2627 |
 | a2_se04 | 32 | 32 | 3350 |
 | a1_event_4b | 31 | 31 | 3124 |
+| gear | 31 | 31 | 5113 |
 | a1_event_11a | 30 | 30 | 2025 |
 | a1_event_2b | 30 | 30 | 1769 |
 | a2_se01 | 30 | 30 | 2209 |
 | event_e8b | 29 | 29 | 2208 |
 | a1_event_4a | 27 | 27 | 2012 |
 | system | 27 | 27 | 1556 |
-| gear | 26 | 26 | 4609 |
 | a1_event_9a | 25 | 25 | 1923 |
 | event_e5a | 24 | 24 | 2026 |
 | a1_scene_between_q9_and_q10 | 23 | 23 | 1529 |
@@ -112,10 +112,10 @@ Wrogowie w zakresie: `A2Q01_VRASKHAR`, `A2Q02_ENEMY_MORANT`, `ENEMY_A2Q11_LEVIRA
 | kategoria | klucze | do syntezy | znaki |
 |---|---|---|---|
 | dialog | 6319 | 6319 | 452909 |
-| komunikat_questu | 3472 | 3472 | 755615 |
+| komunikat_questu | 3712 | 3712 | 780229 |
 | narracja_fabularna | 1015 | 1015 | 113884 |
 | opcja_wyboru | 758 | 758 | 20102 |
-| walka_teren | 538 | 538 | 94503 |
+| walka_teren | 543 | 543 | 95007 |
 | zdarzenie | 186 | 186 | 59234 |
 | cel_misji | 160 | 160 | 6652 |
 | opis_misji | 138 | 138 | 13542 |
@@ -127,7 +127,7 @@ Wrogowie w zakresie: `A2Q01_VRASKHAR`, `A2Q02_ENEMY_MORANT`, `ENEMY_A2Q11_LEVIRA
 
 | głos | klucze | do syntezy | znaki |
 |---|---|---|---|
-| narrator | 6551 | 6537 | 1074978 |
+| narrator | 6796 | 6782 | 1100096 |
 | brynn | 923 | 923 | 61723 |
 | kehli | 780 | 780 | 52329 |
 | syrus | 779 | 779 | 54510 |
@@ -178,28 +178,28 @@ Wrogowie w zakresie: `A2Q01_VRASKHAR`, `A2Q02_ENEMY_MORANT`, `ENEMY_A2Q11_LEVIRA
 | przełącznik companiona | klucze | do syntezy | znaki |
 |---|---|---|---|
 | dialogi | 6290 | 6290 | 451296 |
-| komunikaty_questu | 3472 | 3472 | 755615 |
+| komunikaty_questu | 3712 | 3712 | 780229 |
 | narracja | 1024 | 1024 | 116049 |
 | okna_wyboru | 704 | 704 | 18911 |
+| walka_teren | 275 | 275 | 55510 |
 | aktywacje | 271 | 271 | 39878 |
-| walka_teren | 268 | 268 | 54891 |
 | cele | 160 | 160 | 6652 |
 | podroze | 157 | 157 | 48460 |
 | opis_misji | 138 | 138 | 13542 |
 | miasto | 103 | 103 | 11413 |
-| nagrody | 20 | 20 | 1056 |
+| nagrody | 18 | 18 | 941 |
 | ui | 15 | 1 | 7 |
 
 ## Segmenty i fragmenty
 
 | rodzaj segmentu | liczba |
 |---|---|
-| text | 17776 |
+| text | 18021 |
 | slot | 1491 |
 | quote | 134 |
 | desc | 5 |
 
-Unikalnych fragmentów do syntezy: **17956** (text 16575, value 1242, quote 134, desc 5), znaków: 1500920.
+Unikalnych fragmentów do syntezy: **18249** (text 16818, value 1292, quote 134, desc 5), znaków: 1533566.
 
 Najdłuższy fragment: 434 znaków.
 
@@ -208,17 +208,17 @@ Najdłuższy fragment: 434 znaków.
 | typ luki | luki | kwestie | wartości | w tym audio innej kwestii | unikalne fragmenty |
 |---|---|---|---|---|---|
 | EntityName | 505 | 376 | 35855 | 3030 | 64 |
-| VariableString | 399 | 282 | 2171 | 1879 | 87 |
+| VariableString | 399 | 282 | 2233 | 1879 | 148 |
 | VariableInt | 291 | 259 | 6111 | 0 | 339 |
-| LocalizationKey | 249 | 193 | 983 | 502 | 272 |
+| LocalizationKey | 249 | 193 | 983 | 531 | 249 |
 | EnemyNameWithArticle | 30 | 25 | 2130 | 180 | 64 |
 | RawText | 8 | 8 | 0 | 0 | 0 |
 | ? | 7 | 7 | 0 | 0 | 0 |
-| ListOfKeys | 2 | 2 | 0 | 0 | 0 |
+| ListOfKeys | 2 | 2 | 12 | 0 | 12 |
 
 Wartość „audio innej kwestii” to klucz z bazy (np. cel misji), którego nagranie companion odtwarza w luce. Liczby: 0–20. Wartości luk mają jedno tempo 1.2.
 
-Kwestie z luką bez znanych wartości (companion użyje syntezy na żywo albo pominie lukę): 50.
+Kwestie z luką bez znanych wartości (companion użyje syntezy na żywo albo pominie lukę): 47.
 
 - `A2Q02_TRICK_PROMPT`: luka bez znanych wartości (VariableString): fallback
 - `A2Q08_BELL_CLUE`: luka bez znanych wartości (VariableString): fallback
@@ -244,7 +244,6 @@ Kwestie z luką bez znanych wartości (companion użyje syntezy na żywo albo po
 - `A2Q08_VETA_RECAP_3`: luka bez znanych wartości (VariableString): fallback
 - `A2Q09_SHRINE_ACT_SCOUT`: luka bez znanych wartości (VariableString): fallback
 - `APPLY_AFFLICTION_DAMAGE`: luka bez znanych wartości (None): fallback
-- `ARGUMENT_1`: luka bez znanych wartości (ListOfKeys): fallback
 - `BOOK_INTRO`: luka bez znanych wartości (VariableString): fallback
 - `BUILDING SLOT_CONVERT`: luka bez znanych wartości (LocalizationKey): fallback
 - `LECTERN_FIRST`: luka bez znanych wartości (VariableString): fallback
@@ -264,10 +263,8 @@ Kwestie z luką bez znanych wartości (companion użyje syntezy na żywo albo po
 - `TANGERINE_EVENT_8A_THE_RUNESTONE_21_5K`: luka bez znanych wartości (VariableString): fallback
 - `TANGERINE_Q2_TRAVEL_STORY_10EX`: luka bez znanych wartości (VariableString): fallback
 - `TANGERINE_Q2_TRAVEL_STORY_10RL`: luka bez znanych wartości (VariableString): fallback
-- `TERRAIN_WELL_GALADEN_TEST_FAIL`: luka bez znanych wartości (ListOfKeys): fallback
 - `TRINKET_HORN_OF_COURAGE_ABILITY_PLUR`: luka bez znanych wartości (VariableString): fallback
 - `TRINKET_HORN_OF_COURAGE_ABILITY_SING`: luka bez znanych wartości (VariableString): fallback
-- `UI_ENEMYDEFENSIVE_REMINDER`: luka bez znanych wartości (VariableString): fallback
 - `WEAPON_ABILITY_C_CROSSBOW_4_EFFECT`: luka bez znanych wartości (VariableString): fallback
 - `WOLF_TACTIC_READY_BITE_GO_ACTIVATION`: luka bez znanych wartości (VariableString): fallback
 
@@ -499,7 +496,7 @@ Głosy fragmentów bez referencji w bazie: `alys`, `arden`, `balthain`, `button`
 
 ## Szacunek generowania
 
-Z M2 przejęte 3915 fragmentów. Nowe: **14041** (1218009 znaków).
+Z M2 przejęte 3914 fragmentów. Nowe: **14335** (1250671 znaków).
 
 | głos | silnik | fragmenty | znaki | podejścia |
 |---|---|---|---|---|
@@ -533,7 +530,7 @@ Z M2 przejęte 3915 fragmentów. Nowe: **14041** (1218009 znaków).
 | mok | elevenlabs | 23 | 2301 | 1 |
 | morant | elevenlabs | 27 | 2589 | 1 |
 | nara | elevenlabs | 15 | 1562 | 1 |
-| narrator | omnivoice | 8975 | 835518 | 1 |
+| narrator | omnivoice | 9269 | 868180 | 1 |
 | navoth | omnivoice | 25 | 2771 | 1 |
 | nekrul | omnivoice | 10 | 632 | 1 |
 | outlaw | elevenlabs | 4 | 189 | 1 |
@@ -548,4 +545,4 @@ Z M2 przejęte 3915 fragmentów. Nowe: **14041** (1218009 znaków).
 | waiqar | elevenlabs | 23 | 2666 | 1 |
 | zachareth | omnivoice | 74 | 7438 | 1 |
 
-OmniVoice: ok. **106.0 h** GPU bez ponownych podejść, przy 0.235 s na znak (E3). ElevenLabs: 99682 znaków, ok. **43860** kredytów (0.44 na znak, bez ponownych).
+OmniVoice: ok. **108.2 h** GPU bez ponownych podejść, przy 0.235 s na znak (E3). ElevenLabs: 99682 znaków, ok. **43860** kredytów (0.44 na znak, bez ponownych).

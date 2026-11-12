@@ -21,6 +21,9 @@ def test_scene_narration_keeps_natural_tempo():
     ('dialog', 'Q1_SYRUS_DOOR', 'dialogi'),
     ('zdarzenie', 'TRAVEL_57', 'narracja'),
     ('nieznana', 'X', 'ui'),
+    ('system_nagroda', 'UI_ENEMYDEFENSIVE_REMINDER', 'walka_teren'),     # D98
+    ('system_nagroda', 'TACTIC_PHASE_DESCRIPTION', 'walka_teren'),
+    ('system_nagroda', 'REMOVE_ENEMY', 'nagrody'),
 ])
 def test_toggle(category, key, toggle):
     assert D.toggle(category, key) == toggle

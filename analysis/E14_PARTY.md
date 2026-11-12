@@ -109,4 +109,29 @@ Zachowanie (do decyzji w QA):
 
 Kolejność i zakres dalszych prac (generowanie od początku albo od konkretnej misji) użytkownik ustali później (D97).
 
+## Poprawka bazy (D98, 2026-11-12)
+
+Punkty 3–5 i nowsza tabela tekstów są w bazie `m3`. Zmiany działają tylko przy `--release m3`. Poprzednia baza: `analysis/work/lektor/m3.before_d98.sqlite`.
+
+| Zmiana | Kod | Wpływ na bazę |
+|---|---|---|
+| Tekst klucza z tabeli wczytanej później (`dle04*` po tabelach bazowych) | `game.CSV_ORDER`, `game.terms(game_order=True)` | 1 nazwa wroga; 414 wartości luk `EntityName` wskazuje nowy fragment |
+| Luki `ListOfKeys` | `game.message_args`, `scope.slot_keys`, `scope.string_assignments(lists=True)` | `ARGUMENT_1` +6 wartości, `TERRAIN_WELL_GALADEN_TEST_FAIL` +6 |
+| Podglądy obiektów `PreviewKey` | `game.previews`, `scope.collect` | +245 kwestii narratora (240 `komunikat_questu`, 5 `walka_teren`), 180 ze 181 kluczy z tekstem |
+| Opisy obrony wroga | `scope.DEFENSE_VAR` | `UI_ENEMYDEFENSIVE_REMINDER` +62 wartości `ENEMY_DEFEND_*` |
+| Przełącznik `walka_teren` | `direction.KEY_TOGGLES` | 2 kwestie |
+
+Porównanie z poprzednią bazą:
+- Kluczy jest 12 867 (+245), żadnego nie ubyło. Na istniejących kluczach segmenty bez zmian.
+- Fragmentów jest +306 (232 tekstów, 74 wartości luk), razem 34 136 znaków, sam narrator. Generowanie zajmie ok. 40 min GPU na jedno podejście (66 s na 1000 znaków).
+- 13 fragmentów wartości (1 490 znaków) wypada, bo te teksty są teraz czytane jako kwestie podglądów.
+
+Replay okien z partii na nowej bazie (wszystkie fragmenty traktowane jako dostępne): Mac 417 pełnych i 3 `brak_audio` (zamierzona cisza), sesja testowa Windows 82 pełne i 1 `brak_audio`. Okna z partii, które po generowaniu dostaną głos: `DEFAULT_SPAWN_ENEMY_MULTI`, `UI_ENEMYDEFENSIVE_REMINDER`, `REMOVE_ENEMY`, okna łupu, `ARGUMENT_1`, `BANDIT_TACTIC_*`, `Q_FOF_*_PREVIEW`.
+
+Znalezione przy okazji:
+- `Game.behaviours` trzyma nazwy klas pod kluczem `(m_FileID, m_PathID)`, który jest względny do bundla. Między bundlami nazwy się mylą (17 526 z 48 656 komponentów). Modele danych (wrogowie, misje, łup, przerywniki) są poprawne. `game.previews` rozpoznaje `GameInteractable` po polach, więc błąd go nie dotyczy.
+- 17 innych kwestii systemowych (np. `TACTIC_PHASE_DESCRIPTION_DARK_PRAYER`, `APPLY_AFFLICTION_DAMAGE`, `UI_DEFEAT_HERO`) też ma przełącznik `nagrody` z kategorii zastępczej. Bez zmian, do przeglądu.
+
+Nadal otwarte: punkty 1–2 (diagnostyka), 7–8 (D48, okno ataku) i generowanie nowych fragmentów.
+
 Uwaga do narzędzia: `hook_coverage.py` zawsze zapisuje szczegóły do `analysis/work/out/e1_coverage.json` i nadpisuje wynik E1. Plik E1 odtworzony z pięciu dzienników z 2026-10-31 (343 okna), szczegóły partii leżą w `session_20261111/mac/coverage_details.json`. Warto dodać opcję `--out`.

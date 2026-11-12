@@ -106,6 +106,17 @@ def test_slot_keys_runtime_only():
         assert scope.slot_keys(t, {'ref': 'x'}, 'X', VALUES) == []
 
 
+def test_slot_keys_list_of_keys():
+    values = dict(VALUES, vars={'keys for toss': ['TOSS_0', 'TOSS_1']})
+    assert scope.slot_keys('ListOfKeys', {'ref': 'Keys for Toss'}, 'ARGUMENT_1', values) == ['TOSS_0', 'TOSS_1']
+
+
+def test_message_args_list_of_keys():
+    from lektor import game
+    msg = {'_arguments': [{'ArgType': 'ListOfKeys', 'Data': {'Keys': {'_name': 'Keys for Toss'}, 'IsRestricted': True}}]}
+    assert game.message_args(msg) == [{'type': 'ListOfKeys', 'ref': 'Keys for Toss'}]
+
+
 def test_merged_args_collects_refs_from_all_nodes():
     main = {'args': [{'type': 'LocalizationKey', 'ref': 'A'}]}
     rs = [main, {'args': [{'type': 'LocalizationKey', 'ref': 'B'}]}, {'args': [{'type': 'VariableInt', 'ref': 'n'}]},
@@ -142,3 +153,15 @@ def test_string_assignments():
     scope.string_assignments(graph, out, names)
     assert dict(out) == {'injury': {'INJURY_2'}, 'dest': {'PLACE_1'}}
     assert names == {'who'}
+
+
+def test_string_assignments_lists_only_in_m3():
+    from collections import defaultdict
+    graph = {'localBlackboard': {'_variables': {'Keys for Toss': {
+        '_value': ['TOSS_0', 'TOSS_1'], '_name': 'Keys for Toss',
+        '$type': scope.LIST_VARIABLE + ', mscorlib]], mscorlib]]'}}}}
+    out = defaultdict(set)
+    scope.string_assignments(graph, out, set())
+    assert dict(out) == {}
+    scope.string_assignments(graph, out, set(), lists=True)
+    assert dict(out) == {'keys for toss': {'TOSS_0', 'TOSS_1'}}

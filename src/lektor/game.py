@@ -15,6 +15,11 @@ from . import paths
 STORY_NODES = {'StoryMessageNode', 'MultipleChoiceStoryMessageNode', 'StoryVirtueChoiceNode'}
 COMBAT_NODES = {'DisplayEnemyActivation', 'SpawnEnemy', 'SpawnRandomEnemies', 'SpawnRandomEnemy', 'EnemySelectMessageNode'}
 EVENT_KINDS = {'story_event', 'travelevents', 'narrativeevents', 'cityevents', 'worldmap'}
+# Kolejność wczytania tabel tekstów przez grę (I2.Loc.LocalizationManager.AllCSVPaths, tryb Merge): późniejsza
+# nadpisuje wcześniejszą, np. dle04EnemyLocalization zmienia nazwę ENEMY_BANDIT_CRAZED_1_SING (D98).
+CSV_ORDER = ('MainLocalization', 'EnemyLocalization', 'GlossaryLocalization', 'StoryAct1Localization',
+             'AsmoConnectLocalization', 'dle04MainLocalization', 'dle04EnemyLocalization', 'dle04GlossaryLocalization',
+             'StoryAct2Localization')
 
 
 class Game:
@@ -50,14 +55,19 @@ class Game:
                     self._class_cache[k] = '?'
             yield o, t, self._class_cache[k]
 
-    def terms(self):
-        """Klucz → {text (PL), en, sources}. Źródła: CSV z loc/pl i loc/en oraz zasoby I2."""
-        terms = {}
+    def terms(self, game_order=False):
+        """Klucz → {text (PL), en, sources}. Źródła: CSV z loc/pl i loc/en oraz zasoby I2.
+        game_order: klucz z kilku tabel CSV ma tekst z tabeli wczytanej przez grę później (CSV_ORDER, D98);
+        bez niego zostaje tekst pierwszej tabeli w bundlu (m1, m2)."""
+        terms, rank = {}, {}
 
         def add(key, text, src, en=None):
             e = terms.setdefault(key, {'text': text, 'en': en, 'sources': []})
-            if text and not e['text']:
+            r = CSV_ORDER.index(src[4:]) if game_order and src[4:] in CSV_ORDER else -1
+            if text and (not e['text'] or (r >= 0 and r > rank.get(key, -1))):
                 e['text'] = text
+            if text and r >= 0:
+                rank[key] = max(r, rank.get(key, -1))
             if en and not e['en']:
                 e['en'] = en
             e['sources'].append(src)
@@ -122,6 +132,28 @@ class Game:
                     out[t['_id']] = {'bundle': name, 'ref': (o.assets_file.name.lower(), o.path_id),
                                      'keys': sorted({s for s in walk_strings(t) if s in terms}),
                                      'theme': t.get('ThemeTraits', 0), 'random': bool(t.get('IsRandomEligible'))}
+        return out
+
+    def previews(self, terms):
+        """[(bundel, obiekt, klucz)] podglądów obiektów na planszy: GameInteractable.PreviewKey, który gra pokazuje
+        przez DisplayQuickMessage, gdy obiekt nie ma podglądu domyślnego ani grafu podglądu (D98)."""
+        out = []
+        for name in sorted(self.files):
+            if not name.startswith('d3/'):
+                continue
+            # Komponent rozpoznajemy po polach: pamięć klas w behaviours() ma klucz względny do bundla
+            # (m_FileID), więc po wcześniej czytanych bundlach nazwa klasy bywa myląca.
+            for o, t, _ in self.behaviours(name):
+                key = t.get('PreviewKey') if 'DefaultPreview' in t and 'DTControllerPreview' in t else None
+                if not key or t.get('DefaultPreview') or (t.get('DTControllerPreview') or {}).get('m_PathID'):
+                    continue
+                if not (terms.get(key) or {}).get('text'):
+                    continue
+                try:
+                    owner = o.read().m_GameObject.read().m_Name
+                except Exception:
+                    owner = ''
+                out.append((name, owner, key))
         return out
 
     def cutscene_keys(self, cutscene_id):
@@ -224,7 +256,8 @@ def message_args(msg):
     for a in msg.get('_arguments') or []:
         d = a.get('Data') if isinstance(a.get('Data'), dict) else {}
         kind = a.get('ArgType') or ('LocalizationKey' if '$content' in d else None)
-        out.append({'type': kind, 'ref': d.get('$content') or d.get('_name')})
+        keys = d.get('Keys') if isinstance(d.get('Keys'), dict) else {}     # ListOfKeys: nazwa listy kluczy (D98)
+        out.append({'type': kind, 'ref': d.get('$content') or d.get('_name') or keys.get('_name')})
     return out
 
 

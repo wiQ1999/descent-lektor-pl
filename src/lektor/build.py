@@ -192,7 +192,7 @@ def loot_texts(game, terms, release='m2'):
 def build(path=None, release='m1', only=None):
     path = path or paths.DB
     game = G.Game()
-    terms = game.terms()
+    terms = game.terms(game_order=release == 'm3')
     records, values, info = scope.collect(game, terms, release, only)
     lines = {r['key'] for r in records if r['tts']}
     refs = load_refs()

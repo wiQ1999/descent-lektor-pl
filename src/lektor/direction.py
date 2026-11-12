@@ -47,6 +47,8 @@ TOGGLES = {
     'system_nagroda': 'nagrody',
     'ui_system': 'ui',
 }
+# Okna walki z grafów systemowych, które kategoria system_nagroda przypisałaby nagrodom (D98).
+KEY_TOGGLES = {'UI_ENEMYDEFENSIVE_REMINDER': 'walka_teren', 'TACTIC_PHASE_DESCRIPTION': 'walka_teren'}
 GROUP_TOGGLES = {'travel_act1': 'podroze', 'town': 'miasto', 'map': 'opis_misji',     # D66, D55 pkt 5
                  'travel_act2': 'podroze', 'town_act2': 'miasto', 'city': 'miasto', 'city_act2': 'miasto'}    # E14
 
@@ -62,6 +64,8 @@ def tempo(category, chars):
 def toggle(category, key, group=None):
     """Przełącznik companiona (D21). Aktywacje wrogów (D30) i cele (D31) mają własne, a podróże, miasto i opisy
     celów na mapie obejmują całą grupę."""
+    if key in KEY_TOGGLES:
+        return KEY_TOGGLES[key]
     if group in GROUP_TOGGLES:
         return GROUP_TOGGLES[group]
     if key.startswith('ENEMY_ACTIVATION_') or '_TACTIC_' in key:

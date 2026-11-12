@@ -72,6 +72,9 @@ M3_VOICES = {'BARONESSMAGRIT': 'magrit', 'ALYS': 'alys', 'GREIGORY': 'greigory',
              'VRASKHAR': 'vraskhar', 'CHANCE_SHADOW': 'chance'}
 HERO_NAME_KEYS = ['HERO_%s_NAME' % h for h in HEROES]
 UPPER = re.compile(r'^[A-Z][A-Z0-9_]{3,}$')
+LIST_VARIABLE = 'NodeCanvas.Framework.Variable`1[[System.Collections.Generic.List`1[[System.String'
+# Luka z kluczem zdolności obronnej wroga, którą ustawia kod ataku (EnemyModel.GetDefenseKey, D98).
+DEFENSE_VAR = '_currdefensekey'
 
 
 def voice_for(category, speakers):
@@ -172,11 +175,14 @@ def is_name_var(name):
     return 'name' in v and not any(w in v for w in ('enemy', 'terrain', 'item', 'dest'))
 
 
-def string_assignments(v, out, names):
+def string_assignments(v, out, names, lists=False):
     """Zmienne tekstowe w grafie: klucze ustawiane przez SetStringKey i SetVariable<string> → out[zmienna],
-    zmienne z imieniem gracza (GetPlayerStringField Name) → names."""
+    zmienne z imieniem gracza (GetPlayerStringField Name) → names. lists (m3, D98): także zawartość list
+    tekstowych blackboardu, z których gra losuje klucz luki ListOfKeys."""
     if isinstance(v, dict):
         t = v.get('$type', '')
+        if lists and t.startswith(LIST_VARIABLE) and isinstance(v.get('_value'), list):
+            out[var_id(v.get('_name'))] |= {s for s in v['_value'] if isinstance(s, str)}
         if t == 'FFG.Core.Tasks.SetStringKey':
             out[var_id((v.get('_valueA') or {}).get('_name'))].add(v.get('_pendingKey'))
         elif t.startswith('NodeCanvas.Tasks.Actions.SetVariable`1[[System.String'):
@@ -186,10 +192,10 @@ def string_assignments(v, out, names):
         elif t == 'FFG.D3.Tasks.GetPlayerStringField' and v.get('_field') == 'Name':
             names.add(var_id((v.get('_resultString') or {}).get('_name')))
         for x in v.values():
-            string_assignments(x, out, names)
+            string_assignments(x, out, names, lists)
     elif isinstance(v, list):
         for x in v:
-            string_assignments(x, out, names)
+            string_assignments(x, out, names, lists)
 
 
 def merged_args(main, rs):
@@ -282,7 +288,7 @@ def collect(game, terms, release='m1', only=None):
         for ln in G.graph_lines(gr, terms):
             group_of.setdefault(ln['key'], group)
             refs[ln['key']].append(ln)
-        string_assignments(gr['graph'], var_keys, name_vars)
+        string_assignments(gr['graph'], var_keys, name_vars, lists=release == 'm3')
 
     cutscene = [k for k in game.cutscene_keys(CUTSCENE_ID) if k in terms]
     for k in cutscene:
@@ -347,6 +353,22 @@ def collect(game, terms, release='m1', only=None):
                 take(gr, group)
         extra_strings |= {s for gr in extra_graphs for s in G.walk_strings(gr['graph']) if UPPER.match(s)}
         chosen = sorted(enemies)
+        if not only:
+            # D98: podglądy obiektów spoza grafów i opisy zdolności obronnych wrogów w luce okna ataku
+            quest_group = {b: g for g, (b, _) in QUESTS.items()}
+            quest_group[Q1_BUNDLE] = 'scene_q1'
+            known = set(GROUPS + RELEASE_GROUPS[release]) | set(m3_order)
+            for bundle, owner, key in game.previews(terms):
+                group = quest_group.get(bundle) or m3_group(bundle, owner)
+                if group and group not in known:
+                    known.add(group)
+                    m3_order.append(group)
+                if group and key not in group_of:
+                    group_of[key] = group
+                    refs[key].append({'key': key, 'role': 'message', 'node_type': 'PreviewKey',
+                                      'kind': G.source_kind(bundle), 'bundle': bundle, 'owner': owner, 'graph': None,
+                                      'seq': None, 'conds': [], 'speakers': [], 'args': []})
+            var_keys[DEFENSE_VAR] |= {k for k in terms if k.startswith('ENEMY_DEFEND_')}
 
     records = []
     for key, group in group_of.items():
@@ -409,7 +431,7 @@ def slot_keys(arg_type, arg, line_key, values):
     """Klucze, które mogą trafić w lukę; pusta lista, gdy wartość znana dopiero w grze."""
     if arg_type in ('EntityName', 'EnemyNameWithArticle'):
         return values['entity']
-    if arg_type not in ('VariableString', 'LocalizationKey'):
+    if arg_type not in ('VariableString', 'LocalizationKey', 'ListOfKeys'):
         return []
     keys = []
     for ref in arg.get('refs') or [arg.get('ref')]:

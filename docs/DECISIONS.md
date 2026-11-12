@@ -974,6 +974,20 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - Okno ataku: opis zdolności to tekst do przeczytania, a liczby gracze widzą na ekranie.
 - Zrzut 4: użytkownik słyszał inną nazwę wroga niż na kartach. Przyczyna to starsza tabela tekstów w naszej bazie.
 
+### D98 · 2026-11-12 · E14: poprawki bazy m3 po partii
+**Decyzja:** Baza `m3` przebudowana z poprawkami danych z `analysis/E14_PARTY.md`. Zmiany działają tylko w wydaniu `m3`, więc `m1` i `m2` budują się jak dotąd.
+- Tekst klucza z kilku tabel CSV bierzemy z tabeli, którą gra wczytuje później (`game.CSV_ORDER`, kolejność z `I2.Loc.LocalizationManager.AllCSVPaths`). W bazie zmienia to tylko nazwę `ENEMY_BANDIT_CRAZED_1_SING`, a z nią 414 wartości luk i listę łupu.
+- Luka `ListOfKeys` ma odwołanie do listy kluczy (`Data.Keys`), a jej wartości to zawartość list tekstowych blackboardu grafu. Nowe wartości: 6 przy `ARGUMENT_1` (moneta w studni) i 6 przy `TERRAIN_WELL_GALADEN_TEST_FAIL`.
+- Luka `_currDefenseKey` w `UI_ENEMYDEFENSIVE_REMINDER` dostaje wszystkie 62 klucze `ENEMY_DEFEND_*`.
+- Podglądy obiektów (`GameInteractable.PreviewKey` bez podglądu domyślnego i bez grafu podglądu) to nowe kwestie narratora: 245 kluczy w grupach misji, kategoria `komunikat_questu` (z bundli terenu `walka_teren`). Komponent rozpoznajemy po polach, bo pamięć klas w `Game.behaviours` ma klucz względny do bundla i myli klasy komponentów sceny (35% komponentów; modele danych bez błędów).
+- Przełącznik `walka_teren` zamiast `nagrody` dla `UI_ENEMYDEFENSIVE_REMINDER` i `TACTIC_PHASE_DESCRIPTION` (`direction.KEY_TOGGLES`).
+- Wynik: 12 867 kluczy (+245), 18 249 fragmentów (+306, ok. 34 tys. znaków, sam narrator), 13 fragmentów wartości zastąpionych kwestiami podglądów. Poprzednia baza: `m3.before_d98.sqlite`.
+- Nowe fragmenty czekają na generowanie. Zakres i moment generowania ustali użytkownik (D97).
+
+**Uzasadnienie:**
+- Prośba użytkownika 2026-11-12 o aktualizację bazy według ustalonych poprawek.
+- Sprawdzenie na dziennikach z partii: wszystkie okna oprócz trzech zamierzenie cichych mają pełne rozwiązanie w nowej bazie (wcześniej 15 okien z ciszą albo brakami i 1 ze złą nazwą).
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
