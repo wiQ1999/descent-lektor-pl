@@ -6,6 +6,14 @@ import sys
 from . import paths
 
 
+def test_groups(groups):
+    """Grupy z wiersza poleceń, a w wydaniu testowym bez nich zakres testu (D101)."""
+    if groups:
+        return groups
+    from . import scope
+    return scope.TEST_GROUPS.get(paths.RELEASE)
+
+
 def main(argv=None):
     if hasattr(sys.stdout, 'reconfigure'):
         sys.stdout.reconfigure(encoding='utf-8')
@@ -26,6 +34,8 @@ def main(argv=None):
     g.add_argument('--voices', nargs='*')
     g.add_argument('--retake', action='store_true', help='ponowne podejścia z retake.json (po select)')
     g.add_argument('--acts', type=int, nargs='*', help='tylko części gry: 1 akt 1, 2 akt 2, 3 wspólne (m3, D96)')
+    g.add_argument('--groups', nargs='*', help='tylko fragmenty tych grup kwestii (t1: domyślnie zakres testu D101)')
+    g.add_argument('--only', help='plik z listą id fragmentów (po jednym w wierszu)')
     e = sub.add_parser('eleven', parents=[rel], help='podejścia głosów ElevenLabs (D80, .venv, płatne; wznawialne)')
     e.add_argument('--limit', type=int)
     e.add_argument('--voices', nargs='*')
@@ -38,6 +48,7 @@ def main(argv=None):
     v.add_argument('--no-asr', action='store_true', help='szybka ocena bez Whispera (CPU) do evals_quick.jsonl (D96)')
     v.add_argument('--until', help='godzina HH:MM, po której ocena się kończy (wznowienie tą samą komendą)')
     v.add_argument('--later', nargs='*', default=(), help='grupy na koniec kolejki (np. misje rozegrane w zapisie gry)')
+    v.add_argument('--groups', nargs='*', help='tylko fragmenty tych grup kwestii (t1: domyślnie zakres testu D101)')
     sub.add_parser('select', parents=[rel], help='wybór podejść i lista ponownych (choice.json, retake.json)')
     f = sub.add_parser('finalize', parents=[rel], help='pliki końcowe, manifest i strona odsłuchu (.venv)')
     f.add_argument('--listen-engine', choices=('omnivoice', 'elevenlabs'), help='odsłuch tylko głosów tego silnika')
@@ -64,7 +75,9 @@ def main(argv=None):
     elif a.cmd == 'generate':
         import os
         from . import synth
-        synth.generate(a.limit, a.voices, os.path.join(paths.AUDIO, 'retake.json') if a.retake else None, a.acts)
+        only = set(open(a.only, encoding='utf-8').read().split()) if a.only else None
+        synth.generate(a.limit, a.voices, os.path.join(paths.AUDIO, 'retake.json') if a.retake else None, a.acts,
+                       test_groups(a.groups), only)
     elif a.cmd == 'eleven':
         import os
         from . import eleven
@@ -77,7 +90,7 @@ def main(argv=None):
             import datetime
             h, m = map(int, a.until.split(':'))
             until = datetime.datetime.now().replace(hour=h, minute=m, second=0).timestamp()
-        evaluate.evaluate(a.acts, a.fp32, not a.no_asr, until, set(a.later))
+        evaluate.evaluate(a.acts, a.fp32, not a.no_asr, until, set(a.later), test_groups(a.groups))
     elif a.cmd == 'select':
         from . import evaluate
         evaluate.select()

@@ -44,6 +44,16 @@ def in_acts(con, acts):
     return {r['id'] for r in con.execute('SELECT id FROM fragments') if act(pkg.get(r['id'], 'system')) in acts}
 
 
+def in_groups(con, groups):
+    """Fragmenty używane przez kwestie podanych grup (także wspólne z innymi grupami); wartości łupu liczą się
+    do 'system'. Paczka testowa E16 (D101)."""
+    groups = set(groups)
+    return {fid for fid, grp in con.execute(
+        'SELECT s.fragment, l.grp FROM segments s JOIN lines l ON l.key = s.key WHERE s.fragment IS NOT NULL '
+        'UNION SELECT v.fragment, l.grp FROM slot_values v LEFT JOIN lines l ON l.key = v.key '
+        'WHERE v.fragment IS NOT NULL') if (grp or 'system') in groups}
+
+
 def needed(voice):
     """Numery podejść, które musi mieć fragment (OmniVoice: 1 albo 3, ElevenLabs: pierwsze od 101)."""
     from .synth import takes_for
@@ -56,8 +66,12 @@ def collect():
     pkg = packages(con)
     state = load_state()
     done_prev = inherited()
+    test = scope.TEST_GROUPS.get(paths.RELEASE)
+    only = in_groups(con, test) if test else None      # paczka testowa: tylko fragmenty jej zakresu (E16)
     rows = {}
     for r in con.execute('SELECT id, voice, text FROM fragments'):
+        if only is not None and r['id'] not in only:
+            continue
         g = pkg.get(r['id'], 'system')
         e = D.engine(r['voice'])
         p = rows.setdefault(g, {'group': g, 'act': act(g), 'omnivoice': [0, 0, 0, 0], 'elevenlabs': [0, 0, 0, 0],

@@ -24,7 +24,7 @@ import time
 from .player import CLOSE_FADE_S, FADE_S
 
 WINDOWS = ('message', 'story')
-QUEUED = ('objective', 'activation', 'details')
+QUEUED = ('objective', 'activation', 'details', 'ability')
 SETTLE = 0.35           # cisza po zdarzeniu okna, zanim ruszy kolejka: zamknięcie i nowe okno przychodzą razem
 DUP_S = 30.0            # cel odczytany w oknie w tym czasie nie gra ponownie
 DETAILS_GAP = 0.35      # między nazwą a opisem celu na mapie
@@ -34,7 +34,7 @@ HERO_KEY = re.compile(r'^HERO_([A-Z]+)_NAME$')
 @dataclasses.dataclass
 class Item:
     token: int
-    src: str            # message | story | choice | objective | activation | details
+    src: str            # message | story | choice | objective | activation | details | ability
     wid: int            # id okna z pluginu (cel: None)
     key: str
     u: object           # library.Utterance
@@ -101,6 +101,10 @@ class Director:
             self._details(ev, recv)
         elif name == 'close' and kind == 'details':
             self._withdraw(lambda it: it.src == 'details', recv)
+        elif name == 'open' and kind == 'ability':
+            self._ability(ev, recv)
+        elif name == 'close' and kind == 'ability':
+            self._withdraw(lambda it: it.src == 'ability' and it.wid == ev.get('id'), recv)
         elif name in ('scene', 'stop'):
             self.story_open.clear()
             self.queue.clear()
@@ -232,6 +236,26 @@ class Director:
                 head.pieces[-1][1] = max(head.pieces[-1][1], DETAILS_GAP)
                 item.u.pieces[:0] = head.pieces
         self.queue.append(item)
+
+    def _ability(self, ev, recv):
+        """Kafelki zdolności w oknie ataku (E16, D101): nazwa i opis każdego kafelka po kolei, w kolejce jak aktywacja.
+        Opis bez klucza szukamy po tekście; dopisek (rezonator) idzie po opisie."""
+        for tile in ev.get('items') or []:
+            desc = tile.get('desc_key')
+            if not desc and not tile.get('desc'):
+                continue
+            item = self._make('ability', {'id': ev.get('id'), 'key': desc, 'text': tile.get('desc')}, recv, key=desc or '?')
+            if item is None:
+                continue
+            head = self.lib.resolve(tile['name_key'], text=tile.get('name')) if tile.get('name_key') else None
+            if head is not None and head.pieces:
+                head.pieces[-1][1] = max(head.pieces[-1][1], DETAILS_GAP)
+                item.u.pieces[:0] = head.pieces
+            extra = self.lib.resolve(tile['extra_key']) if tile.get('extra_key') else None
+            if extra is not None and extra.pieces and item.u.pieces:
+                item.u.pieces[-1][1] = max(item.u.pieces[-1][1], DETAILS_GAP)
+                item.u.pieces += extra.pieces
+            self.queue.append(item)
 
     def _withdraw(self, match, recv):
         self.queue = collections.deque(it for it in self.queue if not match(it))

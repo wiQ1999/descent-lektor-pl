@@ -466,6 +466,18 @@ Pytanie etapu: jak czytać opisy zachowania postaci w nawiasach (D86). Skan `ana
 - Zmiana w `build` dla wybranego wariantu, przebudowa `m3`, ponowne generowanie zmienionych kwestii (ElevenLabs tylko u postaci bez dubbingu, reszta w OmniVoice).
 - Plan etapu przedstawię przed startem.
 
+## E16 · Paczka testowa Q1–Q2 (D101)
+
+Cel: rozgrywki testowe Q1 i Q2 z pełnym lektorem, poprawkami D98–D100 i dwoma eksperymentami. Wydanie `t1` to baza `m3` z opcjami testu; `m3` zostaje bez zmian, a `t1` przejmuje z niej nagrania o tym samym id.
+- Zakres audio: prolog, Q1, Welcome Home, Q2, opisy misji na mapie, miasto, wydarzenia miejskie, podróże aktu 1, wydarzenia 2A i 2B, wrogowie, sprzęt, komunikaty systemowe i okno ataku.
+- Podział na głosy w oknach narratora: wypowiedzi w tekście narratora czyta postać, którą wskazuje kontekst. Mówcy jednorazowi i nienazwani dostają nowe głosy zaprojektowane w OmniVoice, wyraźnie różne od narratora i od siebie. Bohater z luki (`{0}`) mówi w wersji swojego głosu, wybieranej przez companion.
+- Jedno tempo narratora 1,4 dla tekstów i wartości luk. Narracja scen fabularnych zostaje w tempie naturalnym.
+- Okno ataku (D100): źródło `ability` w pluginie, kwestie zdolności broni i talizmanów, przełącznik `zdolnosci` (klucz TOML bez polskich liter).
+- Nowe nagrania tylko w OmniVoice (także dla postaci czytanych dotąd przez ElevenLabs).
+- Ocena automatem, do trzech rund ponownych podejść, `finalize`, testy, paczka Windows bez wydania na GitHub.
+
+**Kryteria ukończenia:** wszystkie fragmenty zakresu w manifeście `t1`, testy przechodzą, paczka Windows zbudowana, raport `analysis/E16_TEST.md`, commit.
+
 ## E12 · Katalog treści gry (później)
 
 Uporządkowanie treści całej gry do nagrania: kategorie, mówcy, scenariusze, przedmioty i miejsce na poprawki, np. zapis fonetyczny. Sposób przechowywania dobieram sam (D77). Katalog leży w projekcie, w `analysis/work/`, poza Git (D76). Plan etapu przedstawię przed startem.

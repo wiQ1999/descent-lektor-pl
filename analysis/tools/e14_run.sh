@@ -14,7 +14,7 @@
 # ElevenLabs, ASR_FP32=1 liczy Whispera w fp32, ROUNDS ustala liczbę rund ponownych podejść.
 set -u
 cd "$(dirname "$0")/../.."
-REL=m3
+REL=${REL:-m3}           # E16 (D101): REL=t1 ELEVEN=0 dla paczki testowej (zakres z scope.TEST_GROUPS)
 PY=.venv/Scripts/python
 OMNI="$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe"
 AUDIO=analysis/work/audio/$REL

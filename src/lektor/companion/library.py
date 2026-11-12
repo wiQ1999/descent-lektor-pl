@@ -60,11 +60,14 @@ def value_keys(arg):
     return [] if raw.startswith('<') else KEY.findall(raw)
 
 
+HERO_NAME = re.compile(r'\bHERO_([A-Z]+)_NAME\b')
+
+
 class Library:
     def __init__(self, db, audio_dir):
         con = sqlite3.connect(db)
         con.row_factory = sqlite3.Row
-        self.lines = {r['key']: dict(r) for r in con.execute('SELECT key, category, toggle, voice, tts, text_norm FROM lines')}
+        self.lines = {r['key']: dict(r) for r in con.execute('SELECT key, category, toggle, voice, tts, text_norm, hero_variant FROM lines')}
         self.segments = {}
         for r in con.execute('SELECT * FROM segments ORDER BY key, idx'):
             self.segments.setdefault(r['key'], []).append(dict(r))
@@ -94,6 +97,7 @@ class Library:
     def resolve(self, key, args=(), text=None, depth=0, hero=None):
         if key == CONFUSION[0] and text and '<EntityName>' in text:
             key = CONFUSION[1]
+        hero = self.arg_hero(key, args) or hero     # luka {N} wskazuje mówiącego pewniej niż portret okna
         if hero and '%s#%s' % (key, hero) in self.lines:    # VARIABLE_HERO: wersja w głosie bohatera (D17)
             key = '%s#%s' % (key, hero)
         line, via = self.lines.get(key), 'key'
@@ -107,6 +111,20 @@ class Library:
         if u.tts:
             self._fill(u, key, list(args or []), depth)
         return u
+
+    def arg_hero(self, key, args):
+        """E16 (D101): bohater z luki {N} kwestii narratora, gdy jego wypowiedź ma własną wersję (ARG:N)."""
+        line = self.lines.get(key)
+        marks = json.loads((line or {}).get('hero_variant') or '[]')
+        for mark in marks:
+            if not mark.startswith('ARG:'):
+                continue
+            n = int(mark[4:])
+            arg = (list(args or [])[n:n + 1] or [None])[0] or {}
+            m = HERO_NAME.search(arg.get('as_key') or '')
+            if m:
+                return m.group(1).lower()
+        return None
 
     def repeats(self, option, key):
         """Kwestia zaczyna się tekstem wybranej opcji albo go zawiera (D72)."""

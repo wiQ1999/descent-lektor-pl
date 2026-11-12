@@ -37,6 +37,8 @@ namespace LektorPL.Core
         private static readonly FieldInfo UgObjectiveKey = typeof(UIGame).GetField("_lastObjectiveKey", Private);
         private static readonly FieldInfo UgObjectiveArgs = typeof(UIGame).GetField("_LastObjectiveArguments", Private);
         private static readonly FieldInfo GcActivation = typeof(GameController).GetField("_curEnemyActivation", Private);
+        private static readonly FieldInfo AdWeapon = typeof(UIHeroAttackDialog).GetField("_currentWeapon", Private);
+        private static readonly FieldInfo AdPlayer = typeof(UIHeroAttackDialog).GetField("_player", Private);
         private static readonly FieldInfo I2LanguageField =
             typeof(I2.Loc.LocalizationManager).GetField("mCurrentLanguage", BindingFlags.NonPublic | BindingFlags.Static);
 
@@ -68,6 +70,11 @@ namespace LektorPL.Core
         private float _nextObjectiveCheck;
         private EnemyActivationRequest _activation;
         private int _activationId;
+
+        // Kafelki zdolności w oknie ataku (E16, D101).
+        private string _abilitySig;
+        private int _abilityId;
+        private float _nextAbilityCheck;
 
         // Wybrany cel na mapie (panel DestinationDetails).
         private DestinationNode _detailsNode;
@@ -115,6 +122,7 @@ namespace LektorPL.Core
             try { PollObjective(); } catch (Exception e) { _log.Error("objective", e); }
             try { PollActivation(); } catch (Exception e) { _log.Error("activation", e); }
             try { PollDetails(); } catch (Exception e) { _log.Error("details", e); }
+            try { PollAbility(); } catch (Exception e) { _log.Error("ability", e); }
             try { if (_options.SniffText) Sniff(); } catch (Exception e) { _log.Error("sniff", e); }
             _work.Stop();
             Perf(_work.Elapsed.TotalMilliseconds);
@@ -352,6 +360,85 @@ namespace LektorPL.Core
             if (model == null) return;
             _log.Write(_log.New("details").Str("key", model.DescKey).Str("name_key", model.NameKey)
                 .Str("text", panel.TextDescription != null ? panel.TextDescription.text : null));
+        }
+
+        // Okno ataku po potwierdzeniu trafień pokazuje kafelki UIAbilityTrigger (nazwa w szablonie WEAPON_ABILITY_TRIGGER
+        // i opis). Pula kafelków czyści się dopiero przy następnym ataku, więc o zamknięciu decyduje widoczność okna.
+        // Klucze kafelka: zdolności części B i C bieżącej broni oraz talizmany aktywnych graczy, dopasowane po tekście opisu.
+        private void PollAbility()
+        {
+            if (Time.unscaledTime < _nextAbilityCheck) return;
+            _nextAbilityCheck = Time.unscaledTime + _options.ObjectiveInterval;
+            var dialog = SingletonBehaviour<UIGame>.IsInitialized ? SingletonBehaviour<UIGame>.Instance.HeroAttackDialog : null;
+            var tiles = new List<UIAbilityTrigger>();
+            var sig = new System.Text.StringBuilder();
+            if (dialog != null && dialog.IsVisible && dialog.PoolAbilityTrigger != null)
+                foreach (GameObject go in dialog.PoolAbilityTrigger)
+                {
+                    if (go == null || !go.activeInHierarchy) continue;
+                    var t = go.GetComponent<UIAbilityTrigger>();
+                    if (t == null || t.TextAbilityName == null || string.IsNullOrEmpty(t.TextAbilityName.text)) continue;
+                    tiles.Add(t);
+                    sig.Append(t.TextAbilityName.text).Append('\u0001').Append(t.TextAbilityDesc != null ? t.TextAbilityDesc.text : null).Append('\u0002');
+                }
+            string s = tiles.Count > 0 ? sig.ToString() : null;
+            if (s == _abilitySig) return;
+            if (_abilitySig != null)
+                _log.Write(_log.New("close").Str("kind", "ability").Int("id", _abilityId).Str("via", "poll"));
+            _abilitySig = s;
+            if (s == null) return;
+            _abilityId = ++_nextId;
+            var cands = AbilityCandidates(dialog, out string extraKey);
+            var items = new JsonArray();
+            foreach (var t in tiles)
+            {
+                string name = t.TextAbilityName.text, desc = t.TextAbilityDesc != null ? t.TextAbilityDesc.text : null;
+                var item = new JsonLine().Str("name", name).Str("desc", desc);
+                foreach (var c in cands)
+                {
+                    string d = Loc(c.Value);
+                    if (string.IsNullOrEmpty(d) || desc == null) continue;
+                    bool plain = desc == d, extra = extraKey != null && desc.StartsWith(d + " (", StringComparison.Ordinal);
+                    if (!plain && !extra) continue;
+                    string n = Loc(c.Key);
+                    if (!string.IsNullOrEmpty(n) && name.IndexOf(n, StringComparison.Ordinal) < 0) continue;
+                    item.Str("name_key", c.Key).Str("desc_key", c.Value);
+                    if (extra) item.Str("extra_key", extraKey);
+                    break;
+                }
+                items.Add(item);
+            }
+            _log.Write(_log.New("open").Str("kind", "ability").Int("id", _abilityId).Str("via", "poll").Raw("items", items.ToString()));
+        }
+
+        private static List<KeyValuePair<string, string>> AbilityCandidates(UIHeroAttackDialog dialog, out string extraKey)
+        {
+            var list = new List<KeyValuePair<string, string>>();
+            extraKey = null;
+            var weapon = AdWeapon != null ? AdWeapon.GetValue(dialog) as SerializedWeapon : null;
+            if (weapon != null)
+            {
+                foreach (var part in new[] { weapon.PartB, weapon.PartC })
+                    if (part != null && part.Ability != null)
+                        list.Add(new KeyValuePair<string, string>(part.Ability.KeyName, part.Ability.KeyDesc));
+                if (weapon.PartC != null && weapon.PartC.Ability != null) extraKey = weapon.PartC.Ability.KeyDesc;
+            }
+            var players = new List<SerializedPlayer>();
+            if (AdPlayer != null && AdPlayer.GetValue(dialog) is SerializedPlayer me) players.Add(me);
+            if (SingletonBehaviour<GameData>.IsInitialized && SingletonBehaviour<GameData>.Instance.Data != null
+                && SingletonBehaviour<GameData>.Instance.Data.ActivePlayers != null)
+                players.AddRange(SingletonBehaviour<GameData>.Instance.Data.ActivePlayers);
+            foreach (var pl in players)
+            {
+                var trinket = pl != null ? pl.EquippedTrinket : null;
+                if (trinket != null) list.Add(new KeyValuePair<string, string>(trinket.KeyName, trinket.AbilityKey));
+            }
+            return list;
+        }
+
+        private static string Loc(string key)
+        {
+            return string.IsNullOrEmpty(key) ? null : FFGLocalization.Get(key, returnKeyOnMissing: false);
         }
 
         private void PollActivation()

@@ -1,0 +1,463 @@
+{
+ "_opis": "E16 (D101): głos każdej wypowiedzi w kwestiach narratora z zakresu testu t1; przegląd ręczny z kontekstem okna. Lista: głosy wypowiedzi po kolei; {\"pieces\": [...]}: głos każdego kawałka; \"narrator\": bez podziału. arg:N: bohater z luki {N}; nv_*: nowe głosy (docs/CASTING.md).",
+ "BOOKSHELF_CHOICE_BOOK_FALSE_07_BRYNN": [
+  "brynn",
+  "brynn"
+ ],
+ "BOOKSHELF_CHOICE_BOOK_FALSE_07_KEHLI": [
+  "kehli"
+ ],
+ "BOOKSHELF_CHOICE_BOOK_FALSE_07_CHANCE": [
+  "chance"
+ ],
+ "BOOKSHELF_CHOICE_BOOK_FALSE_07_GALADEN": [
+  "brynn"
+ ],
+ "BOOKSHELF_CHOICE_BOOK_FALSE_07_VAERIX": [
+  "vaerix"
+ ],
+ "BOOKSHELF_CHOICE_BOOK_FALSE_07_SYRUS": [
+  "syrus"
+ ],
+ "BOOKSHELF_CHOICE_BOOK_FALSE_15_SYRUS": [
+  "syrus"
+ ],
+ "REMOVE_CHEST_CANCEL": [
+  "nv_bandyta",
+  "nv_bandyta"
+ ],
+ "Q1_CHOOSE_HERO_ON_WATCH": [
+  "arg:0",
+  "arg:0"
+ ],
+ "Q1_BRYNN_IS_ON_WATCH": [
+  "brynn",
+  "brynn"
+ ],
+ "Q1_GALADEN_IS_ON_WATCH": [
+  "galaden"
+ ],
+ "Q1_SYRUS_IS_ON_WATCH": [
+  "syrus",
+  "syrus"
+ ],
+ "Q1_VAERIX_IS_ON_WATCH": [
+  "vaerix"
+ ],
+ "Q1_BRYNN_DOOR": [
+  "brynn"
+ ],
+ "Q1_VAERIX_TABLE": [
+  "vaerix"
+ ],
+ "Q1_GALADEN_CHEST": [
+  "galaden"
+ ],
+ "Q1_GALADEN_DOOR": [
+  "galaden",
+  "galaden"
+ ],
+ "Q1_SYRUS_DOOR": [
+  "syrus",
+  "syrus"
+ ],
+ "Q1_VAERIX_DOOR": [
+  "vaerix"
+ ],
+ "Q1_SYRUS_BOOKSHELF": [
+  "syrus"
+ ],
+ "Q1_BOSS_SPAWN": [
+  "nekrul",
+  "nekrul"
+ ],
+ "Q1_PERSON_1_TEST_PASS": [
+  "nv_wiesniak"
+ ],
+ "Q1_SOLDIER_1_BRYNN": [
+  "nv_straznik"
+ ],
+ "Q1_SOLDIER_1_BRYNN_2": [
+  "nv_straznik",
+  "nv_straznik"
+ ],
+ "Q1_BRYNN_DRAMATIC_CHOICE_2": [
+  "brynn"
+ ],
+ "Q1_SOLDIER_1": [
+  "nv_straznik",
+  "nv_straznik",
+  "nv_straznik"
+ ],
+ "Q1_PERSON_2_TEST_PASS": [
+  "nv_wiezien",
+  "nv_wiezien"
+ ],
+ "Q1_SAVE_VILLAGERS_BRYNN": [
+  "brynn",
+  "nv_wiesniak",
+  "nv_wiesniak"
+ ],
+ "Q1_BRYNN_DRAMATIC_CHOICE": [
+  "brynn"
+ ],
+ "Q1_GALADEN_DRAMATIC_CHOICE": [
+  "galaden"
+ ],
+ "Q1_VAERIX_DRAMATIC_CHOICE": [
+  "vaerix"
+ ],
+ "Q1_SYRUS_DRAMATIC_CHOICE": [
+  "syrus"
+ ],
+ "Q1_SAVE_VILLAGERS_GALADEN": [
+  "galaden",
+  "nv_wiesniak",
+  "nv_wiesniak"
+ ],
+ "Q1_SAVE_VILLAGERS_VAERIX": [
+  "vaerix",
+  "nv_wiesniak",
+  "nv_wiesniak"
+ ],
+ "Q1_NEKRUL_DEFEAT": [
+  "nekrul"
+ ],
+ "TERRAIN_CAULDRON_KEHLI": [
+  "kehli"
+ ],
+ "TERRAIN_CAULDRON_KEHLI_ENEMIES_NONE": [
+  "kehli"
+ ],
+ "TERRAIN_CAULDRON_KEHLI_WILDCARD_00": [
+  "kehli"
+ ],
+ "TERRAIN_BARRICADE_PASS_SYRUS": [
+  "syrus"
+ ],
+ "ENEMY_ACTIVATION_BOSS_ORBAN_BASIC": [
+  "nv_orban",
+  "nv_orban"
+ ],
+ "ENEMY_ACTIVATION_TACTIC_SCORCHED_EARTH": [
+  "nv_fanatyk"
+ ],
+ "ENEMY_ACTIVATION_TACTIC_THEFT_ALT": [
+  "nv_bandyta"
+ ],
+ "ENEMY_DEFEAT_BOSS_ORBAN": [
+  "nv_orban",
+  "nv_orban"
+ ],
+ "BANDIT_TACTIC_SHADOW_STEP_HINT": [
+  "nv_bandyta"
+ ],
+ "ENEMY_DEFEAT_BOSS_EURTH_ESCAPE": [
+  "nv_eurth",
+  "nv_eurth"
+ ],
+ "ENEMY_DEFEAT_BOSS_EURTH_FINAL": [
+  "nv_ynfernael"
+ ],
+ "FAE_TACTIC_BUBBLE_TROUBLE_ACTIVATION": [
+  "nv_fae"
+ ],
+ "FAE_TACTIC_BE_BACK_ACTIVATION": [
+  "nv_fae",
+  "nv_fae"
+ ],
+ "FAE_TACTIC_BUBBLE_TROUBLE_HINT": [
+  "nv_fae"
+ ],
+ "FAE_TACTIC_BE_BACK_HINT": [
+  "nv_fae"
+ ],
+ "ENEMY_DEFEAT_BOSS_XAIN_FINAL": [
+  "nv_xain",
+  "nv_xain"
+ ],
+ "ENEMY_TACTIC_ZACHARETH_RUNEBLAST_HINT": [
+  "zachareth",
+  "zachareth"
+ ],
+ "RENEYR_TACTIC_SUMMON_SHADOW_HINT": [
+  "reneyr",
+  "reneyr"
+ ],
+ "SPECTER_TACTIC_POSSESSION_ACTIVATION": [
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_RUNELOCK_ACTIVATION_KEHLI": [
+  "nv_widmo",
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_RUNELOCK_ACTIVATION": [
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_DEBT_COLLECTOR_ACTIVATION_ALL": [
+  "nv_widmo",
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_DEBT_COLLECTOR_ACTIVATION_ZERO": [
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_DEBT_COLLECTOR_ACTIVATION_ONE": [
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_DEBT_COLLECTOR_ACTIVATION_TWO": [
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_DEBT_COLLECTOR_ACTIVATION_THREE": [
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_POSSESSION_BRYNN": [
+  "brynn",
+  "brynn"
+ ],
+ "SPECTER_TACTIC_POSSESSION_CHANCE": [
+  "chance"
+ ],
+ "SPECTER_TACTIC_POSSESSION_GALADEN": [
+  "galaden"
+ ],
+ "SPECTER_TACTIC_POSSESSION_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "SPECTER_TACTIC_POSSESSION_SYRUS": [
+  "syrus",
+  "syrus"
+ ],
+ "SPECTER_TACTIC_POSSESSION_VAERIX": [
+  "vaerix"
+ ],
+ "SPECTER_TACTIC_RUNELOCK_HINT": [
+  "nv_widmo",
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_DEBT_COLLECTOR_HINT": [
+  "nv_widmo",
+  "nv_widmo"
+ ],
+ "ENEMY_DEFEAT_BOSS_ZEALOT_ESCAPE": [
+  "nv_nekromanta"
+ ],
+ "ZEALOT_TACTIC_VENDETTA_HINT": [
+  "nv_fanatyk"
+ ],
+ "ZEALOT_TACTIC_SUMMON_SHADOW_HINT": [
+  "nv_fanatyk",
+  "nv_fanatyk"
+ ],
+ "TRAVEL_29": [
+  "nv_gnom"
+ ],
+ "TRAVEL_48": [
+  "galaden"
+ ],
+ "TRAVEL_50": [
+  "kehli"
+ ],
+ "TRAVEL_52": [
+  "syrus"
+ ],
+ "TRAVEL_54": [
+  "vaerix"
+ ],
+ "TRAVEL_58": [
+  "nv_gap",
+  "nv_gap"
+ ],
+ "TRAVEL_62": [
+  "nv_ork"
+ ],
+ "TRAVEL_64": [
+  "nv_uchodzca"
+ ],
+ "TRAVEL_UNDRYING": [
+  "nv_glos",
+  "nv_glos"
+ ],
+ "TRAVEL_BRYNN_CHOICE": [
+  "nv_protektor",
+  "nv_protektor"
+ ],
+ "TRAVEL_BRYNN_RESP_NOBILITY_POST_Q10": [
+  "brynn",
+  "brynn",
+  "nv_protektor",
+  "nv_protektor",
+  "brynn"
+ ],
+ "TRAVEL_BRYNN_RESP_NOBILITY": [
+  "brynn",
+  "brynn",
+  "nv_protektor",
+  "nv_protektor"
+ ],
+ "TRAVEL_BRYNN_RESP_VALOR": [
+  "brynn",
+  "brynn",
+  "nv_protektor",
+  "nv_protektor"
+ ],
+ "TRAVEL_CHANCE_RESP_INDEPENDENCE": [
+  "chance",
+  "chance",
+  "arg:0"
+ ],
+ "TRAVEL_CHANCE_RESP_TRUST": [
+  "chance",
+  "chance"
+ ],
+ "TRAVEL_GALADEN_RESP_CONNECTION_BRYNN": [
+  "brynn",
+  "galaden",
+  "brynn",
+  "brynn"
+ ],
+ "TRAVEL_GALADEN_RESP_CONNECTION_CHANCE": [
+  "galaden",
+  "chance"
+ ],
+ "TRAVEL_GALADEN_RESP_CONNECTION_KEHLI": [
+  "kehli",
+  "kehli",
+  "galaden",
+  "kehli",
+  "kehli"
+ ],
+ "TRAVEL_GALADEN_RESP_CONNECTION_SYRUS": [
+  "syrus",
+  "galaden",
+  "syrus",
+  "galaden",
+  "galaden"
+ ],
+ "TRAVEL_GALADEN_RESP_CONNECTION_VAERIX": [
+  "vaerix",
+  "galaden"
+ ],
+ "TRAVEL_KEHLI_CHOICE": [
+  "kehli",
+  "kehli",
+  "kehli",
+  "arg:0"
+ ],
+ "TRAVEL_KEHLI_RESP_INNOVATION": [
+  "kehli",
+  "arg:0",
+  "kehli",
+  "kehli"
+ ],
+ "TRAVEL_KEHLI_RESP_RELIABILITY": [
+  "kehli",
+  "kehli"
+ ],
+ "TRAVEL_SYRUS_CHOICE": [
+  "syrus",
+  "nv_gont",
+  "nv_gont"
+ ],
+ "TRAVEL_SYRUS_RESP_AMBITION": [
+  "syrus",
+  "syrus",
+  "nv_gont",
+  "nv_gont"
+ ],
+ "TRAVEL_SYRUS_RESP_OPTIMISM": [
+  "syrus",
+  "syrus",
+  "syrus",
+  "nv_gont",
+  "nv_gont"
+ ],
+ "TRAVEL_VAERIX_CHOICE": [
+  "nv_kowalka",
+  "nv_kowalka",
+  "vaerix",
+  "nv_kowalka",
+  "nv_kowalka"
+ ],
+ "TRAVEL_VAERIX_RESP_REBELLION": [
+  "vaerix",
+  "vaerix"
+ ],
+ "TRAVEL_VAERIX_RESP_VISION": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q2_INTRO": [
+  "kehli"
+ ],
+ "Q2_PRE_SPAWN_ROAR": [
+  "kehli",
+  "kehli",
+  "bruli",
+  "bruli"
+ ],
+ "Q2_KEHLIS_MISTAKE_CHOICE": [
+  "kehli"
+ ],
+ "Q2_OLD_MAN_MISSION": [
+  "bruli",
+  "bruli"
+ ],
+ "Q2_KEHLI_SHOUT_POTION": [
+  "kehli"
+ ],
+ "Q2_KEHLI_LAIR_OPEN_BY_OTHER": [
+  "kehli",
+  "kehli"
+ ],
+ "Q2_DWARF_MAD_KEHLI": [
+  "bruli"
+ ],
+ "Q2_DWARF_SHOUT": [
+  "bruli",
+  "bruli"
+ ],
+ "Q2_DWARF_SHOUT_REMINDER": [
+  "bruli"
+ ],
+ "Q2_SPAWN_GOLEMS": [
+  "kehli",
+  "kehli"
+ ],
+ "Q2_SPAWN_GOLEM_2": [
+  "kehli"
+ ],
+ "E_C1_1_TEMP": [
+  "kehli"
+ ],
+ "E_C1_1_TEMP_2": [
+  "kehli",
+  "kehli"
+ ],
+ "E_C1_1_CHOICE_SYRUS": [
+  "kehli"
+ ],
+ "E_C1_1_CHOICE_GALADEN": {
+  "pieces": [
+   "narrator",
+   "kehli",
+   "kehli",
+   "narrator"
+  ]
+ },
+ "E_C1_1_CHOICE_VAERIX": [
+  "kehli"
+ ],
+ "E_C1_1_CHOICE_CHANCE": [
+  "kehli"
+ ],
+ "E_C1_1_CHOICE_KEHLI": [
+  "kehli",
+  "kehli",
+  "kehli"
+ ],
+ "WEAPON_ABILITY_C_CROSSBOW_4_EFFECT": "narrator",
+ "FAE_TACTIC_BE_BACK_SPAWN": [
+  "nv_fae"
+ ]
+}

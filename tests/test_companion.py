@@ -109,6 +109,7 @@ def lib(tmp_path):
     con.executemany('INSERT INTO segments (key, idx, kind, arg, arg_type, voice, text, fragment, pause_after) '
                     'VALUES (?, ?, ?, ?, ?, "narrator", NULL, ?, ?)', SEGMENTS)
     con.executemany('INSERT INTO slot_values VALUES (?, ?, ?, ?)', VALUES)
+    con.execute('UPDATE lines SET hero_variant = ? WHERE key = ?', ('["ARG:1"]', 'SAY'))   # E16: bohater z luki {1}
     con.executemany('INSERT INTO fragments VALUES (?, "narrator", 1.0, ?, 0, "text")', [(k, t) for k, (t, _) in FRAGMENTS.items()])
     con.commit()
     con.close()
@@ -166,6 +167,14 @@ def test_hero_variant_chosen_by_speaker(lib):
     assert fids(lib.resolve('SAY', hero='brynn')) == ['f_say_brynn']
     assert fids(lib.resolve('SAY', hero='syrus')) == ['f_say']
     assert fids(lib.resolve('SAY')) == ['f_say']
+
+
+def test_hero_variant_chosen_by_slot_argument(lib):
+    """E16 (D101): wypowiedź bohatera z luki {1} w oknie narratora: wersja po argumencie, nie po portrecie okna."""
+    args = [{'i': 0, 'type': 'EntityName', 'as_key': 'X'}, {'i': 1, 'type': 'VariableString', 'as_key': 'HERO_BRYNN_NAME'}]
+    assert fids(lib.resolve('SAY', args, hero='syrus')) == ['f_say_brynn']
+    assert fids(lib.resolve('SAY', [args[0]])) == ['f_say']
+    assert fids(lib.resolve('SAY', [args[0], {'i': 1, 'as_key': 'HERO_SYRUS_NAME'}])) == ['f_say']
 
 
 def test_loot_list_from_game_text(lib):
@@ -397,6 +406,15 @@ def test_details_newest_replaces_older(run):
     run({'ev': 'details', 'key': 'MAP_DESC', 'name_key': 'MAP_NAME'}, 1.0)
     d = run({'ev': 'details', 'key': 'GOAL'}, 0.1)
     assert playing(d) == 'GOAL'
+
+
+def test_ability_tiles_read_name_and_description_in_turn_and_stop_on_close(run):
+    """E16 (D101): kafelki zdolności w oknie ataku: nazwa i opis, kolejne kafelki po kolei; opis bez klucza po tekście."""
+    tiles = [{'name_key': 'MAP_NAME', 'desc_key': 'MAP_DESC'}, {'desc': 'Znajdź klucz.'}]
+    d = run({'ev': 'open', 'kind': 'ability', 'id': 7, 'items': tiles}, 1.0)
+    assert [p[0] for p in d.current.u.pieces] == ['f_map_name', 'f_map_desc'] and [it.key for it in d.queue] == ['?']
+    d = run({'ev': 'close', 'kind': 'ability', 'id': 7}, 0.1)
+    assert playing(d) is None and not d.queue
 
 
 def test_objective_waits_and_newest_replaces(run):

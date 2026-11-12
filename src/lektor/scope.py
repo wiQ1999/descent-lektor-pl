@@ -38,6 +38,9 @@ SCENES = {'pre_q678': 'TANGERINE Story Scene Triage Pre Q678', 'event_e5b': 'TAN
           'pre_q9': 'TANGERINE Story Scene Pre Q9'}
 RELEASE_GROUPS = {'m1': (), 'm2': (*QUESTS, *SCENES, 'travel_act1', 'town', 'map')}
 RELEASE_GROUPS['m3'] = RELEASE_GROUPS['m2']     # plus grupy z m3_sources
+# Paczka testowa E16 (D101): Q1 i Q2 z otoczeniem. Generowanie i ocena t1 obejmują tylko fragmenty tych grup.
+TEST_GROUPS = {'t1': ('story_q1', 'welcome_home', 'scene_q1', 'a1_q2', 'map', 'town', 'city', 'travel_act1',
+                      'a1_event_2a', 'a1_event_2b', 'enemies', 'gear', 'system')}
 DESTINATIONS = (('d3/coreset/data', 'QuestModel', '_keyName', '_descKey'),
                 ('d3/narrativeevents', 'NarrativeEventModel', '_keyName', '_keyDesc'),
                 ('d3/dle04/data', 'QuestModel', '_keyName', '_descKey'))

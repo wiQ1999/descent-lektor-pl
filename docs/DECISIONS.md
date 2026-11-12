@@ -1005,6 +1005,18 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - D48: przy studni w Q1 wynik testu zagrałby od 3,2 s zamiast przepaść. Bez zmiany dla graczy, którzy czekają na koniec opcji.
 - Okno ataku: opis mówi, co zrobiła zdolność. Ataki są częste, więc osobny przełącznik pozwala wyłączyć same zdolności.
 
+### D101 · 2026-11-12 · E16: paczka testowa Q1–Q2
+**Decyzja:**
+- Paczka testowa dla rozgrywek Q1 i Q2 z otoczeniem: prolog, Q1, Welcome Home, Q2, opisy misji na mapie, miasto i wydarzenia miejskie, podróże aktu 1, wydarzenia 2A i 2B, wrogowie, sprzęt, komunikaty systemowe.
+- Test 1: wypowiedzi postaci w oknach narratora czyta postać wskazana w tekście albo w kontekście. Mówca jednorazowy bez imienia dostaje nowy głos, losowo zaprojektowany w OmniVoice, wyraźnie różny od narratora i innych nowych głosów.
+- Test 2: narrator ma jedno tempo 1,4 (dotąd 1,2–1,4 zależnie od długości), także w wartościach luk. Narracja scen fabularnych zostaje w tempie naturalnym.
+- Okno ataku (D100) wchodzi do paczki z nowym źródłem w pluginie.
+- Nagrania bez zmian zostają z poprzedniego generowania. Nowe i poprawione nagrania powstają tylko w OmniVoice.
+- Paczka tylko dla Windows, bez wydania na GitHub. Generowanie i testy idą bez pytań do końca.
+- Zmiany działają w osobnym wydaniu `t1`, więc `m3` zostaje bez zmian.
+
+**Uzasadnienie:** Prośba i QA użytkownika 2026-11-12 przed rozgrywkami testowymi.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

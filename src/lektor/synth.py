@@ -75,6 +75,14 @@ def inherited():
     return json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
 
 
+def link_or_copy(src, dst):
+    """Twardy link (ten sam dysk, bez kopii audio), a gdy się nie da, kopia."""
+    try:
+        os.link(src, dst)
+    except OSError:
+        shutil.copy2(src, dst)
+
+
 def inherit(con, source=None):
     """Wybrane podejścia fragmentów o tym samym id (głos z SHA referencji, tekst, tempo) z poprzedniego wydania."""
     src = os.path.join(paths.WORK, 'audio', source or paths.PREVIOUS[paths.RELEASE])
@@ -85,7 +93,7 @@ def inherit(con, source=None):
     for fid, c in out.items():
         dst = take_path(fid, c['take'])
         if not os.path.exists(dst):
-            shutil.copy2(os.path.join(src, 'takes', os.path.basename(dst)), dst)
+            link_or_copy(os.path.join(src, 'takes', os.path.basename(dst)), dst)
     with open(os.path.join(paths.AUDIO, 'inherited.json'), 'w', encoding='utf-8') as fh:
         json.dump(out, fh, indent=1)
     return out
@@ -219,7 +227,8 @@ def jobs(con, voices=None, retake=None, refs=None, order=None):
             yield r['id'], take, r['text'], r['voice'], styled_speed(r['speed'], refs.get(r['voice']))
 
 
-def generate(limit=None, voices=None, retake_file=None, acts=None):
+def generate(limit=None, voices=None, retake_file=None, acts=None, groups=None, only=None):
+    """groups: tylko fragmenty używane przez kwestie tych grup (paczka testowa, D101); only: tylko te fragmenty."""
     import soundfile as sf
     import torch
     con = db.connect(paths.DB)
@@ -230,7 +239,7 @@ def generate(limit=None, voices=None, retake_file=None, acts=None):
     state = load_state()
     done = inherit(con) if paths.RELEASE in paths.PREVIOUS else {}
     order = None
-    if paths.RELEASE == 'm3':
+    if paths.base() == 'm3':
         from . import progress
         order = {f: progress.rank(g) for f, g in progress.packages(con).items()}
     todo = [j for j in jobs(con, voices, retake, refs, order) if (j[0], j[1]) not in state and j[0] not in done]
@@ -238,6 +247,12 @@ def generate(limit=None, voices=None, retake_file=None, acts=None):
         from . import progress
         keep = progress.in_acts(con, acts)
         todo = [j for j in todo if j[0] in keep]
+    if groups:
+        from . import progress
+        keep = progress.in_groups(con, groups)
+        todo = [j for j in todo if j[0] in keep]
+    if only is not None:
+        todo = [j for j in todo if j[0] in only]
     if limit:
         todo = todo[:limit]
     print('do wygenerowania: %d podejść, %d znaków' % (len(todo), sum(len(j[2]) for j in todo)), file=sys.stderr, flush=True)

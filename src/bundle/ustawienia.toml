@@ -28,6 +28,7 @@ cele = true                 # cele misji
 podroze = true              # wydarzenia w podróży
 miasto = true               # teksty w mieście
 opis_misji = true           # nazwa i opis misji po wybraniu jej na mapie
+zdolnosci = true            # nazwa i opis zdolności broni albo talizmanu w oknie ataku
 
 # Start lektora razem z grą.
 [plugin]

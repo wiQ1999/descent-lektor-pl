@@ -1,6 +1,8 @@
 """Reżyseria kwestii: tempo i pauzy (D34), przełącznik kategorii (D21, D30, D31), klucz cache fragmentu."""
 import hashlib
 
+from . import paths
+
 # Ustawienia syntezy (D33, D42). Zmiana któregokolwiek pola zmienia klucze cache wszystkich fragmentów.
 MODEL = {'name': 'omnivoice', 'rev': '08be0b4', 'dtype': 'fp32', 'num_step': 32, 'guidance_scale': 2.0}
 MODEL_ID = 'omnivoice-08be0b4-fp32-s32-cfg2.0'
@@ -24,6 +26,8 @@ ELEVEN_TAKE0 = 100      # podejścia ElevenLabs mają numery od 101; podejścia 
 
 
 def engine(voice):
+    if paths.RELEASE in paths.LOCAL_ONLY:
+        return 'omnivoice'
     return 'elevenlabs' if voice in ELEVEN_VOICES else 'omnivoice'
 
 
@@ -36,6 +40,7 @@ SCENE_PAUSE = 0.35
 PAUSE = 0.25
 SPEED_MIN, SPEED_MAX = 1.2, 1.4
 SPEED_FROM, SPEED_TO = 80, 300          # znaki: do 80 tempo bazowe, od 300 maksymalne (wstępnie, D34)
+ONE_TEMPO = ('t1',)     # E16 (D101): narrator w zakresie testu zawsze SPEED_MAX (poza narracją scen), także wartości luk
 
 TOGGLES = {
     'dialog': 'dialogi',

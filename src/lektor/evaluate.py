@@ -219,7 +219,7 @@ def load_evals(name='evals.jsonl'):
     return out
 
 
-def evaluate(acts=None, fp32=False, asr=True, until=None, later=()):
+def evaluate(acts=None, fp32=False, asr=True, until=None, later=(), groups=None):
     """acts: tylko fragmenty z tych części gry (lektor.progress.in_acts, wydanie częściowe D96). asr=False: szybka
     ocena bez Whispera do evals_quick.jsonl. until: czas (epoch), po którym ocena kończy się po bieżącym podejściu.
     W m3 kolejność to najpierw pierwsze podejścia w kolejności gry, potem pozostałe podejścia bohaterów. later: grupy
@@ -235,7 +235,11 @@ def evaluate(acts=None, fp32=False, asr=True, until=None, later=()):
         from . import progress
         keep = progress.in_acts(con, acts)
         todo = [t for t in todo if t['fragment'] in keep]
-    if paths.RELEASE == 'm3':
+    if groups:
+        from . import progress
+        keep = progress.in_groups(con, groups)
+        todo = [t for t in todo if t['fragment'] in keep]
+    if paths.base() == 'm3':
         from . import progress
         pkg = progress.packages(con)
         def first(t):   # 0: ponowne podejście, 1: pierwsze podejście, 2: pozostałe podejścia bohaterów

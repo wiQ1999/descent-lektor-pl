@@ -5,7 +5,7 @@ import tomllib
 from .. import paths
 
 TOGGLES = ('narracja', 'dialogi', 'komunikaty_questu', 'walka_teren', 'ui', 'okna_wyboru', 'nagrody',
-           'aktywacje', 'cele', 'podroze', 'miasto', 'opis_misji')    # D21, aktywacje (D30), cele (D31), D66, D55
+           'aktywacje', 'cele', 'podroze', 'miasto', 'opis_misji', 'zdolnosci')    # D21, D30, D31, D66, D55, E16 (D101)
 
 DEFAULT = '''# Companion lektora PL. Zmiany działają po ponownym uruchomieniu companiona.
 

@@ -4,7 +4,7 @@ import json
 import os
 import re
 
-from . import __version__, db, paths, scope
+from . import __version__, abilities, db, paths, scope, speakers
 from . import direction as D
 from . import game as G
 from . import segment as S
@@ -124,6 +124,8 @@ def line_parts(r, release='m1'):
     czytamy zwykłą pisownią zamiast go wycinać. Postać nie czyta wstawek scenicznych (D95). M1 i M2 bez zmian."""
     if release in ('m1', 'm2'):
         return speech_parts(r, release)
+    if r.get('split'):      # E16 (D101): okno narratora z wypowiedziami postaci, każdy kawałek swoim głosem
+        return [p for voice, text in r['split'] for p in speech_parts(spoken(r, caps_to_speech(text), voice), release)]
     character = r['voice'] != 'narrator' and r['category'] != 'opcja_wyboru'
     tail = system_tail(r['text_raw']) if r['category'] == 'dialog' and r['voice'] != 'narrator' else None
 
@@ -189,11 +191,55 @@ def loot_texts(game, terms, release='m2'):
     return {k: v for k, v in out.items() if v}
 
 
+def split_voices(records, release):
+    """E16 (D101): okna narratora z zakresu testu dzielone na narrację i wypowiedzi postaci (speakers_t1.json).
+    Wypowiedź bohatera z luki {N} ('arg:N') daje wersje KLUCZ#bohater; companion wybiera ją po argumencie N,
+    a kwestia bazowa (bez znanego bohatera) czyta tę wypowiedź narratorem."""
+    groups = scope.TEST_GROUPS.get(release)
+    if not groups:
+        return records
+    overrides = speakers.load_overrides()
+    out = []
+    for r in records:
+        out.append(r)
+        if not (r['tts'] and r['voice'] == 'narrator' and r['category'] != 'opcja_wyboru' and '#' not in r['key']
+                and r['group'] in groups):
+            continue
+        types = [a.get('type') for a in r['args']]
+        parts = speakers.parts(r['key'], clean_markup(r['text_raw']), overrides, types)
+        if not parts:
+            continue
+        hero_args = sorted({v for v, _ in parts if v.startswith('arg:')})
+        r['split'] = [('narrator' if ':' in v else v, t) for v, t in parts]
+        if hero_args:
+            r['hero_variant'] = sorted(set(r['hero_variant']) | {'ARG:%s' % v.split(':')[1] for v in hero_args})
+            for hero in scope.HEROES.values():
+                out.append(dict(r, key='%s#%s' % (r['key'], hero),
+                                split=[(hero if v.startswith('arg:') else 'narrator' if ':' in v else v, t) for v, t in parts]))
+    return out
+
+
+def piece_speed(r, voice, text, release):
+    """Tempo kawałka. E16 (D101): narrator ma jedno tempo (SPEED_MAX) poza narracją scen, a wypowiedź postaci
+    w oknie narratora dostaje tempo od długości samej wypowiedzi."""
+    if r['speed'] is None or release not in D.ONE_TEMPO or r['group'] not in scope.TEST_GROUPS.get(release, ()):
+        return r['speed']
+    if voice == 'narrator':
+        return D.SPEED_MAX
+    if r.get('split'):
+        return D.tempo(r['category'], len(text))[0]
+    return r['speed']
+
+
 def build(path=None, release='m1', only=None):
     path = path or paths.DB
+    base = paths.base(release)
     game = G.Game()
-    terms = game.terms(game_order=release == 'm3')
-    records, values, info = scope.collect(game, terms, release, only)
+    terms = game.terms(game_order=base == 'm3')
+    records, values, info = scope.collect(game, terms, base, only)
+    if release in scope.TEST_GROUPS:      # E16 (D101): okno zdolności w oknie ataku
+        records += abilities.records(game, terms, {r['key'] for r in records})
+    records = split_voices(records, release)
     lines = {r['key'] for r in records if r['tts']}
     refs = load_refs()
     fragments, segments, slot_values, entities = {}, [], {}, {}
@@ -205,7 +251,7 @@ def build(path=None, release='m1', only=None):
         return fid
 
     for r in records:
-        r['toggle'] = D.toggle(r['category'], r['key'].split('#')[0], r['group'])
+        r['toggle'] = r.get('toggle') or D.toggle(r['category'], r['key'].split('#')[0], r['group'])
         if not r['tts']:
             continue
         r['text_norm'] = normalize(r['text_raw'])
@@ -213,7 +259,7 @@ def build(path=None, release='m1', only=None):
         r['speed'], r['pause'] = D.tempo(r['category'], r['chars'])
         # Wartości luk są krótkie i wspólne dla wielu kwestii: jedno tempo (D34 dla krótkiego fragmentu).
         value_speed = None if r['speed'] is None else D.SPEED_MIN
-        parts = line_parts(r, release)
+        parts = line_parts(r, base)
         for idx, (kind, voice, data) in enumerate(parts):
             nxt = parts[idx + 1][0] if idx + 1 < len(parts) else None
             gap = None if nxt is None else QUOTE_GAP if kind == 'quote' else \
@@ -226,19 +272,21 @@ def build(path=None, release='m1', only=None):
                 if not texts and data['type'] != 'RawText':
                     r['note'] = 'luka bez znanych wartości (%s): fallback' % data['type']
                 for value, text in texts.items():
-                    fid = None if text is None else frag(voice, text, value_speed, 'value')
+                    speed = piece_speed(r, voice, text, release) if voice == 'narrator' else value_speed
+                    fid = None if text is None else frag(voice, text, speed, 'value')
                     slot_values[r['key'], data['arg'], value] = fid
                     if fid and data['type'] == 'EntityName' and voice == 'narrator':
                         entities[squash(text)] = fid
             elif re.search(r'\w', data):
-                seg.update(text=data, fragment=frag(voice, data, r['speed'], kind))
+                seg.update(text=data, fragment=frag(voice, data, piece_speed(r, voice, data, release), kind))
             else:
                 seg.update(text=data)   # sama interpunkcja: bez audio, companion robi tylko pauzę
             segments.append(seg)
 
     if release != 'm1':
-        for value, text in loot_texts(game, terms, release).items():
-            slot_values[LOOT, 0, value] = frag('narrator', text, D.SPEED_MIN, 'value')
+        loot_speed = D.SPEED_MAX if release in D.ONE_TEMPO else D.SPEED_MIN
+        for value, text in loot_texts(game, terms, base).items():
+            slot_values[LOOT, 0, value] = frag('narrator', text, loot_speed, 'value')
         for name, fid in entities.items():      # lista łupu kończy się poleceniem usunięcia wroga (REMOVE_ENTITY)
             slot_values.setdefault((LOOT, 0, name), fid)
 
