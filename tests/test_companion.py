@@ -59,6 +59,7 @@ LINES = [   # klucz, kategoria, przełącznik, tts, tekst
     ('TREASURE', 'system_nagroda', 'nagrody', 1, '{0} {1}'),
     ('MAP_NAME', 'opis_misji', 'opis_misji', 1, 'Cena wiedzy'),
     ('MAP_DESC', 'opis_misji', 'opis_misji', 1, 'Stara wieża czeka.'),
+    ('DOTS', 'dialog', 'dialogi', 1, '…'),
 ]
 SEGMENTS = [    # klucz, idx, rodzaj, luka, typ luki, fragment, pauza po
     ('HELLO', 0, 'text', None, None, 'f_hello', 0.3),
@@ -85,6 +86,7 @@ SEGMENTS = [    # klucz, idx, rodzaj, luka, typ luki, fragment, pauza po
     ('TREASURE', 0, 'slot', 1, 'RawText', None, 0.0),
     ('MAP_NAME', 0, 'text', None, None, 'f_map_name', 0.0),
     ('MAP_DESC', 0, 'text', None, None, 'f_map_desc', 0.0),
+    ('DOTS', 0, 'text', None, None, None, 0.0),
 ]
 VALUES = [
     ('SPAWN', 0, 'ENEMY_BANDIT', 'f_bandit'), ('SPAWN', 0, 'ENEMY_WITCH', 'f_witch'), ('SPAWN', 0, 'HERO_KEHLI', 'f_keli'),
@@ -283,6 +285,18 @@ def test_choice_reply_holds_next_window(run):
     assert run().latency['wait'] == [0.0]
 
 
+def test_window_closed_while_waiting_is_logged(run):
+    run(msg(1, 'HELLO'))
+    run(close(1, choice_key='CHOICE_A'), 0.3)
+    run(msg(2, 'HELLO'))
+    run(msg(3, 'GOAL'), 0.1)
+    d = run(close(3), 0.2)
+    assert playing(d) == 'CHOICE_A' and d.pending is None
+    dropped = [(r['key'], r['reason'], r['reply']) for r in run.log if r['ev'] == 'porzucone']
+    assert dropped == [('HELLO', 'nowe_okno', 'CHOICE_A'), ('GOAL', 'zamknięte', 'CHOICE_A')]
+    assert d.summary()['dropped_windows'] == {'nowe_okno': 1, 'zamknięte': 1}
+
+
 def test_answer_repeated_by_next_line_is_read_once(run):
     run(msg(1, 'HELLO'))
     run(close(1, choice_key='ANSWER'), 0.3)
@@ -442,6 +456,14 @@ def test_summary_coverage(run):
     s = run.d.summary()
     assert s['windows'] == 3 and s['windows_audio'] == 1 and s['coverage'] == pytest.approx(1 / 3, abs=1e-3)
     assert {m['key'] for m in s['missing']} == {'NOPE', 'COUNT'}
+
+
+def test_line_with_nothing_to_read_is_empty_not_missing(run):
+    run(msg(1, 'HELLO'))
+    d = run(msg(2, 'DOTS'), 0.2)
+    s = d.summary()
+    assert playing(d) is None and d.outcomes['message', 'pusta'] == 1
+    assert s['windows_empty'] == 1 and s['windows_runtime_only'] == 0 and s['coverage_readable'] == 1.0
 
 
 # ---------- konfiguracja ----------

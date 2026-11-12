@@ -988,6 +988,13 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - Prośba użytkownika 2026-11-12 o aktualizację bazy według ustalonych poprawek.
 - Sprawdzenie na dziennikach z partii: wszystkie okna oprócz trzech zamierzenie cichych mają pełne rozwiązanie w nowej bazie (wcześniej 15 okien z ciszą albo brakami i 1 ze złą nazwą).
 
+### D99 · 2026-11-12 · E14: diagnostyka companiona
+**Decyzja:**
+- Okno czekające na koniec odpowiedzi z wyboru (D48), które nie zagra, zostawia w dzienniku wpis `porzucone` z powodem (`zamknięte`, `nowe_okno`, `scena`). Podsumowanie liczy je w `dropped_windows`.
+- Kwestia bez niczego do czytania ma wynik `pusta` zamiast `brak_audio` i nie obniża pokrycia.
+
+**Uzasadnienie:** Zgoda użytkownika 2026-11-12 na wnioski 1–2 z `analysis/E14_PARTY.md`. Cisza zamierzona i cisza z błędu wyglądały w dzienniku tak samo, a porzucone okno nie zostawiało śladu.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

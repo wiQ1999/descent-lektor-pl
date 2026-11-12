@@ -132,6 +132,53 @@ Znalezione przy okazji:
 - `Game.behaviours` trzyma nazwy klas pod kluczem `(m_FileID, m_PathID)`, który jest względny do bundla. Między bundlami nazwy się mylą (17 526 z 48 656 komponentów). Modele danych (wrogowie, misje, łup, przerywniki) są poprawne. `game.previews` rozpoznaje `GameInteractable` po polach, więc błąd go nie dotyczy.
 - 17 innych kwestii systemowych (np. `TACTIC_PHASE_DESCRIPTION_DARK_PRAYER`, `APPLY_AFFLICTION_DAMAGE`, `UI_DEFEAT_HERO`) też ma przełącznik `nagrody` z kategorii zastępczej. Bez zmian, do przeglądu.
 
-Nadal otwarte: punkty 1–2 (diagnostyka), 7–8 (D48, okno ataku) i generowanie nowych fragmentów.
+Nadal otwarte: punkty 7–8 (D48, okno ataku) i generowanie nowych fragmentów.
+
+## Diagnostyka companiona (D99, 2026-11-12)
+
+Punkty 1–2 są w `director`:
+- wpis `porzucone` (`reason`: `zamknięte`, `nowe_okno`, `scena`; `waited_s`, `reply`), gdy okno czekające na odpowiedź z wyboru nie zagra; podsumowanie ma `dropped_windows`;
+- wynik `pusta` dla kwestii bez niczego do czytania (wielokropek, wskazówka D85, pusta luka). Podsumowanie liczy je w `windows_empty` i nie wlicza do `coverage_readable`.
+
+Na dziennikach z partii trzy zamierzenie ciche okna mają teraz wynik `pusta` zamiast `brak_audio`.
+
+## Okno w trakcie odpowiedzi z wyboru (D48): przebieg
+
+Sytuacja nie pochodzi ze zrzutu. Jest w dziennikach krótkiej sesji testowej na Windows (14:40), przy studni w Q1. Czas liczony od otwarcia okna studni (`TERRAIN_WELL_BRYNN`):
+
+| Czas | Gra | Lektor |
+|---|---|---|
+| 0,0 s | okno studni z opcjami | czyta opis studni (3,7 s) |
+| 0,9 s | gracz wybiera wyzwanie (`TERRAIN_WELL_BRYNN_CHALLENGE`), od razu otwiera się okno testu (`…_CHALLENGE_TEST`) | przerywa opis, czyta wybraną opcję głosem Brynn (3,5 s); okno testu czeka |
+| 3,2 s | gracz zamyka okno testu, otwiera się wynik (`…_CHALLENGE_PASS`) | opcja nadal gra; okno testu przepada, wynik czeka |
+| 4,1 s | gracz zamyka wynik | wynik przepada |
+| 4,3 s | | koniec opcji |
+
+Oba okna po wyborze przepadły, bo gracz zamknął je, zanim skończyła się czytana opcja. W partii na Macu nie zdarzyło się to ani razu.
+
+## Okno ataku: zdolności przedmiotów
+
+Okno ataku (`UIHeroAttackDialog`) po potwierdzeniu trafień pokazuje listę aktywowanych zdolności. Każdą pozycję wypełnia `UIAbilityTrigger.SyncTo(klucz nazwy, klucz opisu[, klucz dodatku])`: nagłówek `WEAPON_ABILITY_TRIGGER` z nazwą zdolności i opis pod nim. Źródła:
+- zdolności części B i C broni, które zadziałały w tym ataku (`HeroAttackAlgorithm`);
+- talizman bohatera z premią do obrażeń (np. `TRINKET1_ID`, Bloodthirsty Bracers) i talizman sojusznika (Stormbound Pendant);
+- dla rezonatora dodatek w nawiasie z opisem zdolności części C.
+
+Dane z kopii gry (`analysis/work/out/session_20261111/attack_abilities.json`):
+
+| | Modele | Klucze | Teksty unikalne | Znaki |
+|---|---|---|---|---|
+| zdolności broni | 386 | 769 | razem 705 | razem 64 914 |
+| talizmany | 40 | 80 | | |
+| same nazwy | | | 353 | 6 030 |
+
+Teksty nie mają luk `{n}`. Opisy mają znaczniki słów kluczowych (`<style>`, `<link>`), które `normalize` usuwa. W bazie `m3` są tylko 2 z tych kluczy, a `WEAPON_ABILITY_TRIGGER` nie ma wcale.
+
+Przykłady: `WEAPON_ABILITY_ADAPTIVE_HUNGER` (opis 124 znaki, ulepszona wersja `+` 181), `WEAPON_ABILITY_AFTERSHOCK` (151), `WEAPON_PART_C_SPEAR_5` (164), `TRINKET13_ID` (151, ulepszony 272).
+
+Co trzeba zrobić:
+1. Plugin: nowe źródło `ability`, czyli hook na `UIAbilityTrigger.SyncTo` z kluczami (bez liczb) i zamknięcie przy `OnButtonFinishClicked` / `OnButtonCancelClicked`. Test w grze na Windows i Macu.
+2. Baza: kwestie z modeli broni i talizmanów, nagłówek `WEAPON_ABILITY_TRIGGER` z luką na nazwę.
+3. Companion: kolejka zdolności w kolejności okna, czytanie przerwane po zamknięciu okna.
+4. Generowanie: nazwy i opisy to ok. 65 tys. znaków (ok. 70 min GPU na podejście), same nazwy ok. 6 tys. (ok. 7 min).
 
 Uwaga do narzędzia: `hook_coverage.py` zawsze zapisuje szczegóły do `analysis/work/out/e1_coverage.json` i nadpisuje wynik E1. Plik E1 odtworzony z pięciu dzienników z 2026-10-31 (343 okna), szczegóły partii leżą w `session_20261111/mac/coverage_details.json`. Warto dodać opcję `--out`.

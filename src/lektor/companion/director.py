@@ -72,6 +72,7 @@ class Director:
         self.missing = collections.Counter()    # (źródło, klucz, braki)
         self.latency = {'start': [], 'stop': [], 'wait': []}
         self.cut = 0                            # okna przerwane przed końcem audio
+        self.dropped = collections.Counter()    # powód -> okna czekające na odpowiedź, które nie zagrały (D48)
         self._tokens = itertools.count(1)
 
     # ---------- zdarzenia ----------
@@ -103,7 +104,7 @@ class Director:
         elif name in ('scene', 'stop'):
             self.story_open.clear()
             self.queue.clear()
-            self.pending = None
+            self._drop_pending('scena', recv)
             self._stop(recv)
 
     def tick(self, now=None):
@@ -142,6 +143,8 @@ class Director:
             outcome = 'brak_klucza'
         elif not self.toggles.get(u.toggle, True):
             outcome = 'wyłączone'
+        elif not u.pieces and not u.missing:
+            outcome = 'pusta'           # nic do czytania: sam wielokropek, wskazówka „X WYBIERA…” (D85), pusta luka
         elif not u.pieces:
             outcome = 'brak_audio'
         elif src == 'objective' and recv - self.nested.get(u.key, -1e9) < DUP_S:
@@ -171,6 +174,7 @@ class Director:
                 self._stop(recv)
             return
         if self.current is not None and self.current.src == 'choice':
+            self._drop_pending('nowe_okno', recv)
             self.pending = item
             return
         self._start(item, recv)
@@ -180,13 +184,23 @@ class Director:
         self.last_window = recv
         self.story_open.pop(wid, None)
         if self.pending is not None and self.pending.wid == wid:
-            self.pending = None
+            self._drop_pending('zamknięte', recv)
         if self.current is not None and self.current.src == kind and self.current.wid == wid:
             self._stop(recv)
         if ev.get('choice_key') and not ev.get('back') and ev['choice_key'] not in self.lib.generic:
             item = self._make('choice', {'id': wid}, recv, key=ev['choice_key'])
             if item is not None:
                 self._start(item, recv)
+
+    def _drop_pending(self, reason, recv):
+        """Okno czekało na koniec odpowiedzi z wyboru (D48) i nie zagra: wpis w dzienniku zamiast ciszy bez śladu."""
+        item, self.pending = self.pending, None
+        if item is None:
+            return
+        self.dropped[reason] += 1
+        self.log({'ev': 'porzucone', 'token': item.token, 'src': item.src, 'id': item.wid, 'key': item.key,
+                  'reason': reason, 'waited_s': round(recv - item.recv, 2),
+                  'reply': self.current.key if self.current is not None else None})
 
     def _enqueue(self, src, ev, recv):
         if not ev.get('key'):
@@ -283,17 +297,19 @@ class Director:
                 windows[outcome] += n
         total = sum(windows.values()) - windows['bez_lektora']      # przerywniki z dubbingiem gry (D14)
         audio = windows['pełne'] + windows['częściowe']
-        # brak_audio: kwestia z samych luk znanych dopiero w grze (łup), pominięta według D44
-        readable = total - windows['brak_audio']
+        # brak_audio: kwestia z samych luk znanych dopiero w grze (łup), pominięta według D44; pusta: nic do czytania
+        readable = total - windows['brak_audio'] - windows['pusta']
         return {
             'windows': total,
             'windows_audio': audio,
             'windows_full': windows['pełne'],
             'windows_runtime_only': windows['brak_audio'],
+            'windows_empty': windows['pusta'],
             'coverage': round(audio / total, 4) if total else None,
             'coverage_readable': round(audio / readable, 4) if readable else None,
             'outcomes': {'%s/%s' % k: v for k, v in sorted(self.outcomes.items())},
             'missing': [{'src': s, 'key': k, 'missing': list(m), 'n': n} for (s, k, m), n in self.missing.most_common()],
             'cut_windows': self.cut,
+            'dropped_windows': dict(self.dropped),
             'latency': {k: stats(v) for k, v in self.latency.items()},
         }
