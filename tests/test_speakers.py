@@ -21,6 +21,27 @@ def test_speech_after_sentence_end():
     assert kinds('Kowal odkłada młot. – Gotowe, panie.') == [('n', 'Kowal odkłada młot.'), ('s', 'Gotowe, panie.')]
 
 
+def test_speech_without_opening_dash_before_attribution():
+    """D102: akapit zaczyna się od mowy, półpauza dopiero przed wtrąceniem z czasownikiem mówienia."""
+    assert kinds('Uwaga! Ktoś idzie – mówi cicho Brynn.') == [('s', 'Uwaga! Ktoś idzie'), ('n', 'mówi cicho Brynn.')]
+    assert kinds('Droga skręca – wąska i błotnista – w las.') == [('n', 'Droga skręca – wąska i błotnista – w las.')]
+
+
+def test_letter_in_quotes_read_by_author_before_and_over_paragraphs():
+    text = 'Na stole leży list od Adelynn.\n\n„Wracajcie szybko! Czekamy na was.\n\nDo zobaczenia w zamku”.\n\nChowasz list.'
+    pieces = S.split(text)
+    assert [k for k, _, _ in pieces] == ['n', 'q', 'q', 'n']
+    assert S.parts('K', text, {}) == [('narrator', 'Na stole leży list od Adelynn.'),
+                                      ('adelynn', 'Wracajcie szybko! Czekamy na was. Do zobaczenia w zamku.'),
+                                      ('narrator', 'Chowasz list.')]
+
+
+def test_short_or_authorless_quotes_stay_narration():
+    assert S.parts('K', 'Na tabliczce widnieje napis: „Nie wchodzić”.', {}) is None
+    assert S.parts('K', 'Ktoś wyrył na ścianie: „Uciekajcie stąd, póki możecie!”.', {}) is None
+    assert [k for k, _, _ in S.split('– Mówili: „Pomóż nam, proszę, szybko!” – opowiada Kehli.')] == ['s', 'n']
+
+
 def test_guess_name_after_and_continuation():
     pieces = S.split('– Idziemy – mówi Syrus – a potem odpoczniemy.')
     assert [v for v, _ in S.guess('X', pieces)] == ['syrus', 'syrus']

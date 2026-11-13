@@ -7,8 +7,10 @@
                                               następna kwestia, milknie i tekst czyta okno (D72)
   cel misji, aktywacja wroga, opis misji      czekają w kolejce na ciszę (D45); nowszy cel zastępuje starszy,
                                               zamknięta aktywacja wypada z kolejki, a cel odczytany już w oknie
-                                              (wartość luki) nie gra drugi raz; ten sam cel ze zmienionym
+                                              (wartość luki albo tekst celu w tekście okna, D102) nie gra
+                                              drugi raz; ten sam cel ze zmienionym
                                               licznikiem gra sam licznik (D64); nowszy opis zastępuje starszy
+  okno ataku: zdolności, obrona wroga         czekają w kolejce jak aktywacja, zamknięcie okna je wycofuje (D101, D102)
   scena, stop                                 zatrzymują wszystko
   przełącznik kategorii wyłączony (D21)       okno nie gra, ale zatrzymuje audio poprzedniego okna
 
@@ -24,22 +26,30 @@ import time
 from .player import CLOSE_FADE_S, FADE_S
 
 WINDOWS = ('message', 'story')
-QUEUED = ('objective', 'activation', 'details', 'ability')
+QUEUED = ('objective', 'activation', 'details', 'ability', 'defense')
 SETTLE = 0.35           # cisza po zdarzeniu okna, zanim ruszy kolejka: zamknięcie i nowe okno przychodzą razem
 DUP_S = 30.0            # cel odczytany w oknie w tym czasie nie gra ponownie
 DETAILS_GAP = 0.35      # między nazwą a opisem celu na mapie
 HERO_KEY = re.compile(r'^HERO_([A-Z]+)_NAME$')
+COUNTER = re.compile(r'\(\s*\d+\s*/\s*\d+\s*\)')
+MARKUP = re.compile(r'<[^>]*>')
+
+
+def plain(text):
+    """Tekst okna albo celu do porównania (D102): bez znaczników, licznika (1/4) i wielkości liter."""
+    return ' '.join(COUNTER.sub(' ', MARKUP.sub(' ', text or '')).split()).strip(' .!?…').lower()
 
 
 @dataclasses.dataclass
 class Item:
     token: int
-    src: str            # message | story | choice | objective | activation | details | ability
+    src: str            # message | story | choice | objective | activation | details | ability | defense
     wid: int            # id okna z pluginu (cel: None)
     key: str
     u: object           # library.Utterance
     recv: float
     requeued: bool = False
+    text: str = ''      # tekst z pluginu (cel: do porównania z oknami, D102)
 
 
 def speaking_hero(ev):
@@ -63,6 +73,7 @@ class Director:
         self.queue = collections.deque()
         self.story_open = {}                    # id -> zdarzenie open (gramy po shown)
         self.nested = {}                        # klucz odczytany jako wartość luki -> czas
+        self.read = collections.deque(maxlen=16)  # (czas, tekst) okien, które zagrały (D102)
         self.last_window = -1e9
         self.items = {}                         # token -> Item
         self.trigger = {}                       # token -> (czas zdarzenia, start od razu)
@@ -105,6 +116,10 @@ class Director:
             self._ability(ev, recv)
         elif name == 'close' and kind == 'ability':
             self._withdraw(lambda it: it.src == 'ability' and it.wid == ev.get('id'), recv)
+        elif name == 'open' and kind == 'defense':
+            self._enqueue('defense', ev, recv)       # obrona wroga w oknie ataku (D102)
+        elif name == 'close' and kind == 'defense':
+            self._withdraw(lambda it: it.src == 'defense' and it.wid == ev.get('id'), recv)
         elif name in ('scene', 'stop'):
             self.story_open.clear()
             self.queue.clear()
@@ -131,6 +146,8 @@ class Director:
 
     def _utterance(self, src, ev, key):
         args = ev.get('args') or []
+        if src == 'defense':
+            return self.lib.defense(key)
         if src == 'objective' and ev.get('prev_key') == key and key in self.lib.lines:
             u = self.lib.counter(key, args)     # ten sam cel, zmieniony licznik (D64)
             if u is not None:
@@ -140,7 +157,7 @@ class Director:
     def _make(self, src, ev, recv, key=None):
         key = key or ev.get('key')
         u = self._utterance(src, ev, key)
-        item = Item(next(self._tokens), src, ev.get('id'), key, u, recv)
+        item = Item(next(self._tokens), src, ev.get('id'), key, u, recv, text=ev.get('text') or '')
         if not u.tts:
             outcome = 'bez_lektora'
         elif u.via is None:
@@ -151,7 +168,7 @@ class Director:
             outcome = 'pusta'           # nic do czytania: sam wielokropek, wskazówka „X WYBIERA…” (D85), pusta luka
         elif not u.pieces:
             outcome = 'brak_audio'
-        elif src == 'objective' and recv - self.nested.get(u.key, -1e9) < DUP_S:
+        elif src == 'objective' and (recv - self.nested.get(u.key, -1e9) < DUP_S or self._read_in_window(ev, recv)):
             outcome = 'w_oknie'
         else:
             outcome = 'pełne' if not u.missing else 'częściowe'
@@ -162,6 +179,11 @@ class Director:
                   'via': u.via, 'toggle': u.toggle, 'outcome': outcome, 'pieces': len(u.pieces),
                   'missing': sorted(set(u.missing))})
         return item if outcome in ('pełne', 'częściowe') else None
+
+    def _read_in_window(self, ev, recv):
+        """Cel, którego tekst stoi w oknie przeczytanym przed chwilą („Zaktualizowano zadanie: …”, D102)."""
+        goal = plain(ev.get('text'))
+        return bool(goal) and any(recv - t < DUP_S and goal in text for t, text in self.read)
 
     def _drop_repeated_answer(self, key, recv):
         """Okno otwiera się tuż po wyborze, więc odpowiedź ledwo zaczęła grać: nikt nie usłyszy jej dwa razy (D72)."""
@@ -180,8 +202,24 @@ class Director:
         if self.current is not None and self.current.src == 'choice':
             self._drop_pending('nowe_okno', recv)
             self.pending = item
+        else:
+            self._start(item, recv)
+        self._drop_read_goals(ev, recv)
+
+    def _drop_read_goals(self, ev, recv):
+        """Okno, które gra, zapamiętuje tekst; cel zgłoszony przed nim z tym samym tekstem wypada z kolejki (D102)."""
+        text = plain(ev.get('text'))
+        if not text:
             return
-        self._start(item, recv)
+        self.read.append((recv, text))
+        for it in [it for it in self.queue if it.src == 'objective' and plain(it.text) and plain(it.text) in text]:
+            self.queue.remove(it)
+            self.log({'ev': 'item', 'token': it.token, 'src': 'objective', 'id': None, 'key': it.key,
+                      'resolved': it.u.key, 'via': it.u.via, 'toggle': it.u.toggle, 'outcome': 'w_oknie',
+                      'pieces': len(it.u.pieces), 'missing': []})
+            if not it.requeued:
+                self.outcomes['objective', 'pełne'] -= 1
+                self.outcomes['objective', 'w_oknie'] += 1
 
     def _close(self, kind, ev, recv):
         wid = ev.get('id')

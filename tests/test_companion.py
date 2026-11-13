@@ -95,6 +95,7 @@ VALUES = [
     ('NEW_GOAL', 0, 'GOAL', None),
     ('ACT', 0, 'ENEMY_BANDIT', 'f_bandit'),
     ('GOAL_COUNT', 0, '3', 'f_three'),
+    ('UI_ENEMYDEFENSIVE_REMINDER', 0, 'ENEMY_DEFEND_ZEALOT', 'f_bandit'),
     (LOOT, 0, 'do ekwipunku trafia', 'f_loot_head'), (LOOT, 0, 'złoto', 'f_gold'), (LOOT, 0, '15', 'f_fifteen'),
     (LOOT, 0, 'mikstura zdrowia', 'f_potion'),
 ]
@@ -417,6 +418,16 @@ def test_ability_tiles_read_name_and_description_in_turn_and_stop_on_close(run):
     assert playing(d) is None and not d.queue
 
 
+def test_defense_in_attack_window_reads_value_fragment_and_stops_on_close(run):
+    """D102: obrona wroga z okna ataku gra nagranie wartości luki przypomnienia o obronie (przełącznik zdolności)."""
+    d = run({'ev': 'open', 'kind': 'defense', 'id': 8, 'key': 'ENEMY_DEFEND_ZEALOT'}, 1.0)
+    assert [p[0] for p in d.current.u.pieces] == ['f_bandit'] and d.current.u.toggle == 'zdolnosci'
+    d = run({'ev': 'close', 'kind': 'defense', 'id': 8}, 0.1)
+    assert playing(d) is None
+    d = run({'ev': 'open', 'kind': 'defense', 'id': 9, 'key': 'ENEMY_DEFEND_UNKNOWN'}, 0.1)
+    assert d.outcomes['defense', 'brak_klucza'] == 1
+
+
 def test_objective_waits_and_newest_replaces(run):
     run(msg(1, 'HELLO'))
     run({'ev': 'objective', 'key': 'GOAL'})
@@ -466,6 +477,25 @@ def test_objective_already_read_in_window_is_skipped(run):
     run(msg(1, 'NEW_GOAL', args=[{'i': 0, 'type': 'LocalizationKey', 'as_key': 'GOAL'}]))
     d = run({'ev': 'objective', 'key': 'GOAL'}, 0.1)
     assert not d.queue and d.outcomes['objective', 'w_oknie'] == 1
+
+
+def test_objective_text_read_in_window_is_skipped(run):
+    """D102: okno „Zaktualizowano zadanie: <cel> (1/4)” ma cel w tekście, a nie w luce; zdarzenie celu nie gra."""
+    run(msg(1, 'HELLO', text='Zaktualizowano zadanie: <b>Znajdź klucz!</b> (1/4)'))
+    d = run({'ev': 'objective', 'key': 'GOAL', 'text': 'Znajdź klucz! (2/4)'}, 0.1)
+    assert not d.queue and d.outcomes['objective', 'w_oknie'] == 1
+    d = run({'ev': 'objective', 'key': 'GOAL2', 'text': 'Inny cel.'}, 0.1)
+    assert [it.key for it in d.queue] == ['GOAL2']
+
+
+def test_objective_queued_before_window_with_its_text_is_dropped(run):
+    run(msg(1, 'HELLO'))
+    run({'ev': 'objective', 'key': 'GOAL', 'text': 'Znajdź klucz!'}, 0.1)
+    d = run(msg(2, 'HELLO', text='Zaktualizowano zadanie: Znajdź klucz!'), 0.1)
+    assert playing(d) == 'HELLO' and not d.queue and d.outcomes['objective', 'w_oknie'] == 1
+    run({'ev': 'objective', 'key': 'GOAL2', 'text': 'Znajdź drzwi!'}, 2.0)
+    d = run(msg(3, 'HELLO', text='Zaktualizowano zadanie: Znajdź drzwi!'), 0.1)
+    assert not d.queue          # cel, który już zaczął grać, nie wraca po przerwaniu
 
 
 def test_scene_stops_everything(run):

@@ -61,6 +61,7 @@ def value_keys(arg):
 
 
 HERO_NAME = re.compile(r'\bHERO_([A-Z]+)_NAME\b')
+DEFENSE_HOLDER, DEFENSE_TOGGLE = 'UI_ENEMYDEFENSIVE_REMINDER', 'zdolnosci'
 
 
 class Library:
@@ -137,6 +138,15 @@ class Library:
             return False
         head = difflib.SequenceMatcher(None, said, next_line[:len(said) + REPEAT_SLACK]).ratio()
         return head >= REPEAT_RATIO or (len(said) >= REPEAT_MIN and ' %s ' % said in ' %s ' % next_line)
+
+    def defense(self, key):
+        """Opis obrony wroga w oknie ataku (D102): nagranie wartości luki przypomnienia o obronie (D98)."""
+        fid = self.values.get((DEFENSE_HOLDER, 0), {}).get(key)
+        if not fid:
+            return Utterance(key, missing=['klucz'])
+        u = Utterance(key, 'walka_teren', DEFENSE_TOGGLE, via='key')
+        self._add(u, fid)
+        return u
 
     def counter(self, key, args):
         """Sam licznik celu (D64): luka liczbowa i tekst „z czterech” po niej. None, gdy cel nie ma licznika."""

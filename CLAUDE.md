@@ -91,9 +91,10 @@ Cała gra M3 (E14): `--release m3`, baza `m3.sqlite`, audio `audio/m3/`, raporty
 W m3 komunikat gry po pustym wierszu w kwestii postaci czyta narrator, a tekst WIELKIMI literami czytamy zwykłą pisownią (`build.line_parts`, D85). Wstawki w nawiasach czekają na E15 (D86).
 
 Paczka testowa Q1–Q2 (E16, D101): `--release t1`, baza `t1.sqlite`, audio `audio/t1/`, reguły i zakres bazy z `m3` (`paths.BASE`), tylko OmniVoice (`paths.LOCAL_ONLY`), generowanie i ocena w grupach `scope.TEST_GROUPS['t1']`.
-- Wypowiedzi postaci w oknach narratora czyta postać (`speakers.py`, nadpisania w `src/lektor/data/speakers_t1.json`, przegląd `analysis/tools/speakers_review.py`). `arg:N` to bohater z luki {N}: wersje `KLUCZ#bohater`, companion wybiera je po argumencie (`hero_variant` `ARG:N`). Głosy `nv_*` projektuje `analysis/tools/new_voices_t1.py design|choose|adopt`.
+- Wypowiedzi postaci w oknach narratora czyta postać: półpauza, mowa przed „– mówi X” i list w „…” z autorem przed cytatem (D102) (`speakers.py`, nadpisania w `src/lektor/data/speakers_t1.json`, przegląd `analysis/tools/speakers_review.py`). `arg:N` to bohater z luki {N}: wersje `KLUCZ#bohater`, companion wybiera je po argumencie (`hero_variant` `ARG:N`). Głosy `nv_*` projektuje `analysis/tools/new_voices_t1.py design|choose|adopt`.
 - Narrator ma w zakresie testu jedno tempo `SPEED_MAX` (`direction.ONE_TEMPO`), także w wartościach luk i łupu.
-- Okno ataku: kwestie zdolności (`abilities.py`), zdarzenie pluginu `open/close` `kind: ability`, przełącznik `zdolnosci`.
+- Okno ataku: kwestie zdolności (`abilities.py`), zdarzenia pluginu `open/close` `kind: ability` i `kind: defense` (obrona wroga, D102), przełącznik `zdolnosci`.
+- Cel misji, którego tekst przeczytało okno komunikatu, nie gra drugi raz (`director.plain`, D102).
 - Przebieg: `REL=t1 ELEVEN=0 bash analysis/tools/e14_run.sh`, potem dodatkowe rundy `analysis/tools/extra_retakes.py` i `bundle --platform win --release t1`.
 
 - `build --release m2 --only event_e5b map` buduje tylko wybrane grupy spoza M1.
@@ -204,3 +205,4 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 | [analysis/E16_DATA.md](analysis/E16_DATA.md) | baza paczki testowej t1 (E16): liczności według grupy, kategorii i głosu |
 | [analysis/E16_AUDIO.md](analysis/E16_AUDIO.md) | audio t1 (E16): czas generowania, wyniki automatu według głosu, w tym nowych `nv_*` |
 | [analysis/E16_TEST.md](analysis/E16_TEST.md) | paczka testowa Q1–Q2 (E16): podział na głosy, jedno tempo, okno ataku, pokrycie, replay, lista odsłuchu |
+| [analysis/E16_PLAYTEST.md](analysis/E16_PLAYTEST.md) | test t1 w grze (Q1, 2026-11-13): zrzuty, przyczyny, przegląd mowy w oknach narratora, poprawki D102 |

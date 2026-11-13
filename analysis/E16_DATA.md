@@ -1,6 +1,6 @@
 # E16: baza paczki testowej Q1–Q2 (t1)
 
-Wygenerowano przez `python -I -m lektor report` z `analysis/work/lektor/t1.sqlite` (zbudowana 2026-11-13T00:17:27, pakiet 0.1.0, model `omnivoice-08be0b4-fp32-s32-cfg2.0`, manifest gry `fddf8aedeb14`). Raport zawiera tylko liczby i klucze techniczne.
+Wygenerowano przez `python -I -m lektor report` z `analysis/work/lektor/t1.sqlite` (zbudowana 2026-11-13T23:15:48, pakiet 0.1.0, model `omnivoice-08be0b4-fp32-s32-cfg2.0`, manifest gry `fddf8aedeb14`). Raport zawiera tylko liczby i klucze techniczne.
 
 ## Kwestie
 
@@ -195,12 +195,12 @@ Wrogowie w zakresie: `A2Q01_VRASKHAR`, `A2Q02_ENEMY_MORANT`, `ENEMY_A2Q11_LEVIRA
 
 | rodzaj segmentu | liczba |
 |---|---|
-| text | 19166 |
+| text | 19165 |
 | slot | 1521 |
 | quote | 134 |
 | desc | 5 |
 
-Unikalnych fragmentów do syntezy: **20875** (text 17477, value 3259, quote 134, desc 5), znaków: 1602687.
+Unikalnych fragmentów do syntezy: **20874** (text 17476, value 3259, quote 134, desc 5), znaków: 1602685.
 
 Najdłuższy fragment: 434 znaków.
 
@@ -497,16 +497,17 @@ Głosy fragmentów bez referencji w bazie: `alys`, `arden`, `balthain`, `button`
 
 ## Szacunek generowania
 
-Z M3 przejęte 7477 fragmentów. Nowe: **13398** (999660 znaków).
+Z M3 przejęte 7469 fragmentów. Nowe: **13405** (1000263 znaków).
 
 | głos | silnik | fragmenty | znaki | podejścia |
 |---|---|---|---|---|
+| adelynn | omnivoice | 5 | 387 | 1 |
 | alys | omnivoice | 98 | 10467 | 1 |
 | arden | omnivoice | 42 | 4674 | 1 |
 | astarra | omnivoice | 26 | 2176 | 1 |
 | balthain | omnivoice | 25 | 2807 | 1 |
 | bruli | omnivoice | 30 | 3209 | 1 |
-| brynn | omnivoice | 464 | 35914 | 3 |
+| brynn | omnivoice | 465 | 35954 | 3 |
 | button | omnivoice | 62 | 5581 | 1 |
 | chance | omnivoice | 354 | 24312 | 3 |
 | delphyndra | omnivoice | 16 | 1675 | 1 |
@@ -529,7 +530,7 @@ Z M3 przejęte 7477 fragmentów. Nowe: **13398** (999660 znaków).
 | mok | omnivoice | 23 | 2301 | 1 |
 | morant | omnivoice | 27 | 2589 | 1 |
 | nara | omnivoice | 15 | 1562 | 1 |
-| narrator | omnivoice | 9764 | 697162 | 1 |
+| narrator | omnivoice | 9765 | 697338 | 1 |
 | navoth | omnivoice | 25 | 2771 | 1 |
 | nekrul | omnivoice | 12 | 852 | 1 |
 | nv_bandyta | omnivoice | 4 | 60 | 1 |
@@ -564,4 +565,4 @@ Z M3 przejęte 7477 fragmentów. Nowe: **13398** (999660 znaków).
 | waiqar | omnivoice | 23 | 2666 | 1 |
 | zachareth | omnivoice | 52 | 4747 | 1 |
 
-OmniVoice: ok. **89.6 h** GPU bez ponownych podejść, przy 0.235 s na znak (E3). ElevenLabs: 0 znaków, ok. **0** kredytów (0.44 na znak, bez ponownych).
+OmniVoice: ok. **89.7 h** GPU bez ponownych podejść, przy 0.235 s na znak (E3). ElevenLabs: 0 znaków, ok. **0** kredytów (0.44 na znak, bez ponownych).

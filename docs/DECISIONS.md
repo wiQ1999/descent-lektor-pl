@@ -1019,6 +1019,18 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Wykonanie (2026-11-13):** po trzech rundach `e14_run.sh` odrzucone nowe fragmenty zakresu dostały trzy dodatkowe rundy (`analysis/tools/extra_retakes.py`). Po nich zostało 21 krótkich fragmentów, do których paczka bierze najlepsze z siedmiu podejść. Odrzucone fragmenty przejęte z `m3` zostają bez zmian. Lista do odsłuchu jest w `analysis/E16_TEST.md`.
 
+### D102 · 2026-11-13 · E16: poprawki po teście t1 w Q1
+**Decyzja:**
+- Cel misji czytany w oknie komunikatu nie gra drugi raz: companion pomija zdarzenie zmiany celu, gdy okno przeczytane w ciągu `DUP_S` zawiera tekst celu (bez licznika). Reguła obejmuje okna `*_UPDATE` i warianty klucza celu.
+- Wykrywanie mowy w oknach narratora (`speakers.py`) ma dwie nowe reguły:
+  - akapit zaczyna się od wypowiedzi bez półpauzy, a pierwsza półpauza otwiera wtrącenie z czasownikiem mówienia („– mówi X”);
+  - list albo wypowiedź w cudzysłowie „…” z pełnym zdaniem czyta autor wskazany w narracji tuż przed cytatem, a bez autora cytat zostaje narracją.
+- Okno ataku czyta też opis obrony wroga (`TextDefensive`, `ENEMY_DEFEND_*`), raz na okno, z przełącznikiem `zdolnosci`.
+- Opcje wyboru z półpauzą i cytaty bez autora zostają bez zmian.
+- Nowa paczka testowa `t1` dla Windows, bez wydania na GitHub.
+
+**Uzasadnienie:** test w grze 2026-11-13, zrzuty l6–l10 (`analysis/E16_PLAYTEST.md`) i QA użytkownika. Reguły mowy obowiązują też przy generowaniu wersji produkcyjnej.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

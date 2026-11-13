@@ -4,7 +4,11 @@ Dialog w polskim tekście zaczyna się półpauzą: na początku akapitu albo po
 kończy wypowiedź i otwiera wtrącenie narratora („– mówi Brynn.”). Po wtrąceniu półpauza wraca do mowy, gdy
 wtrącenie nie ma w środku końca zdania („– Tutaj chyba nie – odpowiada jeden z uwolnionych – ale…”) albo
 kończy się kropką. Półpauza w zwykłej narracji to wtrącenie („ale – sądząc po scenie – traktuje…”).
-Cudzysłowy („…”) zostają narracją: to zwykle tytuły, napisy i listy.
+Wypowiedź bez otwierającej półpauzy (D102): akapit zaczyna się od mowy, a pierwsza półpauza otwiera wtrącenie
+z czasownikiem mówienia („Ten strażnik! – mówi Brynn.”).
+Cudzysłów („…”) z pełnym zdaniem to list albo wypowiedź (D102, rodzaj 'q', może trwać przez kilka akapitów): czyta
+go autor wskazany w narracji tuż przed cytatem, a bez autora zostaje narracją. Krótkie cudzysłowy (tytuły, napisy,
+przyciski) zostają narracją.
 
 Mówcę wskazuje wtrącenie po wypowiedzi albo narracja tuż przed nią (imię postaci), a w kwestiach bez imienia
 klucz okna (Q1_BRYNN_DOOR). Automat daje propozycję; ostateczny wybór dla zakresu testu leży w
@@ -20,6 +24,13 @@ DASH = re.compile(r'(?:^|(?<=\s))[–—-](?=\s|[^\s\d-])')
 SENTENCE_END = re.compile(r'[.!?…]["”»)]*$')
 INNER_END = re.compile(r'[.!?…]["”»)]*\s+\S')
 PUNCT_ONLY = re.compile(r'^[\s.,;:!?…–—\-„”"«»()]*$')
+QUOTE = re.compile(r'„([^„”]+)”')
+QUOTE_MIN_WORDS = 4
+SPEECH_VERBS = ('mówi|odpowiada|szepcze|woła|krzyczy|pyta|dodaje|mruczy|rzuca|stwierdza|wtrąca|ciągnie|warczy|syczy|'
+                'wzdycha|odzywa|przerywa|oznajmia|wyjaśnia|zauważa|przyznaje|ostrzega|zapewnia|prosi|cedzi|mamrocze|'
+                'burczy|parska|jęczy|wykrzykuje|odpar|powiedział|zapytał|krzyknął|krzyknęła|szepnął|szepnęła|dodał|'
+                'rzucił|stwierdził|zawołał|mruknął|mruknęła|rzekł|oświadczył|odezwał')
+ATTRIBUTION = re.compile(r'\s*(?:\w+\s+){0,2}?(?:%s)\w*\b' % SPEECH_VERBS)
 OVERRIDES = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'speakers_t1.json')
 
 # Imiona w tekście → głos. Odmiana: dopasowanie początku słowa (Galadena, Fuksowi).
@@ -43,11 +54,27 @@ def name_voice(word):
     return None
 
 
+def speech_quote(inner):
+    """Cudzysłów z pełnym zdaniem (list, wypowiedź), a nie tytuł czy napis (D102)."""
+    return len(inner.split()) >= QUOTE_MIN_WORDS and bool(re.search(r'[.!?…]', inner))
+
+
 def split(text):
-    """[(rodzaj, tekst, akapit)]: 'n' narracja, 's' wypowiedź; akapit: numer akapitu kawałka."""
+    """[(rodzaj, tekst, akapit)]: 'n' narracja, 's' wypowiedź, 'q' cytat z pełnym zdaniem; akapit: numer akapitu."""
+    chunks, pos = [], 0
+    for m in QUOTE.finditer(text):
+        line = text[text.rfind('\n', 0, m.start()) + 1:]
+        if speech_quote(m.group(1)) and not DASH.match(line.lstrip()):     # cytat w dialogu należy do mówiącego
+            chunks += [('t', pos, text[pos:m.start()]), ('q', m.start(1), m.group(1))]
+            pos = m.end()
+    chunks.append(('t', pos, text[pos:]))
     out = []
-    for i, para in enumerate(text.split('\n')):
-        out += [(k, t.strip(), i) for k, t in paragraph(para) if not PUNCT_ONLY.match(t)]
+    for kind, at, chunk in chunks:
+        para = text.count('\n', 0, at)
+        for i, line in enumerate(chunk.split('\n')):
+            pieces = [('q', line)] if kind == 'q' else paragraph(line)
+            out += [(k, t.strip().lstrip('.,;:').strip() if k == 'n' else t.strip(), para + i)
+                    for k, t in pieces if not PUNCT_ONLY.match(t)]
     return out
 
 
@@ -56,7 +83,12 @@ def paragraph(para):
     for m in DASH.finditer(para):
         before = para[start:m.start()]
         if state == 'n0':
-            if para[:m.start()].strip() and not SENTENCE_END.search(para[:m.start()].rstrip()):
+            lead = para[:m.start()].strip()
+            if lead and start == 0 and ATTRIBUTION.match(para[m.end():]):
+                pieces.append(('s', before))        # mowa bez otwierającej półpauzy, potem wtrącenie (D102)
+                state, start = 'a', m.end()
+                continue
+            if lead and not SENTENCE_END.search(para[:m.start()].rstrip()):
                 continue    # półpauza w narracji: wtrącenie
             pieces.append(('n', before))
             state = 's'
@@ -98,6 +130,14 @@ def guess(key, pieces, arg_types=()):
     """Propozycja głosu każdej wypowiedzi: [(głos albo None, uzasadnienie)]."""
     out, prev = [], {}
     for i, (kind, text, para) in enumerate(pieces):
+        if kind == 'q':     # cytat: autor z narracji przed nim, dalszy akapit tego samego cytatu bez zmiany (D102)
+            if i and pieces[i - 1][0] == 'q':
+                voice, why = out[-1]
+            else:
+                voice = first_name(' '.join(t for k, t, _ in pieces[:i] if k == 'n'), last=True)
+                voice, why = (voice, 'autor przed') if voice else (None, 'cytat bez autora')
+            out.append((voice, why))
+            continue
         if kind != 's':
             continue
         nxt = pieces[i + 1] if i + 1 < len(pieces) else None
@@ -134,7 +174,7 @@ def parts(key, text, overrides, arg_types=()):
     """[(głos, tekst)] dla kwestii narratora: narracja 'narrator', wypowiedzi głosem z nadpisań (albo automatu,
     gdy klucza nie ma w nadpisaniach). None, gdy kwestia nie ma wypowiedzi albo zostaje w całości narratorowi."""
     pieces = split(text)
-    if not any(p[0] == 's' for p in pieces):
+    if not any(p[0] in 'sq' for p in pieces):
         return None
     voices = overrides.get(key)
     if voices is None:
@@ -145,7 +185,7 @@ def parts(key, text, overrides, arg_types=()):
         per_piece = voices['pieces']
     else:
         it = iter(voices)
-        per_piece = [(next(it, None) or 'narrator') if p[0] == 's' else 'narrator' for p in pieces]
+        per_piece = [(next(it, None) or 'narrator') if p[0] in 'sq' else 'narrator' for p in pieces]
     if not any(v and v != 'narrator' for v in per_piece):
         return None
     out = []

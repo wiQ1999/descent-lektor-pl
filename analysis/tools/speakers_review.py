@@ -34,7 +34,7 @@ def main():
         if r['grp'] not in a.groups:
             continue
         pieces = speakers.split(clean_markup(r['text_raw']))
-        if not any(p[0] == 's' for p in pieces):
+        if not any(p[0] in 'sq' for p in pieces):
             continue
         types = [x.get('type') for x in json.loads(r['args'] or '[]')]
         guess = speakers.guess(r['key'], pieces, types)
@@ -46,9 +46,9 @@ def main():
         out.append('### %s | %s | %s | args=%s | nadpisanie=%s' % (r['key'], r['grp'], r['category'], types, json.dumps(o)))
         it = iter(guess)
         for i, (kind, t, para) in enumerate(pieces):
-            if kind == 's':
+            if kind in 'sq':
                 v, why = next(it)
-                out.append('  S%-2d p%d [%s %s] %s' % (i, para, v, why, t))
+                out.append('  %s%-2d p%d [%s %s] %s' % (kind.upper(), i, para, v, why, t))
             else:
                 out.append('  n%-2d p%d %s' % (i, para, t))
         out.append('')

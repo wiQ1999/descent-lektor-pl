@@ -39,6 +39,7 @@ namespace LektorPL.Core
         private static readonly FieldInfo GcActivation = typeof(GameController).GetField("_curEnemyActivation", Private);
         private static readonly FieldInfo AdWeapon = typeof(UIHeroAttackDialog).GetField("_currentWeapon", Private);
         private static readonly FieldInfo AdPlayer = typeof(UIHeroAttackDialog).GetField("_player", Private);
+        private static readonly FieldInfo AdEnemy = typeof(UIHeroAttackDialog).GetField("_enemy", Private);
         private static readonly FieldInfo I2LanguageField =
             typeof(I2.Loc.LocalizationManager).GetField("mCurrentLanguage", BindingFlags.NonPublic | BindingFlags.Static);
 
@@ -74,6 +75,8 @@ namespace LektorPL.Core
         // Kafelki zdolności w oknie ataku (E16, D101).
         private string _abilitySig;
         private int _abilityId;
+        private string _defenseKey;                 // obrona wroga w otwartym oknie ataku (D102)
+        private int _defenseId;
         private float _nextAbilityCheck;
 
         // Wybrany cel na mapie (panel DestinationDetails).
@@ -101,7 +104,7 @@ namespace LektorPL.Core
                 .Str("unity", Application.unityVersion).Str("platform", Application.platform.ToString())
                 .Bool("fields_ok", McCurrent != null && McBack != null && McData != null && SmCurrent != null && SmBack != null && SmData != null
                     && I2LanguageField != null)
-                .Bool("sources_ok", UgObjectiveKey != null && UgObjectiveArgs != null && GcActivation != null)
+                .Bool("sources_ok", UgObjectiveKey != null && UgObjectiveArgs != null && GcActivation != null && AdEnemy != null)
                 .Bool("sniffer", options.SniffText).Int("stage", options.DiagnosticStage));
         }
 
@@ -370,6 +373,7 @@ namespace LektorPL.Core
             if (Time.unscaledTime < _nextAbilityCheck) return;
             _nextAbilityCheck = Time.unscaledTime + _options.ObjectiveInterval;
             var dialog = SingletonBehaviour<UIGame>.IsInitialized ? SingletonBehaviour<UIGame>.Instance.HeroAttackDialog : null;
+            PollDefense(dialog);
             var tiles = new List<UIAbilityTrigger>();
             var sig = new System.Text.StringBuilder();
             if (dialog != null && dialog.IsVisible && dialog.PoolAbilityTrigger != null)
@@ -409,6 +413,25 @@ namespace LektorPL.Core
                 items.Add(item);
             }
             _log.Write(_log.New("open").Str("kind", "ability").Int("id", _abilityId).Str("via", "poll").Raw("items", items.ToString()));
+        }
+
+        // Okno ataku pokazuje obronę wroga w polu TextDefensive (klucz SerializedEnemy.GetDefenseKey, ustawiony przez grę
+        // przy otwarciu okna). Jedno zdarzenie na otwarcie okna; zamknięcie przy ukryciu okna albo zmianie wroga (D102).
+        private void PollDefense(UIHeroAttackDialog dialog)
+        {
+            string key = null, text = null;
+            if (dialog != null && dialog.IsVisible && AdEnemy != null && AdEnemy.GetValue(dialog) is SerializedEnemy enemy)
+            {
+                text = dialog.TextDefensive != null ? dialog.TextDefensive.text : null;
+                if (!string.IsNullOrEmpty(text)) key = enemy.GetDefenseKey();
+            }
+            if (key == _defenseKey) return;
+            if (_defenseKey != null)
+                _log.Write(_log.New("close").Str("kind", "defense").Int("id", _defenseId).Str("via", "poll"));
+            _defenseKey = key;
+            if (key == null) return;
+            _defenseId = ++_nextId;
+            _log.Write(_log.New("open").Str("kind", "defense").Int("id", _defenseId).Str("via", "poll").Str("key", key).Str("text", text));
         }
 
         private static List<KeyValuePair<string, string>> AbilityCandidates(UIHeroAttackDialog dialog, out string extraKey)
