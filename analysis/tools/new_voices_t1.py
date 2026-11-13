@@ -49,7 +49,7 @@ VOICES = {
                'Raz, dwa, trzy, szukasz ty! Kwiatek żółty, kwiatek mój, a kto złapie, ten ma rój! Hop i nie ma mnie!'),
     'nv_xain': ('male', 'male, young adult, very low pitch',
                 'Służyłem wiernie, dopóki honor miał jakieś znaczenie. Moja włócznia nie zna strachu, ale zna wstyd.'),
-    'nv_widmo': ('female', 'female, elderly, very low pitch',
+    'nv_widmo': ('female', 'female, elderly, low pitch, whisper',
                  'Długi trzeba spłacać, zawsze i wszędzie. Ja pamiętam każdą przysięgę, nawet tę, o której zapomniałeś.'),
     'nv_nekromanta': ('male', 'male, elderly, low pitch, whisper',
                       'Śmierć to tylko drzwi, a ja mam do nich klucz. Do zobaczenia wkrótce, mój drogi, bardzo wkrótce.'),
@@ -134,10 +134,11 @@ def choose():
         def nearest(n):
             return max(float(np.dot(scan[n]['emb'], e)) for e in taken.values())
         best = min(ok, key=nearest)
+        sim = nearest(best)
         taken[voice] = np.array(scan[best]['emb'])
         chosen[voice] = best
         print('%-14s %s  sim %.3f' % (voice, '  '.join('s%d CER %.2f F0 %3.0f%s' % (
-            scan[n]['seed'], scan[n]['cer'], scan[n]['f0'], '*' if n == best else ' ') for n in sorted(mine)), nearest(best)))
+            scan[n]['seed'], scan[n]['cer'], scan[n]['f0'], '*' if n == best else ' ') for n in sorted(mine)), sim))
     names = list(taken)
     sims = [(float(np.dot(taken[a], taken[b])), a, b) for i, a in enumerate(names) for b in names[i + 1:]]
     print('najbliższe pary:', ', '.join('%s~%s %.3f' % (a, b, s) for s, a, b in sorted(sims, reverse=True)[:5]))

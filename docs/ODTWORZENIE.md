@@ -184,6 +184,51 @@ Wydanie częściowe (D96): akt 1 i części wspólne, z oceną dopasowaną do te
 .venv/Scripts/python -I analysis/tools/release_coverage.py --release m3 --acts 1 3
 ```
 
+Paczka testowa Q1–Q2 (E16, D101): wydanie `t1` na bazie `m3`, tylko OmniVoice, zakres z `scope.TEST_GROUPS`.
+- Podział okien narratora na głosy postaci czyta `src/lektor/data/speakers_t1.json` (klucze i głosy, bez tekstów gry). Przegląd z tekstem i propozycją automatu zapisuje `analysis/tools/speakers_review.py` do `analysis/work/out/t1/speakers_review.txt`.
+- Nowe głosy `nv_*` projektuje `analysis/tools/new_voices_t1.py` (kopia poprzedniej bazy referencji to `refs.before_t1.json`):
+
+```bash
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/new_voices_t1.py design
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/new_voices_t1.py choose
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/new_voices_t1.py adopt
+```
+
+```bash
+.venv/Scripts/python -I -m lektor build --release t1
+```
+
+```bash
+REL=t1 ELEVEN=0 bash analysis/tools/e14_run.sh
+```
+
+- `generate` i `evaluate` bez `--groups` biorą zakres testu, a `generate` przejmuje z `audio/m3` fragmenty o tym samym id.
+- Po trzech rundach skryptu odrzucone nowe fragmenty zakresu dostają do trzech dodatkowych rund (`extra_retakes.py` pisze `retake.json`, potem `generate --retake`, `evaluate`, `select`), a na końcu `finalize` i `audio-report`:
+
+```bash
+.venv/Scripts/python -I analysis/tools/extra_retakes.py --release t1
+```
+
+- Sprawdzenie: pokrycie zakresu i replay dzienników pluginu na bazie `t1` (konfiguracja z `companion.config.default_text()` po `paths.use('t1')`):
+
+```bash
+.venv/Scripts/python -I analysis/tools/release_coverage.py --release t1
+```
+
+```bash
+.venv/Scripts/python -I -m lektor companion --config <plik.toml> --replay <hook.jsonl> --speed 0 --no-audio
+```
+
+```bash
+.venv/Scripts/python -I -m lektor bundle --platform win --release t1
+```
+
 ## 7. Plugin i paczka
 
 ```bash

@@ -1017,6 +1017,8 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** Prośba i QA użytkownika 2026-11-12 przed rozgrywkami testowymi.
 
+**Wykonanie (2026-11-13):** po trzech rundach `e14_run.sh` odrzucone nowe fragmenty zakresu dostały trzy dodatkowe rundy (`analysis/tools/extra_retakes.py`). Po nich zostało 21 krótkich fragmentów, do których paczka bierze najlepsze z siedmiu podejść. Odrzucone fragmenty przejęte z `m3` zostają bez zmian. Lista do odsłuchu jest w `analysis/E16_TEST.md`.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

@@ -108,3 +108,32 @@ Historia:
 - Runda E7/1b (2026-11-04, Ronan): urywany tekst referencji, 18 kandydatów, warianty z chrypą w referencji i po wygenerowaniu. Wygrał kandydat bez dodatkowej chrypy (D68).
 - Rundy E7/2 i E7/3 (2026-11-05): Kathryn, Rand, Bruli, Xenith, Herbie, Mok, Banita. Strony odsłuchu pokazywały też głosy już wybrane (D68).
 - Rundy E7/4 i 4b (2026-11-05): Flint z pierwszej próby. Galgoraz w drugiej: 30 kandydatów, 9 do odsłuchu, dobranych tak, by różnili się też od Bruliego, Herbiego, Flinta i Ronana (D69).
+
+## E16: mówcy jednorazowi w oknach narratora (D101, paczka testowa `t1`)
+
+Wypowiedzi postaci w oknach narratora czyta postać wskazana w tekście albo w kontekście (`src/lektor/data/speakers_t1.json`). Mówcy bez imienia i bez obsady dostali głosy testowe: losowe projekty OmniVoice bez portretu i bez QA, wybrane automatem (`analysis/tools/new_voices_t1.py`). Ziarno: najmniejszy CER, wysokość w zakresie płci, a z dobrych to, które leży najdalej od narratora i głosów wybranych wcześniej. Każdy głos ma własne zdanie w stylu postaci (nie tekst gry). Najbliższe pary barwy: `nv_wiezien`~`nv_fanatyk` i `nv_ynfernael`~`nv_nekromanta` (0,919). Widmo w pierwszej wersji było za blisko kowalki (0,949), więc dostało szept.
+
+| Głos | Kto mówi | Opis OmniVoice | Ziarno | Referencja | Kwestie |
+|---|---|---|---:|---|---:|
+| `nv_bandyta` | bandyta, okrzyki w walce | `male, young adult, high pitch` | 23 | 8,4 s, SHA `cfadd386` | 3 |
+| `nv_wiesniak` | uwolniony wieśniak (Q1) | `male, elderly, moderate pitch` | 23 | 8,9 s, SHA `f523a4bb` | 4 |
+| `nv_straznik` | ranny strażnik w piwnicy (Q1) | `male, middle-aged, low pitch` | 37 | 9,1 s, SHA `3538bd60` | 3 |
+| `nv_wiezien` | uwolniony więzień (Q1) | `male, young adult, moderate pitch` | 23 | 7,6 s, SHA `4654b2b1` | 1 |
+| `nv_orban` | rozczochrany mężczyzna z łopatą (boss) | `male, middle-aged, high pitch` | 23 | 8,2 s, SHA `7c0660e6` | 2 |
+| `nv_fanatyk` | fanatyk, okrzyki w walce | `male, young adult, low pitch` | 37 | 7,8 s, SHA `62856326` | 3 |
+| `nv_eurth` | Pani Kości (boss) | `female, middle-aged, low pitch` | 37 | 8,6 s, SHA `746f2df2` | 1 |
+| `nv_ynfernael` | głos z Ynfernaelu | `male, elderly, very low pitch, whisper` | 11 | 8,0 s, SHA `9d547553` | 1 |
+| `nv_fae` | fae, okrzyki w walce | `female, child, very high pitch` | 37 | 8,0 s, SHA `2f41934e` | 5 |
+| `nv_xain` | porucznik smoczego miotu (boss) | `male, young adult, very low pitch` | 37 | 7,8 s, SHA `98bb0495` | 1 |
+| `nv_widmo` | widmo, okrzyki w walce | `female, elderly, low pitch, whisper` | 23 | 8,1 s, SHA `5d8a6d81` | 10 |
+| `nv_nekromanta` | cień nekromanty | `male, elderly, low pitch, whisper` | 23 | 7,9 s, SHA `ab66ab02` | 1 |
+| `nv_gnom` | gnom na drodze (podróż) | `male, teenager, very high pitch` | 37 | 9,1 s, SHA `8db3e8bf` | 1 |
+| `nv_gap` | gap przy procesji (podróż) | `female, middle-aged, moderate pitch` | 37 | 9,1 s, SHA `2a811e46` | 1 |
+| `nv_ork` | ork z karawany (podróż) | `male, middle-aged, very low pitch` | 37 | 8,1 s, SHA `87fe47ed` | 1 |
+| `nv_uchodzca` | uchodźcy (podróż) | `female, young adult, high pitch` | 37 | 8,4 s, SHA `ca508237` | 1 |
+| `nv_glos` | odległy głos z lasu (podróż) | `male, elderly, high pitch` | 11 | 8,5 s, SHA `4539ea56` | 1 |
+| `nv_protektor` | Protektor Cytadeli (podróż Brynn) | `male, middle-aged, moderate pitch` | 23 | 8,4 s, SHA `9ad50cfb` | 4 |
+| `nv_gont` | mistrzyni Gont, orczyca (podróż Syrusa) | `female, young adult, low pitch` | 37 | 8,1 s, SHA `92e2bac3` | 3 |
+| `nv_kowalka` | kowalka, smocza hybryda (podróż Vaerix) | `female, middle-aged, very low pitch` | 23 | 7,9 s, SHA `f1da6143` | 1 |
+
+Bohater wskazany luką (`{0}`) mówi głosem bohatera z argumentu okna (`arg:N`). Nowe nagrania postaci czytanych dotąd przez ElevenLabs powstają w paczce testowej w OmniVoice z referencji zapasowych (D80).

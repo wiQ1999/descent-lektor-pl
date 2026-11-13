@@ -1,6 +1,8 @@
 """Pokrycie wydania audio (D96): ile kwestii z wybranych części gry ma wszystkie fragmenty w manifeście.
 
-  .venv/Scripts/python -I analysis/tools/release_coverage.py [--release m3] [--acts 1 3]
+  .venv/Scripts/python -I analysis/tools/release_coverage.py [--release m3] [--acts 1 3] [--groups ...]
+
+Paczka testowa (E16): --release t1 bez --groups bierze grupy scope.TEST_GROUPS['t1'].
 
 Kwestia jest pełna, gdy każdy jej fragment tekstu ma plik w manifeście, a każda luka ma nagraną co najmniej jedną
 wartość. Na konsolę idą liczby według paczki (klucze techniczne), lista kwestii z brakami do analysis/work/out/.
@@ -11,11 +13,11 @@ import os
 import sys
 from collections import defaultdict
 
-from lektor import db, paths, progress
+from lektor import db, paths, progress, scope
 from lektor import direction as D
 
 
-def coverage(acts):
+def coverage(acts, groups=None):
     con = db.connect(paths.DB)
     manifest = json.load(open(os.path.join(paths.AUDIO, 'manifest.json'), encoding='utf-8'))
     have = set(manifest['fragments'])
@@ -29,7 +31,7 @@ def coverage(acts):
     rows, missing = defaultdict(lambda: [0, 0, 0]), []
     for line in con.execute('SELECT key, grp FROM lines WHERE tts = 1'):
         grp = line['grp'] or 'system'
-        if progress.act(grp) not in acts:
+        if progress.act(grp) not in acts or (groups and grp not in groups):
             continue
         gaps = []
         for s in segs[line['key']]:
@@ -52,10 +54,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--release', default='m3')
     ap.add_argument('--acts', type=int, nargs='*', default=[1, 3])
+    ap.add_argument('--groups', nargs='*')
     a = ap.parse_args()
     sys.stdout.reconfigure(encoding='utf-8')
     paths.use(a.release)
-    rows, missing = coverage(set(a.acts))
+    rows, missing = coverage(set(a.acts), set(a.groups or scope.TEST_GROUPS.get(a.release, ())))
     out = os.path.join(paths.WORK, 'out', '%s_coverage_missing.json' % a.release)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     json.dump(missing, open(out, 'w', encoding='utf-8'), indent=1)
