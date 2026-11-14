@@ -103,7 +103,7 @@ Paczka testowa Q1–Q2 (E16, D101): `--release t1`, baza `t1.sqlite`, audio `aud
   - potem ocena, ponowne podejścia i `finalize`;
   - dzienniki zapisuje w `audio/m3/logs/`.
 - Postęp: `progress --release m3 [--all]`, a co 10 min także plik `audio/m3/progress.md`.
-- Dashboard stanu dialogów wszystkich wydań (D103): `dashboard [--serve [PORT]]` pisze `analysis/work/dashboard/index.html` (misje osobno, reszta w kategoriach, wersja i procent); `--serve` albo `analysis/tools/dashboard.cmd` liczy stan przy każdym odświeżeniu `http://127.0.0.1:47811/`. `e14_run.sh` odświeża plik razem z `progress.md`.
+- Dashboard stanu dialogów wszystkich wydań (D104): `dashboard [--serve [PORT]]` pisze `analysis/work/dashboard/index.html` (misje osobno, reszta w kategoriach, wersja i procent); `--serve` albo `analysis/tools/dashboard.cmd` liczy stan przy każdym odświeżeniu `http://127.0.0.1:47811/`. `e14_run.sh` odświeża plik razem z `progress.md`.
 - ElevenLabs zapisuje stan w `takes_eleven.jsonl`.
 - Wydanie częściowe (D96): `generate` i `evaluate` przyjmują `--acts 1 3` (akt 1 i części wspólne).
   - `evaluate --no-asr` robi szybką ocenę bez Whispera do `evals_quick.jsonl`.

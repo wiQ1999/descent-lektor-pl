@@ -157,7 +157,7 @@ bash analysis/tools/e14_run.sh
 ```
 
 - `--all` pokazuje wszystkie paczki. Ten sam raport skrypt co 10 min zapisuje do `analysis/work/audio/m3/progress.md`.
-- Stan dialogów wszystkich wydań (D103) pokazuje dashboard: misje osobno, reszta w kategoriach, wersja i procent wykonania. Skrypt odświeża plik `analysis/work/dashboard/index.html` razem z `progress.md`, a `--serve` (albo dwuklik `analysis/tools/dashboard.cmd`) liczy stan przy każdym odświeżeniu strony `http://127.0.0.1:47811/`:
+- Stan dialogów wszystkich wydań (D104) pokazuje dashboard: misje osobno, reszta w kategoriach, wersja i procent wykonania. Skrypt odświeża plik `analysis/work/dashboard/index.html` razem z `progress.md`, a `--serve` (albo dwuklik `analysis/tools/dashboard.cmd`) liczy stan przy każdym odświeżeniu strony `http://127.0.0.1:47811/`:
 
 ```bash
 .venv/Scripts/python -I -m lektor dashboard [--serve [PORT]] [--out PLIK]

@@ -1031,7 +1031,7 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** test w grze 2026-11-13, zrzuty l6–l10 (`analysis/E16_PLAYTEST.md`) i QA użytkownika. Reguły mowy obowiązują też przy generowaniu wersji produkcyjnej.
 
-### D103 · 2026-11-14 · Dashboard stanu dialogów
+### D104 · 2026-11-14 · Dashboard stanu dialogów
 **Decyzja:**
 - `python -I -m lektor dashboard` składa stronę HTML ze stanem dialogów wszystkich wydań (`analysis/work/dashboard/index.html`). `--serve` albo `analysis/tools/dashboard.cmd` pokazuje ją pod `http://127.0.0.1:47811/` i liczy stan przy każdym odświeżeniu. `e14_run.sh` odświeża plik razem z `progress.md`.
 - Każda misja główna i poboczna ma własny wiersz, a pozostałe treści są zebrane w kategorie (sceny, wydarzenia, podróże, miasto i mapa, wrogowie, przedmioty i zdolności, system i łup), rozwijane do grup.
