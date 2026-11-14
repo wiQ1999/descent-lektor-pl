@@ -286,6 +286,18 @@ def unique_enemy_names(enemies, chosen):
     return out
 
 
+def feat_names(game, terms):
+    """{klucz opisu wyzwania: nazwa}: pogrubiona część FEAT_*_DESC, jak FeatModel.GetLocalizedFeatName (l16)."""
+    out = {}
+    for bundle in sorted(b for b in game.files if b.startswith('d3/heroes/')):
+        for _, t, cls in game.behaviours(bundle):
+            key = t.get('DescriptionKey') if cls == 'FeatModel' else None
+            m = re.search(r'<b>(.*?)</b>', (terms.get(key) or {}).get('text') or '', re.S) if key else None
+            if m and m.group(1).strip():
+                out[key] = m.group(1).strip()
+    return out
+
+
 def loot_keys(game, terms, acts=(0,)):
     """Klucze tekstów listy łupu (D51): szablony z GiveTreasure i nazwy tego, co gra może dać w podanych aktach."""
     keys = set(LOOT_TEMPLATES) | set(HERO_NAME_KEYS)

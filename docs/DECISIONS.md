@@ -1063,6 +1063,15 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** trzecia sesja testu t1 (slot 4, 2026-11-14), zrzuty l13–l15 i dzienniki (`analysis/E16_PLAYTEST.md`). QA użytkownika 2026-11-14: dodać okno wyzwania do t1, czytać tylko nagłówek i nagrodę, przebudować paczkę. Reguły obowiązują też przy generowaniu wersji produkcyjnej.
 
+### D106 · 2026-11-14 · E16: zapowiedź ukończonego wyzwania
+**Decyzja:**
+- W chwili ukończenia wyzwania lektor od razu mówi „Wyzwanie ukończone!”, imię bohatera i nazwę wyzwania, żeby gracze nie przeoczyli nagrody czekającej w menu wyzwań. Okno wyzwania (D105) nadal czyta nagłówek i nagrodę po wejściu do menu.
+- Plugin 0.4.5 śledzi listy ukończonych wyzwań w `FeatsController` i zgłasza zdarzenie `feat_done` z kluczem opisu wyzwania i kluczem imienia bohatera. Wyzwania z wczytanego zapisu nie są zgłaszane.
+- Nazwa wyzwania to pogrubiona część opisu `FEAT_*_DESC`, tak jak w grze (`GetLocalizedFeatName`). Baza ma nagrania nazw 120 wyzwań i imion bohaterów (`@FEATS`). Przełącznik: `nagrody`.
+- Nowa paczka testowa t1 dla Windows (plugin 0.4.5), bez wydania na GitHub.
+
+**Uzasadnienie:** czwarta sesja testu t1 2026-11-14, zrzut l16: gra pokazuje tylko napis przy przycisku drużyny i znikające powiadomienie, a lektor odzywał się dopiero w menu wyzwań. Prośba użytkownika: zapowiedź od razu po ukończeniu.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

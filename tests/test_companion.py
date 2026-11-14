@@ -11,7 +11,7 @@ from lektor import db
 from lektor.companion import app as A
 from lektor.companion import config as C
 from lektor.companion import director as D
-from lektor.companion.library import LIST_GAP, LOOT, Library
+from lektor.companion.library import FEATS, LIST_GAP, LOOT, Library
 from lektor.companion.player import CLOSE_FADE_S, FADE_S, Mixer, NullPlayer
 
 SR = 24000
@@ -101,6 +101,7 @@ VALUES = [
     ('UI_ENEMYDEFENSIVE_REMINDER', 0, 'ENEMY_DEFEND_ZEALOT', 'f_bandit'),
     (LOOT, 0, 'do ekwipunku trafia', 'f_loot_head'), (LOOT, 0, 'złoto', 'f_gold'), (LOOT, 0, '15', 'f_fifteen'),
     (LOOT, 0, 'mikstura zdrowia', 'f_potion'),
+    (FEATS, 0, 'HERO_KEHLI_NAME', 'f_keli'), (FEATS, 0, 'FEAT_X_DESC', 'f_map_name'),
 ]
 
 
@@ -442,6 +443,16 @@ def test_completed_feat_reads_header_and_reward_as_loot(run):
     assert playing(d) is None
     d = run({'ev': 'open', 'kind': 'feat', 'id': 6, 'reward': 'Wyzwanie zmienione.', 'replaced': True}, 0.1)
     assert d.outcomes['feat', 'brak_klucza'] == 1      # UI_FEAT_REPLACED nie ma w bazie testowej
+
+
+def test_feat_completion_is_announced_with_hero_and_name(run):
+    """l16: w chwili ukończenia wyzwania lektor mówi nagłówek, imię bohatera i nazwę wyzwania."""
+    run.d.toggles['nagrody'] = True
+    d = run({'ev': 'feat_done', 'kind': 'feat_done', 'id': 3, 'feat': 'FEAT_X', 'desc_key': 'FEAT_X_DESC',
+             'hero_key': 'HERO_KEHLI_NAME'}, 1.0)
+    assert [p[0] for p in d.current.u.pieces] == ['f_feat', 'f_keli', 'f_map_name']
+    d = run({'ev': 'feat_done', 'kind': 'feat_done', 'id': 4, 'desc_key': 'FEAT_Y_DESC'}, 10.0)
+    assert d.outcomes['feat_done', 'częściowe'] == 1
 
 
 def test_objective_waits_and_newest_replaces(run):

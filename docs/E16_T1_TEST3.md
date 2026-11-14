@@ -80,3 +80,7 @@ Nowa paczka ma plugin 0.4.4, więc przed grą uruchom **Zainstaluj** z nowej pac
 | łup po pokonaniu golema w Q2 | nazwa golema w poleceniu „Usuń: …” | D105 |
 | atak na fae | „potencjał” w opisie obrony | D103 (nie wystąpił w sesji 3) |
 | kafelek zdolności broni | nazwa i opis zdolności | D101 (nie wystąpił w sesji 3) |
+
+### Po czwartej sesji (D106)
+
+Paczka z pluginem 0.4.5: przed grą znowu uruchom **Zainstaluj**. Gdy bohater ukończy wyzwanie, lektor od razu powie „Wyzwanie ukończone!”, imię bohatera i nazwę wyzwania. Nagrodę przeczyta po wejściu do menu wyzwań.

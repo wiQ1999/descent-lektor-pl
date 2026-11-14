@@ -19,6 +19,7 @@ SPRITE = re.compile(r'<sprite=\d+>')
 KEY = re.compile(r'\b[A-Z][A-Z0-9_]+\b')
 LIST_GAP = 0.15         # między wartościami listy {n} (np. kilku wrogów)
 LOOT = '@LOOT'          # slot_values: teksty listy łupu (D51)
+FEATS = '@FEATS'        # slot_values: nazwy wyzwań (klucz opisu) i imiona bohaterów (l16)
 LOOT_WORDS = 12         # najdłuższy kawałek łupu w słowach
 LOOT_SKIP = {'i'}       # spójnik między pozycjami listy
 REPEAT_RATIO = 0.85     # początek kwestii tak podobny do wybranej opcji to powtórka (D72)
@@ -154,6 +155,22 @@ class Library:
         if u.via and u.tts and self.loot and reward and reward.strip():
             self._gap(u, LIST_GAP)
             self._loot(u, reward)
+        return u
+
+    def feat_done(self, hero_key=None, desc_key=None):
+        """Chwila ukończenia wyzwania (l16): „Wyzwanie ukończone!”, imię bohatera i nazwa wyzwania."""
+        u = self.resolve('UI_FEAT_COMPLETED')
+        if not (u.via and u.tts):
+            return u
+        names = self.values.get((FEATS, 0), {})
+        for key in (hero_key, desc_key):
+            if not key:
+                continue
+            if names.get(key):
+                self._gap(u, LIST_GAP)
+                self._add(u, names[key])
+            else:
+                u.missing.append('wyzwanie')
         return u
 
     def counter(self, key, args):

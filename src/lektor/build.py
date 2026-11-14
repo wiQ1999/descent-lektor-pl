@@ -8,7 +8,7 @@ from . import __version__, abilities, db, paths, scope, speakers
 from . import direction as D
 from . import game as G
 from . import segment as S
-from .companion.library import LOOT, squash
+from .companion.library import FEATS, LOOT, squash
 from .normalize import cardinal, clean_markup, normalize, ordinal, pronounce
 
 PIECE_GAP = 0.06    # sklejanie kawałka szablonu z wartością luki (D16)
@@ -292,6 +292,14 @@ def build(path=None, release='m1', only=None):
             slot_values[LOOT, 0, value] = frag('narrator', text, loot_speed, 'value')
         for name, fid in entities.items():      # lista łupu kończy się poleceniem usunięcia wroga (REMOVE_ENTITY)
             slot_values.setdefault((LOOT, 0, name), fid)
+    if base == 'm3':        # zapowiedź ukończonego wyzwania (l16): imię bohatera i nazwa wyzwania
+        names = {**scope.feat_names(game, terms), **{k: terms[k]['text'] for k in scope.HERO_NAME_KEYS if k in terms}}
+        for key, name in names.items():
+            text = normalize(clean_markup(name)).strip()
+            # poziom wyzwania „Straż przednia II” → „dwa”: OmniVoice gubi albo przekręca rzymskie liczby
+            text = ROMAN.sub(lambda m: cardinal(ROMAN_VALUES[m.group(0)]), text)
+            if text:
+                slot_values[FEATS, 0, key] = frag('narrator', text, loot_speed, 'value')
 
     meta = {'version': __version__, 'release': release, 'model': D.MODEL, 'model_id': D.MODEL_ID, 'manifest': game.manifest_hash(),
             'built_at': datetime.datetime.now().isoformat(timespec='seconds'), 'scope': info,

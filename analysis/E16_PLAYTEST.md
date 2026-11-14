@@ -122,3 +122,28 @@ Wybrane w QA: okno wyzwania w t1, czytany tylko nagłówek i nagroda, nowa paczk
 - **Audio.** 92 nowe fragmenty OmniVoice w zakresie testu (2454 znaki): wartości luk z nazwami wrogów, nagłówki okna wyzwania, nazwy legend i towarzyszy, kwestie z dopełniaczem i 4 kawałki podzielonej kwestii Kehli. Po rundach ponownych podejść automat odrzucił 4 z nich: nazwy wrogów z późniejszych aktów, nieobecnych w Q1–Q2, z podejrzeniem uciętej końcówki. Paczka bierze ich najlepsze podejście. 16 starszych odrzuconych fragmentów zostało bez zmian.
 - **Replay sesji 3** (`--speed 0 --no-audio`): 225 z 225 okien gra w całości, także okno łupu z poleceniem „Usuń: …”. Okna wyzwania nie da się odtworzyć ze starego dziennika: na danych t1 sprawdzone przez `library.feat` (nagłówek, „Otrzymujesz następujące karty”, karta, bohater, bez braków).
 - **Testy.** `pytest`: 334 przechodzą, 2 pominięte. Plugin 0.4.4.
+
+## Czwarta sesja: okno wyzwania w Q2 (2026-11-14)
+
+Paczka D105 (commit b4ecf5a, plugin 0.4.4), dzienniki `hook-20261114-163100` i `companion-20261114-163107`. 36 okien do czytania, pokrycie 100%.
+
+| zrzut | sytuacja | co słychać | przyczyna |
+|---|---|---|---|
+| l16 | ukończenie wyzwania na planszy | cisza do wejścia w menu wyzwań | Okno wyzwania (D105) zagrało dwa razy w całości, ale dopiero po wejściu do menu. W chwili ukończenia gra pokazuje tylko napis przy przycisku drużyny i znikające powiadomienie z nazwą wyzwania (`UIGame.ShowNotification`), a tego plugin nie śledził. Gracze mogą przeoczyć nagrodę. |
+
+Inne ustalenia:
+
+- **Obrona wroga:** 3 okna ataku, każde z odczytem.
+- **Cel misji na starcie Q2:** pierwsze zgłoszenie `Q2_OBJECTIVE_1` przyszło bez argumentu licznika, więc cel zagrał bez liczby (wynik `częściowe`). Kolejne zmiany licznika grały w całości. Nie poprawiamy tego.
+
+## Wykonanie (D106)
+
+- **Plugin 0.4.5** (`Tracker.PollFeatDone`): porównuje `_pendingCompletedFeats` i `_completedFeatIds` w `FeatsController` z poprzednim stanem i każde nowe wyzwanie zgłasza raz jako `feat_done` (klucz opisu, klucz imienia bohatera, nazwa). Nowa lista `_completedFeatIds` oznacza wczytany zapis i ustawia nową bazę bez zgłoszeń.
+- **Baza** (`scope.feat_names`, `build`): nazwy 120 wyzwań (pogrubiona część `FEAT_*_DESC`) i imiona bohaterów pod kluczem `@FEATS`.
+- **Companion** (`library.feat_done`): kolejka jak cele i obrona: „Wyzwanie ukończone!”, imię bohatera, nazwa wyzwania. Przełącznik `nagrody`.
+- **Audio.** 119 nowych fragmentów OmniVoice: nazwy wyzwań i imiona bohaterów. Trzy nazwy miały poziom zapisany rzymską „II”, którą model gubił. Czytamy ją jako „dwa” („… dwa”) i po zmianie automat przyjął te nagrania. Jedyny odrzucony fragment to imię „Fuks”: Whisper zapisuje je jako „Fuchs”, więc to fałszywy alarm. `extra_retakes.py` liczy teraz wartości bez kwestii (`@LOOT`, `@FEATS`) do grupy `system`, tak jak generowanie.
+- **Sprawdzenie.**
+  - Replay sesji 4: 36 z 36 okien w całości, poza celem bez licznika na starcie Q2.
+  - Zapowiedź na danych t1 (`library.feat_done`): nagłówek, bohater i nazwa, bez braków.
+  - Zdarzenie `feat_done` z pluginu trzeba jeszcze sprawdzić w grze.
+  - `pytest`: 335 przechodzą, 2 pominięte.

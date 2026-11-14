@@ -26,7 +26,7 @@ import time
 from .player import CLOSE_FADE_S, FADE_S
 
 WINDOWS = ('message', 'story')
-QUEUED = ('objective', 'activation', 'details', 'ability', 'defense', 'feat')
+QUEUED = ('objective', 'activation', 'details', 'ability', 'defense', 'feat', 'feat_done')
 SETTLE = 0.35           # cisza po zdarzeniu okna, zanim ruszy kolejka: zamknięcie i nowe okno przychodzą razem
 DUP_S = 30.0            # cel odczytany w oknie w tym czasie nie gra ponownie
 DETAILS_GAP = 0.35      # między nazwą a opisem celu na mapie
@@ -43,7 +43,7 @@ def plain(text):
 @dataclasses.dataclass
 class Item:
     token: int
-    src: str            # message | story | choice | objective | activation | details | ability | defense | feat
+    src: str            # message | story | choice | objective | activation | details | ability | defense | feat | feat_done
     wid: int            # id okna z pluginu (cel: None)
     key: str
     u: object           # library.Utterance
@@ -125,6 +125,8 @@ class Director:
             self._enqueue('feat', {**ev, 'key': key}, recv)     # ukończone wyzwanie: nagłówek i nagroda (l14)
         elif name == 'close' and kind == 'feat':
             self._withdraw(lambda it: it.src == 'feat' and it.wid == ev.get('id'), recv)
+        elif name == 'feat_done':
+            self._enqueue('feat_done', {**ev, 'key': 'UI_FEAT_COMPLETED'}, recv)   # chwila ukończenia wyzwania (l16)
         elif name in ('scene', 'stop'):
             self.story_open.clear()
             self.queue.clear()
@@ -155,6 +157,8 @@ class Director:
             return self.lib.defense(key)
         if src == 'feat':
             return self.lib.feat(key, None if ev.get('replaced') else ev.get('reward'))
+        if src == 'feat_done':
+            return self.lib.feat_done(ev.get('hero_key'), ev.get('desc_key'))
         if src == 'objective' and ev.get('prev_key') == key and key in self.lib.lines:
             u = self.lib.counter(key, args)     # ten sam cel, zmieniony licznik (D64)
             if u is not None:

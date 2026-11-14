@@ -40,6 +40,8 @@ namespace LektorPL.Core
         private static readonly FieldInfo AdWeapon = typeof(UIHeroAttackDialog).GetField("_currentWeapon", Private);
         private static readonly FieldInfo AdPlayer = typeof(UIHeroAttackDialog).GetField("_player", Private);
         private static readonly FieldInfo AdEnemy = typeof(UIHeroAttackDialog).GetField("_enemy", Private);
+        private static readonly FieldInfo FcCompleted = typeof(FeatsController).GetField("_completedFeatIds", Private);
+        private static readonly FieldInfo FcPending = typeof(FeatsController).GetField("_pendingCompletedFeats", Private);
         private static readonly FieldInfo I2LanguageField =
             typeof(I2.Loc.LocalizationManager).GetField("mCurrentLanguage", BindingFlags.NonPublic | BindingFlags.Static);
 
@@ -80,6 +82,8 @@ namespace LektorPL.Core
         private float _nextAbilityCheck;
         private string _featSig;                    // okno „Wyzwanie ukończone” (UIFeatsDialog.DialogSelectNewFeat, l14)
         private int _featId;
+        private object _featList;                   // _completedFeatIds: nowa lista = wczytany zapis, nowa baza (l16)
+        private readonly HashSet<string> _featsDone = new HashSet<string>();
 
         // Wybrany cel na mapie (panel DestinationDetails).
         private DestinationNode _detailsNode;
@@ -376,6 +380,7 @@ namespace LektorPL.Core
             _nextAbilityCheck = Time.unscaledTime + _options.ObjectiveInterval;
             var dialog = SingletonBehaviour<UIGame>.IsInitialized ? SingletonBehaviour<UIGame>.Instance.HeroAttackDialog : null;
             try { PollFeat(); } catch (Exception e) { _log.Error("feat", e); }
+            try { PollFeatDone(); } catch (Exception e) { _log.Error("feat_done", e); }
             PollDefense(dialog);
             var tiles = new List<UIAbilityTrigger>();
             var sig = new System.Text.StringBuilder();
@@ -458,6 +463,38 @@ namespace LektorPL.Core
             _featId = ++_nextId;
             _log.Write(_log.New("open").Str("kind", "feat").Int("id", _featId).Str("via", "poll").Str("name", name)
                 .Str("reward", reward).Bool("replaced", reward != null && reward == Loc("UI_FEAT_REPLACED")));
+        }
+
+        // Chwila ukończenia wyzwania (l16): gra dopisuje id do _pendingCompletedFeats (powiadomienie „nazwa (3/3)”),
+        // a po opróżnieniu stosu przenosi je do _completedFeatIds. Zgłaszamy każde nowe id raz; wyzwania z wczytanego
+        // zapisu (nowa lista _completedFeatIds) tworzą bazę bez zgłoszeń.
+        private void PollFeatDone()
+        {
+            if (FcCompleted == null || FcPending == null || !SingletonBehaviour<PersistentGameObject>.IsInitialized) return;
+            var fc = SingletonBehaviour<PersistentGameObject>.Instance.FeatController;
+            var done = fc != null ? FcCompleted.GetValue(fc) as List<string> : null;
+            var pending = fc != null ? FcPending.GetValue(fc) as List<string> : null;
+            if (done == null) return;
+            bool baseline = !ReferenceEquals(done, _featList) || done.Count + (pending != null ? pending.Count : 0) < _featsDone.Count;
+            var now = new List<string>(done);
+            if (pending != null) now.AddRange(pending);
+            if (baseline)
+            {
+                _featList = done;
+                _featsDone.Clear();
+                foreach (var id in now) _featsDone.Add(id);
+                return;
+            }
+            foreach (var id in now)
+            {
+                if (string.IsNullOrEmpty(id) || !_featsDone.Add(id)) continue;
+                var feat = UserCollectionManager.GetFeat(id, ownedOnly: true);
+                string hero = feat != null && feat.HeroSource != null ? feat.HeroSource.Id : null;
+                _log.Write(_log.New("feat_done").Str("kind", "feat_done").Int("id", ++_nextId).Str("feat", id)
+                    .Str("desc_key", feat != null ? feat.DescriptionKey : null)
+                    .Str("hero_key", hero != null ? hero + "_NAME" : null)
+                    .Str("name", feat != null ? feat.GetLocalizedFeatName() : null));
+            }
         }
 
         private static List<KeyValuePair<string, string>> AbilityCandidates(UIHeroAttackDialog dialog, out string extraKey)

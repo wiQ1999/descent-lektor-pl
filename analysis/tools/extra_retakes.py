@@ -29,7 +29,8 @@ def retakes(release):
     for q in ('SELECT key, fragment FROM segments', 'SELECT key, fragment FROM slot_values'):
         for r in con.execute(q):
             if r['fragment']:
-                frag_groups[r['fragment']].add(grp.get(r['key'].split('#')[0]))
+                # wartości bez kwestii (@LOOT, @FEATS) liczą się do 'system', jak w progress.in_groups
+                frag_groups[r['fragment']].add(grp.get(r['key'].split('#')[0]) or 'system')
     last = collections.Counter()
     for line in open(os.path.join(paths.AUDIO, 'takes.jsonl'), encoding='utf-8'):
         t = json.loads(line)
