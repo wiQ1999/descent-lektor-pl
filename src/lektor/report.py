@@ -21,7 +21,8 @@ EL_RATE = 0.44          # kredyty na znak eleven_v4 (E9, E13)
 REPORTS = {'m1': ('E2_DATA.md', 'E3_AUDIO.md', 'E2: baza kwestii M1', 'E3: audio M1'),
            'm2': ('E7_DATA.md', 'E7_AUDIO.md', 'E7: baza kwestii M2', 'E7: audio M2'),
            'm3': ('E14_DATA.md', 'E14_AUDIO.md', 'E14: baza kwestii całej gry (M3)', 'E14: audio całej gry (M3)'),
-           't1': ('E16_DATA.md', 'E16_AUDIO.md', 'E16: baza paczki testowej Q1–Q2 (t1)', 'E16: audio paczki testowej Q1–Q2 (t1)')}
+           't1': ('E16_DATA.md', 'E16_AUDIO.md', 'E16: baza paczki testowej Q1–Q2 (t1)', 'E16: audio paczki testowej Q1–Q2 (t1)'),
+           'm4': ('E17_DATA.md', 'E17_AUDIO.md', 'E17: baza kwestii wersji produkcyjnej (m4)', 'E17: audio wersji produkcyjnej (m4)')}
 
 
 def table(head, rows):

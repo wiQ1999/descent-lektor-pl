@@ -1072,6 +1072,17 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** czwarta sesja testu t1 2026-11-14, zrzut l16: gra pokazuje tylko napis przy przycisku drużyny i znikające powiadomienie, a lektor odzywał się dopiero w menu wyzwań. Prośba użytkownika: zapowiedź od razu po ukończeniu.
 
+### D107 · 2026-11-14 · E17: wersja produkcyjna m4 z regułami t1 w całej grze
+**Decyzja:**
+- Testy t1 są zakończone. Wersja produkcyjna to wydanie `m4`: zakres bazy `m3`, nagrania przejęte z t1, a także wybory i nieocenione podejścia OmniVoice z m3.
+- Reguły t1 (D101–D106) obowiązują w całej grze. Narrator ma jedno tempo `SPEED_MAX` w całej grze.
+- Głosy w oknach narratora pochodzą z ręcznego przeglądu wszystkich 915 okien spoza t1: `src/lektor/data/speakers_prod.json`, budowany przez `analysis/tools/speakers_freeze.py`.
+- Mówców bez imienia grupujemy według misji i kontekstu. Każda postać ma własny głos, a typ wroga jeden głos. Głos z Ynfernaelu z t1 to Baelziffar.
+- Wszystkie głosy `nv_*` (99, w tym 19 z t1) czyta ElevenLabs. Opis głosu powstaje z kontekstu wszystkich kwestii postaci (`analysis/tools/voice_designs_prod.json`), a `voice_id` trafia do `direction.ELEVEN_VOICES_PROD`.
+- Opcje wyboru z półpauzą czyta narrator, jak w t1.
+
+**Uzasadnienie:** QA użytkownika 2026-11-14 (tempo w całej grze, mówcy bez imienia w ElevenLabs, bo nie są kopią głosów z dubbingu, opcje bez zmian). Liczby i szacunek: `analysis/E17_PREP.md`.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

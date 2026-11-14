@@ -258,7 +258,7 @@ def clean_markup(text):
     text = upgraded(text)
     text = re.sub('[%s]' % ''.join(GLYPH_TERMS), lambda m: ICON_TOKEN % GLYPH_TERMS[m.group(0)], text)
     text = PUA.sub('', text)
-    return text
+    return re.sub(r'\[(?![^\[\]]*\])', '', text)     # nawias bez pary po urwanym znaczniku gry (D107)
 
 
 def _case_from_ending(noun, gender, n):
@@ -309,6 +309,8 @@ def _numbers(text):
     text = re.sub(r'\bstr\.\s*(\d+)', lambda m: 'strona ' + cardinal(int(m.group(1))), text)
     text = re.sub(r'\b([Tt]om)\s+(\d+)', lambda m: m.group(1) + ' ' + ordinal(int(m.group(2))), text)
     text = re.sub(r'\b(\d+)([A-D])\b', lambda m: cardinal(int(m.group(1))) + ' ' + LETTERS[m.group(2)], text)
+    text = re.sub(r'\b(kafel\w*\s+)([A-D])(\d+)\b',     # „na kafelku B13” (D107)
+                  lambda m: m.group(1) + LETTERS[m.group(2)] + ' ' + cardinal(int(m.group(3))), text)
     text = re.sub(r'\((\d+|\{\d\})\s*/\s*(\d+)\)', lambda m: '(%s z %s)' % (
         cardinal(int(m.group(1))) if m.group(1).isdigit() else m.group(1), cardinal(int(m.group(2)), 'gen')), text)
 

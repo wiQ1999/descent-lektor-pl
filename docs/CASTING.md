@@ -137,3 +137,10 @@ Wypowiedzi postaci w oknach narratora czyta postać wskazana w tekście albo w k
 | `nv_kowalka` | kowalka, smocza hybryda (podróż Vaerix) | `female, middle-aged, very low pitch` | 23 | 7,9 s, SHA `f1da6143` | 1 |
 
 Bohater wskazany luką (`{0}`) mówi głosem bohatera z argumentu okna (`arg:N`). Nowe nagrania postaci czytanych dotąd przez ElevenLabs powstają w paczce testowej w OmniVoice z referencji zapasowych (D80).
+
+## E17: mówcy bez imienia w wersji produkcyjnej (D107, wydanie `m4`)
+
+Każda postać bez imienia ma własny głos ElevenLabs, a typ wroga jeden głos. Mówców pogrupowaliśmy według misji i kontekstu w ręcznym przeglądzie wszystkich okien narratora (`src/lektor/data/speakers_prod.json`). Głosy testowe t1 (tabela wyżej) też dostają głosy ElevenLabs. `nv_ynfernael` to Baelziffar (`nv_baelziffar`).
+
+- 99 głosów: 80 nowych i 19 z t1. Opisy (kto mówi, z kontekstu wszystkich kwestii, oraz opis do `text_to_voice`) są w `analysis/tools/voice_designs_prod.json`.
+- Projekt, odsłuch i wybór głosów przez QA, z portretem z gry tam, gdzie postać go ma (D41). Wybrane `voice_id` trafiają do `direction.ELEVEN_VOICES_PROD` i do tej sekcji.

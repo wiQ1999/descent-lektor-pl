@@ -41,6 +41,17 @@ RELEASE_GROUPS['m3'] = RELEASE_GROUPS['m2']     # plus grupy z m3_sources
 # Paczka testowa E16 (D101): Q1 i Q2 z otoczeniem. Generowanie i ocena t1 obejmują tylko fragmenty tych grup.
 TEST_GROUPS = {'t1': ('story_q1', 'welcome_home', 'scene_q1', 'a1_q2', 'map', 'town', 'city', 'travel_act1',
                       'a1_event_2a', 'a1_event_2b', 'enemies', 'gear', 'system')}
+# Reguły t1 (D101–D106): głosy postaci w oknach narratora, jedno tempo narratora, okno ataku. t1 w zakresie testu,
+# m4 (produkcja, D107) w całej grze (None).
+T1_RULES = {'t1': TEST_GROUPS['t1'], 'm4': None}
+
+
+def t1_rules(release, group=None):
+    """Czy w wydaniu (i grupie) obowiązują reguły t1."""
+    if release not in T1_RULES:
+        return False
+    groups = T1_RULES[release]
+    return groups is None or group is None or group in groups
 DESTINATIONS = (('d3/coreset/data', 'QuestModel', '_keyName', '_descKey'),
                 ('d3/narrativeevents', 'NarrativeEventModel', '_keyName', '_keyDesc'),
                 ('d3/dle04/data', 'QuestModel', '_keyName', '_descKey'))

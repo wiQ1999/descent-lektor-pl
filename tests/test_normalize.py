@@ -91,3 +91,9 @@ def test_icon_after_negated_verb_takes_genitive(text, expected):
     """l13: ikona po przeczonym czasowniku w dopełniaczu."""
     assert normalize(text) == expected
 
+
+
+def test_tile_letter_first_and_orphan_bracket():
+    """D107: kafel „B13” (litera przed numerem) i nawias bez pary po urwanym znaczniku gry."""
+    assert normalize('Wrogowie na kafelku B13.') == 'Wrogowie na kafelku be trzynaście.'
+    assert normalize('Bohater może [wykonać przemieszczenie</link></style> 5.') == 'Bohater może wykonać przemieszczenie pięć.'

@@ -99,6 +99,11 @@ Paczka testowa Q1–Q2 (E16, D101): `--release t1`, baza `t1.sqlite`, audio `aud
 - D105–D106: w chwili ukończenia wyzwania plugin zgłasza `feat_done`, a companion mówi nagłówek, bohatera i nazwę (`library.feat_done`, nazwy w `@FEATS`); okno wyzwania (`kind: feat`, `library.feat`) czyta nagłówek i nagrodę jak łup. Kwestia postaci z wtrąceniem „– mówi X” dzieli się jak okno narratora (`build.NARRATED`). Ikona po przeczeniu stoi w dopełniaczu. Wrogowie bez `_SING` (`scope.unique_enemy_names`) mają nazwę w `EntityName` i w łupie.
 - Przebieg: `REL=t1 ELEVEN=0 bash analysis/tools/e14_run.sh`, potem dodatkowe rundy `analysis/tools/extra_retakes.py` i `bundle --platform win --release t1`.
 
+Wersja produkcyjna (E17, D107): `--release m4`, baza `m4.sqlite`, audio `audio/m4/`, zakres `m3` (`paths.BASE`), reguły t1 w całej grze (`scope.T1_RULES`, `ONE_TEMPO`).
+- Mówcy w oknach narratora: `src/lektor/data/speakers_prod.json` z `analysis/tools/speakers_freeze.py` (propozycja automatu + `analysis/work/out/prod/corrections.txt` + wybory t1). Przegląd: `speakers_digest.py`.
+- Mówcy bez imienia (`nv_*`, 99) czyta ElevenLabs (`direction.ELEVEN_NEW`). Opisy w `analysis/tools/voice_designs_prod.json`, `voice_id` w `direction.ELEVEN_VOICES_PROD`; bez nich `eleven` pomija głos.
+- `generate` przejmuje wybory z t1 i m3 (tylko silnik głosu w m4) i nieocenione podejścia OmniVoice z m3 (`paths.ADOPT`, `synth.adopt`).
+
 - `build --release m2 --only event_e5b map` buduje tylko wybrane grupy spoza M1.
 - Fazę B E14 prowadzi `bash analysis/tools/e14_run.sh` (D95). Skrypt jest wznawialny i działa w aplikacji Claude:
   - ElevenLabs i OmniVoice idą naraz, w kolejności gry;
@@ -209,3 +214,5 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 | [analysis/E16_AUDIO.md](analysis/E16_AUDIO.md) | audio t1 (E16): czas generowania, wyniki automatu według głosu, w tym nowych `nv_*` |
 | [analysis/E16_TEST.md](analysis/E16_TEST.md) | paczka testowa Q1–Q2 (E16): podział na głosy, jedno tempo, okno ataku, pokrycie, replay, lista odsłuchu |
 | [analysis/E16_PLAYTEST.md](analysis/E16_PLAYTEST.md) | testy t1 w grze (Q1–Q2, 2026-11-13/14): zrzuty, przyczyny, przegląd mowy w oknach narratora, poprawki D102, D103, D105 i D106 (okno i zapowiedź wyzwania, przeczenie, wtrącenia) |
+| [analysis/E17_PREP.md](analysis/E17_PREP.md) | przygotowanie wersji produkcyjnej m4: przegląd mówców w oknach, nowe głosy ElevenLabs, szacunek GPU i kredytów, kontrola tekstów |
+| [analysis/E17_DATA.md](analysis/E17_DATA.md) | baza kwestii m4: liczności według grupy, kategorii i głosu, szacunek generowania |

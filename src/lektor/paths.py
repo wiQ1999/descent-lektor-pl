@@ -8,9 +8,11 @@ VOICES = os.path.join(WORK, 'voices')          # nagrania dubbingu (analysis/too
 OUT = os.path.join(WORK, 'lektor')
 REFS = os.path.join(OUT, 'refs')
 HF_HOME = os.path.join(WORK, 'hf_cache')
-RELEASES = ('m1', 'm2', 'm3', 't1')             # m2: M1 i scenariusze E7 (D63), m3: cała gra (E14, D83), t1: test E16
-PREVIOUS = {'m2': 'm1', 'm3': 'm2', 't1': 'm3'}  # wydanie, z którego przejmujemy fragmenty o tym samym id
-BASE = {'t1': 'm3'}                             # wydanie testowe: zakres i reguły bazy, do tego opcje testu (D101)
+RELEASES = ('m1', 'm2', 'm3', 't1', 'm4')       # m2: M1 i scenariusze E7 (D63), m3: cała gra (E14, D83), t1: test E16,
+                                                # m4: cała gra z regułami t1 (produkcja, D107)
+PREVIOUS = {'m2': 'm1', 'm3': 'm2', 't1': 'm3', 'm4': 't1'}  # wydanie, z którego przejmujemy fragmenty o tym samym id
+ADOPT = {'m4': 'm3'}        # D107: podejścia OmniVoice bez wyboru (m3, akt 2 bez oceny) przejmujemy do oceny
+BASE = {'t1': 'm3', 'm4': 'm3'}                 # zakres i reguły bazy m3, do tego reguły testu t1 (D101, D107)
 LOCAL_ONLY = ('t1',)                            # nowe nagrania tylko w OmniVoice, także głosów ElevenLabs (D101)
 RELEASE = DB = AUDIO = None
 
@@ -27,7 +29,7 @@ use('m1')
 
 
 def base(release=None):
-    """Wydanie, którego zakres i reguły bazy obowiązują (t1 → m3)."""
+    """Wydanie, którego zakres i reguły bazy obowiązują (t1, m4 → m3)."""
     release = release or RELEASE
     return BASE.get(release, release)
 

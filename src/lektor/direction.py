@@ -22,13 +22,20 @@ ELEVEN_VOICES_E14 = {'magrit': '4z2ttMe9kFzyBLgroafB', 'alys': 'PzYUKC9HYBoJ4OGy
                      'drys': 'UrUMN6EMRqqvJz3oDHD1', 'waiqar': 'IQY1bvB4YbPVoS6Go9q3', 'morant': '3CNDe9njN2kEBkgjZlEi',
                      'nara': 'peH5NmVUWPLR3C6OwCIg', 'meza': '6QqpmxamtHSBJVCpfj8E'}
 ELEVEN_VOICES.update(ELEVEN_VOICES_E14)
+# D107: mówcy bez imienia (nv_*) w produkcji mają własne głosy ElevenLabs; voice_id dopisujemy po projekcie głosów
+# (analysis/tools/voice_designs_prod.json). Bez voice_id eleven pomija głos i podaje jego liczbę znaków.
+ELEVEN_VOICES_PROD = {}
+ELEVEN_VOICES.update(ELEVEN_VOICES_PROD)
+ELEVEN_NEW = ('m4',)
 ELEVEN_TAKE0 = 100      # podejścia ElevenLabs mają numery od 101; podejścia OmniVoice tych głosów zostają jako zapas
 
 
 def engine(voice):
     if paths.RELEASE in paths.LOCAL_ONLY:
         return 'omnivoice'
-    return 'elevenlabs' if voice in ELEVEN_VOICES else 'omnivoice'
+    if voice in ELEVEN_VOICES or paths.RELEASE in ELEVEN_NEW and voice.startswith('nv_'):
+        return 'elevenlabs'
+    return 'omnivoice'
 
 
 def take_engine(take):
@@ -40,7 +47,7 @@ SCENE_PAUSE = 0.35
 PAUSE = 0.25
 SPEED_MIN, SPEED_MAX = 1.2, 1.4
 SPEED_FROM, SPEED_TO = 80, 300          # znaki: do 80 tempo bazowe, od 300 maksymalne (wstępnie, D34)
-ONE_TEMPO = ('t1',)     # E16 (D101): narrator w zakresie testu zawsze SPEED_MAX (poza narracją scen), także wartości luk
+ONE_TEMPO = ('t1', 'm4')   # E16 (D101): narrator w zakresie reguł t1 zawsze SPEED_MAX (poza narracją scen), także luki; m4: cała gra (D107)
 
 TOGGLES = {
     'dialog': 'dialogi',

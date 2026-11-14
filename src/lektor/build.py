@@ -196,14 +196,13 @@ def split_voices(records, release):
     """E16 (D101): okna narratora z zakresu testu dzielone na narrację i wypowiedzi postaci (speakers_t1.json).
     Wypowiedź bohatera z luki {N} ('arg:N') daje wersje KLUCZ#bohater; companion wybiera ją po argumencie N,
     a kwestia bazowa (bez znanego bohatera) czyta tę wypowiedź narratorem."""
-    groups = scope.TEST_GROUPS.get(release)
-    if not groups:
+    if not scope.t1_rules(release):
         return records
-    overrides = speakers.load_overrides()
+    overrides = speakers.load_overrides(release=release)
     out = []
     for r in records:
         out.append(r)
-        if not (r['tts'] and r['category'] != 'opcja_wyboru' and '#' not in r['key'] and r['group'] in groups):
+        if not (r['tts'] and r['category'] != 'opcja_wyboru' and '#' not in r['key'] and scope.t1_rules(release, r['group'])):
             continue
         # Kwestia postaci z wtrąceniem narratora („– mamrocze Kehli, …”) dzielona jak okno narratora (l15).
         if r['voice'] != 'narrator' and not (r['category'] == 'dialog' and NARRATED.search(clean_markup(r['text_raw']))):
@@ -225,7 +224,7 @@ def split_voices(records, release):
 def piece_speed(r, voice, text, release):
     """Tempo kawałka. E16 (D101): narrator ma jedno tempo (SPEED_MAX) poza narracją scen, a wypowiedź postaci
     w oknie narratora dostaje tempo od długości samej wypowiedzi."""
-    if r['speed'] is None or release not in D.ONE_TEMPO or r['group'] not in scope.TEST_GROUPS.get(release, ()):
+    if r['speed'] is None or release not in D.ONE_TEMPO or not scope.t1_rules(release, r['group']):
         return r['speed']
     if voice == 'narrator':
         return D.SPEED_MAX
@@ -240,7 +239,7 @@ def build(path=None, release='m1', only=None):
     game = G.Game()
     terms = game.terms(game_order=base == 'm3')
     records, values, info = scope.collect(game, terms, base, only)
-    if release in scope.TEST_GROUPS:      # E16 (D101): okno zdolności w oknie ataku
+    if scope.t1_rules(release):      # E16 (D101): okno zdolności w oknie ataku
         records += abilities.records(game, terms, {r['key'] for r in records})
     records = split_voices(records, release)
     lines = {r['key'] for r in records if r['tts']}

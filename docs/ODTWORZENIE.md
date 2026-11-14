@@ -235,6 +235,25 @@ REL=t1 ELEVEN=0 bash analysis/tools/e14_run.sh
 .venv/Scripts/python -I -m lektor bundle --platform win --release t1
 ```
 
+Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej grze, przejęcie nagrań z t1 i m3.
+- Przegląd mówców w oknach narratora spoza t1 zapisuje `speakers_digest.py` do `analysis/work/out/prod/speakers_digest.txt`. Poprawki ręczne leżą w `analysis/work/out/prod/corrections.txt`, a opisy nowych postaci w `new_voices.txt` tamże.
+- `speakers_freeze.py` składa z nich `src/lektor/data/speakers_prod.json` (propozycja automatu, poprawki i wybory t1) i sprawdza liczby głosów:
+
+```bash
+.venv/Scripts/python -I analysis/tools/speakers_digest.py
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/speakers_freeze.py
+```
+
+```bash
+.venv/Scripts/python -I -m lektor build --release m4
+```
+
+- Głosy `nv_*` projektujemy w ElevenLabs według `analysis/tools/voice_designs_prod.json` (skill `elevenlabs`, za zgodą użytkownika), a `voice_id` wpisujemy do `direction.ELEVEN_VOICES_PROD`. Do tego czasu `eleven` pomija te głosy i podaje ich liczbę znaków.
+- Generowanie jak w E14 (`REL=m4 bash analysis/tools/e14_run.sh`). `generate` przejmuje wybory z t1 i m3 oraz nieocenione podejścia OmniVoice z m3 (`synth.adopt`). Dodatkowe rundy: `extra_retakes.py --release m4`.
+
 ## 7. Plugin i paczka
 
 ```bash

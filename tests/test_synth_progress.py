@@ -59,3 +59,36 @@ def test_needed_takes_by_engine():
     assert progress.needed('brynn') == [1, 2, 3]
     assert progress.needed('narrator') == [1]
     assert progress.needed(next(iter(D.ELEVEN_VOICES))) == [D.ELEVEN_TAKE0 + 1]
+
+
+def test_m4_inherits_own_engine_and_adopts_unchosen_takes(tmp_path, monkeypatch):
+    """D107: m4 przejmuje wybory t1 i m3 tylko w silniku głosu (nv_* w t1 z OmniVoice odpada), a podejścia
+    OmniVoice z m3 bez wyboru trafiają do takes.jsonl m4 do oceny."""
+    monkeypatch.setattr(paths, 'WORK', str(tmp_path))
+
+    def release(name, choice=None, takes=()):
+        d = tmp_path / 'audio' / name
+        (d / 'takes').mkdir(parents=True)
+        (d / 'choice.json').write_text(json.dumps(choice or {}), encoding='utf-8')
+        (d / 'takes.jsonl').write_text(''.join(json.dumps(t) + '\n' for t in takes), encoding='utf-8')
+        for f, c in (choice or {}).items():
+            (d / 'takes' / ('%s_t%d.wav' % (f, c['take']))).write_bytes(b'x')
+        for t in takes:
+            (d / 'takes' / ('%s_t%d.wav' % (t['fragment'], t['take']))).write_bytes(b'x')
+
+    release('t1', {'n': {'take': 1, 'voice': 'narrator'}, 'v': {'take': 1, 'voice': 'nv_bandyta'}})
+    release('m3', {'n': {'take': 2, 'voice': 'narrator'}, 'x': {'take': 1, 'voice': 'syrus'}},
+            [{'fragment': 'u', 'take': 1, 'voice': 'syrus'}, {'fragment': 'x', 'take': 1, 'voice': 'syrus'}])
+    paths.use('m4')
+    try:
+        (tmp_path / 'audio' / 'm4').mkdir(parents=True)
+        monkeypatch.setattr(paths, 'AUDIO', str(tmp_path / 'audio' / 'm4'))
+        con = fragments_db([('n', 'narrator', 1.4, 'a'), ('v', 'nv_bandyta', None, 'b'), ('x', 'syrus', None, 'c'),
+                            ('u', 'syrus', None, 'd')])
+        done = synth.inherit(con)
+        assert done == {'n': {'take': 1, 'voice': 'narrator'}, 'x': {'take': 1, 'voice': 'syrus'}}
+        assert D.engine('nv_bandyta') == 'elevenlabs'
+        assert synth.adopt(con, done) == 1 and ('u', 1) in synth.load_state()
+        assert synth.adopt(con, done) == 0
+    finally:
+        paths.use('m1')

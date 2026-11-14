@@ -1,5 +1,5 @@
 """Dodatkowe ponowne podejścia po limicie `select` (E16, D101): retake.json z odrzuconych, nieprzejętych fragmentów
-zakresu testu (scope.TEST_GROUPS). Ucięta końcówka: podejście wolniej, jak w `select`. Fragmenty przejęte z poprzedniego
+zakresu testu (scope.TEST_GROUPS), a w m4 całej gry (D107). Ucięta końcówka: podejście wolniej, jak w `select`. Fragmenty przejęte z poprzedniego
 wydania zostają bez zmian. Na konsolę idzie tylko liczba fragmentów.
 
     .venv/Scripts/python -I analysis/tools/extra_retakes.py [--release t1]
@@ -20,7 +20,7 @@ from lektor.evaluate import RETAKE_SLOWER  # noqa: E402
 
 def retakes(release):
     paths.use(release)
-    groups = set(scope.TEST_GROUPS[release])
+    groups = set(scope.TEST_GROUPS.get(release, ()))    # m4 (D107): cała gra
     choice = json.load(open(os.path.join(paths.AUDIO, 'choice.json'), encoding='utf-8'))
     inherited = json.load(open(os.path.join(paths.AUDIO, 'inherited.json'), encoding='utf-8'))
     con = db.connect(paths.DB)
@@ -37,7 +37,7 @@ def retakes(release):
         last[t['fragment']] = max(last[t['fragment']], t['take'])
     out = {}
     for fid, c in choice.items():
-        if not c['problems'] or fid in inherited or not frag_groups[fid] & groups or last[fid] >= 100:
+        if not c['problems'] or fid in inherited or groups and not frag_groups[fid] & groups or last[fid] >= 100:
             continue    # podejścia od 101 to ElevenLabs (E13)
         speed = c['speed']
         if 'koncowka' in c['problems']:
@@ -50,5 +50,5 @@ def retakes(release):
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument('--release', default='t1', choices=sorted(scope.TEST_GROUPS))
+    ap.add_argument('--release', default='t1', choices=paths.RELEASES)
     print(retakes(ap.parse_args().release))

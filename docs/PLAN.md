@@ -478,6 +478,15 @@ Cel: rozgrywki testowe Q1 i Q2 z pełnym lektorem, poprawkami D98–D100 i dwoma
 
 **Kryteria ukończenia:** wszystkie fragmenty zakresu w manifeście `t1`, testy przechodzą, paczka Windows zbudowana, raport `analysis/E16_TEST.md`, commit.
 
+## E17 · Wersja produkcyjna m4 (D107)
+
+Cel: paczka całej gry z regułami t1. Przygotowanie zrobione 2026-11-14 (`analysis/E17_PREP.md`): przegląd mówców we wszystkich oknach, kod wydania `m4`, baza i szacunek.
+- Projekt 99 głosów `nv_*` w ElevenLabs, odsłuch i wybór przez QA (płatne, za zgodą użytkownika; potrzebne miejsca na głosy).
+- Generowanie: ElevenLabs i OmniVoice w kolejności gry (`REL=m4 bash analysis/tools/e14_run.sh`), ocena, ponowne podejścia, `finalize`.
+- Testy, replay dzienników, paczki Windows i Mac, wydanie po akceptacji użytkownika.
+
+**Kryteria ukończenia:** wszystkie fragmenty w manifeście `m4`, testy przechodzą, paczki zbudowane, raport `analysis/E17_AUDIO.md`, commit.
+
 ## E12 · Katalog treści gry (później)
 
 Uporządkowanie treści całej gry do nagrania: kategorie, mówcy, scenariusze, przedmioty i miejsce na poprawki, np. zapis fonetyczny. Sposób przechowywania dobieram sam (D77). Katalog leży w projekcie, w `analysis/work/`, poza Git (D76). Plan etapu przedstawię przed startem.

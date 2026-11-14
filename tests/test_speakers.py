@@ -77,7 +77,7 @@ def test_overrides_file_has_only_known_voice_forms():
 
 
 def test_split_voices_makes_hero_versions(monkeypatch):
-    monkeypatch.setattr(B.speakers, 'load_overrides', lambda: {'K': ['arg:0']})
+    monkeypatch.setattr(B.speakers, 'load_overrides', lambda **_: {'K': ['arg:0']})
     r = {'key': 'K', 'tts': 1, 'voice': 'narrator', 'category': 'zdarzenie', 'group': 'travel_act1',
          'text_raw': '– Uważaj – szepcze {0}.', 'args': [{'type': 'VariableString'}], 'hero_variant': []}
     out = B.split_voices([r], 't1')
@@ -88,17 +88,38 @@ def test_split_voices_makes_hero_versions(monkeypatch):
 
 
 def test_split_voices_only_in_test_release_and_groups(monkeypatch):
-    monkeypatch.setattr(B.speakers, 'load_overrides', lambda: {})
+    monkeypatch.setattr(B.speakers, 'load_overrides', lambda **_: {})
     r = {'key': 'K', 'tts': 1, 'voice': 'narrator', 'category': 'zdarzenie', 'group': 'travel_act2',
          'text_raw': '– Idziemy – mówi Syrus.', 'args': [], 'hero_variant': []}
     assert 'split' not in B.split_voices([dict(r)], 't1')[0]
     assert B.split_voices([dict(r, group='travel_act1')], 'm3')[0].get('split') is None
     assert B.split_voices([dict(r, group='travel_act1')], 't1')[0]['split'][0] == ('syrus', 'Idziemy.')
+    # m4 (D107): reguły t1 w całej grze
+    assert B.split_voices([dict(r)], 'm4')[0]['split'][0] == ('syrus', 'Idziemy.')
+
+
+def test_prod_overrides_cover_t1_and_use_known_voice_forms():
+    """D107: plik produkcyjny zawiera wszystkie wybory t1 (poza nazwą głosu z Ynfernaelu) i tylko głosy w formie
+    nazwy, arg:N albo nv_*."""
+    t1 = S.load_overrides()
+    prod = S.load_overrides(release='m4')
+    assert set(t1) <= set(prod)
+    for key, v in prod.items():
+        voices = v['pieces'] if isinstance(v, dict) else [v] if isinstance(v, str) else v
+        assert all(x == 'narrator' or x.startswith(('arg:', 'nv_')) or x.isalpha() for x in voices), key
+        assert 'nv_ynfernael' not in voices, key
+
+
+def test_t1_rules_scope():
+    from lektor import scope
+    assert scope.t1_rules('t1', 'story_q1') and not scope.t1_rules('t1', 'a2_q11')
+    assert scope.t1_rules('m4', 'a2_q11') and scope.t1_rules('m4')
+    assert not scope.t1_rules('m3', 'story_q1')
 
 
 def test_character_line_with_narrator_aside_is_split(monkeypatch):
     """l15: kwestia postaci z wtrąceniem „– mamrocze X, …” i poleceniem po pustym wierszu: oba czyta narrator."""
-    monkeypatch.setattr(B.speakers, 'load_overrides', lambda: {})
+    monkeypatch.setattr(B.speakers, 'load_overrides', lambda **_: {})
     r = {'key': 'K', 'tts': 1, 'voice': 'kehli', 'category': 'dialog', 'group': 'city', 'args': [], 'hero_variant': [],
          'text_raw': '<i>– Za ciężki młot. – mamrocze Kehli, szkicując. – Coś wymyślę.</i>\n\nStwórz przedmiot.'}
     split = B.split_voices([r], 't1')[0]['split']

@@ -84,19 +84,60 @@ def link_or_copy(src, dst):
 
 
 def inherit(con, source=None):
-    """Wybrane podejścia fragmentów o tym samym id (głos z SHA referencji, tekst, tempo) z poprzedniego wydania."""
-    src = os.path.join(paths.WORK, 'audio', source or paths.PREVIOUS[paths.RELEASE])
-    choice = json.load(open(os.path.join(src, 'choice.json'), encoding='utf-8'))
+    """Wybrane podejścia fragmentów o tym samym id (głos z SHA referencji, tekst, tempo) z poprzedniego wydania.
+    D107 (m4): też wybory z wydania paths.ADOPT dla fragmentów, których poprzednie nie ma, i tylko podejścia
+    silnika, który ma głos w tym wydaniu (t1 nagrał wszystko w OmniVoice, D101)."""
+    sources = [source or paths.PREVIOUS[paths.RELEASE]]
+    if not source and paths.ADOPT.get(paths.RELEASE):
+        sources.append(paths.ADOPT[paths.RELEASE])
+    strict = paths.RELEASE in D.ELEVEN_NEW
     ids = {r['id'] for r in con.execute('SELECT id FROM fragments')}
-    out = {f: c for f, c in choice.items() if f in ids}
+    out = {}
     os.makedirs(os.path.join(paths.AUDIO, 'takes'), exist_ok=True)
-    for fid, c in out.items():
-        dst = take_path(fid, c['take'])
-        if not os.path.exists(dst):
-            link_or_copy(os.path.join(src, 'takes', os.path.basename(dst)), dst)
+    for name in sources:
+        src = os.path.join(paths.WORK, 'audio', name)
+        choice = json.load(open(os.path.join(src, 'choice.json'), encoding='utf-8'))
+        for fid, c in choice.items():
+            if fid not in ids or fid in out or strict and D.take_engine(c['take']) != D.engine(c['voice']):
+                continue
+            dst = take_path(fid, c['take'])
+            if not os.path.exists(dst):
+                link_or_copy(os.path.join(src, 'takes', os.path.basename(dst)), dst)
+            out[fid] = c
     with open(os.path.join(paths.AUDIO, 'inherited.json'), 'w', encoding='utf-8') as fh:
         json.dump(out, fh, indent=1)
     return out
+
+
+def adopt(con, done):
+    """D107: podejścia OmniVoice z wydania paths.ADOPT bez wyboru (wygenerowane, nieocenione) dla fragmentów
+    o tym samym id, poza przejętymi: plik i wpis w takes.jsonl, więc ocena i wybór liczą je jak własne."""
+    source = paths.ADOPT.get(paths.RELEASE)
+    if not source:
+        return 0
+    src = os.path.join(paths.WORK, 'audio', source)
+    voices = {r['id']: r['voice'] for r in con.execute('SELECT id, voice FROM fragments')}
+    state = load_state()
+    os.makedirs(os.path.join(paths.AUDIO, 'takes'), exist_ok=True)
+    n = 0
+    with open(take_log(), 'a', encoding='utf-8') as log:
+        for line in open(os.path.join(src, TAKE_LOGS['omnivoice']), encoding='utf-8'):
+            try:
+                t = json.loads(line)
+            except ValueError:
+                continue
+            fid = t['fragment']
+            if (fid not in voices or fid in done or (fid, t['take']) in state or D.take_engine(t['take']) != 'omnivoice'
+                    or D.engine(voices[fid]) != 'omnivoice'):
+                continue
+            wav = os.path.join(src, 'takes', '%s_t%d.wav' % (fid, t['take']))
+            if not os.path.exists(wav):
+                continue
+            link_or_copy(wav, take_path(fid, t['take']))
+            log.write(json.dumps(dict(t, adopted=source)) + '\n')
+            state[fid, t['take']] = t
+            n += 1
+    return n
 
 
 def generate_iterative_unpadded(self, task, gen_config):
@@ -236,8 +277,11 @@ def generate(limit=None, voices=None, retake_file=None, acts=None, groups=None, 
     retake = None
     if retake_file:
         retake = {k: tuple(v) for k, v in json.load(open(retake_file, encoding='utf-8')).items()}
-    state = load_state()
     done = inherit(con) if paths.RELEASE in paths.PREVIOUS else {}
+    adopted = adopt(con, done)
+    if adopted:
+        print('przejęte podejścia bez wyboru z %s: %d' % (paths.ADOPT[paths.RELEASE], adopted), file=sys.stderr, flush=True)
+    state = load_state()
     order = None
     if paths.base() == 'm3':
         from . import progress

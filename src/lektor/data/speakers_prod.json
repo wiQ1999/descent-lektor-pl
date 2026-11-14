@@ -1,0 +1,3942 @@
+{
+ "_opis": "D107: głos każdej wypowiedzi w kwestiach narratora całej gry (produkcja po t1); przegląd ręczny z kontekstem okna (analysis/tools/speakers_freeze.py). Format jak speakers_t1.json.",
+ "BOOKSHELF_CHOICE_BOOK_FALSE_07_BRYNN": [
+  "brynn",
+  "brynn"
+ ],
+ "BOOKSHELF_CHOICE_BOOK_FALSE_07_KEHLI": [
+  "kehli"
+ ],
+ "BOOKSHELF_CHOICE_BOOK_FALSE_07_CHANCE": [
+  "chance"
+ ],
+ "BOOKSHELF_CHOICE_BOOK_FALSE_07_GALADEN": [
+  "brynn"
+ ],
+ "BOOKSHELF_CHOICE_BOOK_FALSE_07_VAERIX": [
+  "vaerix"
+ ],
+ "BOOKSHELF_CHOICE_BOOK_FALSE_07_SYRUS": [
+  "syrus"
+ ],
+ "BOOKSHELF_CHOICE_BOOK_FALSE_15_SYRUS": [
+  "syrus"
+ ],
+ "REMOVE_CHEST_CANCEL": [
+  "nv_bandyta",
+  "nv_bandyta"
+ ],
+ "Q1_CHOOSE_HERO_ON_WATCH": [
+  "arg:0",
+  "arg:0"
+ ],
+ "Q1_BRYNN_IS_ON_WATCH": [
+  "brynn",
+  "brynn"
+ ],
+ "Q1_GALADEN_IS_ON_WATCH": [
+  "galaden"
+ ],
+ "Q1_SYRUS_IS_ON_WATCH": [
+  "syrus",
+  "syrus"
+ ],
+ "Q1_VAERIX_IS_ON_WATCH": [
+  "vaerix"
+ ],
+ "Q1_BRYNN_DOOR": [
+  "brynn"
+ ],
+ "Q1_VAERIX_TABLE": [
+  "vaerix"
+ ],
+ "Q1_GALADEN_CHEST": [
+  "galaden"
+ ],
+ "Q1_GALADEN_DOOR": [
+  "galaden",
+  "galaden"
+ ],
+ "Q1_SYRUS_DOOR": [
+  "syrus",
+  "syrus"
+ ],
+ "Q1_VAERIX_DOOR": [
+  "vaerix"
+ ],
+ "Q1_SYRUS_BOOKSHELF": [
+  "syrus"
+ ],
+ "Q1_BRYNN_SHOUT": [
+  "brynn"
+ ],
+ "Q1_BOSS_SPAWN": [
+  "nekrul",
+  "nekrul"
+ ],
+ "Q1_PERSON_1_TEST_PASS": [
+  "nv_wiesniak"
+ ],
+ "Q1_SOLDIER_1_BRYNN": [
+  "nv_straznik"
+ ],
+ "Q1_SOLDIER_1_BRYNN_2": [
+  "nv_straznik",
+  "nv_straznik"
+ ],
+ "Q1_BRYNN_DRAMATIC_CHOICE_2": [
+  "brynn"
+ ],
+ "Q1_SOLDIER_1": [
+  "nv_straznik",
+  "nv_straznik",
+  "nv_straznik"
+ ],
+ "Q1_PERSON_2_TEST_PASS": [
+  "nv_wiezien",
+  "nv_wiezien"
+ ],
+ "Q1_SAVE_VILLAGERS_BRYNN": [
+  "brynn",
+  "nv_wiesniak",
+  "nv_wiesniak"
+ ],
+ "Q1_BRYNN_DRAMATIC_CHOICE": [
+  "brynn"
+ ],
+ "Q1_GALADEN_DRAMATIC_CHOICE": [
+  "galaden"
+ ],
+ "Q1_VAERIX_DRAMATIC_CHOICE": [
+  "vaerix"
+ ],
+ "Q1_SYRUS_DRAMATIC_CHOICE": [
+  "syrus"
+ ],
+ "Q1_SAVE_VILLAGERS_GALADEN": [
+  "galaden",
+  "nv_wiesniak",
+  "nv_wiesniak"
+ ],
+ "Q1_SAVE_VILLAGERS_VAERIX": [
+  "vaerix",
+  "nv_wiesniak",
+  "nv_wiesniak"
+ ],
+ "Q1_NEKRUL_DEFEAT": [
+  "nekrul"
+ ],
+ "TERRAIN_CAULDRON_KEHLI": [
+  "kehli"
+ ],
+ "TERRAIN_CAULDRON_KEHLI_ENEMIES_NONE": [
+  "kehli"
+ ],
+ "TERRAIN_CAULDRON_KEHLI_WILDCARD_00": [
+  "kehli"
+ ],
+ "Q1_ROUND_TABLE_LETTER": [
+  "adelynn",
+  "adelynn"
+ ],
+ "TERRAIN_BARRICADE_PASS_SYRUS": [
+  "syrus"
+ ],
+ "ENEMY_ACTIVATION_BOSS_ORBAN_BASIC": [
+  "nv_orban",
+  "nv_orban"
+ ],
+ "ENEMY_ACTIVATION_TACTIC_SCORCHED_EARTH": [
+  "nv_fanatyk"
+ ],
+ "ENEMY_ACTIVATION_TACTIC_THEFT_ALT": [
+  "nv_bandyta"
+ ],
+ "ENEMY_DEFEAT_BOSS_ORBAN": [
+  "nv_orban",
+  "nv_orban"
+ ],
+ "BANDIT_TACTIC_SHADOW_STEP_HINT": [
+  "nv_bandyta"
+ ],
+ "ENEMY_DEFEAT_BOSS_EURTH_ESCAPE": [
+  "nv_eurth",
+  "nv_eurth"
+ ],
+ "ENEMY_DEFEAT_BOSS_EURTH_FINAL": [
+  "nv_baelziffar"
+ ],
+ "FAE_TACTIC_BUBBLE_TROUBLE_ACTIVATION": [
+  "nv_fae"
+ ],
+ "FAE_TACTIC_BE_BACK_ACTIVATION": [
+  "nv_fae",
+  "nv_fae"
+ ],
+ "FAE_TACTIC_BUBBLE_TROUBLE_HINT": [
+  "nv_fae"
+ ],
+ "FAE_TACTIC_BE_BACK_HINT": [
+  "nv_fae"
+ ],
+ "ENEMY_DEFEAT_BOSS_XAIN_FINAL": [
+  "nv_xain",
+  "nv_xain"
+ ],
+ "ENEMY_TACTIC_ZACHARETH_RUNEBLAST_HINT": [
+  "zachareth",
+  "zachareth"
+ ],
+ "RENEYR_TACTIC_SUMMON_SHADOW_HINT": [
+  "reneyr",
+  "reneyr"
+ ],
+ "ENEMY_ACTIVATION_ZADIE_BASIC": [
+  "narrator"
+ ],
+ "SPECTER_TACTIC_POSSESSION_ACTIVATION": [
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_RUNELOCK_ACTIVATION_KEHLI": [
+  "nv_widmo",
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_RUNELOCK_ACTIVATION": [
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_DEBT_COLLECTOR_ACTIVATION_ALL": [
+  "nv_widmo",
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_DEBT_COLLECTOR_ACTIVATION_ZERO": [
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_DEBT_COLLECTOR_ACTIVATION_ONE": [
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_DEBT_COLLECTOR_ACTIVATION_TWO": [
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_DEBT_COLLECTOR_ACTIVATION_THREE": [
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_POSSESSION_BRYNN": [
+  "brynn",
+  "brynn"
+ ],
+ "SPECTER_TACTIC_POSSESSION_CHANCE": [
+  "chance"
+ ],
+ "SPECTER_TACTIC_POSSESSION_GALADEN": [
+  "galaden"
+ ],
+ "SPECTER_TACTIC_POSSESSION_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "SPECTER_TACTIC_POSSESSION_SYRUS": [
+  "syrus",
+  "syrus"
+ ],
+ "SPECTER_TACTIC_POSSESSION_VAERIX": [
+  "vaerix"
+ ],
+ "SPECTER_TACTIC_RUNELOCK_HINT": [
+  "nv_widmo",
+  "nv_widmo"
+ ],
+ "SPECTER_TACTIC_DEBT_COLLECTOR_HINT": [
+  "nv_widmo",
+  "nv_widmo"
+ ],
+ "ENEMY_DEFEAT_BOSS_ZEALOT_ESCAPE": [
+  "nv_nekromanta"
+ ],
+ "ZEALOT_TACTIC_VENDETTA_HINT": [
+  "nv_fanatyk"
+ ],
+ "ZEALOT_TACTIC_SUMMON_SHADOW_HINT": [
+  "nv_fanatyk",
+  "nv_fanatyk"
+ ],
+ "Q_FOF_NOBLE_VICTORY": [
+  "kathryn",
+  "kathryn"
+ ],
+ "Q_FOF_NOBLE_VICTORY_2": [
+  "brynn",
+  "kathryn",
+  "brynn",
+  "kathryn"
+ ],
+ "Q_FOF_ENDGAME_NOBLE_RND": [
+  "kathryn",
+  "kathryn"
+ ],
+ "Q_FOF_ENDGAME_NOBLE_INIT": [
+  "kathryn"
+ ],
+ "Q_FOF_ENDGAME_NOBLE_SYRUS": [
+  "syrus",
+  "brynn",
+  "brynn",
+  "syrus",
+  "syrus"
+ ],
+ "Q_FOF_NECRO_VICTORY": [
+  "kathryn",
+  "kathryn"
+ ],
+ "Q_FOF_ENDGAME_NECRO_INIT": [
+  "kathryn",
+  "kathryn"
+ ],
+ "Q_FOF_KATHRYN_PREVIEW": [
+  "kathryn"
+ ],
+ "Q_FOF_PLACE_HEROES": [
+  "brynn"
+ ],
+ "Q_FOF_INTRODUCTION_CHOICE_BRYNN": [
+  "brynn"
+ ],
+ "Q_FOF_DEZRAS_DESK_SEARCH": [
+  "narrator"
+ ],
+ "Q_FOF_DEZRAS_DESK_SEARCHED": [
+  "narrator"
+ ],
+ "Q_FOF_SCOUT_CHOICE": [
+  "nv_fof_kapitan",
+  "nv_fof_kapitan",
+  "brynn"
+ ],
+ "Q_FOF_SCOUT_RESPONSE1": [
+  "nv_fof_kapitan",
+  "nv_fof_kapitan"
+ ],
+ "Q_FOF_SCOUT_RESPONSE_SYRUS": [
+  "syrus"
+ ],
+ "Q_FOF_SCOUT_BRIEFING": [
+  "nv_fof_kapitan"
+ ],
+ "Q_FOF_PLACE_TOWNSFOLK": [
+  "nv_fof_kapitan"
+ ],
+ "Q_FOF_PLACE_HALLWAY": {
+  "pieces": [
+   "nv_fof_kapitan",
+   "nv_fof_kapitan",
+   "nv_fof_kapitan",
+   "narrator"
+  ]
+ },
+ "Q_FOF_BRIEFING_END": [
+  "nv_fof_kapitan",
+  "nv_fof_kapitan"
+ ],
+ "Q_FOF_CAPTAIN_CHOICE": [
+  "nv_fof_kapitan",
+  "nv_fof_kapitan"
+ ],
+ "Q_FOF_CAPTAIN_R2": [
+  "brynn",
+  "brynn",
+  "nv_fof_kapitan"
+ ],
+ "Q_FOF_CAPTAIN_R1": [
+  "brynn",
+  "brynn",
+  "nv_fof_kapitan"
+ ],
+ "Q_FOF_SCOUT_RESPONSE2": [
+  "nv_fof_kapitan",
+  "nv_fof_kapitan"
+ ],
+ "Q_FOF_SCOUT_DANGER": [
+  "nv_fof_kapitan"
+ ],
+ "Q_FOF_KATHRYN_1": [
+  "kathryn",
+  "kathryn"
+ ],
+ "Q_FOF_KATHRYN_1_R2": [
+  "brynn",
+  "kathryn",
+  "kathryn"
+ ],
+ "Q_FOF_KATHRYN_2": [
+  "kathryn"
+ ],
+ "Q_FOF_KATHRYN_1_R1": [
+  "brynn",
+  "kathryn"
+ ],
+ "Q_FOF_HAUNTING3": [
+  "kathryn"
+ ],
+ "Q_FOF_HAUNTING3_PREVIEW": [
+  "kathryn"
+ ],
+ "Q_FOF_KATHRYN_BRYNN": [
+  "kathryn",
+  "kathryn",
+  "brynn"
+ ],
+ "Q_FOF_KATHRYN_BRYNN_CHOICE": [
+  "kathryn",
+  "brynn",
+  "kathryn",
+  "kathryn"
+ ],
+ "Q_FOF_KATHRYN_BRYNN_CHOICE_R1": [
+  "brynn",
+  "kathryn",
+  "kathryn"
+ ],
+ "Q_FOF_NOBLE_KATHRYN_PLACE": [
+  "kathryn",
+  "kathryn"
+ ],
+ "Q_FOF_KATHRYN_CHALLENGE1_PASS": [
+  "kathryn",
+  "kathryn",
+  "kathryn"
+ ],
+ "Q_FOF_NECRO_KATHRYN_PLACE": [
+  "kathryn",
+  "kathryn"
+ ],
+ "Q_FOF_KATHRYN_CHALLENGE1_FAIL": [
+  "kathryn",
+  "kathryn"
+ ],
+ "Q_FOF_KATHRYNS_TOME_SYRUS": [
+  "syrus",
+  "syrus"
+ ],
+ "Q_FOF_KATHRYNS_CHEST_SPAWN_BRYNN": [
+  "kathryn",
+  "brynn"
+ ],
+ "Q_FOF_KATHRYN_INTERACT": [
+  "kathryn"
+ ],
+ "Q_FOF_PLACE_15A_OBJECTS": [
+  "kathryn"
+ ],
+ "Q_FOF_HAUNTING2": [
+  "kathryn"
+ ],
+ "Q_FOF_TOWNSFOLK1_BUTWAIT": [
+  "nv_fof_mieszkanka"
+ ],
+ "Q_FOF_TOWNSFOLK2_INTERACT": [
+  "nv_warrick",
+  "nv_warrick"
+ ],
+ "Q_FOF_TOWNSFOLK2_R21": [
+  "nv_warrick"
+ ],
+ "Q_FOF_TOWNSFOLK2_R31": [
+  "nv_warrick",
+  "nv_warrick",
+  "narrator"
+ ],
+ "Q_FOF_TOWNSFOLK2_R33": [
+  "nv_warrick",
+  "nv_warrick"
+ ],
+ "Q_LISB_LAIR_VAERIX": [
+  "nv_lisb_naukowiec",
+  "xenith",
+  "xenith"
+ ],
+ "Q_LISB_LAIR_VAERIX2": [
+  "xenith",
+  "xenith",
+  "vaerix",
+  "xenith"
+ ],
+ "Q_LISB_WATCHTOWER_SIGHT_MEZA_SECOND": [
+  "nv_lisb_zwiadowca",
+  "nv_lisb_zwiadowca"
+ ],
+ "Q_LISB_WATCHTOWER_MEZA_DEPART": [
+  "meza",
+  "meza"
+ ],
+ "Q_LISB_WATCHTOWER_MEZA_VAERIX": [
+  "vaerix"
+ ],
+ "Q_LISB_WATCHTOWER_SIGHT_MEZA": [
+  "nv_lisb_zwiadowca",
+  "nv_lisb_zwiadowca"
+ ],
+ "Q_LISB_CAMP_SIGHT_MEZA_SECOND": [
+  "meza",
+  "nv_lisb_naukowiec",
+  "nv_lisb_naukowiec"
+ ],
+ "Q_LISB_CAMP_MEZA_DEPART": [
+  "meza",
+  "meza"
+ ],
+ "Q_LISB_CAMP_MEZA_VAERIX": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q_LISB_CAMP_SIGHT_MEZA": [
+  "meza",
+  "nv_lisb_naukowiec",
+  "nv_lisb_naukowiec"
+ ],
+ "Q_LISB_CAMP_SMALL_TABLE_R3": [
+  "narrator"
+ ],
+ "Q_LISB_CAMP_SMALL_TABLE_CLUE_DREAD": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q_LISB_CAMP_SMALL_TABLE_CLUE": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q_LISB_SMALL_TABLE_CLUE_KEHLI": [
+  "kehli",
+  "kehli",
+  "vaerix"
+ ],
+ "Q_LISB_THATS_IT": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q_LISB_COMMANDERS_CHEST_LETTERS": [
+  "xenith"
+ ],
+ "Q_LISB_COMMANDERS_DESK_R2": [
+  "narrator"
+ ],
+ "Q_LISB_COMMANDERS_DESK_R2_VAERIX": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q_LISB_SENTRY_CHOICE": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q_LISB_SENTRY_R1": [
+  "vaerix"
+ ],
+ "Q_LISB_SENTRY_OUTRO": [
+  "vaerix"
+ ],
+ "Q_LISB_SENTRY_R2": [
+  "vaerix"
+ ],
+ "Q_LISB_SENTRY_1": [
+  "nv_lisb_wartownik_a"
+ ],
+ "Q_LISB_SENTRY_2": [
+  "nv_lisb_wartownik_b",
+  "nv_lisb_wartownik_b"
+ ],
+ "Q_LISB_INTRO_2": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q_LISB_XENITH_DEFEAT": [
+  "xenith",
+  "xenith"
+ ],
+ "Q_LISB_VICTORY_1": [
+  "arg:0"
+ ],
+ "Q_LISB_VICTORY_2": [
+  "vaerix",
+  "vaerix",
+  "vaerix"
+ ],
+ "Q_LISB_VICTORY_CHOICE": [
+  "vaerix"
+ ],
+ "Q_LISB_VICTORY_REBELLION": [
+  "vaerix"
+ ],
+ "Q_LISB_VICTORY_VISION": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q_LISB_PLACE_LAIR": [
+  "vaerix"
+ ],
+ "Q_LISB_XENITH_PLACE": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q_LISB_WATERFALL_MEZA_CHOICE": [
+  "meza",
+  "meza",
+  "meza"
+ ],
+ "Q_LISB_WATERFALL_MEZA_R1": [
+  "vaerix"
+ ],
+ "Q_LISB_WATERFALL_MEZA_R1_PASS": [
+  "meza",
+  "meza",
+  "meza"
+ ],
+ "Q_LISB_WATERFALL_MEZA_PASS_VAERIX": [
+  "vaerix"
+ ],
+ "Q_LISB_WATERFALL_MEZA_FAIL": [
+  "meza",
+  "meza"
+ ],
+ "Q_LISB_WATERFALL_MEZA_R2": [
+  "vaerix"
+ ],
+ "Q_LISB_WATERFALL_MEZA_R2_PASS": [
+  "meza",
+  "meza",
+  "meza"
+ ],
+ "Q8_NEKRUL_DEATH": [
+  "nekrul"
+ ],
+ "Q8_KEHLI_RUNE": [
+  "kehli"
+ ],
+ "Q8_INTRO": [
+  "kehli",
+  "kehli"
+ ],
+ "Q8_GOLEM_1_SPAWN": [
+  "kehli"
+ ],
+ "Q8_KEHLI_VIRTUE_3": [
+  "kehli"
+ ],
+ "Q8_KEHLI_VIRTUE_CHOICE_2": [
+  "kehli"
+ ],
+ "Q8_RUNE_GET_1": [
+  "kehli",
+  "kehli"
+ ],
+ "Q8_NEKRUL_GYLDREN": [
+  "kehli",
+  "kehli",
+  "nekrul",
+  "nekrul"
+ ],
+ "Q8_KEHLI_INNOVATIVE_PAYOFF": [
+  "kehli",
+  "kehli",
+  "kehli"
+ ],
+ "Q8_KEHLI_RELIABLE_PAYOFF": [
+  "kehli"
+ ],
+ "Q8_KEHLI_PAYOFF_BALANCED": [
+  "kehli"
+ ],
+ "Q8_KEHLI_GATE_POP": [
+  "kehli"
+ ],
+ "Q8_GOLEM_BYE": [
+  "kehli",
+  "kehli"
+ ],
+ "Q8_BOSS_NEKRUL_TAUNT": [
+  "nekrul"
+ ],
+ "Q8_OBJECTIVE_2_INSTRUCT": [
+  "kehli"
+ ],
+ "Q8_KEHLI_VIRTUE_CHOICE_1": [
+  "kehli"
+ ],
+ "Q8_KEHLI_TEACH_DOOR": [
+  "kehli",
+  "kehli"
+ ],
+ "Q8_KEHLI_GOLEM_1": [
+  "kehli"
+ ],
+ "Q8_GOLEM_TEST_PASS": [
+  "kehli"
+ ],
+ "TRAVEL_29": [
+  "nv_gnom"
+ ],
+ "TRAVEL_48": [
+  "galaden"
+ ],
+ "TRAVEL_50": [
+  "kehli"
+ ],
+ "TRAVEL_52": [
+  "syrus"
+ ],
+ "TRAVEL_54": [
+  "vaerix"
+ ],
+ "TRAVEL_58": [
+  "nv_gap",
+  "nv_gap"
+ ],
+ "TRAVEL_62": [
+  "nv_ork"
+ ],
+ "TRAVEL_64": [
+  "nv_uchodzca"
+ ],
+ "TRAVEL_UNDRYING": [
+  "nv_glos",
+  "nv_glos"
+ ],
+ "TRAVEL_BRYNN_CHOICE": [
+  "nv_protektor",
+  "nv_protektor"
+ ],
+ "TRAVEL_BRYNN_RESP_NOBILITY_POST_Q10": [
+  "brynn",
+  "brynn",
+  "nv_protektor",
+  "nv_protektor",
+  "brynn"
+ ],
+ "TRAVEL_BRYNN_RESP_NOBILITY": [
+  "brynn",
+  "brynn",
+  "nv_protektor",
+  "nv_protektor"
+ ],
+ "TRAVEL_BRYNN_RESP_VALOR": [
+  "brynn",
+  "brynn",
+  "nv_protektor",
+  "nv_protektor"
+ ],
+ "TRAVEL_CHANCE_RESP_INDEPENDENCE": [
+  "chance",
+  "chance",
+  "arg:0"
+ ],
+ "TRAVEL_CHANCE_RESP_TRUST": [
+  "chance",
+  "chance"
+ ],
+ "TRAVEL_GALADEN_RESP_CONNECTION_BRYNN": [
+  "brynn",
+  "galaden",
+  "brynn",
+  "brynn"
+ ],
+ "TRAVEL_GALADEN_RESP_CONNECTION_CHANCE": [
+  "galaden",
+  "chance"
+ ],
+ "TRAVEL_GALADEN_RESP_CONNECTION_KEHLI": [
+  "kehli",
+  "kehli",
+  "galaden",
+  "kehli",
+  "kehli"
+ ],
+ "TRAVEL_GALADEN_RESP_CONNECTION_SYRUS": [
+  "syrus",
+  "galaden",
+  "syrus",
+  "galaden",
+  "galaden"
+ ],
+ "TRAVEL_GALADEN_RESP_CONNECTION_VAERIX": [
+  "vaerix",
+  "galaden"
+ ],
+ "TRAVEL_KEHLI_CHOICE": [
+  "kehli",
+  "kehli",
+  "kehli",
+  "arg:0"
+ ],
+ "TRAVEL_KEHLI_RESP_INNOVATION": [
+  "kehli",
+  "arg:0",
+  "kehli",
+  "kehli"
+ ],
+ "TRAVEL_KEHLI_RESP_RELIABILITY": [
+  "kehli",
+  "kehli"
+ ],
+ "TRAVEL_SYRUS_CHOICE": [
+  "syrus",
+  "nv_gont",
+  "nv_gont"
+ ],
+ "TRAVEL_SYRUS_RESP_AMBITION": [
+  "syrus",
+  "syrus",
+  "nv_gont",
+  "nv_gont"
+ ],
+ "TRAVEL_SYRUS_RESP_OPTIMISM": [
+  "syrus",
+  "syrus",
+  "syrus",
+  "nv_gont",
+  "nv_gont"
+ ],
+ "TRAVEL_VAERIX_CHOICE": [
+  "nv_kowalka",
+  "nv_kowalka",
+  "vaerix",
+  "nv_kowalka",
+  "nv_kowalka"
+ ],
+ "TRAVEL_VAERIX_RESP_REBELLION": [
+  "vaerix",
+  "vaerix"
+ ],
+ "TRAVEL_VAERIX_RESP_VISION": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q2_INTRO": [
+  "kehli"
+ ],
+ "Q2_PRE_SPAWN_ROAR": [
+  "kehli",
+  "kehli",
+  "bruli",
+  "bruli"
+ ],
+ "Q2_KEHLIS_MISTAKE_CHOICE": [
+  "kehli"
+ ],
+ "Q2_OLD_MAN_MISSION": [
+  "bruli",
+  "bruli"
+ ],
+ "Q2_KEHLI_SHOUT_POTION": [
+  "kehli"
+ ],
+ "Q2_KEHLI_LAIR_OPEN_BY_OTHER": [
+  "kehli",
+  "kehli"
+ ],
+ "Q2_DWARF_MAD_KEHLI": [
+  "bruli"
+ ],
+ "Q2_DWARF_SHOUT": [
+  "bruli",
+  "bruli"
+ ],
+ "Q2_DWARF_SHOUT_REMINDER": [
+  "bruli"
+ ],
+ "Q2_SPAWN_GOLEMS": [
+  "kehli",
+  "kehli"
+ ],
+ "Q2_SPAWN_GOLEM_2": [
+  "kehli"
+ ],
+ "Q3_OCELLA_CLUE": [
+  "nv_ocella",
+  "nv_ocella"
+ ],
+ "Q3_SET_HIDEOUT_OBJECTIVE": [
+  "chance",
+  "chance"
+ ],
+ "Q3_PLACE_17B_CAULDRON": [
+  "nv_ocella",
+  "nv_ocella"
+ ],
+ "Q3_WELL_SPAWN": [
+  "nv_q3_herszt",
+  "nv_q3_herszt"
+ ],
+ "Q3_PLACE_8B_SPAWN": [
+  "nv_q3_bandyta_skrzynia"
+ ],
+ "Q3_SETUP_INTRO_BRYNN": [
+  "brynn",
+  "brynn"
+ ],
+ "Q3_SETUP_CHANCE_CHOICE": [
+  "chance",
+  "chance"
+ ],
+ "Q3_SETUP_INDEPENDENCE": [
+  "chance",
+  "chance",
+  "chance"
+ ],
+ "Q3_SETUP_TRUST": [
+  "chance",
+  "chance",
+  "chance"
+ ],
+ "Q3_SETUP_NOBRYNN": [
+  "arg:0",
+  "arg:0"
+ ],
+ "Q3_OUTLAW_PRINCE_ARRIVES_2": [
+  "outlaw",
+  "outlaw"
+ ],
+ "Q3_OUTLAW_PRINCE_2": [
+  "chance",
+  "chance",
+  "outlaw",
+  "outlaw",
+  "outlaw"
+ ],
+ "Q3_OUTLAW_PRINCE_3": [
+  "outlaw",
+  "outlaw"
+ ],
+ "Q3_OUTLAW_PRINCE_CHOICE": [
+  "outlaw",
+  "chance"
+ ],
+ "Q3_OUTLAW_PRINCE_R1": [
+  "chance",
+  "chance"
+ ],
+ "Q3_OUTLAW_PRINCE_LEVER": [
+  "outlaw"
+ ],
+ "Q3_SPRING_TRAP_R1_2": [
+  "outlaw",
+  "outlaw",
+  "outlaw"
+ ],
+ "Q3_OUTLAW_PRINCE_R2": [
+  "chance",
+  "chance"
+ ],
+ "Q3_EXIT_GATE_CHALLENGE_PASS_CHANCE": [
+  "chance"
+ ],
+ "Q3_OCELLA_CHANCE_CHOICE": [
+  "nv_ocella",
+  "nv_ocella",
+  "chance",
+  "chance",
+  "chance",
+  "nv_ocella"
+ ],
+ "Q3_OCELLA_CHANCE_R1": [
+  "chance",
+  "nv_ocella",
+  "nv_ocella"
+ ],
+ "Q3_OCELLA_CHANCE_R2": [
+  "nv_ocella",
+  "nv_ocella",
+  "nv_ocella"
+ ],
+ "Q3_OCELLA_PLACE_PATHS": [
+  "nv_ocella"
+ ],
+ "Q3_OCELLA_NO": "narrator",
+ "Q3_OCELLA_CHOICE": [
+  "nv_ocella"
+ ],
+ "Q3_OCELLA_R1": [
+  "nv_ocella",
+  "nv_ocella"
+ ],
+ "Q3_OCELLA_DECLINE": [
+  "nv_ocella",
+  "nv_ocella"
+ ],
+ "Q3_OCELLA_R2": [
+  "nv_ocella",
+  "nv_ocella"
+ ],
+ "Q3_OCELLA_R3": [
+  "nv_ocella"
+ ],
+ "TANGERINE_Q3_INTRO_04": [
+  "chance"
+ ],
+ "Q4_DREAM_WHY_ME": [
+  "galaden"
+ ],
+ "Q4_GALADEN_AWAKENS": [
+  "laurel",
+  "galaden"
+ ],
+ "Q4_GALADENS_HISTORY": [
+  "arg:0",
+  "laurel",
+  "arg:0"
+ ],
+ "Q4_GALADENS_HISTORY_2": [
+  "laurel",
+  "laurel"
+ ],
+ "Q4_SPAWN_VAGABOND": [
+  "laurel",
+  "laurel"
+ ],
+ "Q4_SETUP_1": [
+  "arg:0"
+ ],
+ "Q4_SETUP_2": [
+  "galaden",
+  "galaden"
+ ],
+ "Q4_SETUP_3": [
+  "galaden",
+  "galaden"
+ ],
+ "Q4_SETUP_CONNECTION": [
+  "galaden"
+ ],
+ "Q4_SETUP_DETERMINATION": [
+  "galaden"
+ ],
+ "Q4_GALADEN_STARTS": [
+  "laurel",
+  "laurel"
+ ],
+ "Q4_LAUREL_ARRIVES": [
+  "galaden",
+  "laurel"
+ ],
+ "Q4_VICTORY_GALADEN": [
+  "laurel",
+  "laurel",
+  "galaden",
+  "laurel"
+ ],
+ "Q4_VICTORY_BAELZIFFAR": [
+  "galaden",
+  "galaden",
+  "laurel",
+  "laurel",
+  "galaden",
+  "galaden"
+ ],
+ "Q4_LAURELS_OFFER": [
+  "laurel",
+  "laurel"
+ ],
+ "Q4_LAURELS_OFFER_R2": [
+  "galaden",
+  "galaden",
+  "galaden",
+  "laurel",
+  "laurel"
+ ],
+ "Q4_LAURELS_OFFER_R1": [
+  "galaden",
+  "galaden",
+  "laurel",
+  "laurel"
+ ],
+ "Q4_LAUREL_INTRODUCTION": [
+  "laurel",
+  "galaden",
+  "galaden"
+ ],
+ "Q4_LAUREL_UPDATE": [
+  "laurel",
+  "laurel"
+ ],
+ "Q4_RIFTS_VAERIX": [
+  "vaerix",
+  "galaden",
+  "galaden"
+ ],
+ "Q4_RIFTS_SYRUS": [
+  "syrus",
+  "syrus"
+ ],
+ "Q4_LAUREL_INTRODUCTION_2": [
+  "laurel",
+  "laurel"
+ ],
+ "Q4_LAUREL_GATE": [
+  "laurel",
+  "galaden",
+  "galaden"
+ ],
+ "Q4_GALADEN_SLEEP_CHOICE": [
+  "galaden",
+  "laurel",
+  "laurel"
+ ],
+ "Q4_PLACE_GALADEN": [
+  "laurel",
+  "laurel"
+ ],
+ "Q4_LAUREL_SIGNS": [
+  "laurel",
+  "laurel",
+  "laurel"
+ ],
+ "Q4_GALADEN_NOT_YET": [
+  "galaden",
+  "laurel",
+  "laurel"
+ ],
+ "Q4_GALADEN_NOT_YET_RETURN": [
+  "laurel"
+ ],
+ "Q4_LAURELS_PACK_LETTER": [
+  "galaden",
+  "arg:0",
+  "galaden",
+  "galaden"
+ ],
+ "Q4_LAURELS_PACK_INTERACT": [
+  "galaden",
+  "galaden"
+ ],
+ "ALTAR_HINT": [
+  "narrator"
+ ],
+ "LOCKED_NUDGE": [
+  "syrus"
+ ],
+ "HINT_01": [
+  "narrator"
+ ],
+ "SECRET_DOOR_SYRUS": [
+  "syrus",
+  "syrus",
+  "syrus"
+ ],
+ "SECRET_DOOR_GALADEN": [
+  "galaden",
+  "galaden"
+ ],
+ "SECRET_DOOR_SYRUS_02": [
+  "syrus"
+ ],
+ "SECRET_DOOR_TIME": "narrator",
+ "SECRET_DOOR_OBJECTIVE": [
+  "syrus"
+ ],
+ "SECRET_DOOR_OBJECTIVE_ALL_NOTES": [
+  "syrus"
+ ],
+ "SECRET_DOOR_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "SECRET_DOOR_VAERIX": [
+  "vaerix",
+  "vaerix"
+ ],
+ "SECRET_DOOR_CHANCE": [
+  "chance",
+  "chance"
+ ],
+ "SECRET_DOOR_BRYNN": [
+  "brynn"
+ ],
+ "SPAWN_GREYSDON": [
+  "greysdon",
+  "greysdon"
+ ],
+ "SYRUS_VIRTUE_03": [
+  "syrus",
+  "syrus"
+ ],
+ "SYRUS_AMBITION_PAYOFF_03": [
+  "syrus",
+  "syrus"
+ ],
+ "SYRUS_OPT_PAYOFF": [
+  "syrus",
+  "syrus"
+ ],
+ "CHAINS_CHEST": [
+  "greysdon",
+  "greysdon"
+ ],
+ "GREYSDON_CHANT_UPDATED": [
+  "greysdon"
+ ],
+ "SYRUS_AMBITION_TIMER": [
+  "syrus"
+ ],
+ "SET_UP_01": [
+  "greysdon"
+ ],
+ "SYRUS_VIRTUE_01": [
+  "syrus",
+  "greysdon",
+  "greysdon"
+ ],
+ "SETUP_05": [
+  "syrus",
+  "greysdon"
+ ],
+ "SETUP_03": [
+  "chance"
+ ],
+ "SETUP_06": [
+  "syrus"
+ ],
+ "OPT_PAYOFF_01": [
+  "syrus",
+  "greysdon"
+ ],
+ "SETUP_04": [
+  "syrus"
+ ],
+ "LOCKED_UNLOCKED": [
+  "syrus"
+ ],
+ "7A_PLACE_TERRAIN": [
+  "greysdon"
+ ],
+ "SET_FINALE_OBECTIVE": [
+  "greysdon",
+  "greysdon"
+ ],
+ "GREYSDON_DEFEAT": [
+  "greysdon",
+  "greysdon",
+  "syrus"
+ ],
+ "10A_ROUND_TABLE": [
+  "narrator"
+ ],
+ "CAULDRON_HINT_02": [
+  "narrator"
+ ],
+ "GREYSDON_INSULT_06": [
+  "greysdon"
+ ],
+ "GREYSDON_INSULT_05": [
+  "greysdon"
+ ],
+ "GREYSDON_INSULT_04": [
+  "greysdon"
+ ],
+ "GREYSDON_INSULT_02": [
+  "greysdon"
+ ],
+ "GREYSDON_INSULT_03": [
+  "greysdon"
+ ],
+ "GREYSDON_INSULT_01": [
+  "greysdon"
+ ],
+ "SYRUS_VIRTUE_02": [
+  "syrus"
+ ],
+ "Q9_PLACE_HEALING_POOL": [
+  "galaden",
+  "galaden"
+ ],
+ "Q9_TIMER_BLOOD_BOWL_CHANT_NEXT": [
+  "nekrul"
+ ],
+ "Q9_TIMER_BLOOD_BOWL_CHANT": [
+  "nekrul"
+ ],
+ "Q9_SWIPE": [
+  "nekrul"
+ ],
+ "Q9_GALADEN_TORMENT_DENAVEL": [
+  "nv_baelziffar"
+ ],
+ "Q9_GALADEN_TORMENT_LAPARI": [
+  "nv_baelziffar"
+ ],
+ "Q9_GALADEN_TORMENT_VERDEL": [
+  "nv_baelziffar"
+ ],
+ "Q9_GALADEN_TORMENT_TWINS": [
+  "nv_q9_blizniaki"
+ ],
+ "Q9_GALADEN_TORMENT_DALAVEL": [
+  "nv_dalavel",
+  "nv_baelziffar",
+  "nv_baelziffar"
+ ],
+ "Q9_GALADEN_TORMENT_REDSTAR": [
+  "nv_baelziffar"
+ ],
+ "Q9_GALADEN_CONNECTED": [
+  "galaden"
+ ],
+ "Q9_TORMENT_ASIDE_1": [
+  "arg:0",
+  "galaden"
+ ],
+ "Q9_TORMENT_ASIDE_2": [
+  "arg:0",
+  "arg:0",
+  "galaden",
+  "arg:0"
+ ],
+ "Q8_GALADEN_DEDICATE": [
+  "galaden"
+ ],
+ "Q9_GALADEN_WARNING": [
+  "galaden",
+  "galaden"
+ ],
+ "Q9_SPAWN_NEKRUL": [
+  "nekrul",
+  "nekrul"
+ ],
+ "Q9_GALADEN_BOOSTS_FRIENDS": [
+  "galaden"
+ ],
+ "Q9_GALADEN_FLAVOR_CAGES": [
+  "galaden"
+ ],
+ "Q9_SPAWN_BLOOD_SIS_ROOM6": [
+  "nv_siostra_krwi",
+  "nv_siostra_krwi"
+ ],
+ "Q9_BLOOD_SIS_SPAWN_DRAGON": [
+  "nv_siostra_krwi"
+ ],
+ "Q9_SPAWN_BLOOD_SIS_RUNE": [
+  "nv_siostra_krwi"
+ ],
+ "ADELYNN_EXPLAINS_IT_ALL": [
+  "arg:0",
+  "arg:0",
+  "arg:0"
+ ],
+ "OMEN_KEHLI": [
+  "kehli"
+ ],
+ "PLACE_GATE_SYRUS": [
+  "syrus",
+  "syrus"
+ ],
+ "BRYNN_VIRTUE_GATE": [
+  "brynn",
+  "brynn",
+  "adelynn"
+ ],
+ "BRYNN_GATE_NOBILITY": [
+  "brynn"
+ ],
+ "GATE_FIXED": [
+  "adelynn"
+ ],
+ "BACK_TO_BUSINESS": [
+  "arg:1"
+ ],
+ "BRYNN_GATES_VALOR": [
+  "brynn"
+ ],
+ "ARCHWAY_PASS_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "BRYNN_VIRTUE_SERVANTS": [
+  "nv_zarzadczyni",
+  "adelynn"
+ ],
+ "BRYNN_SERVANTS_GUIDE": [
+  "brynn",
+  "brynn"
+ ],
+ "VIRTUE_SERVANTS_FIGHT": [
+  "brynn"
+ ],
+ "BRYNN_VIRTUE_OMEN": [
+  "nv_q10_straznik"
+ ],
+ "BRYNN_VIRTUE_N_LICH": [
+  "brynn"
+ ],
+ "BRYNN_VIRTUE_N": [
+  "brynn"
+ ],
+ "BRYNN_VIRTUE_OMEN_V_LICH": [
+  "brynn"
+ ],
+ "VIRTUE_BRYNN_V": [
+  "brynn"
+ ],
+ "ADELYNN_BATTLE_CRY": [
+  "adelynn"
+ ],
+ "ADELYNN_REPRIEVE": [
+  "adelynn"
+ ],
+ "BRYNN_SPEECH_VALOR": [
+  "brynn",
+  "brynn"
+ ],
+ "BRYNN_VALOR_PAYOFF": [
+  "brynn",
+  "brynn"
+ ],
+ "SHOWTIME": [
+  "brynn"
+ ],
+ "DRAGON_SEPHIROTH": [
+  "xenith",
+  "xenith"
+ ],
+ "BRYNN_SPEECH_NOBILITY": [
+  "brynn",
+  "brynn"
+ ],
+ "BRYNN_NOBILITY_PAYOFF": [
+  "brynn",
+  "brynn"
+ ],
+ "BRYNN_SPEECH_BOTH": [
+  "brynn",
+  "brynn"
+ ],
+ "BRYNN_MIX_PAYOFF": [
+  "brynn"
+ ],
+ "BRYNN_SPEECH_06": [
+  "brynn"
+ ],
+ "SETUP_GATE_CRASHERS_HYBRIDS": [
+  "ronan"
+ ],
+ "SETUP_GATE_CRASHERS_UTHUK": [
+  "laurel"
+ ],
+ "SETUP_CHOICE": [
+  "adelynn",
+  "adelynn"
+ ],
+ "SETUP_WESTERN_GATE": [
+  "brynn",
+  "ronan",
+  "laurel",
+  "laurel"
+ ],
+ "VAERIX_FACES_HYBRIDS": [
+  "vaerix"
+ ],
+ "ADELYNN_BADASS": [
+  "adelynn",
+  "adelynn"
+ ],
+ "SETUP_PLACE_POISON": [
+  "laurel"
+ ],
+ "SETUP_GIVE_OBJ": [
+  "arg:0",
+  "arg:0",
+  "adelynn"
+ ],
+ "SETUP_PLACE_EMBERS": [
+  "ronan"
+ ],
+ "SETUP_EASTERN_GATE": [
+  "brynn",
+  "laurel",
+  "ronan",
+  "ronan"
+ ],
+ "GALADEN_FACES_UTHUK": [
+  "galaden"
+ ],
+ "ROC_F_LETTER": [
+  "nv_q10_jezdziec"
+ ],
+ "ROC_G_TEST": [
+  "nv_q10_jezdzczyni",
+  "nv_q10_jezdzczyni"
+ ],
+ "ROC_G_FAIL": [
+  "nv_q10_jezdzczyni"
+ ],
+ "ARCH_INSTRUCTIONS_KEHLI": [
+  "kehli"
+ ],
+ "SET_GATE_OBJ": [
+  "adelynn"
+ ],
+ "SET_OBJECTIVE_02": [
+  "adelynn"
+ ],
+ "INSTIGATOR_DEFEAT_LAUREL": [
+  "laurel"
+ ],
+ "INSTIGATOR_DEFEAT_RONAN": [
+  "ronan"
+ ],
+ "INSTIGATORS_DEFEAT": [
+  "adelynn"
+ ],
+ "INSTIGATORS_DEFEAT_02": [
+  "adelynn",
+  "adelynn"
+ ],
+ "CLEAR_BOARD": [
+  "adelynn"
+ ],
+ "TANGERINE_Q10_OUTRO_WIN_10": [
+  "narrator"
+ ],
+ "SPIRIT_PASS": [
+  "nv_q11_kobieta_kufel",
+  "nv_q11_kobieta_kufel",
+  "nv_q11_kobieta_kufel"
+ ],
+ "MOONSHINE": [
+  "nv_preesha"
+ ],
+ "MOONSHINE_TOO_STRONG": [
+  "nv_preesha",
+  "outlaw"
+ ],
+ "MOONSHINE_THE_COST": [
+  "nv_preesha",
+  "nv_preesha"
+ ],
+ "45_FOES_UNDEAD": [
+  "nv_q11_bandyta_nekromanta"
+ ],
+ "DOCTOR_PASS": [
+  "nv_q11_uzdrowiciel"
+ ],
+ "LEG_PATIENT": [
+  "nv_q11_pacjentka",
+  "nv_q11_pacjentka"
+ ],
+ "WELL_DO_GO_ON_MORE": [
+  "nv_q11_rodzic"
+ ],
+ "FALLOWHEARTH_FRIEND": [
+  "nv_warrick"
+ ],
+ "FALLOWHEARTH_FRIEND_NO_TRUST": [
+  "nv_warrick"
+ ],
+ "FALLOWHEARTH_TRUST_DONE": [
+  "nv_warrick"
+ ],
+ "FALLOWHEARTH_FRIEND_CHECK_REFUGEES": [
+  "nv_warrick"
+ ],
+ "FALLOWHEARTH_EYE_DONE": [
+  "nv_warrick"
+ ],
+ "FALLOWHEARTH_NOFRIEND": [
+  "nv_q11_mlody_ork"
+ ],
+ "WELL_ACTUALLY_YOU_PASSED": [
+  "outlaw",
+  "outlaw"
+ ],
+ "REFUGE_ENTER": [
+  "outlaw"
+ ],
+ "REFUGE_ENTER_02": [
+  "outlaw"
+ ],
+ "REFUGE_SETUP_01": [
+  "outlaw"
+ ],
+ "REFUGE_SETUP_03": [
+  "outlaw"
+ ],
+ "REFUGE_SETUP_02": [
+  "nv_warrick"
+ ],
+ "REFUGE_SETUP_04": [
+  "outlaw",
+  "outlaw"
+ ],
+ "CHANCE_OBJ_GIVE": [
+  "chance"
+ ],
+ "CHANCE_SPECIAL_EYES": [
+  "chance",
+  "chance",
+  "chance"
+ ],
+ "ONLY_CHANCE": "narrator",
+ "CHANCE_VIRTUE_03": [
+  "outlaw",
+  "outlaw",
+  "chance",
+  "chance"
+ ],
+ "CHANCE_IND_VALUABLES": [
+  "chance",
+  "outlaw"
+ ],
+ "CONVINCE_VOLKS": [
+  "chance",
+  "chance"
+ ],
+ "CHANCE_TRUST_USED": [
+  "chance",
+  "outlaw"
+ ],
+ "CROWD_HELP_03": [
+  "nv_q11_tlum"
+ ],
+ "COMPANION_STUFF": "narrator",
+ "CHANCE_YEAH": "narrator",
+ "CHANCE_HELL_YEAH": "narrator",
+ "SETUP_SPAWN_ENEMIES": [
+  "nv_q11_zbir"
+ ],
+ "OP_LOCKED_K": [
+  "chance",
+  "kehli"
+ ],
+ "OP_LOCKED": [
+  "chance"
+ ],
+ "LOCKED_DOOR": [
+  "nv_q11_zbir"
+ ],
+ "SPAWN_OP": [
+  "outlaw"
+ ],
+ "CHANCE_INSTRUCTS": [
+  "chance"
+ ],
+ "INSIGHT_REF_PASS": [
+  "nv_q11_kobieta_a",
+  "nv_q11_kobieta_a",
+  "nv_q11_kobieta_b",
+  "nv_q11_kobieta_a",
+  "nv_q11_kobieta_a"
+ ],
+ "OP_QUEST_VICTORY": [
+  "outlaw"
+ ],
+ "AH_MONSTERS_LEAVES": [
+  "nv_q11_uchodzca"
+ ],
+ "REFUGEE_AH_MONSTERS": [
+  "nv_q11_ork_ojciec"
+ ],
+ "INFO_DUMP": [
+  "narrator"
+ ],
+ "SYRUS_CREST_01": [
+  "syrus",
+  "syrus"
+ ],
+ "SYRUS_CREST_01_B": [
+  "syrus",
+  "syrus"
+ ],
+ "BRYNN_CREST_01": [
+  "brynn"
+ ],
+ "SYRUS_CREST_02": [
+  "syrus",
+  "syrus"
+ ],
+ "SYRUS_CREST_03": [
+  "syrus",
+  "syrus"
+ ],
+ "SYRUS_CREST_04": [
+  "syrus"
+ ],
+ "SYRUS_GETS_IT": [
+  "syrus"
+ ],
+ "SYRUS_CHOICE": [
+  "syrus"
+ ],
+ "SYRUS_OPTIMISM_PAYOFF": [
+  "syrus"
+ ],
+ "SYRUS_RUNES_CHOICE": [
+  "syrus"
+ ],
+ "RUNES_BLAST_ENEMIES_TRUE": [
+  "syrus",
+  "syrus"
+ ],
+ "RUNES_EMPOWER_TRUE": [
+  "syrus"
+ ],
+ "SYRUS_RUNES_CHOICE_O": [
+  "syrus"
+ ],
+ "RUNES_ENHANCE": [
+  "syrus"
+ ],
+ "RUNES_HELP": [
+  "syrus"
+ ],
+ "SYRUS_RUNES_CHOICE_BOTH": [
+  "syrus"
+ ],
+ "SYRUS_GOLEMS_CHOICE_A": [
+  "syrus"
+ ],
+ "SYRUS_GOLEMS_CHOICE_B": [
+  "syrus"
+ ],
+ "SYRUS_CHOICE_GOLEMS_BOTH": [
+  "syrus"
+ ],
+ "SETUP_AMBITION": [
+  "syrus"
+ ],
+ "SYRUS_SETUP": [
+  "syrus",
+  "syrus",
+  "syrus"
+ ],
+ "SETUP_OPTIMISM": [
+  "syrus"
+ ],
+ "SETUP_A_AND_O": [
+  "syrus",
+  "syrus"
+ ],
+ "DOOR_TRAP_FAIL": "narrator",
+ "SPOOKY_DOOR_TEST": [
+  "narrator"
+ ],
+ "SPAWN_GHOST_KEY": [
+  "nv_q12_duch",
+  "nv_q12_duch"
+ ],
+ "CHEST_BRYNN_NOTICES": [
+  "brynn",
+  "brynn"
+ ],
+ "GALADEN_ENEMIES": [
+  "galaden",
+  "syrus",
+  "galaden"
+ ],
+ "VAERIX_ENEMES": [
+  "vaerix"
+ ],
+ "CHANCE_ENEMIES": [
+  "nv_q12_banitka",
+  "chance"
+ ],
+ "CHEST_SYRUS_NOTICES": [
+  "syrus",
+  "syrus"
+ ],
+ "VAERIX_WHY_DOES_IT_HAVE_TO_BE_DRAGONS": [
+  "vaerix",
+  "vaerix"
+ ],
+ "ENDING_AMBITIOUS": [
+  "syrus"
+ ],
+ "ENDING_OPTIMISM": [
+  "syrus"
+ ],
+ "SPIKES_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "SYRUS_TABLE_01": [
+  "syrus",
+  "syrus",
+  "syrus"
+ ],
+ "SYRUS_TABLE_02": [
+  "syrus",
+  "syrus"
+ ],
+ "BRYNN_IS_GONNA_APPROVE": [
+  "syrus",
+  "syrus",
+  "syrus"
+ ],
+ "BRYNN_APPROVES": [
+  "brynn"
+ ],
+ "SYRUS_TABLE_03B": [
+  "syrus",
+  "syrus"
+ ],
+ "SYRUS_RUNES": [
+  "syrus"
+ ],
+ "KEHLI_THATS_WRONG": [
+  "kehli"
+ ],
+ "CRUMBLE_TOWN": [
+  "syrus",
+  "syrus"
+ ],
+ "SYRUS_OBJ": [
+  "syrus",
+  "syrus"
+ ],
+ "SYRUS_OBJ_B": [
+  "syrus",
+  "syrus"
+ ],
+ "SYRUS_GOLEMS": [
+  "syrus"
+ ],
+ "SYRUS_TABLE_03": [
+  "syrus",
+  "syrus",
+  "syrus"
+ ],
+ "SPAWN_GHOST": [
+  "nv_q12_duch",
+  "nv_q12_duch"
+ ],
+ "SKELLY_CONVINCED": [
+  "nv_q12_duch"
+ ],
+ "BRYNN_IS_WORTHY": [
+  "brynn",
+  "brynn"
+ ],
+ "TREE_GOLEM_REASON": [
+  "syrus",
+  "syrus"
+ ],
+ "REVEAL_14": [
+  "syrus"
+ ],
+ "UPDATE_FIND_STUFF": [
+  "syrus"
+ ],
+ "Q13_GREYSDON_BOOKSHELF_FREE_CLUE": [
+  "narrator"
+ ],
+ "Q13_GREYSDON_BOOKSHELF_FREE_CLUE_RETURN": [
+  "narrator"
+ ],
+ "Q13_BELLCHAMBER_TABLE": [
+  "narrator"
+ ],
+ "Q13_BELLCHAMBER_TABLE_RETURN": [
+  "narrator"
+ ],
+ "Q13_NOTES_VAERIX_CHOICE": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q13_NOTES_VAERIX_REBELLION": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q13_NOTES_FINISHED": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q13_NOTES_VAERIX_VISION": [
+  "vaerix"
+ ],
+ "Q13_DRAGON_SKELETON_PREVIEW_1": [
+  "vaerix"
+ ],
+ "Q13_ENEMY_ACTIVATION_GREYSDON_CLAWS": [
+  "greysdon"
+ ],
+ "Q13_GREYSDON_DEFEAT": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q13_GREYSDON_DEFEAT_SYRUS": [
+  "syrus",
+  "syrus"
+ ],
+ "Q13_INTRO_GREYSDON_SYRUS": [
+  "greysdon",
+  "syrus",
+  "syrus",
+  "greysdon"
+ ],
+ "Q13_INTRO_VAERIX_CHOICE": [
+  "vaerix",
+  "vaerix",
+  "vaerix"
+ ],
+ "Q13_INTRO_VAERIX_CHOICE_R1_SYRUS": [
+  "syrus",
+  "syrus"
+ ],
+ "Q13_INTRO_SET_OBJECTIVE": [
+  "vaerix"
+ ],
+ "Q13_INTRO_VAERIX_CHOICE_R2_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "Q13_INTRO_GREYSDON": [
+  "greysdon",
+  "vaerix",
+  "greysdon"
+ ],
+ "Q13_START_ENDGAME_1": [
+  "xenith",
+  "xenith"
+ ],
+ "Q13_START_ENDGAME_2": [
+  "nv_q13_smok",
+  "xenith",
+  "nv_q13_smok",
+  "nv_q13_smok"
+ ],
+ "Q13_ENDGAME_WORD_REBELLION": [
+  "nv_q13_smok"
+ ],
+ "Q13_VAERIX_WORD_CHALLENGE": [
+  "vaerix",
+  "xenith",
+  "xenith",
+  "nv_q13_smok"
+ ],
+ "Q13_ENDGAME_XENITH_RETREAT": [
+  "xenith",
+  "nv_q13_smok"
+ ],
+ "Q13_ENDGAME_FINAL_OBJECTIVE": [
+  "nv_q13_smok",
+  "nv_q13_smok"
+ ],
+ "Q13_ENDGAME_WORD_VISION": [
+  "nv_q13_smok"
+ ],
+ "Q13_ENDGAME_WORD_MIDDLE": [
+  "nv_q13_smok"
+ ],
+ "Q13_VAERIX_WORD_MIDDLE_PASS": [
+  "xenith",
+  "vaerix"
+ ],
+ "Q13_GREYSDON_BOOKSHELF_EXPOSE_CLUE": [
+  "narrator"
+ ],
+ "Q13_GREYSDON_NOTE_OPTIONAL_TAG": [
+  "vaerix"
+ ],
+ "Q13_PLACE_16A_EGGS": [
+  "greysdon"
+ ],
+ "Q13_SPAWN_GREYSDON": [
+  "greysdon"
+ ],
+ "Q13_SYRUS_OPTIMISM": [
+  "syrus",
+  "syrus",
+  "greysdon",
+  "greysdon"
+ ],
+ "Q13_SYRUS_AMBITION": [
+  "syrus",
+  "syrus",
+  "greysdon",
+  "greysdon"
+ ],
+ "Q13_BELLS_VAERIX_CHOICE": [
+  "arg:0",
+  "arg:0",
+  "vaerix"
+ ],
+ "Q13_BELLS_VAERIX_REBELLION": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q13_BELL_STRIKE_REBELLION_COMPLETE": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q13_OBJECTIVE_4_SPAWN": [
+  "nv_q13_hybryda"
+ ],
+ "Q13_BELL_STRIKE_VISION_COMPLETE": [
+  "nv_q13_smok",
+  "nv_q13_smok",
+  "vaerix",
+  "vaerix"
+ ],
+ "Q13_BELLS_VAERIX_VISION": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q13_SKELETON_VAERIX_CHOICE": [
+  "nv_q13_smok",
+  "vaerix",
+  "vaerix",
+  "nv_q13_smok"
+ ],
+ "Q13_GREAT_BELL_VAERIX_REBELLION": [
+  "vaerix",
+  "vaerix",
+  "nv_q13_smok",
+  "nv_q13_smok"
+ ],
+ "Q13_SKELETON_VAERIX_FINISH": [
+  "vaerix",
+  "vaerix",
+  "nv_q13_smok",
+  "nv_q13_smok",
+  "vaerix"
+ ],
+ "Q13_GREAT_BELL_VAERIX_VISION": [
+  "vaerix",
+  "vaerix",
+  "nv_q13_smok",
+  "nv_q13_smok"
+ ],
+ "Q13_SKELETON_NOT_VAERIX": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q13_ENDGAME_SKELETON_ENDING": [
+  "nv_q13_smok",
+  "vaerix",
+  "vaerix",
+  "nv_q13_smok",
+  "nv_q13_smok"
+ ],
+ "Q13_ENDING_SKELETON_ENDING_2": [
+  "nv_q13_smok",
+  "nv_q13_smok",
+  "arg:0",
+  "vaerix",
+  "vaerix"
+ ],
+ "Q13_ENDGAME_SKELETON_ENEMIES": [
+  "nv_q13_smok",
+  "nv_q13_smok"
+ ],
+ "Q14_XENITH_2_INTRO": [
+  "xenith",
+  "xenith",
+  "xenith"
+ ],
+ "Q14_START_THE_ENDGAME_KEHLI": [
+  "kehli",
+  "chance",
+  "brynn"
+ ],
+ "Q14_CAPTURED_SOLDIER_BRYNN_1": [
+  "nv_q14_zolnierka"
+ ],
+ "Q14_CAPTURED_SOLDIER_2": [
+  "nv_q14_zolnierka",
+  "nv_q14_zolnierka"
+ ],
+ "Q14_CAPTURED_SOLDIER": [
+  "nv_q14_zolnierka"
+ ],
+ "Q14_DRAKELING_DEFEAT_INNOVATION_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "Q14_DISCARD_BALLISTAE_KEHLI": [
+  "kehli"
+ ],
+ "Q14_DRAKELING_DEFEAT_RELIABILITY_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "Q14_LAUREL_INTEL": [
+  "laurel",
+  "laurel"
+ ],
+ "Q14_UNBOUND_SHARD_SYRUS": [
+  "syrus",
+  "syrus"
+ ],
+ "Q14_UNBOUND_SHARD_LAUREL": [
+  "laurel"
+ ],
+ "Q14_MAP3_SPAWN_XENITH": [
+  "xenith",
+  "xenith",
+  "xenith"
+ ],
+ "Q14_XENITH_EXTRA_ACTIVATIONS": [
+  "laurel"
+ ],
+ "Q14_LAUREL_DOOR_EXPLAIN": [
+  "laurel"
+ ],
+ "Q14_PLACE_VAULT_GOLEMS": [
+  "syrus"
+ ],
+ "Q14_UNBOUND_SHARD_VAERIX": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q14_UNBOUND_SHARD_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "Q14_UNBOUND_SHARD_CHANCE": [
+  "chance",
+  "chance",
+  "laurel"
+ ],
+ "Q14_UNBOUND_SHARD_GALADEN": [
+  "galaden",
+  "galaden"
+ ],
+ "Q14_LAUREL_FREE": [
+  "laurel",
+  "laurel"
+ ],
+ "Q14_MAP2_END_TIMER_START": [
+  "arg:0"
+ ],
+ "Q14_DRYS_DEFEAT_VAERIX": [
+  "drys",
+  "vaerix",
+  "vaerix"
+ ],
+ "Q14_DRYS_DEFEAT_VAERIX_REBELLION": [
+  "vaerix",
+  "drys",
+  "vaerix",
+  "vaerix"
+ ],
+ "Q14_DRYS_DEFEAT_VAERIX_REBELLION_2": [
+  "drys",
+  "vaerix",
+  "vaerix",
+  "drys"
+ ],
+ "Q14_DRYS_DEFEAT_VAERIX_VISION": [
+  "vaerix",
+  "drys",
+  "vaerix",
+  "vaerix"
+ ],
+ "Q14_DRYS_DEFEAT_VAERIX_VISION_2": [
+  "drys",
+  "vaerix",
+  "vaerix",
+  "drys",
+  "drys",
+  "vaerix"
+ ],
+ "Q14_DRYS_DEFEAT_VAERIX_MIDDLE": [
+  "vaerix",
+  "drys",
+  "vaerix",
+  "vaerix"
+ ],
+ "Q14_DRYS_DEFEAT_VAERIX_MIDDLE_2": [
+  "drys",
+  "vaerix",
+  "drys",
+  "vaerix"
+ ],
+ "Q14_OBJECTIVE_2_COMPLETE": [
+  "nv_zarzadczyni",
+  "nv_zarzadczyni",
+  "nv_q14_kucharz",
+  "nv_q14_kucharz",
+  "nv_q14_kucharz"
+ ],
+ "Q14_OBJECTIVE_2_COMPLETE_2": [
+  "nv_q14_kucharz"
+ ],
+ "Q14_SPAWN_LIEUTENANT_DRYS_VAERIX": [
+  "vaerix",
+  "vaerix"
+ ],
+ "Q14_SPAWN_UTHUK": [
+  "drys",
+  "drys"
+ ],
+ "Q14_SPAWN_UTHUK_GALADEN_CONNECTION": [
+  "laurel"
+ ],
+ "Q14_LEVIRAX_FLYOVER": [
+  "arg:0"
+ ],
+ "Q14_UNDEAD_ARRIVE_ALLY": [
+  "nv_q14_wskrzeszeniec",
+  "nv_q14_wskrzeszeniec"
+ ],
+ "Q14_SPAWN_LIEUTENANT_ZERAI": [
+  "nv_zerai"
+ ],
+ "Q14_DRAKELING_ARRIVE_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "Q14_MAP2_PLACE_DAMAGED_BALLISTA_KEHLI": [
+  "kehli"
+ ],
+ "Q14_UNDEAD_ARRIVE_ENEMY": [
+  "nv_q14_wskrzeszeniec"
+ ],
+ "Q14_PARTISANS_ARRIVE_ENEMY": [
+  "nv_q14_stronnik"
+ ],
+ "Q14_PARTISANS_ARRIVE_ALLY": [
+  "nv_q14_stronnik"
+ ],
+ "Q14_VAERIX_VISION_CAMEO": [
+  "drys"
+ ],
+ "Q14_XENITH_WOUNDED": [
+  "arg:0"
+ ],
+ "Q14_XENITH_RECOVER": [
+  "laurel"
+ ],
+ "Q14_PARTISANS_ARRIVE_BRYNN_NOBILITY": [
+  "brynn",
+  "brynn",
+  "brynn"
+ ],
+ "Q14_PARTISANS_ARRIVE_BRYNN_VALOR": [
+  "brynn",
+  "brynn"
+ ],
+ "Q14_XENITH_2_SPAWN_CHANCE": [
+  "arg:0"
+ ],
+ "Q14_XENITH_2_SPAWN_NOCHANCE": [
+  "xenith"
+ ],
+ "Q14_INTRO_3": [
+  "brynn"
+ ],
+ "Q14_INTRO_OBJECTIVE": [
+  "brynn",
+  "brynn"
+ ],
+ "Q14_VAULT_GOLEM_SYRUS": [
+  "syrus"
+ ],
+ "Q14_VAULT_GOLEM_SYRUS_AMBITION": [
+  "syrus",
+  "syrus"
+ ],
+ "Q14_VAULT_GOLEM_SYRUS_AMBITION_3": [
+  "syrus"
+ ],
+ "Q14_XENITH_2_SPAWN_CHANCE_2": [
+  "arg:0",
+  "arg:0",
+  "chance",
+  "chance",
+  "arg:0",
+  "chance"
+ ],
+ "Q14_XENITH_2_SPAWN_SHARD": [
+  "xenith"
+ ],
+ "Q14_VAULT_GOLEM_SYRUS_OPTIMISM": [
+  "syrus",
+  "syrus",
+  "syrus"
+ ],
+ "Q14_VAULT_GOLEM_SYRUS_OPTIMISM_2": [
+  "syrus"
+ ],
+ "Q14_XENITH_1_DEFEAT": [
+  "arg:0",
+  "arg:1"
+ ],
+ "Q14_BELL_NOTICE": [
+  "arg:0"
+ ],
+ "Q14_XENITH_DEFEAT_BY_DAMAGE": [
+  "xenith"
+ ],
+ "Q14_XENITH_2_DEFEAT_BONUS": [
+  "arg:0"
+ ],
+ "Q14_MAP2_PLACE_DAMAGED_BALLISTA_NEED_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "Q14_DAMAGED_BALLISTA_INNOVATION_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "Q14_DAMAGED_BALLISTA_RELIABILITY_KEHLI": [
+  "kehli",
+  "kehli",
+  "kehli"
+ ],
+ "Q14_WALL_DOOR_1": [
+  "nv_q14_zolnierka",
+  "brynn",
+  "brynn"
+ ],
+ "Q14_BRYNN_ASSIST_NOBILITY_START": [
+  "brynn",
+  "brynn",
+  "brynn"
+ ],
+ "Q14_BRYNN_ASSIST_VALOR_START": [
+  "brynn",
+  "brynn",
+  "brynn"
+ ],
+ "Q14_BRYNN_NOBILITY_START": [
+  "brynn",
+  "brynn",
+  "brynn",
+  "brynn"
+ ],
+ "Q14_BRYNN_VALOR_START": [
+  "brynn",
+  "brynn",
+  "brynn",
+  "brynn"
+ ],
+ "Q14_HUMAN_PRISONER_INTERACT": [
+  "nv_zarzadczyni",
+  "nv_zarzadczyni"
+ ],
+ "Q14_HUMAN_PRISONER_BRYNN": [
+  "brynn"
+ ],
+ "Q14_HYBRID_PRISONER_INTERACT": [
+  "nv_q14_wiezien_hybryda",
+  "nv_q14_wiezien_hybryda"
+ ],
+ "Q14_INNER_VAULT_TABLE_BRYNN": [
+  "brynn"
+ ],
+ "Q14_LAUREL_CHALLENGE": [
+  "laurel"
+ ],
+ "Q14_LAUREL_PASS": [
+  "laurel",
+  "laurel"
+ ],
+ "Q14_TOWER_DOOR_BRYNN": [
+  "brynn",
+  "vaerix",
+  "vaerix"
+ ],
+ "Q14_TOWER_DOOR_CHANCE": [
+  "chance",
+  "syrus"
+ ],
+ "Q14_TOWER_DOOR_KEHLI": [
+  "kehli",
+  "kehli",
+  "galaden",
+  "galaden"
+ ],
+ "Q14_INNER_VAULT_DOOR_CHANCE": [
+  "chance",
+  "chance"
+ ],
+ "Q14_INNER_VAULT_DOOR_BRYNNS_IDEA": [
+  "brynn",
+  "chance",
+  "brynn"
+ ],
+ "Q14_INNER_VAULT_DOOR_CHANCE_INDEPENDENCE": [
+  "chance"
+ ],
+ "Q14_INNER_VAULT_DOOR_OPEN_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "Q14_INNER_VAULT_DOOR_CHANCE_2": [
+  "chance",
+  "chance",
+  "chance"
+ ],
+ "Q14_INNER_VAULT_DOOR_CHANCE_TRUST": [
+  "chance",
+  "chance"
+ ],
+ "Q14_INNER_VAULT_DOOR_LAURELS_IDEA": [
+  "laurel",
+  "laurel"
+ ],
+ "Q14_INNER_VAULT_DOOR_SYRUS_NOTTHIS": [
+  "syrus",
+  "syrus"
+ ],
+ "Q14_XENITH_NOTES_SYRUS": [
+  "syrus",
+  "syrus"
+ ],
+ "BARK_GALADEN_GATE": [
+  "galaden",
+  "galaden"
+ ],
+ "BOOK_SIGHT": [
+  "nv_sq1_wyslannik"
+ ],
+ "BOOK_WITCH": [
+  "nv_sq1_wiedzma"
+ ],
+ "RIDDLE_FAIL_0_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "RIDDLE_FAIL_0": [
+  "arg:0",
+  "arg:0"
+ ],
+ "RIDDLE_FAIL_1": [
+  "arg:0"
+ ],
+ "RIDDLE_FAIL_SYRUS": [
+  "syrus",
+  "syrus"
+ ],
+ "RIDDLE_FAIL_2": [
+  "arg:0"
+ ],
+ "RIDDLE_FAIL_BRYNN": [
+  "brynn"
+ ],
+ "RIDDLE_FAIL_3": [
+  "arg:0"
+ ],
+ "S1_INTRO_4": [
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik"
+ ],
+ "ENVOY_DEFEATED": [
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik"
+ ],
+ "WIN_ENVOY_2": [
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik"
+ ],
+ "WIN_CONVINCE": [
+  "nv_sq1_wiedzma"
+ ],
+ "WIN_BRYNN": [
+  "brynn",
+  "brynn"
+ ],
+ "WIN_ACCEPT": [
+  "nv_sq1_wiedzma",
+  "nv_sq1_wiedzma"
+ ],
+ "WIN_RUNE": [
+  "nv_sq1_wiedzma",
+  "nv_sq1_wiedzma"
+ ],
+ "WITCH_RUNE": [
+  "nv_sq1_wiedzma"
+ ],
+ "WIN_OFFER": [
+  "arg:0"
+ ],
+ "DIPLOMACY_TRUE": [
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik"
+ ],
+ "HANDS_TRUE": [
+  "nv_sq1_wyslannik"
+ ],
+ "BARK_GALADEN_ENVOY": [
+  "galaden"
+ ],
+ "LOSE_1": [
+  "narrator"
+ ],
+ "BARK_CHANCE_SHADOW": [
+  "chance",
+  "chance"
+ ],
+ "BARK_VAERIX_LAST_HINT": [
+  "vaerix",
+  "vaerix"
+ ],
+ "PILLARS_DONE": [
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik"
+ ],
+ "WITCH_ENCROUAGEMENT": [
+  "nv_sq1_wiedzma"
+ ],
+ "ANGRY_NECRO": [
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik"
+ ],
+ "ENVOY_SPAWN": [
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik"
+ ],
+ "GATE_BRYNN_RESPONSE": [
+  "brynn",
+  "brynn"
+ ],
+ "GATE_INTRO_RESPONSE": [
+  "arg:0",
+  "arg:0"
+ ],
+ "GATE_SYRUS_RESPONSE": [
+  "syrus",
+  "syrus"
+ ],
+ "GATE_GENERAL_RESPONSE": [
+  "arg:0",
+  "arg:0"
+ ],
+ "WELL_INTRO_WITCH_SNARK": [
+  "nv_sq1_wiedzma",
+  "nv_sq1_wiedzma",
+  "nv_sq1_wiedzma"
+ ],
+ "BARK_CHANCE_WELL": [
+  "chance",
+  "chance"
+ ],
+ "SQ2_TAUNT_BEGIN": [
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik",
+  "arg:0",
+  "arg:0"
+ ],
+ "SQ2_TAUNT_14A": [
+  "nv_sq1_wyslannik"
+ ],
+ "SQ2_NECORMANCER_DEATH": [
+  "arg:0"
+ ],
+ "SQ2_WAIQAR_1": [
+  "narrator",
+  "narrator",
+  "narrator"
+ ],
+ "SQ2_SPAWN_EVIL_BRYNN": [
+  "brynn"
+ ],
+ "SQ2_SPAWN_EVIL_GALADEN": [
+  "galaden"
+ ],
+ "SQ2_SPAWN_EVIL_SYRUS": [
+  "syrus"
+ ],
+ "SQ2_SPAWN_EVIL_VAERIX": [
+  "vaerix"
+ ],
+ "SQ2_SPAWN_EVIL_KEHLI": [
+  "kehli"
+ ],
+ "SQ2_SPAWN_EVIL_CHANCE": [
+  "chance"
+ ],
+ "SQ2_TAUNT_5A": [
+  "nv_sq1_wyslannik",
+  "nv_sq1_wyslannik"
+ ],
+ "TANGERINE_STORY_SCENE_PRE_FINALE_REVISION_34": [
+  "brynn"
+ ],
+ "E_C1_1_TEMP": [
+  "kehli"
+ ],
+ "E_C1_1_TEMP_2": [
+  "kehli",
+  "kehli"
+ ],
+ "E_C1_1_CHOICE_BRYNN": [
+  "kehli",
+  "kehli"
+ ],
+ "E_C1_1_CHOICE_SYRUS": [
+  "kehli"
+ ],
+ "E_C1_1_CHOICE_GALADEN": {
+  "pieces": [
+   "narrator",
+   "kehli",
+   "kehli",
+   "narrator"
+  ]
+ },
+ "E_C1_1_CHOICE_VAERIX": [
+  "kehli"
+ ],
+ "E_C1_1_CHOICE_CHANCE": [
+  "kehli"
+ ],
+ "E_C1_1_CHOICE_KEHLI": [
+  "kehli",
+  "kehli",
+  "kehli"
+ ],
+ "A2Q01_ALYS_INTERACT_1_BRYNN": [
+  "alys"
+ ],
+ "A2Q01_ALYS_INTERACT_2": [
+  "alys"
+ ],
+ "A2Q01_ALYS_INTERACT_LEAD": [
+  "alys"
+ ],
+ "A2Q01_ALYS_INTERACT_FIGHT": [
+  "alys"
+ ],
+ "A2Q01_ALYS_INTERACT_3": [
+  "alys"
+ ],
+ "A2Q01_ALYS_INTERACT_1": [
+  "alys"
+ ],
+ "A2Q01_CHASE_8_REVEAL": [
+  "vraskhar"
+ ],
+ "A2Q01_CHASE_9_REVEAL": [
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q01_CHASE_10_REVEAL": [
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q01_CHASE_11_REVEAL": [
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q01_SETUP_TAUNT1_A": [
+  "vraskhar"
+ ],
+ "A2Q01_SETUP_TAUNT1_A_1": [
+  "vraskhar"
+ ],
+ "A2Q01_SETUP_TAUNT1_B_1": [
+  "vraskhar"
+ ],
+ "A2Q01_SETUP_TAUNT1_B": [
+  "vraskhar"
+ ],
+ "A2Q01_VRASKHAR_ESCAPE_TAUNT": [
+  "vraskhar"
+ ],
+ "A2Q01_VRASKHAR_DEFEAT": [
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q01_TAUNT_BRYNN": [
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q01_TAUNT_CHANCE": [
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q01_TAUNT_KEHLI": [
+  "vraskhar",
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q01_TAUNT_GALADEN": [
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q01_TAUNT_SYRUS": [
+  "vraskhar",
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q01_TAUNT_VAERIX": [
+  "vraskhar",
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q01_VRASKHAR_WOUND": [
+  "vraskhar"
+ ],
+ "A2Q01_SCHOLAR_DONE_2": [
+  "nv_saphar"
+ ],
+ "A2Q01_SCHOLAR_DONE": [
+  "nv_saphar"
+ ],
+ "A2Q01_CHASE_67_REVEAL": [
+  "vraskhar"
+ ],
+ "A2Q01_DYING_WARDEN_1": [
+  "nv_gravia"
+ ],
+ "A2Q01_4A_CHASE_2_REVEAL": [
+  "vraskhar"
+ ],
+ "A2Q01_DYING_WARDEN_2": [
+  "nv_gravia"
+ ],
+ "A2Q01_LECTERN_VOLUME_SYRUS": [
+  "syrus",
+  "syrus",
+  "syrus"
+ ],
+ "A2Q01_CHASE_3_REVEAL": [
+  "vraskhar"
+ ],
+ "A2Q01_SCHOLAR_CALM": [
+  "nv_saphar"
+ ],
+ "A2Q01_SCHOLAR_ANSWER_1": [
+  "nv_saphar"
+ ],
+ "A2Q01_SCHOLAR_ANSWER_2": [
+  "nv_saphar"
+ ],
+ "A2Q01_SCHOLAR_ANSWER_3": [
+  "nv_saphar"
+ ],
+ "A2Q01_SCHOLAR_TREASURE": [
+  "nv_saphar",
+  "nv_saphar"
+ ],
+ "A2Q01_WARDEN_GREET": [
+  "nv_gravia"
+ ],
+ "A2Q01_WARDEN_HELP_MEND": [
+  "nv_gravia",
+  "nv_gravia"
+ ],
+ "A2Q01_WARDEN_HELP_OTHER": [
+  "nv_gravia",
+  "nv_gravia"
+ ],
+ "A2Q01_WARDEN_GOAL_SYRUS": [
+  "nv_gravia"
+ ],
+ "A2Q01_WARDEN_GOAL_OTHER": [
+  "nv_gravia"
+ ],
+ "A2Q01_WARDEN_MARSHALS_BRYNN": [
+  "nv_gravia",
+  "nv_gravia"
+ ],
+ "A2Q01_WARDEN_MARSHALS_OTHER": [
+  "nv_gravia"
+ ],
+ "A2Q01_WARDEN_MORE": [
+  "nv_gravia"
+ ],
+ "A2Q01_WARDEN_TREASURE": [
+  "nv_gravia"
+ ],
+ "A2Q01_WARDEN_DONE": [
+  "nv_gravia",
+  "narrator"
+ ],
+ "A2Q02_SETUP_OBJECTIVE_SET2": [
+  "nv_gorzae"
+ ],
+ "A2Q02_PLACE_BRYNN": [
+  "morant"
+ ],
+ "A2Q02_SETUP7": [
+  "nv_a2q2_straznik"
+ ],
+ "A2Q02_TRIAL_SPAWN": [
+  "morant"
+ ],
+ "A2Q02_TRIAL_SPAWN2": [
+  "morant",
+  "morant"
+ ],
+ "A2Q02_SPAWN_COURT_CHAMP_NO": [
+  "morant",
+  "morant"
+ ],
+ "A2Q02_SPAWN_COURT_CHAMP": [
+  "morant",
+  "morant"
+ ],
+ "A2Q02_VERDICT_COMBAT": [
+  "morant"
+ ],
+ "A2Q02_DUCARD_VERDICT_START": [
+  "morant"
+ ],
+ "A2Q02_DUCARD_VERDICT_PRO": [
+  "ducard",
+  "morant",
+  "morant"
+ ],
+ "A2Q02_JURY_PRO_FINAL": [
+  "morant"
+ ],
+ "A2Q02_AUDIENCE_PRO_FINAL": [
+  "morant"
+ ],
+ "A2Q02_BAILIFF_PRO_FINAL": [
+  "nv_gorzae",
+  "nv_gorzae"
+ ],
+ "A2Q02_MAGRIT_HAPPY": [
+  "magrit",
+  "magrit"
+ ],
+ "A2Q02_MAGRIT_UNHAPPY": [
+  "magrit",
+  "magrit"
+ ],
+ "A2Q02_AUDIENCE_CON_FINAL": [
+  "morant"
+ ],
+ "A2Q02_DUCARD_VERDICT_CON": [
+  "ducard"
+ ],
+ "A2Q02_EVIDENCE_PASS_1": [
+  "brynn",
+  "brynn"
+ ],
+ "A2Q02_EVIDENCE_PASS_2": [
+  "brynn",
+  "brynn"
+ ],
+ "A2Q02_EVIDENCE_PASS_3": [
+  "brynn",
+  "brynn"
+ ],
+ "A2Q02_PLACE_MORANT": [
+  "magrit",
+  "magrit"
+ ],
+ "A2Q02_MORANT_CHOICE": [
+  "magrit"
+ ],
+ "A2Q02_MORANT_ATTACK": [
+  "morant"
+ ],
+ "A2Q02_JUDGE_TABLE": [
+  "morant"
+ ],
+ "A2Q02_JUDGE_NO": [
+  "morant",
+  "morant"
+ ],
+ "A2Q02_DUCARD_WHY2": [
+  "ducard"
+ ],
+ "A2Q02_DUCARD_GUILT2": [
+  "brynn",
+  "brynn"
+ ],
+ "A2Q02_DUCARD_LOYALTY2": [
+  "ducard",
+  "ducard"
+ ],
+ "A2Q02_DUCARD4": [
+  "nv_gorzae"
+ ],
+ "TERRAIN_SHRINE_CLEANSE_VAERIX": [
+  "vaerix"
+ ],
+ "TERRAIN_SHRINE_CLEANSE_KEHLI": [
+  "kehli"
+ ],
+ "TERRAIN_SHRINE_CLEANSE_CHANCE": [
+  "chance"
+ ],
+ "TERRAIN_SHRINE_CLEANSE_SYRUS": [
+  "syrus"
+ ],
+ "TERRAIN_SHRINE_CLEANSE_GALADEN": [
+  "galaden"
+ ],
+ "TERRAIN_SHRINE_CLEANSE_BRYNN": [
+  "brynn"
+ ],
+ "A2Q02_HERBIE_FAIL": [
+  "brynn"
+ ],
+ "A2Q02_WITNESS_MORANT_FAIL": [
+  "brynn",
+  "brynn",
+  "morant"
+ ],
+ "A2Q03_VIRTUE_CHOICE_COOK": [
+  "nv_patralis",
+  "nv_patralis"
+ ],
+ "A2Q03_COOK_HIDE": [
+  "nv_patralis",
+  "nv_patralis"
+ ],
+ "A2Q03_COOK_HELP": [
+  "nv_patralis",
+  "nv_patralis",
+  "nv_patralis",
+  "nv_patralis"
+ ],
+ "A2Q03_AMBUSH_CLEARED": [
+  "chance",
+  "chance"
+ ],
+ "A2Q03_COURIER_SHOT": [
+  "nv_a2q3_bandyta"
+ ],
+ "A2Q03_TRANSITION_10_SHADOW": [
+  "chance",
+  "chance"
+ ],
+ "A2Q03_SPAWN_GILLIAM": [
+  "gilliam"
+ ],
+ "A2Q03_SETUP_BANDITS": [
+  "chance",
+  "chance"
+ ],
+ "A2Q03_VIRTUE_CHOICE_START": [
+  "chance",
+  "chance"
+ ],
+ "A2Q03_VIRTUE_CHOICE_START_SURPRISE_RESULT": [
+  "chance"
+ ],
+ "A2Q03_VIRTUE_CHOICE_START_WARN_RESULT": [
+  "chance"
+ ],
+ "A2Q03_TALK_COURIER": [
+  "nv_edgar",
+  "nv_edgar"
+ ],
+ "A2Q03_VIRTUE_CHOICE_COURIER": [
+  "nv_edgar",
+  "nv_edgar"
+ ],
+ "A2Q03_TREAT_COURIER": [
+  "nv_edgar",
+  "nv_edgar"
+ ],
+ "A2Q03_COURIER_WARN_REBEL": [
+  "nv_edgar",
+  "narrator",
+  "narrator"
+ ],
+ "A2Q03_COURIER_WARN_LOYALIST": [
+  "nv_edgar",
+  "narrator",
+  "narrator"
+ ],
+ "A2Q03_GUARD_REACT": [
+  "nv_a2q3_straznik"
+ ],
+ "A2Q03_COURIER_FIGHT_SHOT": [
+  "nv_edgar"
+ ],
+ "A2Q03_SHADOW_MEET_HIDE": [
+  "chance",
+  "chance"
+ ],
+ "A2Q03_SHADOW_CHANCE_HIDE": [
+  "chance",
+  "chance"
+ ],
+ "A2Q03_SHADOW_CHANCE_BEFRIEND": [
+  "chance",
+  "chance"
+ ],
+ "A2Q03_SHADOW_OTHER": "narrator",
+ "A2Q03_VICTIM_SYRUS": [
+  "syrus",
+  "syrus"
+ ],
+ "A2Q03_VICTIM_VAERIX": [
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q03_CAILN_GALADEN": [
+  "galaden",
+  "galaden"
+ ],
+ "A2Q03_CAILN_KEHLI": [
+  "kehli",
+  "kehli",
+  "nv_a2q3_zolnierz",
+  "nv_a2q3_strazniczka"
+ ],
+ "A2Q04_OBJECTIVE_REBEL_1_UPDATE": [
+  "greigory"
+ ],
+ "A2Q04_OBJECTIVE_LOYALIST_1_UPDATE": [
+  "magrit",
+  "magrit"
+ ],
+ "A2Q04_FULMINAR_NAVOTH_DIALOGUE_1": [
+  "nv_fulminar",
+  "nv_fulminar"
+ ],
+ "A2Q04_FULMINAR_NAVOTH_DIALOGUE_3": [
+  "navoth",
+  "navoth",
+  "nv_fulminar",
+  "nv_fulminar"
+ ],
+ "A2Q04_FULMINAR_NAVOTH_DIALOGUE_4": [
+  "nv_fulminar",
+  "nv_fulminar"
+ ],
+ "A2Q04_FULMINAR_NAVOTH_DIALOGUE_2": [
+  "navoth",
+  "navoth",
+  "nv_fulminar",
+  "nv_fulminar"
+ ],
+ "A2Q04_TEAMWORK_REBEL": [
+  "nv_nicodemus",
+  "nv_nicodemus"
+ ],
+ "A2Q04_DOOR_TEAMWORK_REBEL": [
+  "nv_nicodemus",
+  "nv_nicodemus"
+ ],
+ "A2Q04_TEAMWORK_LOYALIST": [
+  "nv_honora",
+  "nv_honora"
+ ],
+ "A2Q04_DOOR_TEAMWORK_LOYALIST": [
+  "nv_honora",
+  "nv_honora"
+ ],
+ "A2Q05_BOSS_SPAWN_1": [
+  "nv_crayleth"
+ ],
+ "A2Q05_BOSS_SPAWN_2": [
+  "navoth"
+ ],
+ "A2Q05_BOSS_SPAWN_DONE": [
+  "nara"
+ ],
+ "A2Q05_CAMPFIRE_SEARCH": [
+  "narrator"
+ ],
+ "A2Q05_CAMPFIRE_VAERIX": [
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q05_CAMPFIRE_SYRUS": [
+  "syrus"
+ ],
+ "A2Q05_BOSS_DEFEAT_1": [
+  "nv_crayleth"
+ ],
+ "A2Q05_SETUP_3_GALADEN": [
+  "galaden",
+  "galaden"
+ ],
+ "A2Q05_LOW_ROAD_BADDIES": [
+  "nv_a2q5_lowczyni"
+ ],
+ "A2Q05_CRAYLETH_REVENGE_1": [
+  "nv_crayleth"
+ ],
+ "A2Q05_CRAYLETH_REVENGE_2": [
+  "nv_crayleth",
+  "navoth"
+ ],
+ "A2Q05_ICE_BREATH_CHOOSE": [
+  "nara",
+  "nara"
+ ],
+ "A2Q05_NARA_ACTION_HINT": [
+  "nara"
+ ],
+ "A2Q05_NARA_ACTION_4": [
+  "nara"
+ ],
+ "A2Q05_FINAL_SETUP_FINISH_1": [
+  "nara"
+ ],
+ "A2Q05_FINAL_SETUP_FINISH_2": [
+  "nara"
+ ],
+ "A2Q05_HIDDEN_CHEST_BRYNN": [
+  "brynn",
+  "brynn"
+ ],
+ "A2Q05_HIDDEN_CHEST_SYRUS": [
+  "syrus",
+  "syrus"
+ ],
+ "A2Q05_HUNTERS_ARRIVE_1": [
+  "nv_a2q5_hybryda"
+ ],
+ "A2Q05_HUNTERS_ARRIVE_3": [
+  "nv_a2q5_hybryda"
+ ],
+ "A2Q05_NARA_DONE": [
+  "nara"
+ ],
+ "A2Q05_NARA_WHAT_INFO": [
+  "nara",
+  "nara"
+ ],
+ "A2Q05_NARA_WHAT_VAERIX": [
+  "vaerix"
+ ],
+ "A2Q05_NARA_WHAT_OTHER": [
+  "narrator",
+  "nara"
+ ],
+ "A2Q05_NARA_WHAT_SYRUS": [
+  "syrus"
+ ],
+ "A2Q05_NARA_WHO_INFO": [
+  "nara",
+  "nara"
+ ],
+ "A2Q05_NARA_WHO_INFO_WIN": [
+  "arg:0",
+  "arg:0"
+ ],
+ "A2Q05_NARA_WHO_INFO_LOSS": [
+  "arg:0",
+  "arg:0"
+ ],
+ "A2Q05_NARA_HOW_INFO": [
+  "nara"
+ ],
+ "A2Q05_BOSS_DEFEAT_2": [
+  "nv_crayleth",
+  "navoth"
+ ],
+ "A2Q05_CACHE_CHANCE": [
+  "chance",
+  "chance"
+ ],
+ "A2Q05_TRAINING_RIG_TEST": [
+  "nara"
+ ],
+ "A2Q05_TRAINING_RIG_FAIL": [
+  "nara"
+ ],
+ "A2Q05_TRAINING_RIG_PASS": [
+  "nara"
+ ],
+ "A2Q05_WAGON_KEHLI": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_WIN_2": [
+  "brynn",
+  "brynn"
+ ],
+ "A2Q06_WIN_7": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_WIN_3": [
+  "chance",
+  "chance"
+ ],
+ "A2Q06_WIN_4": [
+  "galaden",
+  "galaden"
+ ],
+ "A2Q06_WIN_5": [
+  "syrus",
+  "syrus"
+ ],
+ "A2Q06_WIN_6": [
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q06_VIRTUE_CHOICE": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_OBJECTIVE3_SET": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_SCRAP1_OBJECTIVE": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_SCRAP2_OBJECTIVE": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_SCRAP3_OBJECTIVE_DONE": [
+  "kehli"
+ ],
+ "A2Q06_SCRAP3_OBJECTIVE": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_SCRAP4_OBJECTIVE_DONE": [
+  "kehli",
+  "kehli",
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_SCRAP4_OBJECTIVE": [
+  "kehli",
+  "kehli",
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_SCRAP5_OBJECTIVE_DONE": [
+  "kehli"
+ ],
+ "A2Q06_LEGEND_CHOICE": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_INTRODUCTION": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_OBJECTIVE1_SET": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_SIGHT_CONSUMABLE": [
+  "kehli",
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_DRAGON_STUDY": [
+  "kehli"
+ ],
+ "A2Q06_GATE_RELIABILITY": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_GATE_INNOVATION": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_GATE_BALANCED": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q06_OBJECTIVE2_SET": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q07_OBJECTIVE_4_SET": [
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q07_OBJECTIVE_NAVOTH_SET": [
+  "navoth"
+ ],
+ "A2Q07_DOOR_EARLY": [
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q07_EOR_FIRE2": [
+  "galgoraz",
+  "galgoraz"
+ ],
+ "A2Q07_SPAWN_LEVIRAX": [
+  "levirax"
+ ],
+ "A2Q07_LEVIRAX_WOUNDED": [
+  "levirax"
+ ],
+ "A2Q07_NAVOTH_DEFEAT_1": [
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q07_NAVOTH_DEFEAT_2B": [
+  "navoth",
+  "navoth"
+ ],
+ "A2Q07_NAVOTH_DEFEAT_REB_1": [
+  "vaerix",
+  "navoth"
+ ],
+ "A2Q07_NAVOTH_DEFEAT_VIS_1": [
+  "vaerix",
+  "vaerix",
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q07_NAVOTH_DEFEAT_2A": [
+  "navoth",
+  "navoth",
+  "vaerix"
+ ],
+ "A2Q07_REVEAL_11": [
+  "meza",
+  "meza"
+ ],
+ "A2Q07_REVEAL_17": [
+  "galgoraz",
+  "galgoraz"
+ ],
+ "A2Q07_REVEAL_6": [
+  "nv_a2q7_wygnaniec"
+ ],
+ "A2Q07_OBJECTIVE_1_SET": [
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q07_LABYRINTH_REVEAL": [
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q07_STATUE_REMOVE": [
+  "galgoraz"
+ ],
+ "A2Q07_STATUE_REMOVE_2": [
+  "galgoraz"
+ ],
+ "A2Q07_TOUCHSTONE_0": [
+  "vaerix",
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q07_TOUCHSTONE_VAERIX": [
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q07_STATUE_VAERIX": [
+  "vaerix",
+  "vaerix",
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q07_WIN": [
+  "vaerix",
+  "drys",
+  "drys",
+  "vaerix",
+  "vaerix"
+ ],
+ "A2Q08_ALT_BOSS_DEFEAT_PASS": [
+  "veta"
+ ],
+ "A2Q08_VRASKHAR_DEFEAT_PASS": [
+  "vraskhar",
+  "veta"
+ ],
+ "A2Q08_VRASKHAR_DEFEAT_FAIL": [
+  "vraskhar"
+ ],
+ "A2Q08_VETA_RECAP_NONE": [
+  "veta",
+  "veta"
+ ],
+ "A2Q08_GNOME_PLACE": [
+  "nv_a2q8_ogrodniczka"
+ ],
+ "A2Q08_PLACE_HEROES": [
+  "syrus"
+ ],
+ "A2Q08_SETUP_CENTRAL": [
+  "nv_a2q8_ogrodniczka"
+ ],
+ "A2Q08_SETUP_LIBRARY": [
+  "nv_a2q8_ogrodniczka",
+  "nv_a2q8_ogrodniczka"
+ ],
+ "A2Q08_SETUP_TOWER_BASE": [
+  "nv_a2q8_ogrodniczka"
+ ],
+ "A2Q08_VETA_PLACE": [
+  "veta"
+ ],
+ "A2Q08_VETA_EOR_WEAK": [
+  "veta"
+ ],
+ "A2Q08_VETA_EOR_DEFEAT": [
+  "veta"
+ ],
+ "A2Q08_GARDENER_HALL_ANSWER": [
+  "nv_a2q8_ogrodniczka"
+ ],
+ "A2Q08_GARDENER_DONE": [
+  "nv_a2q8_ogrodniczka"
+ ],
+ "A2Q08_GARDENER_CLUE_TEST": [
+  "nv_a2q8_ogrodniczka"
+ ],
+ "A2Q08_GARDENER_CLUE_NO": [
+  "nv_a2q8_ogrodniczka",
+  "nv_a2q8_ogrodniczka"
+ ],
+ "A2Q08_GARDENER_CLUE": [
+  "nv_a2q8_ogrodniczka",
+  "nv_a2q8_ogrodniczka"
+ ],
+ "A2Q08_GARDENER_PERSONAL": [
+  "nv_a2q8_ogrodniczka",
+  "nv_a2q8_ogrodniczka"
+ ],
+ "A2Q08_GARDENER_SYRUS_REACT": [
+  "syrus"
+ ],
+ "A2Q08_GARDENER_ESCAPE_CLUE": [
+  "nv_a2q8_ogrodniczka"
+ ],
+ "A2Q08_GARDENER_ESCAPE_NO_CLUE": [
+  "nv_a2q8_ogrodniczka"
+ ],
+ "A2Q08_LECTERN_DESTROYED": [
+  "narrator"
+ ],
+ "A2Q08_LIBRARIAN_KEY": [
+  "nv_a2q8_bibliotekarka",
+  "nv_a2q8_bibliotekarka"
+ ],
+ "A2Q08_LIBRARIAN_NO_KEY": [
+  "nv_a2q8_bibliotekarka",
+  "nv_a2q8_bibliotekarka"
+ ],
+ "A2Q08_LIBRARIAN_SYRUS_REACT": [
+  "syrus",
+  "syrus",
+  "nv_a2q8_bibliotekarka"
+ ],
+ "A2Q08_LIBRARIAN_INTERACT_SAFE": [
+  "nv_a2q8_bibliotekarka"
+ ],
+ "A2Q08_LIBRARIAN_CLUE_START": [
+  "nv_a2q8_bibliotekarka"
+ ],
+ "A2Q08_LIBRARIAN_ESCAPE_CLUE": [
+  "nv_a2q8_bibliotekarka"
+ ],
+ "A2Q08_LIBRARIAN_RESCUE_KEY": [
+  "nv_a2q8_bibliotekarka"
+ ],
+ "A2Q08_RECORDER_INTERACT_SAFE": [
+  "nv_a2q8_kronikarz"
+ ],
+ "A2Q08_RECORDER_KEY": [
+  "nv_a2q8_kronikarz",
+  "nv_a2q8_kronikarz"
+ ],
+ "A2Q08_RECORDER_NO_KEY": [
+  "nv_a2q8_kronikarz",
+  "nv_a2q8_kronikarz"
+ ],
+ "A2Q08_RECORDER_CLUE_TEST": [
+  "nv_a2q8_kronikarz"
+ ],
+ "A2Q08_RECORDER_PERSONAL": [
+  "nv_a2q8_kronikarz",
+  "nv_a2q8_kronikarz"
+ ],
+ "A2Q08_RECORDER_SYRUS_REACT": [
+  "syrus",
+  "syrus",
+  "nv_a2q8_kronikarz"
+ ],
+ "A2Q08_RECORDER_ESCAPE_CLUE": [
+  "nv_a2q8_kronikarz"
+ ],
+ "A2Q08_RECORDER_RESCUE_KEY": [
+  "nv_a2q8_kronikarz"
+ ],
+ "A2Q08_VRASKHAR_SPAWN": [
+  "vraskhar"
+ ],
+ "A2Q08_PAYOFF_AMBITION": [
+  "syrus",
+  "syrus"
+ ],
+ "A2Q08_RENEYR_LEAVES_A": [
+  "reneyr",
+  "vraskhar"
+ ],
+ "A2Q08_RENEYR_LEAVES_A2": [
+  "reneyr",
+  "reneyr"
+ ],
+ "A2Q08_UTHUK_OBJECTIVE_SET": [
+  "veta"
+ ],
+ "A2Q08_RENEYR_LEAVES_B": [
+  "reneyr",
+  "vraskhar"
+ ],
+ "A2Q08_RENEYR_LEAVES_B2": [
+  "reneyr",
+  "vraskhar"
+ ],
+ "A2Q08_RENEYR_LEAVES_C": [
+  "reneyr",
+  "nv_siostra_krwi"
+ ],
+ "A2Q08_RENEYR_LEAVES_C2": [
+  "reneyr",
+  "reneyr"
+ ],
+ "A2Q08_PAYOFF_OPTIMISM": [
+  "syrus"
+ ],
+ "A2Q08_PAYOFF_BALANCE": [
+  "syrus",
+  "syrus"
+ ],
+ "A2Q08_VRASKHAR_SPAWN_GLOAT": [
+  "vraskhar"
+ ],
+ "A2Q08_BLOOD_WITCH_SPAWN": [
+  "nv_siostra_krwi"
+ ],
+ "A2Q08_VRASKHAR_SPAWN_SUPER_GLOAT": [
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q08_UNDEAD_ATK_1": [
+  "reneyr"
+ ],
+ "A2Q08_SWEEPER_INTERACT_SAFE": [
+  "nv_a2q8_zamiatacz"
+ ],
+ "A2Q08_SWEEPER_HALL_ANSWER": [
+  "nv_a2q8_zamiatacz"
+ ],
+ "A2Q08_SWEEPER_CLUE_TEST": [
+  "nv_a2q8_zamiatacz"
+ ],
+ "A2Q08_SWEEPER_CLUE_NO": [
+  "nv_a2q8_zamiatacz",
+  "nv_a2q8_zamiatacz"
+ ],
+ "A2Q08_SWEEPER_PERSONAL": [
+  "nv_a2q8_zamiatacz"
+ ],
+ "A2Q08_SWEEPER_SYRUS_REACT": [
+  "syrus",
+  "syrus"
+ ],
+ "A2Q08_SWEEPER_ESCAPE_CLUE": [
+  "nv_a2q8_zamiatacz"
+ ],
+ "A2Q08_VETA_HELP_FAIL": [
+  "veta"
+ ],
+ "A2Q08_VETA_PREVIEW": [
+  "veta"
+ ],
+ "A2Q08_VETA_PREVIEW_2": [
+  "veta"
+ ],
+ "A2Q08_WIN_VETA_SAFE": [
+  "veta",
+  "veta"
+ ],
+ "A2Q09_OBJECTIVE_2_SET": [
+  "galaden",
+  "galaden"
+ ],
+ "A2Q09_NIGHTMARE_BRYNN_SPAWN": [
+  "kathryn",
+  "kathryn"
+ ],
+ "A2Q09_NIGHTMARE_CHANCE_SPAWN": [
+  "outlaw",
+  "outlaw"
+ ],
+ "A2Q09_NIGHTMARE_KEHLI_SPAWN": [
+  "bruli"
+ ],
+ "A2Q09_NIGHTMARE_SYRUS_SPAWN": [
+  "greysdon",
+  "syrus"
+ ],
+ "A2Q09_NIGHTMARE_GALADEN_1_SPAWN": [
+  "nekrul",
+  "galaden",
+  "galaden"
+ ],
+ "A2Q09_NIGHTMARE_GALADEN_2_SPAWN": [
+  "galaden"
+ ],
+ "A2Q09_NIGHTMARE_GALADEN_3_SPAWN": [
+  "nv_dalavel",
+  "nv_dalavel"
+ ],
+ "A2Q09_NIGHTMARE_GALADEN_5_SPAWN": [
+  "nv_q9_blizniaki"
+ ],
+ "A2Q09_LEGEND_CHOICE_01": [
+  "galaden",
+  "galaden"
+ ],
+ "A2Q09_VRASKHAR_GLOAT": [
+  "vraskhar"
+ ],
+ "A2Q09_STOREHOUSE_OBJ_UPDATE": [
+  "galaden",
+  "vraskhar"
+ ],
+ "A2Q09_VRASKHAR_REVENGE": [
+  "vraskhar"
+ ],
+ "A2Q09_VRASKHAR_FRESH_THIEF": [
+  "vraskhar"
+ ],
+ "A2Q09_VRASKHAR_FRESH": [
+  "vraskhar"
+ ],
+ "A2Q09_BLOODLESS_REVEAL_2": [
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q09_VRASKHAR_IMMORTAL": [
+  "vraskhar"
+ ],
+ "A2Q10_RENEYR_EVACUATE": [
+  "reneyr",
+  "reneyr"
+ ],
+ "A2Q10_ZACHARETH_EVACUATE": [
+  "zachareth",
+  "zachareth"
+ ],
+ "A2Q10_SETUP_HEROES": [
+  "balthain"
+ ],
+ "A2Q11_HANDICAP_PAYOFF_0": [
+  "astarra",
+  "astarra"
+ ],
+ "A2Q11_LEVIRAX_TOWER2": [
+  "levirax",
+  "levirax"
+ ],
+ "A2Q11_SOLDIER_AGILITY_REWARD": [
+  "nv_a2q11_protektor"
+ ],
+ "A2Q11_PAYOFF_BRYNN_NOBILITY_MARSHAL": [
+  "alys",
+  "alys",
+  "brynn"
+ ],
+ "A2Q11_PAYOFF_BRYNN_VALOR_MARSHAL": [
+  "alys",
+  "alys",
+  "brynn",
+  "brynn"
+ ],
+ "A2Q11_PAYOFF_BRYNN_BALANCE_MARSHAL": [
+  "alys",
+  "alys",
+  "brynn",
+  "brynn"
+ ],
+ "A2Q11_PAYOFF_BRYNN_NOBILITY_LOYALIST": [
+  "magrit",
+  "magrit",
+  "brynn"
+ ],
+ "A2Q11_PAYOFF_BRYNN_VALOR_LOYALIST": [
+  "magrit",
+  "magrit",
+  "brynn",
+  "brynn"
+ ],
+ "A2Q11_PAYOFF_BRYNN_BALANCE_LOYALIST": [
+  "magrit",
+  "magrit",
+  "brynn",
+  "brynn"
+ ],
+ "A2Q11_PAYOFF_BRYNN_NOBILITY_REBEL": [
+  "greigory",
+  "greigory",
+  "brynn"
+ ],
+ "A2Q11_PAYOFF_BRYNN_VALOR_REBEL": [
+  "greigory",
+  "greigory",
+  "brynn",
+  "brynn"
+ ],
+ "A2Q11_PAYOFF_BRYNN_BALANCE_REBEL": [
+  "greigory",
+  "greigory",
+  "brynn",
+  "brynn"
+ ],
+ "A2Q11_PAYOFF_CHANCE_OFFSCREEN": [
+  "chance"
+ ],
+ "A2Q11_CRYPT_REVEAL4_OTHER": [
+  "syrus"
+ ],
+ "A2Q11_CRYPT_REVEAL5": {
+  "pieces": [
+   "syrus",
+   "syrus",
+   "narrator"
+  ]
+ },
+ "A2Q11_VRASKHAR_SPAWN": [
+  "vraskhar"
+ ],
+ "A2Q11_RENEYR_SPAWN": [
+  "reneyr"
+ ],
+ "A2Q11_ZACHARETH_SPAWN": [
+  "zachareth"
+ ],
+ "A2Q11_GILLIAM_SPAWN": [
+  "gilliam"
+ ],
+ "A2Q11_CRYPT_REVEAL4": [
+  "syrus",
+  "syrus"
+ ],
+ "A2Q11_GILLIAM_DEFEAT": [
+  "gilliam",
+  "gilliam"
+ ],
+ "A2Q11_LEVIRAX_FIRST_SPAWN": [
+  "levirax"
+ ],
+ "A2Q11_RENEYR_DEFEAT": [
+  "reneyr",
+  "reneyr"
+ ],
+ "A2Q11_SETUP_GALADEN_2": [
+  "syrus",
+  "syrus",
+  "galaden"
+ ],
+ "A2Q11_CRYPT_OBJECTIVE": [
+  "syrus",
+  "syrus"
+ ],
+ "A2Q11_VRASKHAR_DEFEAT": [
+  "vraskhar",
+  "vraskhar"
+ ],
+ "A2Q11_SYRUS_PUZZLING_JOURNAL": {
+  "pieces": [
+   "syrus",
+   "narrator",
+   "syrus",
+   "syrus",
+   "syrus",
+   "narrator",
+   "syrus",
+   "narrator",
+   "narrator"
+  ]
+ },
+ "A2Q11_TREVALYN_5A": [
+  "trevalyn"
+ ],
+ "A2Q11_ZACHARETH_DEFEAT": [
+  "zachareth"
+ ],
+ "A2Q11_SYRUS_PUZZLING": {
+  "pieces": [
+   "syrus",
+   "narrator",
+   "syrus",
+   "syrus",
+   "syrus",
+   "narrator",
+   "syrus",
+   "narrator",
+   "narrator"
+  ]
+ },
+ "A2Q11_SARCOPHAGUS_GO": [
+  "syrus",
+  "syrus"
+ ],
+ "A2Q11_SARCOPHAGUS_SYRADEN": [
+  "galaden"
+ ],
+ "A2Q11_GUILDS_PAYOFF_2": [
+  "bruli"
+ ],
+ "A2Q11_GUILDS_PAYOFF_1": [
+  "bruli"
+ ],
+ "A2Q11_SOLDIER_INSIGHT_REWARD": [
+  "nv_a2q11_medyk"
+ ],
+ "A2Q11_PAYOFF_KEHLI_PREP": [
+  "kehli",
+  "kehli"
+ ],
+ "A2Q11_SOLDIER_MIGHT_REWARD": [
+  "nv_a2q11_wojowniczka"
+ ],
+ "A2Q11_REBEL_PAYOFF_2_ZACH": [
+  "greigory",
+  "zachareth",
+  "zachareth",
+  "greigory",
+  "greigory"
+ ],
+ "A2Q11_REBEL_PAYOFF_2": [
+  "greigory"
+ ],
+ "A2Q11_REBEL_PAYOFF_1_ZACH": [
+  "greigory",
+  "zachareth",
+  "zachareth",
+  "greigory",
+  "greigory"
+ ],
+ "A2Q11_REBEL_PAYOFF_1": [
+  "greigory"
+ ],
+ "A2Q11_REBEL_PAYOFF_ZACH_ONLY": [
+  "zachareth",
+  "zachareth"
+ ],
+ "A2Q11_PAYOFF_SYRUS_PREP": [
+  "syrus",
+  "syrus"
+ ],
+ "A2Q11_PAYOFF_VAERIX_PREP": [
+  "vaerix"
+ ],
+ "A2Q11_WILDLANDERS_PAYOFF_2": [
+  "ronan",
+  "ronan"
+ ],
+ "A2Q11_WILDLANDERS_PAYOFF_1": [
+  "ronan",
+  "ronan"
+ ],
+ "A2Q11_SOLDIER_WILL_REWARD": [
+  "nv_a2q11_zolnierz"
+ ],
+ "A2_SE10_AFTER_THE_FLAMES_26": [
+  "vaerix",
+  "vaerix"
+ ],
+ "A2_SE22_TIMMORRAN'S_LAST_SECRET_37C": [
+  "syrus",
+  "syrus"
+ ],
+ "TRAVEL_EVENT_A2_01": [
+  "nv_ta2_sierzant",
+  "nv_ta2_sierzant"
+ ],
+ "TRAVEL_EVENT_A2_10_1B": [
+  "kehli",
+  "kehli"
+ ],
+ "TRAVEL_EVENT_A2_10_1A": [
+  "kehli"
+ ],
+ "TRAVEL_EVENT_A2_11": [
+  "kehli",
+  "kehli"
+ ],
+ "TRAVEL_EVENT_A2_13": [
+  "nv_ta2_mag",
+  "nv_ta2_mag"
+ ],
+ "TRAVEL_EVENT_A2_13_2": [
+  "arg:0",
+  "arg:0",
+  "nv_ta2_mag",
+  "nv_ta2_mag"
+ ],
+ "TRAVEL_EVENT_A2_13_3B": [
+  "syrus"
+ ],
+ "TRAVEL_EVENT_A2_13_3A": [
+  "syrus",
+  "nv_ta2_mag",
+  "syrus"
+ ],
+ "TRAVEL_EVENT_A2_14": [
+  "syrus"
+ ],
+ "TRAVEL_EVENT_A2_16_2A": [
+  "vaerix",
+  "vaerix"
+ ],
+ "TRAVEL_EVENT_A2_16_2B": [
+  "vaerix",
+  "vaerix"
+ ],
+ "TRAVEL_EVENT_A2_16_1A": [
+  "vaerix",
+  "vaerix"
+ ],
+ "TRAVEL_EVENT_A2_21": [
+  "nv_ta2_orczyca"
+ ],
+ "TRAVEL_EVENT_A2_29": [
+  "nv_ta2_kupiec"
+ ],
+ "TRAVEL_EVENT_A2_33": [
+  "nv_ta2_pielgrzym"
+ ],
+ "TRAVEL_EVENT_A2_04": [
+  "nv_ta2_04_kobieta",
+  "nv_ta2_04_kobieta"
+ ],
+ "TRAVEL_EVENT_A2_04_1B": [
+  "chance"
+ ],
+ "TRAVEL_EVENT_A2_04_3": [
+  "arg:0"
+ ],
+ "TRAVEL_EVENT_A2_04_2B": [
+  "chance"
+ ],
+ "TRAVEL_EVENT_A2_04_1A": [
+  "chance"
+ ],
+ "TRAVEL_EVENT_A2_44": [
+  "nv_ta2_karciarz"
+ ],
+ "TRAVEL_EVENT_A2_52": [
+  "nv_ta2_czeladnik",
+  "nv_ta2_czeladnik"
+ ],
+ "TRAVEL_EVENT_A2_56": [
+  "nv_ta2_gospodarz"
+ ],
+ "TRAVEL_EVENT_A2_59": [
+  "nv_ta2_sluzacy"
+ ],
+ "TRAVEL_EVENT_A2_07": [
+  "nv_denavel",
+  "nv_denavel"
+ ],
+ "TRAVEL_EVENT_A2_07_1": [
+  "galaden",
+  "galaden"
+ ],
+ "TRAVEL_EVENT_A2_07_2": [
+  "nv_czerwona_gwiazda"
+ ],
+ "TRAVEL_EVENT_A2_07_3A": [
+  "galaden"
+ ],
+ "WEAPON_ABILITY_C_CROSSBOW_4_EFFECT": "narrator",
+ "FAE_TACTIC_BE_BACK_SPAWN": [
+  "nv_fae"
+ ]
+}

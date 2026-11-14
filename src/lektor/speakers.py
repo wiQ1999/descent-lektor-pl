@@ -31,7 +31,9 @@ SPEECH_VERBS = ('mówi|odpowiada|szepcze|woła|krzyczy|pyta|dodaje|mruczy|rzuca|
                 'burczy|parska|jęczy|wykrzykuje|odpar|powiedział|zapytał|krzyknął|krzyknęła|szepnął|szepnęła|dodał|'
                 'rzucił|stwierdził|zawołał|mruknął|mruknęła|rzekł|oświadczył|odezwał')
 ATTRIBUTION = re.compile(r'\s*(?:\w+\s+){0,2}?(?:%s)\w*\b' % SPEECH_VERBS)
-OVERRIDES = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'speakers_t1.json')
+DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+OVERRIDES = os.path.join(DATA, 'speakers_t1.json')
+RELEASE_OVERRIDES = {'t1': OVERRIDES, 'm4': os.path.join(DATA, 'speakers_prod.json')}   # m4: cała gra (D107)
 
 # Imiona w tekście → głos. Odmiana: dopasowanie początku słowa (Galadena, Fuksowi).
 NAMES = [
@@ -163,7 +165,9 @@ def guess(key, pieces, arg_types=()):
     return out
 
 
-def load_overrides(path=OVERRIDES):
+def load_overrides(path=OVERRIDES, release=None):
+    if release:
+        path = RELEASE_OVERRIDES.get(release, path)
     if not os.path.exists(path):
         return {}
     data = json.load(open(path, encoding='utf-8'))
