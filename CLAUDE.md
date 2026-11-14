@@ -95,6 +95,7 @@ Paczka testowa Q1–Q2 (E16, D101): `--release t1`, baza `t1.sqlite`, audio `aud
 - Narrator ma w zakresie testu jedno tempo `SPEED_MAX` (`direction.ONE_TEMPO`), także w wartościach luk i łupu.
 - Okno ataku: kwestie zdolności (`abilities.py`), zdarzenia pluginu `open/close` `kind: ability` i `kind: defense` (obrona wroga, D102), przełącznik `zdolnosci`.
 - Cel misji, którego tekst przeczytało okno komunikatu, nie gra drugi raz (`director.plain`, D102).
+- Ikony (D103): każda ikona glosariusza ma słowo w `normalize.ICONS` (plus to „potencjał”), glify bez linku mapuje `GLYPH_TERMS`, a ikona ulepszenia daje „ulepszony/-a/-e” przed nazwą (`normalize.upgraded`). Klucze i luki wybierane w kodzie gry dodaje `scope` (`CODE_PREVIEWS`, `GiveTreasure._outputFirstKey`).
 - Przebieg: `REL=t1 ELEVEN=0 bash analysis/tools/e14_run.sh`, potem dodatkowe rundy `analysis/tools/extra_retakes.py` i `bundle --platform win --release t1`.
 
 - `build --release m2 --only event_e5b map` buduje tylko wybrane grupy spoza M1.
@@ -205,4 +206,4 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 | [analysis/E16_DATA.md](analysis/E16_DATA.md) | baza paczki testowej t1 (E16): liczności według grupy, kategorii i głosu |
 | [analysis/E16_AUDIO.md](analysis/E16_AUDIO.md) | audio t1 (E16): czas generowania, wyniki automatu według głosu, w tym nowych `nv_*` |
 | [analysis/E16_TEST.md](analysis/E16_TEST.md) | paczka testowa Q1–Q2 (E16): podział na głosy, jedno tempo, okno ataku, pokrycie, replay, lista odsłuchu |
-| [analysis/E16_PLAYTEST.md](analysis/E16_PLAYTEST.md) | test t1 w grze (Q1, 2026-11-13): zrzuty, przyczyny, przegląd mowy w oknach narratora, poprawki D102 |
+| [analysis/E16_PLAYTEST.md](analysis/E16_PLAYTEST.md) | testy t1 w grze (Q1–Q2, 2026-11-13/14): zrzuty, przyczyny, przegląd mowy w oknach narratora, poprawki D102 i D103 |

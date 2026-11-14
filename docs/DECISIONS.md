@@ -1031,6 +1031,18 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** test w grze 2026-11-13, zrzuty l6–l10 (`analysis/E16_PLAYTEST.md`) i QA użytkownika. Reguły mowy obowiązują też przy generowaniu wersji produkcyjnej.
 
+### D103 · 2026-11-14 · E16: ikony, podglądy z kodu gry i łup w luce
+**Decyzja:**
+- Ikona plusa na kości (`TERM_ADVANTAGE`) czytana jako „potencjał”, nazwą z glosariusza gry. Ikona kosztu w akcjach (`TERM_ACTIONS`) czytana jako „akcja”. Obie odmieniają się jak inne ikony; koszt przed dwukropkiem jest w mianowniku („jedna akcja: …”).
+- Glify ikon bez linku glosariusza (np. obrażenia po luce `{1}`) czytamy tak samo jak ikony z linkiem.
+- Jedna ikona zamieniana na drugą stoi w bierniku liczby pojedynczej („za każdy potencjał zamieniony na sukces”).
+- Ikona ulepszenia po nazwie przedmiotu: przymiotnik „ulepszony”, „ulepszona”, „ulepszone” albo „ulepszeni” przed nazwą. Rodzaj wynika z pierwszego wyrazu nazwy. Dotyczy kafelka zdolności w oknie ataku i listy łupu.
+- Podgląd obiektu wybierany w kodzie gry (`DEFAULT_EXPLORE_PREVIEW`) trafia do bazy jako komunikat questu.
+- Luka z kluczem przedmiotu z łupu (`GiveTreasure._outputFirstKey`) dostaje nagrania nazw wszystkich przedmiotów aktu. W Q2 ta luka leży w komunikacie po pustym wierszu, który czyta narrator (D85), więc nazwy czyta narrator. Wybór „głosem Kehli” z QA nie ma tu zastosowania.
+- Nowa paczka testowa `t1` dla Windows, bez wydania na GitHub.
+
+**Uzasadnienie:** test w grze 2026-11-13/14, zrzuty l11–l12 (`analysis/E16_PLAYTEST.md`) i QA użytkownika 2026-11-14. Reguły obowiązują też przy generowaniu wersji produkcyjnej.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

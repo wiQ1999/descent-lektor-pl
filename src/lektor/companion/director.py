@@ -217,8 +217,8 @@ class Director:
             self.log({'ev': 'item', 'token': it.token, 'src': 'objective', 'id': None, 'key': it.key,
                       'resolved': it.u.key, 'via': it.u.via, 'toggle': it.u.toggle, 'outcome': 'w_oknie',
                       'pieces': len(it.u.pieces), 'missing': []})
-            if not it.requeued:
-                self.outcomes['objective', 'pełne'] -= 1
+            if not it.requeued:     # licznik wyniku z _make: pełne albo częściowe (D103)
+                self.outcomes['objective', 'częściowe' if it.u.missing else 'pełne'] -= 1
                 self.outcomes['objective', 'w_oknie'] += 1
 
     def _close(self, kind, ev, recv):
