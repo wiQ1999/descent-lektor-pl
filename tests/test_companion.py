@@ -37,6 +37,7 @@ FRAGMENTS = {           # id: (tekst, sekundy)
     'f_answer_line': ('Stara wieża czeka na nas, przyjacielu.', 0.5),
     'f_map_name': ('Cena wiedzy', 0.25),
     'f_map_desc': ('Stara wieża czeka.', 0.5),
+    'f_feat': ('Wyzwanie ukończone!', 0.5),
 }
 LINES = [   # klucz, kategoria, przełącznik, tts, tekst
     ('HELLO', 'narracja', 'narracja', 1, 'Witaj w gospodzie.'),
@@ -60,6 +61,7 @@ LINES = [   # klucz, kategoria, przełącznik, tts, tekst
     ('MAP_NAME', 'opis_misji', 'opis_misji', 1, 'Cena wiedzy'),
     ('MAP_DESC', 'opis_misji', 'opis_misji', 1, 'Stara wieża czeka.'),
     ('DOTS', 'dialog', 'dialogi', 1, '…'),
+    ('UI_FEAT_COMPLETED', 'system_nagroda', 'nagrody', 1, 'Wyzwanie ukończone!'),
 ]
 SEGMENTS = [    # klucz, idx, rodzaj, luka, typ luki, fragment, pauza po
     ('HELLO', 0, 'text', None, None, 'f_hello', 0.3),
@@ -87,6 +89,7 @@ SEGMENTS = [    # klucz, idx, rodzaj, luka, typ luki, fragment, pauza po
     ('MAP_NAME', 0, 'text', None, None, 'f_map_name', 0.0),
     ('MAP_DESC', 0, 'text', None, None, 'f_map_desc', 0.0),
     ('DOTS', 0, 'text', None, None, None, 0.0),
+    ('UI_FEAT_COMPLETED', 0, 'text', None, None, 'f_feat', 0.0),
 ]
 VALUES = [
     ('SPAWN', 0, 'ENEMY_BANDIT', 'f_bandit'), ('SPAWN', 0, 'ENEMY_WITCH', 'f_witch'), ('SPAWN', 0, 'HERO_KEHLI', 'f_keli'),
@@ -426,6 +429,19 @@ def test_defense_in_attack_window_reads_value_fragment_and_stops_on_close(run):
     assert playing(d) is None
     d = run({'ev': 'open', 'kind': 'defense', 'id': 9, 'key': 'ENEMY_DEFEND_UNKNOWN'}, 0.1)
     assert d.outcomes['defense', 'brak_klucza'] == 1
+
+
+def test_completed_feat_reads_header_and_reward_as_loot(run):
+    """l14: okno ukończonego wyzwania czyta nagłówek i nagrodę jak listę łupu; zamknięcie zatrzymuje."""
+    run.d.toggles['nagrody'] = True
+    d = run({'ev': 'open', 'kind': 'feat', 'id': 5, 'name': 'Wyzwanie', 'reward': 'Do ekwipunku trafia: Złoto (15).',
+             'replaced': False}, 1.0)
+    assert [p[0] for p in d.current.u.pieces] == ['f_feat', 'f_loot_head', 'f_gold', 'f_fifteen']
+    assert d.outcomes['feat', 'pełne'] == 1
+    d = run({'ev': 'close', 'kind': 'feat', 'id': 5}, 0.1)
+    assert playing(d) is None
+    d = run({'ev': 'open', 'kind': 'feat', 'id': 6, 'reward': 'Wyzwanie zmienione.', 'replaced': True}, 0.1)
+    assert d.outcomes['feat', 'brak_klucza'] == 1      # UI_FEAT_REPLACED nie ma w bazie testowej
 
 
 def test_objective_waits_and_newest_replaces(run):

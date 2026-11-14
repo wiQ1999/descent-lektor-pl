@@ -1052,6 +1052,17 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** prośba użytkownika 2026-11-14: podgląd stanu w trakcie generowania i podstawa do decyzji o kolejnych wydaniach. Strona zawiera tytuły wydarzeń z gry, więc zostaje w `analysis/work/` (D75).
 
+### D105 · 2026-11-14 · E16: okno wyzwania, przeczenie, wtrącenia w kwestii postaci, nazwy unikalnych wrogów
+**Decyzja:**
+- Okno „Wyzwanie ukończone” (`UIFeatsDialog`, panel wyboru nowego wyzwania) wchodzi do paczki t1. Plugin 0.4.4 zgłasza je jako zdarzenie `feat` z tekstem nagrody. Companion czyta tylko nagłówek (`UI_FEAT_COMPLETED`, przy wymianie `UI_FEAT_REPLACED`) i nagrodę jak listę łupu. Opisów wyzwań nie czytamy. Przełącznik: `nagrody`.
+- Lista łupu zna też nazwy legend i towarzyszy (nagrody za wyzwania w akcie 2).
+- Ikona po przeczonym czasowniku stoi w dopełniaczu („jeśli cel nie wyrzucił wzmocnienia”).
+- Kwestia postaci z wtrąceniem narratora („– mamrocze Kehli, …”) dzieli się na głosy jak okno narratora: wtrącenie i polecenie gry po pustym wierszu czyta narrator.
+- Wrogowie bez klucza `ENEMY_…_SING` (np. golem z Q2, bossowie z imieniem) mają nazwę w wartościach luk `EntityName` i na liście łupu. Gra wstawia ją m.in. w polecenie „Usuń: …” po łupie.
+- Nowa paczka testowa t1 dla Windows (plugin 0.4.4), bez wydania na GitHub.
+
+**Uzasadnienie:** trzecia sesja testu t1 (slot 4, 2026-11-14), zrzuty l13–l15 i dzienniki (`analysis/E16_PLAYTEST.md`). QA użytkownika 2026-11-14: dodać okno wyzwania do t1, czytać tylko nagłówek i nagrodę, przebudować paczkę. Reguły obowiązują też przy generowaniu wersji produkcyjnej.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

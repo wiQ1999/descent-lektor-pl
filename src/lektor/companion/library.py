@@ -148,6 +148,14 @@ class Library:
         self._add(u, fid)
         return u
 
+    def feat(self, key, reward=None):
+        """Ukończone wyzwanie (l14): nagłówek z bazy, potem nagroda (karty, receptury) jak lista łupu (D51)."""
+        u = self.resolve(key)
+        if u.via and u.tts and self.loot and reward and reward.strip():
+            self._gap(u, LIST_GAP)
+            self._loot(u, reward)
+        return u
+
     def counter(self, key, args):
         """Sam licznik celu (D64): luka liczbowa i tekst „z czterech” po niej. None, gdy cel nie ma licznika."""
         segs = self.segments.get(key, [])

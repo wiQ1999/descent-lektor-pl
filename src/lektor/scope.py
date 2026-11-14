@@ -52,7 +52,8 @@ LOOT_TEMPLATES = ('GAIN_PHYSICAL_TREASURE', 'GAIN_DIGITAL_TREASURE', 'NO_ITEM_BA
                   'CONSUMABLE_BACKUP_MULTIPLE', 'REMOVE_ENTITY', 'UI_GOLD', 'UI_RECIPE')
 LOOT_BUNDLES = ('d3/items', 'd3/loot', 'd3/recipes')
 LOOT_MODELS = {'ArmorModel', 'ConsumableModel', 'TrinketModel', 'CraftingMaterialModel', 'WeaponPartsModel', 'LootModel',
-               'RecipeModel', 'SkillModel'}     # okno nagrody wymienia też nowe umiejętności bohaterów
+               'RecipeModel', 'SkillModel',     # okno nagrody wymienia też nowe umiejętności bohaterów
+               'LegendModel', 'CompanionModel'}     # nagrody za wyzwanie (FeatsController.UnlockReward, l14)
 OBJECTIVE_PREFIXES = ('Q1_OBJECTIVE_', 'Q8_OBJECTIVE_', 'Q_FOF_OBJECTIVE_', 'Q_LISB_OBJECTIVE_')
 # EnemyThemeTraits (flagi) do kryteriów losowania wrogów (EnemyFilter).
 THEMES = {'Undead': 4, 'Dragonkind': 8, 'Uthuk': 0x10, 'UndeadFaction': 0x80000, 'UthukFaction': 0x100000,
@@ -80,6 +81,8 @@ LIST_VARIABLE = 'NodeCanvas.Framework.Variable`1[[System.Collections.Generic.Lis
 DEFENSE_VAR = '_currdefensekey'
 # Podglądy, które kod gry pokazuje bez klucza w obiekcie (GameInteractable: DefaultPreview, płonący teren), D103.
 CODE_PREVIEWS = ('DEFAULT_EXPLORE_PREVIEW', 'TERRAIN_BURNING_INSPECT')
+# Nagłówki okna ukończonego wyzwania (UIFeatsDialog; po nich companion czyta nagrodę jak listę łupu, l14).
+FEAT_HEADERS = ('UI_FEAT_COMPLETED', 'UI_FEAT_REPLACED')
 GIVE_TREASURE = 'FFG.D3.DTNodes.GiveTreasure'
 
 
@@ -272,6 +275,17 @@ def destination_keys(game, terms, acts=(0,)):
                 yield tuple(k if k and (terms.get(k) or {}).get('text') else None for k in (t.get(name), t.get(desc)))
 
 
+def unique_enemy_names(enemies, chosen):
+    """Nazwy wrogów bez klucza ENEMY_…_SING (golem z Q2, bossowie z imieniem): gra wstawia je w EntityName
+    i w polecenie usunięcia wroga na liście łupu (REMOVE_ENTITY, sesja 3 t1)."""
+    out = set()
+    for e in chosen:
+        keys = enemies[e]['keys']
+        if not any(k.endswith('_SING') for k in keys):
+            out |= {k for k in keys if not re.search(r'DEFEND|_PLUR$|_SPAWN_GROUP$', k)}
+    return out
+
+
 def loot_keys(game, terms, acts=(0,)):
     """Klucze tekstów listy łupu (D51): szablony z GiveTreasure i nazwy tego, co gra może dać w podanych aktach."""
     keys = set(LOOT_TEMPLATES) | set(HERO_NAME_KEYS)
@@ -386,6 +400,12 @@ def collect(game, terms, release='m1', only=None):
                     refs[key].append({'key': key, 'role': 'message', 'node_type': 'PreviewKey', 'kind': 'quest',
                                       'bundle': None, 'owner': 'GameInteractable', 'graph': None, 'seq': None,
                                       'conds': [], 'speakers': [], 'args': []})
+            for key in FEAT_HEADERS:
+                if key not in group_of and (terms.get(key) or {}).get('text'):
+                    group_of[key] = 'system'
+                    refs[key].append({'key': key, 'role': 'message', 'node_type': 'FeatDialog', 'kind': 'system',
+                                      'bundle': None, 'owner': 'UIFeatsDialog', 'graph': None, 'seq': None,
+                                      'conds': [], 'speakers': [], 'args': []})
             items = set(loot_keys(game, terms, release_acts(release))) - set(LOOT_TEMPLATES) - set(HERO_NAME_KEYS)
             for v in loot_vars:
                 var_keys[v] |= items
@@ -426,7 +446,8 @@ def collect(game, terms, release='m1', only=None):
     # Inwentarz wartości luk (D16). E1: EntityName to forma pojedyncza nazwy wroga, u bossa z aliasem
     # w nawiasie („ENEMY_…_SING (Q1_BOSS_NAME)”); zmienne tekstowe dostają klucze, najczęściej HERO_*_NAME.
     entity = sorted({k for e in chosen for k in enemies[e]['keys'] if re.match(r'^ENEMY_.*_SING$', k)} |
-                    {k for k in E1_ENTITY_NAMES if k in terms})
+                    {k for k in E1_ENTITY_NAMES if k in terms} |
+                    (unique_enemy_names(enemies, chosen) if release == 'm3' else set()))
     boss = r'^(A\d)?Q\d+_BOSS_NAME$' if release == 'm3' else r'^Q\d+_BOSS_NAME$'
     entity += sorted(s for s in q1_strings | extra_strings if re.match(boss, s) and s in terms)
     if release == 'm3':     # cele wszystkich misji obu aktów (A2Q3_…, Q10_…, Q_LISB_…, SQ1_…)

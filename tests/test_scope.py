@@ -175,3 +175,11 @@ def test_give_treasure_output_key_is_a_loot_variable():
     out, names, loot = defaultdict(set), set(), set()
     scope.string_assignments({'nodes': [node, off]}, out, names, lists=True, loot=loot)
     assert loot == {'output first key'}
+
+
+def test_unique_enemy_name_without_sing_key_is_an_entity_value():
+    """Sesja 3 t1: golem z Q2 ma tylko klucz nazwy (Q2_GOLEM), bez ENEMY_…_SING; gra wstawia go w „Usuń: …”."""
+    enemies = {'ENEMY_GOLEM_Q2': {'keys': ['ENEMY_DEFEND_GOLEM', 'Q2_GOLEM']},
+               'ENEMY_GOLEM_1': {'keys': ['ENEMY_DEFEND_GOLEM', 'ENEMY_GOLEM_1_PLUR', 'ENEMY_GOLEM_1_SING']},
+               'ENEMY_FAE_RU_SPAWN': {'keys': ['FAE_RU_SPAWN_GROUP']}}
+    assert scope.unique_enemy_names(enemies, sorted(enemies)) == {'Q2_GOLEM'}

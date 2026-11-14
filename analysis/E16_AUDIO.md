@@ -4,24 +4,24 @@ Wygenerowano przez `python -I -m lektor audio-report`. Model `omnivoice-08be0b4-
 
 ## Czas generowania
 
-Podejść: **3569** (235722 znaków, 305.4 min audio). Czas GPU: **13.0 h**, czyli **0.199 s na znak** i RTF 2.56 (mediana RTF podejść 2.96). Szczyt VRAM: 3.10 GB.
+Podejść: **4076** (251723 znaków, 327.8 min audio). Czas GPU: **14.5 h**, czyli **0.208 s na znak** i RTF 2.66 (mediana RTF podejść 3.69). Szczyt VRAM: 3.10 GB.
 
 | znaki fragmentu | podejścia | średnio s | s na znak |
 |---|---|---|---|
-| 0–29 | 1505 | 9.1 | 0.562 |
-| 30–79 | 898 | 11.3 | 0.216 |
-| 80–159 | 815 | 17.2 | 0.150 |
-| 160– | 351 | 25.2 | 0.125 |
+| 0–29 | 1899 | 9.3 | 0.541 |
+| 30–79 | 971 | 11.3 | 0.220 |
+| 80–159 | 846 | 17.2 | 0.150 |
+| 160– | 360 | 25.2 | 0.125 |
 
-Z M3 przejęte 7469 fragmentów bez generowania.
+Z M3 przejęte 7464 fragmentów bez generowania.
 
-Na znak nowego tekstu (z podejściami bohaterów i ponownymi): 0.047 s. Cała gra (D02, ok. 1.43 mln znaków) w tych samych proporcjach: ok. **19 h** GPU (D39; przed przyspieszeniami ok. 610 h na jedno podejście).
+Na znak nowego tekstu (z podejściami bohaterów i ponownymi): 0.051 s. Cała gra (D02, ok. 1.43 mln znaków) w tych samych proporcjach: ok. **20 h** GPU (D39; przed przyspieszeniami ok. 610 h na jedno podejście).
 
 ## Automat (D38)
 
-Fragmentów: **10337**. Z ponownym podejściem: 363. Bez zaakceptowanego podejścia po ponownym: **85** (koncowka 48, cer 38, barwa 6, zgubiony_fragment 5, tempo 3, cisza 2).
+Fragmentów: **10672**. Z ponownym podejściem: 395. Bez zaakceptowanego podejścia po ponownym: **82** (koncowka 46, cer 38, barwa 6, zgubiony_fragment 5, tempo 3, cisza 2).
 
-Wybrane podejścia sprawdzone Whisperem (z przejętymi): **6460** z 10337. Pozostałe 3877 mają tylko szybką ocenę bez ASR (cisza, tempo, końcówka, barwa, pauzy; D96), więc ich CER w tabeli wynosi 0.
+Wybrane podejścia sprawdzone Whisperem (z przejętymi): **6800** z 10672. Pozostałe 3872 mają tylko szybką ocenę bez ASR (cisza, tempo, końcówka, barwa, pauzy; D96), więc ich CER w tabeli wynosi 0.
 
 | głos | fragmenty | podejścia ocenione | CER wybranych (mediana) | barwa (mediana) | odrzucone |
 |---|---|---|---|---|---|
@@ -38,17 +38,17 @@ Wybrane podejścia sprawdzone Whisperem (z przejętymi): **6460** z 10337. Pozos
 | greysdon | 27 | 0 | 0.000 | 0.879 | 0 |
 | herbie | 13 | 0 | 0.000 | 0.946 | 0 |
 | kathryn | 13 | 0 | 0.000 | 0.927 | 0 |
-| kehli | 401 | 165 | 0.000 | 0.898 | 0 |
+| kehli | 398 | 171 | 0.000 | 0.898 | 0 |
 | laurel | 33 | 0 | 0.000 | 0.914 | 0 |
 | levirax | 6 | 0 | 0.003 | 0.939 | 0 |
 | ltrand | 18 | 0 | 0.000 | 0.929 | 0 |
 | magrit | 30 | 0 | 0.000 | 0.933 | 1 |
 | mok | 7 | 0 | 0.000 | 0.971 | 0 |
-| narrator | 7618 | 2940 | 0.000 | 0.928 | 69 |
-| nekrul | 5 | 15 | 0.000 | 0.870 | 3 |
+| narrator | 7956 | 3433 | 0.000 | 0.927 | 68 |
+| nekrul | 5 | 19 | 0.000 | 0.870 | 3 |
 | nv_bandyta | 4 | 5 | 0.000 | 0.859 | 0 |
 | nv_eurth | 2 | 2 | 0.000 | 0.911 | 0 |
-| nv_fae | 6 | 27 | 0.000 | 0.795 | 2 |
+| nv_fae | 6 | 31 | 0.000 | 0.775 | 0 |
 | nv_fanatyk | 4 | 5 | 0.000 | 0.868 | 0 |
 | nv_gap | 2 | 3 | 0.000 | 0.917 | 0 |
 | nv_glos | 2 | 2 | 0.000 | – | 0 |
@@ -76,4 +76,4 @@ Wybrane podejścia sprawdzone Whisperem (z przejętymi): **6460** z 10337. Pozos
 
 ## Pokrycie T1
 
-Klucze do syntezy z zaakceptowanym audio wszystkich fragmentów: **7485 / 13724 (54.5%)**. Wartości luk z zaakceptowanym audio: 22253 / 34433.
+Klucze do syntezy z zaakceptowanym audio wszystkich fragmentów: **7492 / 13727 (54.6%)**. Wartości luk z zaakceptowanym audio: 35512 / 57030.

@@ -26,7 +26,7 @@ import time
 from .player import CLOSE_FADE_S, FADE_S
 
 WINDOWS = ('message', 'story')
-QUEUED = ('objective', 'activation', 'details', 'ability', 'defense')
+QUEUED = ('objective', 'activation', 'details', 'ability', 'defense', 'feat')
 SETTLE = 0.35           # cisza po zdarzeniu okna, zanim ruszy kolejka: zamknięcie i nowe okno przychodzą razem
 DUP_S = 30.0            # cel odczytany w oknie w tym czasie nie gra ponownie
 DETAILS_GAP = 0.35      # między nazwą a opisem celu na mapie
@@ -43,7 +43,7 @@ def plain(text):
 @dataclasses.dataclass
 class Item:
     token: int
-    src: str            # message | story | choice | objective | activation | details | ability | defense
+    src: str            # message | story | choice | objective | activation | details | ability | defense | feat
     wid: int            # id okna z pluginu (cel: None)
     key: str
     u: object           # library.Utterance
@@ -120,6 +120,11 @@ class Director:
             self._enqueue('defense', ev, recv)       # obrona wroga w oknie ataku (D102)
         elif name == 'close' and kind == 'defense':
             self._withdraw(lambda it: it.src == 'defense' and it.wid == ev.get('id'), recv)
+        elif name == 'open' and kind == 'feat':
+            key = 'UI_FEAT_REPLACED' if ev.get('replaced') else 'UI_FEAT_COMPLETED'
+            self._enqueue('feat', {**ev, 'key': key}, recv)     # ukończone wyzwanie: nagłówek i nagroda (l14)
+        elif name == 'close' and kind == 'feat':
+            self._withdraw(lambda it: it.src == 'feat' and it.wid == ev.get('id'), recv)
         elif name in ('scene', 'stop'):
             self.story_open.clear()
             self.queue.clear()
@@ -148,6 +153,8 @@ class Director:
         args = ev.get('args') or []
         if src == 'defense':
             return self.lib.defense(key)
+        if src == 'feat':
+            return self.lib.feat(key, None if ev.get('replaced') else ev.get('reward'))
         if src == 'objective' and ev.get('prev_key') == key and key in self.lib.lines:
             u = self.lib.counter(key, args)     # ten sam cel, zmieniony licznik (D64)
             if u is not None:

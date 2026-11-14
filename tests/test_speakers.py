@@ -96,6 +96,17 @@ def test_split_voices_only_in_test_release_and_groups(monkeypatch):
     assert B.split_voices([dict(r, group='travel_act1')], 't1')[0]['split'][0] == ('syrus', 'Idziemy.')
 
 
+def test_character_line_with_narrator_aside_is_split(monkeypatch):
+    """l15: kwestia postaci z wtrąceniem „– mamrocze X, …” i poleceniem po pustym wierszu: oba czyta narrator."""
+    monkeypatch.setattr(B.speakers, 'load_overrides', lambda: {})
+    r = {'key': 'K', 'tts': 1, 'voice': 'kehli', 'category': 'dialog', 'group': 'city', 'args': [], 'hero_variant': [],
+         'text_raw': '<i>– Za ciężki młot. – mamrocze Kehli, szkicując. – Coś wymyślę.</i>\n\nStwórz przedmiot.'}
+    split = B.split_voices([r], 't1')[0]['split']
+    assert [v for v, _ in split] == ['kehli', 'narrator', 'kehli', 'narrator']
+    plain = dict({k: v for k, v in r.items() if k != 'split'}, text_raw='– Za ciężki młot. Coś wymyślę.')
+    assert 'split' not in B.split_voices([plain], 't1')[0]      # zwykła kwestia postaci bez zmian
+
+
 def test_narrator_one_tempo_in_test_release():
     r = {'speed': 1.23, 'group': 'town', 'category': 'zdarzenie'}
     assert B.piece_speed(r, 'narrator', 'x' * 40, 't1') == D.SPEED_MAX

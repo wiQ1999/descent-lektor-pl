@@ -15,6 +15,7 @@ PIECE_GAP = 0.06    # sklejanie kawałka szablonu z wartością luki (D16)
 QUOTE_GAP = 0.15    # cytat bohatera → opis narratora (D20)
 SPRITE = re.compile(r'<sprite[^>]*>')
 PARAGRAPH = re.compile(r'\n\s*\n')
+NARRATED = re.compile(r'[–—]\s*(?:\w+\s+){0,2}?(?:%s)\w*\b' % speakers.SPEECH_VERBS)     # wtrącenie „– mówi X”
 SYSTEM_NOTICE = re.compile(r'^(\*.*\*|Do (waszych|twoich) zasobów\b.*|Zyskuje(cie|sz)\b.*|Zdobywa(cie|sz)\b.*)$', re.S | re.I)
 CAPS_TOKEN = re.compile(r'[^\sa-ząćęłńóśźż<>=]*[A-ZĄĆĘŁŃÓŚŹŻ0-9}\x01][^\sa-ząćęłńóśźż<>=]*')
 DIRECTION = re.compile(r'\bWYBIERA\b')
@@ -202,8 +203,10 @@ def split_voices(records, release):
     out = []
     for r in records:
         out.append(r)
-        if not (r['tts'] and r['voice'] == 'narrator' and r['category'] != 'opcja_wyboru' and '#' not in r['key']
-                and r['group'] in groups):
+        if not (r['tts'] and r['category'] != 'opcja_wyboru' and '#' not in r['key'] and r['group'] in groups):
+            continue
+        # Kwestia postaci z wtrąceniem narratora („– mamrocze Kehli, …”) dzielona jak okno narratora (l15).
+        if r['voice'] != 'narrator' and not (r['category'] == 'dialog' and NARRATED.search(clean_markup(r['text_raw']))):
             continue
         types = [a.get('type') for a in r['args']]
         parts = speakers.parts(r['key'], clean_markup(r['text_raw']), overrides, types)

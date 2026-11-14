@@ -78,6 +78,8 @@ namespace LektorPL.Core
         private string _defenseKey;                 // obrona wroga w otwartym oknie ataku (D102)
         private int _defenseId;
         private float _nextAbilityCheck;
+        private string _featSig;                    // okno „Wyzwanie ukończone” (UIFeatsDialog.DialogSelectNewFeat, l14)
+        private int _featId;
 
         // Wybrany cel na mapie (panel DestinationDetails).
         private DestinationNode _detailsNode;
@@ -373,6 +375,7 @@ namespace LektorPL.Core
             if (Time.unscaledTime < _nextAbilityCheck) return;
             _nextAbilityCheck = Time.unscaledTime + _options.ObjectiveInterval;
             var dialog = SingletonBehaviour<UIGame>.IsInitialized ? SingletonBehaviour<UIGame>.Instance.HeroAttackDialog : null;
+            try { PollFeat(); } catch (Exception e) { _log.Error("feat", e); }
             PollDefense(dialog);
             var tiles = new List<UIAbilityTrigger>();
             var sig = new System.Text.StringBuilder();
@@ -432,6 +435,29 @@ namespace LektorPL.Core
             if (key == null) return;
             _defenseId = ++_nextId;
             _log.Write(_log.New("open").Str("kind", "defense").Int("id", _defenseId).Str("via", "poll").Str("key", key).Str("text", text));
+        }
+
+        // Ukończone wyzwanie: gra pokazuje panel DialogSelectNewFeat z nazwą wyzwania i opisem nagrody
+        // (FeatsController.GetRewardDescription albo UI_FEAT_REPLACED przy wymianie). Lektor czyta nagłówek i nagrodę.
+        private void PollFeat()
+        {
+            var feats = SingletonBehaviour<UIGame>.IsInitialized ? SingletonBehaviour<UIGame>.Instance.FeatsDialog : null;
+            var panel = feats != null ? feats.DialogSelectNewFeat : null;
+            string sig = null, reward = null, name = null;
+            if (panel != null && panel.gameObject.activeInHierarchy && panel.alpha > 0.05f)
+            {
+                reward = feats.RewardDescription != null ? feats.RewardDescription.text : null;
+                name = feats.FeatName != null ? feats.FeatName.text : null;
+                sig = (name ?? "") + "\u0001" + (reward ?? "");
+            }
+            if (sig == _featSig) return;
+            if (_featSig != null)
+                _log.Write(_log.New("close").Str("kind", "feat").Int("id", _featId).Str("via", "poll"));
+            _featSig = sig;
+            if (sig == null) return;
+            _featId = ++_nextId;
+            _log.Write(_log.New("open").Str("kind", "feat").Int("id", _featId).Str("via", "poll").Str("name", name)
+                .Str("reward", reward).Bool("replaced", reward != null && reward == Loc("UI_FEAT_REPLACED")));
         }
 
         private static List<KeyValuePair<string, string>> AbilityCandidates(UIHeroAttackDialog dialog, out string extraKey)

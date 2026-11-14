@@ -85,3 +85,40 @@ Wybrane w QA: plus jako „potencjał”, nazwy łupu w luce nagrane, ikona ulep
 - **Audio.** 285 nowych fragmentów OmniVoice (narrator): 135 nazw ulepszonych przedmiotów, 22 opisy z ikonami, `DEFAULT_EXPLORE_PREVIEW`, wartości luk i listy łupu. Po czterech rundach ponownych podejść automat przyjął wszystkie 285; 16 potrzebowało więcej niż jednego podejścia. Pokrycie zakresu: 2348 z 2348 kwestii.
 - **Replay sesji** (`--speed 0 --no-audio`): pokrycie okien do czytania 100%. `DEFAULT_EXPLORE_PREVIEW` i `TANGERINE_Q2_TRAVEL_STORY_10RL` grają w całości. Liczniki wyników celów nie schodzą poniżej zera. Braki zostały tylko w oknach poza zakresem testu (`OBJECTIVE_01` i podróż przed Q5).
 - **Testy.** `pytest`: 322 przechodzą, 2 pominięte. Plugin bez zmian (0.4.3).
+
+## Trzecia sesja: slot 4, miasto, Q2 i wydarzenie 2A (2026-11-14)
+
+Paczka D103 (commit 9888a75, plugin 0.4.3), dzienniki `hook-20261114-125149` i `companion-20261114-125156`, instrukcja `docs/E16_T1_TEST3.md`. Przebieg: mapa aktu 1 (12:52), podróż i Q2 (12:55–13:09), miasto z wydarzeniem miejskim, potem wydarzenie 2A (od 13:16) i mapa do 13:19.
+
+| zrzut | okno (klucz) | co słychać | przyczyna |
+|---|---|---|---|
+| l13 | aktywacja fanatyka `ENEMY_ACTIVATION_ZEALOT_BASIC_2` | ikona wzmocnienia po „nie wyrzucił” w bierniku | Samodzielna ikona dostaje domyślny biernik. Po przeczonym czasowniku potrzebny jest dopełniacz. W grze 6 takich miejsc (4 aktywacje fanatyków, taktyka cienia, interakcja w akcie 2). |
+| l14 | okno „Wyzwanie ukończone” (`UIFeatsDialog`) | cisza | Plugin nie śledził tego okna: między 13:06:58 a 13:08:23 dziennik nie ma żadnego zdarzenia. Okno składa kod gry (`FeatsController.GetRewardDescription`, nagłówek `UI_FEAT_COMPLETED`), a nie graf ani `MessageController`. |
+| l15 | wybór w wydarzeniu miejskim `E_C1_1_CHOICE_BRYNN` | całość głosem Kehli | Gra przypisuje tej kwestii mówcę Kehli (kategoria `dialog`), choć zawiera wtrącenie narratora „– mamrocze Kehli, …” i polecenie gry po pustym wierszu. Podział D101–D102 obejmował tylko okna narratora, a polecenie nie pasowało do wzorców komunikatu gry (D85). W całej grze to jedyna kwestia postaci z takim wtrąceniem. |
+
+Punkty instrukcji testu:
+
+- **Łup w podróży przed Q2 (D103):** `TANGERINE_Q2_TRAVEL_STORY_10EX` zagrało w całości z nazwą przedmiotu z luki.
+- **Podgląd odkrycia (D103):** `DEFAULT_EXPLORE_PREVIEW` zagrał w całości.
+- **Obrona wroga (D102):** 17 okien ataku, każde z odczytem obrony (golem 11, wilk 3, bandyta 2, fanatyk 1). Walki z fae nie było, więc „potencjał” w obronie fae czeka na kolejny test.
+- **Kafelek zdolności:** 0 zdarzeń. Użytkownik potwierdził, że kafelek się nie pojawił, więc to nie błąd.
+- **Wydarzenie miejskie i 2A:** wszystkie okna 2A (gałąź „innowacja”) zagrały w całości, także kwestie z podziałem na głosy.
+- **Lista łupu:** jedno okno częściowe (`DEFAULT_GET_TREASURE_MULTI`, luka `RawText`). Po łupie gra dopisała polecenie „Usuń: …” z nazwą golema z Q2 (`ENEMY_GOLEM_Q2`, klucz `Q2_GOLEM`). Ten wróg nie ma klucza `ENEMY_…_SING`, z którego baza brała nazwy wrogów, więc nazwy nie było na liście.
+- **Cele misji (D102/D103):** 11 zmian celu pominiętych jako przeczytane w oknie; licznik `objective/pełne` nie schodzi poniżej zera.
+- **Pokrycie:** 225 okien do czytania, pokrycie 100%.
+
+## Wykonanie (D105)
+
+Wybrane w QA: okno wyzwania w t1, czytany tylko nagłówek i nagroda, nowa paczka t1.
+
+- **Przeczenie** (`normalize._icons`): ikona po „nie” i najwyżej dwóch wyrazach stoi w dopełniaczu liczby pojedynczej.
+- **Wtrącenie w kwestii postaci** (`build.split_voices`, `NARRATED`): kwestia `dialog` z wtrąceniem „– <czasownik mówienia> …” dzieli się automatem `speakers` jak okno narratora. `E_C1_1_CHOICE_BRYNN`: Kehli, narrator, Kehli, narrator.
+- **Unikalni wrogowie** (`scope.unique_enemy_names`): nazwy wrogów bez klucza `_SING` w wartościach `EntityName` i na liście łupu.
+- **Okno wyzwania:**
+  - plugin 0.4.4 (`Tracker.PollFeat`) zgłasza `open`/`close` `kind: feat` z nazwą, tekstem nagrody i znacznikiem wymiany;
+  - companion (`director`, `library.feat`) czyta nagłówek i nagrodę jak listę łupu;
+  - klucze nagłówków to `scope.FEAT_HEADERS` (grupa `system`, przełącznik `nagrody`);
+  - lista łupu zna nazwy legend i towarzyszy (`LegendModel`, `CompanionModel`).
+- **Audio.** 92 nowe fragmenty OmniVoice w zakresie testu (2454 znaki): wartości luk z nazwami wrogów, nagłówki okna wyzwania, nazwy legend i towarzyszy, kwestie z dopełniaczem i 4 kawałki podzielonej kwestii Kehli. Po rundach ponownych podejść automat odrzucił 4 z nich: nazwy wrogów z późniejszych aktów, nieobecnych w Q1–Q2, z podejrzeniem uciętej końcówki. Paczka bierze ich najlepsze podejście. 16 starszych odrzuconych fragmentów zostało bez zmian.
+- **Replay sesji 3** (`--speed 0 --no-audio`): 225 z 225 okien gra w całości, także okno łupu z poleceniem „Usuń: …”. Okna wyzwania nie da się odtworzyć ze starego dziennika: na danych t1 sprawdzone przez `library.feat` (nagłówek, „Otrzymujesz następujące karty”, karta, bohater, bez braków).
+- **Testy.** `pytest`: 334 przechodzą, 2 pominięte. Plugin 0.4.4.

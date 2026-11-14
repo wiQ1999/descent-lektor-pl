@@ -80,3 +80,14 @@ def test_icons_without_word_get_glossary_name(text, expected):
 def test_upgrade_icon_becomes_adjective_before_name(text, expected):
     """D103: ikona ulepszenia po nazwie przedmiotu, przymiotnik w rodzaju nazwy."""
     assert normalize(text) == expected
+
+
+@pytest.mark.parametrize('text, expected', [
+    ('Jeśli cel nie wyrzucił <link=TERM_SURGE>X</link>, odrzuć kartę.', 'Jeśli cel nie wyrzucił wzmocnienia, odrzuć kartę.'),
+    ('Wróg nie może wydawać <link=TERM_FATIGUE>X</link>.', 'Wróg nie może wydawać punktu zmęczenia.'),
+    ('Nie wydawaj <link=TERM_SURGE>X</link>.', 'Nie wydawaj wzmocnienia.'),
+])
+def test_icon_after_negated_verb_takes_genitive(text, expected):
+    """l13: ikona po przeczonym czasowniku w dopełniaczu."""
+    assert normalize(text) == expected
+

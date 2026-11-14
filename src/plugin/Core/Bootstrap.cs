@@ -41,7 +41,7 @@ namespace LektorPL.Core
     /// <summary>Punkt wejścia rdzenia, niezależny od loadera.</summary>
     public static class Bootstrap
     {
-        public const string Version = "0.4.3";
+        public const string Version = "0.4.4";
         private static GameObject s_host;
 
         /// <summary>Tworzy ukryty obiekt z <see cref="Runner"/>; zwraca ścieżkę dziennika. Kolejne wywołania nic nie robią.</summary>

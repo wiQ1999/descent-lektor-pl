@@ -344,6 +344,9 @@ def _icons(text):
     # „za każdy potencjał zamieniony na sukces”: jedna ikona zamieniana na drugą (D103)
     text = re.sub(r'(\b(?:za|z)?mienion\w*\s+(?:na|w)\s+)\x01(TERM_[A-Z_]+)\x01',
                   lambda m: m.group(1) + _icon_form(m.group(2), 1, 'acc'), text)
+    # dopełniacz po przeczeniu: „jeśli cel nie wyrzucił wzmocnienia”, „nie może wydawać zmęczenia” (l13)
+    text = re.sub(r'(\b[Nn]ie\s+(?:\w+\s+){1,2}?)\x01(TERM_[A-Z_]+)\x01',
+                  lambda m: m.group(1) + _icon_form(m.group(2), 1, 'gen'), text)
     return re.sub(r'(?:(\w+)\s+)?\x01(TERM_[A-Z_]+)\x01', standalone, text)
 
 
