@@ -1,8 +1,9 @@
 """Normalizacja tekstu PL do syntezy.
 
   - znaczniki TMP (<i>, <b>, <style>, <sprite>, <color>) usunięte, terminy <link=TERM_X> zastąpione słowem;
-  - ikony glosariusza (obrażenia, zmęczenie, sukces, wzmocnienie, zdrowie) zamienione na rzeczowniki
-    w formie zależnej od liczby i przypadka;
+  - ikony glosariusza (obrażenia, zmęczenie, sukces, wzmocnienie, zdrowie, potencjał, akcja) zamienione na rzeczowniki
+    w formie zależnej od liczby i przypadka, także glify bez linku (D103);
+  - ikona ulepszenia po nazwie przedmiotu: „ulepszony/ulepszona/ulepszone” przed nazwą (D103);
   - cyfry zamienione na słowa z odmianą: przypadek z przyimka, rodzaj z rzeczownika po liczbie;
   - wzorce gry: „na str. 29”, kafelki „10B”, liczniki „(2/4)”, zakresy „2-4”, „Tom 7”;
   - dopiski reżyserskie wielkimi literami („X WYBIERA…”) usunięte;
@@ -129,9 +130,26 @@ ICONS = {
                          pl_loc='wzmocnieniach', pl_dat='wzmocnieniom'),
     'TERM_HEALTH_DIAL': _forms('punkt zdrowia', 'punktu zdrowia', 'punkty zdrowia', 'punktów zdrowia', 'm',
                                sg_loc='punkcie zdrowia', pl_loc='punktach zdrowia', pl_dat='punktom zdrowia'),
+    # D103: plus na kości („Potencjał” w glosariuszu gry) i koszt w akcjach na kartach przedmiotów
+    'TERM_ADVANTAGE': _forms('potencjał', 'potencjału', 'potencjały', 'potencjałów', 'm', sg_loc='potencjale',
+                             pl_loc='potencjałach', pl_dat='potencjałom'),
+    'TERM_ACTIONS': _forms('akcja', 'akcji', 'akcje', 'akcji', 'f', sg_acc='akcję', sg_loc='akcji', sg_ins='akcją',
+                           pl_loc='akcjach', pl_dat='akcjom'),
 }
 ICON_DEFAULT = {'TERM_DAMAGE': ('pl', 'nom'), 'TERM_SUCCESS': ('pl', 'nom'), 'TERM_SURGE': ('sg', 'acc'),
-                'TERM_FATIGUE': ('pl', 'nom'), 'TERM_HEALTH_DIAL': ('pl', 'nom')}
+                'TERM_FATIGUE': ('pl', 'nom'), 'TERM_HEALTH_DIAL': ('pl', 'nom'), 'TERM_ADVANTAGE': ('sg', 'nom'),
+                'TERM_ACTIONS': ('sg', 'nom')}
+# Glify ikon w tekście bez linku glosariusza („przyjmuje {1} ”), D103. Glif w linku ma ten sam kod.
+GLYPH_TERMS = {'': 'TERM_DAMAGE', '': 'TERM_FATIGUE', '': 'TERM_HEALTH_DIAL', '': 'TERM_ADVANTAGE',
+               '': 'TERM_SURGE', '': 'TERM_SUCCESS', '': 'TERM_ACTIONS'}
+# Ikona ulepszenia po nazwie przedmiotu (D103): przymiotnik przed nazwą w rodzaju jej pierwszego wyrazu.
+UPGRADE_GLYPH = ''
+UPGRADE_NAME = re.compile(r'([^,:;.!?\n]*?)[ \t]*')
+UPGRADE_LEAD = re.compile(r'^(.*(?:^|\s)(?:i|oraz|albo|lub)\s+|\s*)(.*)$', re.S)     # nazwa po ostatnim spójniku
+UPGRADED_FORMS = {'m': 'ulepszony', 'f': 'ulepszona', 'n': 'ulepszone', 'pl': 'ulepszone', 'mp': 'ulepszeni'}
+# Pierwszy wyraz nazwy, którego rodzaju nie widać po końcówce (liczba mnoga, żeński na spółgłoskę).
+HEAD_GENDER = {'opiekunowie': 'mp', 'baszty': 'pl', 'bełty': 'pl', 'rękawiczki': 'pl', 'gogle': 'pl', 'karwasze': 'pl',
+               'noże': 'pl', 'ostrza': 'pl', 'rękojeść': 'f'}
 ABBREV_TERMS = {'TERM_EXPERIENCE': _forms('punkt doświadczenia', 'punktu doświadczenia', 'punkty doświadczenia',
                                           'punktów doświadczenia', 'm')}
 
@@ -200,6 +218,33 @@ FOLLOW = re.compile(r'\s*(?:\x01(TERM_[A-Z_]+)\x01|([A-Za-ząćęłńóśźżĄ�
 PREV = re.compile(r'([A-Za-ząćęłńóśźżĄĆĘŁŃÓŚŹŻ]+)\s*$')
 
 
+def name_gender(name):
+    """Rodzaj nazwy przedmiotu z pierwszego wyrazu: przymiotnik albo rzeczownik główny („Pęknięte lusterko”,
+    „Kolczuga Mocarza”, „Gogle magowidzenia”). Rodzaj nijaki i liczba mnoga mają tę samą formę przymiotnika."""
+    m = re.match(r'[^\W\d_]+', name.strip())
+    w = m.group(0).lower() if m else ''
+    if w in HEAD_GENDER:
+        return HEAD_GENDER[w]
+    if w.endswith('a'):
+        return 'f'
+    if w.endswith(('e', 'o', 'um')):
+        return 'n'
+    return 'm'      # przymiotnik na -y/-i albo rzeczownik męski na spółgłoskę
+
+
+def upgraded(text):
+    """Nazwa z ikoną ulepszenia → „ulepszony …” w rodzaju nazwy; działa też dla kilku nazw na liście łupu."""
+    if UPGRADE_GLYPH not in text:
+        return text
+
+    def one(m):
+        lead, name = UPGRADE_LEAD.match(m.group(1)).groups()
+        if not name.strip():
+            return m.group(1)
+        return '%s%s %s' % (lead, UPGRADED_FORMS[name_gender(name)], name.strip())
+    return UPGRADE_NAME.sub(one, text)
+
+
 def clean_markup(text):
     """Znaczniki gry → czysty tekst; ikony zostają jako tokeny do odmiany przy liczbach."""
     def link(m):
@@ -210,6 +255,8 @@ def clean_markup(text):
     text = text.replace('{BR}', '\n')
     text = LINK.sub(link, text)
     text = TAG.sub('', text)
+    text = upgraded(text)
+    text = re.sub('[%s]' % ''.join(GLYPH_TERMS), lambda m: ICON_TOKEN % GLYPH_TERMS[m.group(0)], text)
     text = PUA.sub('', text)
     return text
 
@@ -241,7 +288,8 @@ def _num_phrase(text, m):
     target = words[-1] if words else None
     if target is not None and target.group(1):
         term = target.group(1)
-        case = _case_for(prev, None, n)
+        # koszt przed dwukropkiem to mianownik („1 akcja: Zaatakuj wroga”), D103
+        case = 'nom' if text[target.end():].lstrip().startswith(':') else _case_for(prev, None, n)
         gender = (ICONS.get(term) or ABBREV_TERMS[term])['gender']
         adj = text[m.end():target.start(1) - 1]
         return m.start(), target.end(), cardinal(n, case, gender) + adj + ' ' + _icon_form(term, n, case)
@@ -293,6 +341,9 @@ def _icons(text):
             case = None
         last_case[0] = case
         return (prev + ' ' if prev else '') + _icon_form(m.group(2), None, case)
+    # „za każdy potencjał zamieniony na sukces”: jedna ikona zamieniana na drugą (D103)
+    text = re.sub(r'(\b(?:za|z)?mienion\w*\s+(?:na|w)\s+)\x01(TERM_[A-Z_]+)\x01',
+                  lambda m: m.group(1) + _icon_form(m.group(2), 1, 'acc'), text)
     return re.sub(r'(?:(\w+)\s+)?\x01(TERM_[A-Z_]+)\x01', standalone, text)
 
 

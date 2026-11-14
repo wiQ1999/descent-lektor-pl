@@ -51,3 +51,32 @@ def test_number_words():
     assert cardinal(2, 'acc', 'f') == 'dwie'
     assert cardinal(5, 'gen') == 'pięciu'
     assert ordinal(3) == 'trzeci'
+
+
+ADV, SUCC, ACT = '<link=TERM_ADVANTAGE>\uf5de</link>', '<link=TERM_SUCCESS>\uf5e8</link>', '<link=TERM_ACTIONS>\uf5e4</link>'
+
+
+@pytest.mark.parametrize('text, expected', [
+    ('Za każdy %s zamieniony na %s weź kartę.' % (ADV, SUCC), 'Za każdy potencjał zamieniony na sukces weź kartę.'),
+    ('Dodaj 1 i 1 %s.' % ADV, 'Dodaj jeden i jeden potencjał.'),
+    ('1 %s: Zaatakuj.' % ACT, 'jedna akcja: Zaatakuj.'),
+    ('2 %s: Zaatakuj.' % ACT, 'dwie akcje: Zaatakuj.'),
+    ('Możesz wykonać 1 %s z karty.' % ACT, 'Możesz wykonać jedną akcję z karty.'),
+    ('Wróg przyjmuje {1} \uf5e5.', 'Wróg przyjmuje {1} obrażenia.'),
+])
+def test_icons_without_word_get_glossary_name(text, expected):
+    """D103: plus (potencjał), akcja i glif ikony bez linku glosariusza."""
+    assert normalize(text) == expected
+
+
+@pytest.mark.parametrize('text, expected', [
+    ('Stary róg \uf5e2', 'ulepszony Stary róg'),
+    ('Szara peleryna \uf5e2', 'ulepszona Szara peleryna'),
+    ('Kamienne lusterko \uf5e2', 'ulepszone Kamienne lusterko'),
+    ('Gogle nocy \uf5e2', 'ulepszone Gogle nocy'),
+    ('Rękojeść nocy \uf5e2', 'ulepszona Rękojeść nocy'),
+    ('Masz: Szara peleryna \uf5e2, Stary róg i Gogle nocy \uf5e2.', 'Masz: ulepszona Szara peleryna, Stary róg i ulepszone Gogle nocy.'),
+])
+def test_upgrade_icon_becomes_adjective_before_name(text, expected):
+    """D103: ikona ulepszenia po nazwie przedmiotu, przymiotnik w rodzaju nazwy."""
+    assert normalize(text) == expected

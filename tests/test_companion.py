@@ -498,6 +498,16 @@ def test_objective_queued_before_window_with_its_text_is_dropped(run):
     assert not d.queue          # cel, który już zaczął grać, nie wraca po przerwaniu
 
 
+def test_partial_objective_dropped_by_window_keeps_counts_non_negative(run):
+    """D103: cel bez wartości luki (wynik częściowe) zdjęty z kolejki przez okno nie psuje licznika pełnych."""
+    run(msg(1, 'HELLO'))
+    bad = [{'i': 0, 'type': 'VariableInt', 'as_key': '9', 'value': '9'}]
+    d = run({'ev': 'objective', 'key': 'GOAL_COUNT', 'args': bad, 'text': 'Znajdź klucz (9/4)'}, 0.1)
+    assert d.outcomes['objective', 'częściowe'] == 1
+    d = run(msg(2, 'HELLO', text='Zaktualizowano zadanie: Znajdź klucz (9/4)'), 0.1)
+    assert not d.queue and d.outcomes['objective', 'częściowe'] == 0 and d.outcomes['objective', 'pełne'] == 0
+    assert d.outcomes['objective', 'w_oknie'] == 1
+
 def test_scene_stops_everything(run):
     run(msg(1, 'HELLO'))
     run({'ev': 'objective', 'key': 'GOAL'})

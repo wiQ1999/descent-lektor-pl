@@ -78,6 +78,9 @@ UPPER = re.compile(r'^[A-Z][A-Z0-9_]{3,}$')
 LIST_VARIABLE = 'NodeCanvas.Framework.Variable`1[[System.Collections.Generic.List`1[[System.String'
 # Luka z kluczem zdolności obronnej wroga, którą ustawia kod ataku (EnemyModel.GetDefenseKey, D98).
 DEFENSE_VAR = '_currdefensekey'
+# Podglądy, które kod gry pokazuje bez klucza w obiekcie (GameInteractable: DefaultPreview, płonący teren), D103.
+CODE_PREVIEWS = ('DEFAULT_EXPLORE_PREVIEW', 'TERRAIN_BURNING_INSPECT')
+GIVE_TREASURE = 'FFG.D3.DTNodes.GiveTreasure'
 
 
 def voice_for(category, speakers):
@@ -178,14 +181,17 @@ def is_name_var(name):
     return 'name' in v and not any(w in v for w in ('enemy', 'terrain', 'item', 'dest'))
 
 
-def string_assignments(v, out, names, lists=False):
+def string_assignments(v, out, names, lists=False, loot=None):
     """Zmienne tekstowe w grafie: klucze ustawiane przez SetStringKey i SetVariable<string> → out[zmienna],
     zmienne z imieniem gracza (GetPlayerStringField Name) → names. lists (m3, D98): także zawartość list
-    tekstowych blackboardu, z których gra losuje klucz luki ListOfKeys."""
+    tekstowych blackboardu, z których gra losuje klucz luki ListOfKeys. loot (m3, D103): zmienne z kluczem
+    pierwszego przedmiotu łupu (GiveTreasure._outputFirstKey)."""
     if isinstance(v, dict):
         t = v.get('$type', '')
         if lists and t.startswith(LIST_VARIABLE) and isinstance(v.get('_value'), list):
             out[var_id(v.get('_name'))] |= {s for s in v['_value'] if isinstance(s, str)}
+        if loot is not None and t == GIVE_TREASURE and v.get('_outputKeyEnabled'):
+            loot.add(var_id((v.get('_outputFirstKey') or {}).get('_name')))
         if t == 'FFG.Core.Tasks.SetStringKey':
             out[var_id((v.get('_valueA') or {}).get('_name'))].add(v.get('_pendingKey'))
         elif t.startswith('NodeCanvas.Tasks.Actions.SetVariable`1[[System.String'):
@@ -195,10 +201,10 @@ def string_assignments(v, out, names, lists=False):
         elif t == 'FFG.D3.Tasks.GetPlayerStringField' and v.get('_field') == 'Name':
             names.add(var_id((v.get('_resultString') or {}).get('_name')))
         for x in v.values():
-            string_assignments(x, out, names, lists)
+            string_assignments(x, out, names, lists, loot)
     elif isinstance(v, list):
         for x in v:
-            string_assignments(x, out, names, lists)
+            string_assignments(x, out, names, lists, loot)
 
 
 def merged_args(main, rs):
@@ -283,7 +289,7 @@ def collect(game, terms, release='m1', only=None):
     only: grupy spoza M1, gdy nie wszystkie (test cyklu na jednym wydarzeniu, D63)."""
     extra = [g for g in RELEASE_GROUPS[release] if not only or g in only]
     group_of, refs = {}, defaultdict(list)
-    var_keys, name_vars = defaultdict(set), set()
+    var_keys, name_vars, loot_vars = defaultdict(set), set(), set()
     taken = set()
 
     def take(gr, group):
@@ -291,7 +297,8 @@ def collect(game, terms, release='m1', only=None):
         for ln in G.graph_lines(gr, terms):
             group_of.setdefault(ln['key'], group)
             refs[ln['key']].append(ln)
-        string_assignments(gr['graph'], var_keys, name_vars, lists=release == 'm3')
+        string_assignments(gr['graph'], var_keys, name_vars, lists=release == 'm3',
+                           loot=loot_vars if release == 'm3' else None)
 
     cutscene = [k for k in game.cutscene_keys(CUTSCENE_ID) if k in terms]
     for k in cutscene:
@@ -372,6 +379,16 @@ def collect(game, terms, release='m1', only=None):
                                       'kind': G.source_kind(bundle), 'bundle': bundle, 'owner': owner, 'graph': None,
                                       'seq': None, 'conds': [], 'speakers': [], 'args': []})
             var_keys[DEFENSE_VAR] |= {k for k in terms if k.startswith('ENEMY_DEFEND_')}
+            # D103: podglądy wybierane w kodzie gry i luki z kluczem przedmiotu z łupu
+            for key in CODE_PREVIEWS:
+                if key not in group_of and (terms.get(key) or {}).get('text'):
+                    group_of[key] = 'system'
+                    refs[key].append({'key': key, 'role': 'message', 'node_type': 'PreviewKey', 'kind': 'quest',
+                                      'bundle': None, 'owner': 'GameInteractable', 'graph': None, 'seq': None,
+                                      'conds': [], 'speakers': [], 'args': []})
+            items = set(loot_keys(game, terms, release_acts(release))) - set(LOOT_TEMPLATES) - set(HERO_NAME_KEYS)
+            for v in loot_vars:
+                var_keys[v] |= items
 
     records = []
     for key, group in group_of.items():

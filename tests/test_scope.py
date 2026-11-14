@@ -165,3 +165,13 @@ def test_string_assignments_lists_only_in_m3():
     assert dict(out) == {}
     scope.string_assignments(graph, out, set(), lists=True)
     assert dict(out) == {'keys for toss': {'TOSS_0', 'TOSS_1'}}
+
+
+def test_give_treasure_output_key_is_a_loot_variable():
+    """D103: GiveTreasure z _outputFirstKey zapisuje klucz pierwszego przedmiotu łupu w zmiennej luki."""
+    from collections import defaultdict
+    node = {'$type': scope.GIVE_TREASURE, '_outputKeyEnabled': True, '_outputFirstKey': {'_name': 'Output First Key'}}
+    off = dict(node, _outputKeyEnabled=False, _outputFirstKey={'_name': 'Other'})
+    out, names, loot = defaultdict(set), set(), set()
+    scope.string_assignments({'nodes': [node, off]}, out, names, lists=True, loot=loot)
+    assert loot == {'output first key'}

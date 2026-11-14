@@ -1,4 +1,4 @@
-# E16: test paczki t1 w grze, Q1 (2026-11-13)
+# E16: test paczki t1 w grze, Q1 i Q2 (2026-11-13/14)
 
 Sesja Windows 22:17–22:47 z paczką testową `t1` (plugin 0.4.2). Zrzuty l6–l10 i dzienniki leżą w `analysis/work/playtest/t1/` (poza Git). Zrzuty l1–l5 pochodzą z partii 2026-11-11 i opisuje je [E14_PARTY.md](E14_PARTY.md). Raport podaje klucze i liczby, bez tekstów gry.
 
@@ -51,3 +51,37 @@ Wybrane w QA poprawki: 1, 2, 3 i 5. Punkt 4 (opcje wyboru) i głos `nv_*` dla cy
 - **Obrona wroga w oknie ataku.** Plugin 0.4.3 ma nowe zdarzenie `open/close` `kind: defense` z kluczem `GetDefenseKey()`. Companion gra nagranie wartości luki `UI_ENEMYDEFENSIVE_REMINDER` (`Library.defense`) z przełącznikiem `zdolnosci`. Nowe zdarzenie trzeba jeszcze sprawdzić w grze.
 - **Audio.** 8 nowych fragmentów OmniVoice (brynn 1, adelynn 5, narrator 2), wszystkie zaakceptowane przez automat, z 1 ponownym podejściem. Pokrycie zakresu: 2347 z 2347 kwestii.
 - **Testy.** `pytest`: 308 przechodzi, 2 pominięte. Plugin buduje się bez ostrzeżeń.
+
+## Druga sesja: Q1 i Q2 z paczką D102 (2026-11-13/14)
+
+Sesja Windows 23:40–00:18 z paczką `t1` (plugin 0.4.3, commit b303ccc). Zrzuty l11–l12 i dzienniki leżą w `analysis/work/playtest/t1/` (`logs-20261113b/`). Gracz przeszedł Q1, Q2 i część drogi do Q5.
+
+| zrzut | okno (klucz) | co słychać | przyczyna |
+|---|---|---|---|
+| l11 | okno ataku, obrona wroga `ENEMY_DEFEND_FAE` | opis bez ikony plusa | Ikona plusa to `<link=TERM_ADVANTAGE>` z glifem. `normalize.ICONS` nie miał tej ikony, więc link bez tekstu znikał z nagrania. Tak samo znikała ikona akcji (`TERM_ACTIONS`) i glify ikon bez linku (np. obrażenia po luce). |
+| l12 | podgląd żetonu odkrycia `DEFAULT_EXPLORE_PREVIEW` | cisza | Klucz wybiera kod gry (`GameInteractable`, obiekt z `DefaultPreview`), a nie graf ani pole `PreviewKey`. Zakres D98 pomijał takie obiekty, więc kwestii nie było w bazie (`brak_klucza`, 4 okna). |
+
+Inne ustalenia z dzienników:
+
+- **Obrona wroga (D102) działa:** 18 okien ataku, każde z odczytem `ENEMY_DEFEND_*` (fae, bandyta, berserker, fanatyk, siostra krwi, golem).
+- **Kafelek zdolności broni działa:** 2 okna `ability` (zdolność części broni) z nazwą i opisem.
+- **Cel misji (D102):** 24 zmiany celu pominięte jako przeczytane w oknie.
+  - Licznik wyników pokazał `objective/pełne: -1`.
+  - Cel z niepełną luką (`OBJECTIVE_01`, wynik `częściowe`) zdjęty z kolejki odejmował od wyniku `pełne`.
+  - Poprawka w `director._drop_read_goals`.
+- **Luka łupu w Q2:** `TANGERINE_Q2_TRAVEL_STORY_10RL` (i `10EX`) ma lukę `Output First Key`. Gra wpisuje do niej klucz pierwszego przedmiotu z węzła `GiveTreasure` (`_outputFirstKey`), więc baza nie znała jej wartości. Ten sam wzorzec mają 3 kwestie w całej grze.
+- **Ikona ulepszenia:** nazwy ulepszonych przedmiotów (310 kluczy w grze) mają na końcu glif ulepszenia, który lektor pomijał. Nazwy pojawiają się w kafelku zdolności w oknie ataku i na liście łupu.
+- **Poza zakresem testu:** 4 okna podróży przed Q5 (`TANGERINE_Q5_TRAVEL_STORY_*`) bez nagrań, zgodnie z zakresem D101.
+- **Pokrycie i wydajność:** pokrycie okien 98,4% (99,2% okien do czytania), start dźwięku p50 0,12 s, p95 0,15 s.
+
+## Wykonanie (D103)
+
+Wybrane w QA: plus jako „potencjał”, nazwy łupu w luce nagrane, ikona ulepszenia jako przymiotnik przed nazwą z odmianą.
+
+- **Ikony** (`normalize.ICONS`, `GLYPH_TERMS`): „potencjał” i „akcja”, glify bez linku, mianownik przed dwukropkiem, biernik pojedynczy po „zamieniony na”.
+- **Ulepszenie** (`normalize.upgraded`, `name_gender`): rodzaj z pierwszego wyrazu nazwy, z wyjątkami w `HEAD_GENDER` (liczba mnoga, „rękojeść”). Sprawdzone na wszystkich 310 nazwach gry. Companion stosuje tę samą zamianę do tekstu okna łupu, więc znajduje nagranie wersji ulepszonej.
+- **Podglądy z kodu** (`scope.CODE_PREVIEWS`): `DEFAULT_EXPLORE_PREVIEW` w grupie `system` jako komunikat questu.
+- **Łup w luce** (`scope.string_assignments`, `loot`): zmienna z `GiveTreasure._outputFirstKey` dostaje klucze przedmiotów aktu (716 wartości). W Q2 luka stoi w komunikacie po pustym wierszu, który czyta narrator (D85), więc wartości mają głos narratora i w większości korzystają z nagrań listy łupu.
+- **Audio.** 285 nowych fragmentów OmniVoice (narrator): 135 nazw ulepszonych przedmiotów, 22 opisy z ikonami, `DEFAULT_EXPLORE_PREVIEW`, wartości luk i listy łupu. Po czterech rundach ponownych podejść automat przyjął wszystkie 285; 16 potrzebowało więcej niż jednego podejścia. Pokrycie zakresu: 2348 z 2348 kwestii.
+- **Replay sesji** (`--speed 0 --no-audio`): pokrycie okien do czytania 100%. `DEFAULT_EXPLORE_PREVIEW` i `TANGERINE_Q2_TRAVEL_STORY_10RL` grają w całości. Liczniki wyników celów nie schodzą poniżej zera. Braki zostały tylko w oknach poza zakresem testu (`OBJECTIVE_01` i podróż przed Q5).
+- **Testy.** `pytest`: 322 przechodzą, 2 pominięte. Plugin bez zmian (0.4.3).
