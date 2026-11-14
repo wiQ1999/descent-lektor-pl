@@ -15,6 +15,7 @@ Gra wczytuje ze slotu najnowszy plik. Kopia zapisów leży w `analysis/work/save
 | 5 | 2026-11-11 14:45 | kampania znajomego (23,5 h), w toku Q6 | nie: Q6 poza zakresem |
 | 6 | 2026-11-06 22:30 | początek Q1 | Q1 przeszło już dwa testy |
 | 7 | 2026-11-14 00:18 | Q1, Q2, miasto i E2A ukończone, w toku Q5 | nie: Q5 poza zakresem |
+| 8 | 2026-11-11 21:09 | kampania znajomego po partii (26,9 h), dostępne Q7 i Q8 (dodany 2026-11-14) | nie: poza zakresem |
 
 Slot 4 daje wszystko, czego brakuje: wydarzenie miejskie, podróż przed Q2, całe Q2 i potem wydarzenie 2A na mapie. Q2 w slocie 7 jest już ukończone, a slot 3 zaczyna Q2 od razu na planszy.
 
@@ -64,3 +65,18 @@ Okna czytaj do końca. Po zakończeniu kwestii klikaj spokojnie, zwłaszcza w wy
 ## Po sesji
 
 Napisz, że skończyłeś. Przeanalizuję dzienniki `hook-*.jsonl` i `companion-*.jsonl` z `logs/` paczki oraz nowe zrzuty.
+
+## Wynik i następny test (D105)
+
+Sesja na slocie 4 odbyła się 2026-11-14. Wyniki i przyczyny błędów l13–l15 są w `analysis/E16_PLAYTEST.md`.
+
+Nowa paczka ma plugin 0.4.4, więc przed grą uruchom **Zainstaluj** z nowej paczki. Bez tego okno wyzwania zostanie ciche. W kolejnej sesji sprawdź:
+
+| sytuacja | czego słuchać | poprawka |
+|---|---|---|
+| ukończone wyzwanie bohatera | „Wyzwanie ukończone!” i lista nagród (karty z imieniem bohatera) | D105 (l14) |
+| aktywacja fanatyka | „jeśli cel nie wyrzucił wzmocnienia” | D105 (l13) |
+| wydarzenie miejskie, wybór dla Brynn | wtrącenie „– mamrocze Kehli…” i polecenie po nim czyta narrator | D105 (l15) |
+| łup po pokonaniu golema w Q2 | nazwa golema w poleceniu „Usuń: …” | D105 |
+| atak na fae | „potencjał” w opisie obrony | D103 (nie wystąpił w sesji 3) |
+| kafelek zdolności broni | nazwa i opis zdolności | D101 (nie wystąpił w sesji 3) |

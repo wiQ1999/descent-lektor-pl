@@ -184,3 +184,10 @@ Co trzeba zrobić:
 4. Generowanie: nazwy i opisy to ok. 65 tys. znaków (ok. 70 min GPU na podejście), same nazwy ok. 6 tys. (ok. 7 min).
 
 Uwaga do narzędzia: `hook_coverage.py` zawsze zapisuje szczegóły do `analysis/work/out/e1_coverage.json` i nadpisuje wynik E1. Plik E1 odtworzony z pięciu dzienników z 2026-10-31 (343 okna), szczegóły partii leżą w `session_20261111/mac/coverage_details.json`. Warto dodać opcję `--out`.
+
+## Zapisy gry z partii (dostarczone 2026-11-14)
+
+- Pięć zapisów i kopia zapasowa z Maca (2026-11-11 20:20–21:09) to dalszy ciąg kampanii znajomego ze slotu 5 (ten sam `SlotGUID`). Kopia leży w `analysis/work/saves/party-20261111/`.
+- Stan według `campaign_state.py`: 26,9 h, 17 ukończonych (ponad slot 5: Q6, EC1, E6A), dostępne Q7 i Q8.
+- Najnowszy stan jest w nowym slocie `SavedGames\8`. Slot dostał nowy `SlotGUID` (`slot8-guid.txt` w kopii), bo synchronizacja z chmurą rozpoznaje sloty po GUID. Zamiana nie zmienia długości plików, a wszystkie `.sav` czytają się jako JSON.
+- Slot 5 został bez zmian: stan sprzed partii (23,5 h, w toku Q6), identyczny z `snap-20261114/5`. Wycofanie slotu 8 to usunięcie folderu `8`.
