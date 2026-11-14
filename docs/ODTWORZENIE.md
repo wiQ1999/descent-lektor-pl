@@ -251,7 +251,19 @@ Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej 
 .venv/Scripts/python -I -m lektor build --release m4
 ```
 
-- Głosy `nv_*` projektujemy w ElevenLabs według `analysis/tools/voice_designs_prod.json` (skill `elevenlabs`, za zgodą użytkownika), a `voice_id` wpisujemy do `direction.ELEVEN_VOICES_PROD`. Do tego czasu `eleven` pomija te głosy i podaje ich liczbę znaków.
+- Nowe głosy `nv_*` projektuje OmniVoice z profili postaci (`omni` w `analysis/tools/voice_designs_prod.json`): trzy ziarna na profil, wybór automatem, referencje do `refs.json`. Potem przebudowa bazy `m4`:
+
+```bash
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/new_voices_prod.py design
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/new_voices_prod.py choose
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/new_voices_prod.py adopt
+```
 - Generowanie jak w E14 (`REL=m4 bash analysis/tools/e14_run.sh`). `generate` przejmuje wybory z t1 i m3 oraz nieocenione podejścia OmniVoice z m3 (`synth.adopt`). Dodatkowe rundy: `extra_retakes.py --release m4`.
 
 ## 7. Plugin i paczka

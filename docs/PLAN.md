@@ -481,8 +481,8 @@ Cel: rozgrywki testowe Q1 i Q2 z pełnym lektorem, poprawkami D98–D100 i dwoma
 ## E17 · Wersja produkcyjna m4 (D107)
 
 Cel: paczka całej gry z regułami t1. Przygotowanie zrobione 2026-11-14 (`analysis/E17_PREP.md`): przegląd mówców we wszystkich oknach, kod wydania `m4`, baza i szacunek.
-- Projekt 99 głosów `nv_*` w ElevenLabs, odsłuch i wybór przez QA (płatne, za zgodą użytkownika; potrzebne miejsca na głosy).
-- Generowanie: ElevenLabs i OmniVoice w kolejności gry (`REL=m4 bash analysis/tools/e14_run.sh`), ocena, ponowne podejścia, `finalize`.
+- Projekt 80 nowych głosów `nv_*` w OmniVoice z profili postaci, wybór automatem (`new_voices_prod.py`).
+- Generowanie: OmniVoice od 2026-11-14, ElevenLabs po odnowieniu limitu (60 tys. kredytów), w kolejności gry (`REL=m4 bash analysis/tools/e14_run.sh`), ocena, ponowne podejścia, `finalize`.
 - Testy, replay dzienników, paczki Windows i Mac, wydanie po akceptacji użytkownika.
 
 **Kryteria ukończenia:** wszystkie fragmenty w manifeście `m4`, testy przechodzą, paczki zbudowane, raport `analysis/E17_AUDIO.md`, commit.

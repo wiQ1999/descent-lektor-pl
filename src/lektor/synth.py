@@ -90,7 +90,7 @@ def inherit(con, source=None):
     sources = [source or paths.PREVIOUS[paths.RELEASE]]
     if not source and paths.ADOPT.get(paths.RELEASE):
         sources.append(paths.ADOPT[paths.RELEASE])
-    strict = paths.RELEASE in D.ELEVEN_NEW
+    strict = paths.PREVIOUS.get(paths.RELEASE) in paths.LOCAL_ONLY     # t1 nagrał głosy ElevenLabs w OmniVoice
     ids = {r['id'] for r in con.execute('SELECT id FROM fragments')}
     out = {}
     os.makedirs(os.path.join(paths.AUDIO, 'takes'), exist_ok=True)

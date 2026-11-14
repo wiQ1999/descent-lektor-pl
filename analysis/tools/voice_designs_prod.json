@@ -1,597 +1,990 @@
 {
- "_info": "D107: głosy ElevenLabs mówców bez imienia (nv_*) w wersji produkcyjnej m4. `brief`: kto i jak mówi (z kontekstu wszystkich kwestii, bez tekstu gry); `el`: opis do text_to_voice (MCP). Projekt i wybór głosów według skilla elevenlabs, za zgodą użytkownika; potem voice_id w direction.ELEVEN_VOICES_PROD. Portret z gry (D41) dopisujemy, gdy postać go ma.",
+ "_info": "D107: głosy mówców bez imienia (nv_*) w wersji produkcyjnej m4, z modelu lokalnego OmniVoice (decyzja użytkownika 2026-11-14: bez profili ElevenLabs). `brief`: kto i jak mówi (z kontekstu wszystkich kwestii, bez tekstu gry); `omni`: projekt OmniVoice (instruct i własne zdanie w stylu postaci); głosy z t1 zostają przy referencjach t1. `el`: opis ElevenLabs, zapas. Projekt i wybór: analysis/tools/new_voices_prod.py.",
  "nv_a2q11_medyk": {
   "groups": "a2_q11",
   "brief": "uratowany medyk Cytadeli; wdzięczny, rzeczowy, szybki",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 30-40. Persona: rescued field medic. Emotion: grateful, businesslike, quick. Crisp, light baritone."
+  "el": "Native Polish. Studio quality. Male, 30-40. Persona: rescued field medic. Emotion: grateful, businesslike, quick. Crisp, light baritone.",
+  "omni": {
+   "instruct": "male, young adult, moderate pitch",
+   "style_text": "Dziękuję! Pokaż tę ranę, szybko. Bandaż, maść i gotowe, możesz walczyć dalej."
+  }
  },
  "nv_a2q11_protektor": {
   "groups": "a2_q11",
   "brief": "uratowany Protektor Cytadeli; wdzięczny, zdyszany żołnierz",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 35-45. Persona: rescued fortress protector. Emotion: grateful, out of breath. Solid, sturdy baritone."
+  "el": "Native Polish. Studio quality. Male, 35-45. Persona: rescued fortress protector. Emotion: grateful, out of breath. Solid, sturdy baritone.",
+  "omni": {
+   "instruct": "male, middle-aged, moderate pitch",
+   "style_text": "Uff, w ostatniej chwili! Dzięki, przyjacielu. Cytadela przetrwa, póki mamy takich obrońców."
+  }
  },
  "nv_a2q11_wojowniczka": {
   "groups": "a2_q11",
   "brief": "ranna wojowniczka Cytadeli; twarda, z ulgą, żartobliwa",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 30-40. Persona: wounded fortress warrior. Emotion: tough, relieved, joking. Strong, gritty alto."
+  "el": "Native Polish. Studio quality. Female, 30-40. Persona: wounded fortress warrior. Emotion: tough, relieved, joking. Strong, gritty alto.",
+  "omni": {
+   "instruct": "female, middle-aged, low pitch",
+   "style_text": "Ha, myślałam, że już po mnie. Ramię boli, ale miecz wciąż trzymam. Kto następny?"
+  }
  },
  "nv_a2q11_zolnierz": {
   "groups": "a2_q11",
   "brief": "ranny żołnierz z manierką; słaby, wdzięczny, szczery",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 20-30. Persona: wounded young soldier with a flask. Emotion: weak, grateful, sincere. Soft, strained tenor."
+  "el": "Native Polish. Studio quality. Male, 20-30. Persona: wounded young soldier with a flask. Emotion: weak, grateful, sincere. Soft, strained tenor.",
+  "omni": {
+   "instruct": "male, young adult, high pitch",
+   "style_text": "Dziękuję… już myślałem, że tu zostanę. Weź to, proszę, tobie bardziej się przyda."
+  }
  },
  "nv_a2q2_straznik": {
   "groups": "a2_q2",
   "brief": "strażnik więzienia (most zwodzony); okrzyk",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 30-40. Persona: prison guard at a drawbridge. Emotion: alarmed shout. Loud, hoarse baritone."
+  "el": "Native Polish. Studio quality. Male, 30-40. Persona: prison guard at a drawbridge. Emotion: alarmed shout. Loud, hoarse baritone.",
+  "omni": {
+   "instruct": "male, middle-aged, moderate pitch",
+   "style_text": "Podnieść most! Więźniowie uciekają! Straż, do mnie!"
+  }
  },
  "nv_a2q3_bandyta": {
   "groups": "a2_q3",
   "brief": "banita z zasadzki; krótki okrzyk",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 25-35. Persona: outlaw in an ambush. Emotion: short aggressive shout. Rough tenor."
+  "el": "Native Polish. Studio quality. Male, 25-35. Persona: outlaw in an ambush. Emotion: short aggressive shout. Rough tenor.",
+  "omni": {
+   "instruct": "male, young adult, moderate pitch",
+   "style_text": "Teraz! Bierzcie ich! Nikt nie ucieknie!"
+  }
  },
  "nv_a2q3_strazniczka": {
   "groups": "a2_q3",
   "brief": "strażniczka w karczmie; wspomina matkę bez ręki, podpita",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 35-45. Persona: guardswoman in a tavern, a bit drunk, remembering her mother. Emotion: wistful, tipsy. Husky alto."
+  "el": "Native Polish. Studio quality. Female, 35-45. Persona: guardswoman in a tavern, a bit drunk, remembering her mother. Emotion: wistful, tipsy. Husky alto.",
+  "omni": {
+   "instruct": "female, middle-aged, low pitch",
+   "style_text": "Moja matka miała jedną rękę, a i tak była najlepszą strażniczką w mieście. Zdrowie mamy!"
+  }
  },
  "nv_a2q3_straznik": {
   "groups": "a2_q3",
   "brief": "strażnik pod urokiem (nieobecny wzrok); martwy, beznamiętny rozkaz",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 30-40. Persona: guard under a mind-control spell, blank stare. Emotion: dead, flat, emotionless orders. Monotone, hollow voice."
+  "el": "Native Polish. Studio quality. Male, 30-40. Persona: guard under a mind-control spell, blank stare. Emotion: dead, flat, emotionless orders. Monotone, hollow voice.",
+  "omni": {
+   "instruct": "male, middle-aged, low pitch",
+   "style_text": "Stać. Rozkaz barona. Nikt nie przechodzi. Stać. Rozkaz barona."
+  }
  },
  "nv_a2q3_zolnierz": {
   "groups": "a2_q3",
   "brief": "żołnierz w karczmie; opowiada o młynie i obietnicach barona, rozgoryczony",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 40-50. Persona: soldier in a tavern complaining about a baron's broken promises. Emotion: bitter, resentful. Grumbling, coarse baritone."
+  "el": "Native Polish. Studio quality. Male, 40-50. Persona: soldier in a tavern complaining about a baron's broken promises. Emotion: bitter, resentful. Grumbling, coarse baritone.",
+  "omni": {
+   "instruct": "male, middle-aged, low pitch",
+   "style_text": "Baron obiecał, że młyn ruszy przed żniwami. Żniwa minęły, a młyn stoi. Tyle są warte jego słowa."
+  }
  },
  "nv_a2q5_hybryda": {
   "groups": "a2_q5",
   "brief": "hybryda zwiadowca; ostrzegawczy krzyk",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 25-35, dragon-blooded scout. Emotion: warning shout. Raspy, barking voice."
+  "el": "Native Polish. Studio quality. Male, 25-35, dragon-blooded scout. Emotion: warning shout. Raspy, barking voice.",
+  "omni": {
+   "instruct": "male, young adult, low pitch",
+   "style_text": "Intruzi! Na wzgórzu, intruzi! Dajcie znać reszcie!"
+  }
  },
  "nv_a2q5_lowczyni": {
   "groups": "a2_q5",
   "brief": "łowczyni (hybryda) ścigająca Narę; z obrzydzeniem",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 30-40, dragon-blooded huntress. Emotion: disgusted. Sharp, hissing voice."
+  "el": "Native Polish. Studio quality. Female, 30-40, dragon-blooded huntress. Emotion: disgusted. Sharp, hissing voice.",
+  "omni": {
+   "instruct": "female, young adult, low pitch",
+   "style_text": "Fuj. Śmierdzisz strachem. Gdzie ona jest? Mów, zanim stracę cierpliwość."
+  }
  },
  "nv_a2q7_wygnaniec": {
   "groups": "a2_q7",
   "brief": "mężczyzna przy płonącej studni (wygnaniec w Jaskini Snów); zdyszany, ponaglający",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 35-45. Persona: exile by a burning well in a dream cave. Emotion: breathless, urging. Strained, hurried baritone."
+  "el": "Native Polish. Studio quality. Male, 35-45. Persona: exile by a burning well in a dream cave. Emotion: breathless, urging. Strained, hurried baritone.",
+  "omni": {
+   "instruct": "male, young adult, low pitch",
+   "style_text": "Szybciej, szybciej, tędy! Studnia płonie, a to znaczy, że nie mamy już czasu na rozmowy!"
+  }
  },
  "nv_a2q8_bibliotekarka": {
   "groups": "a2_q8",
   "brief": "bibliotekarka opactwa, widzi przyszłość; łagodna, miła, lekko złośliwa wobec kronikarza",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 55-65. Persona: abbey librarian who sees the future. Emotion: gentle, kind, slightly teasing. Soft, mellow, wise alto."
+  "el": "Native Polish. Studio quality. Female, 55-65. Persona: abbey librarian who sees the future. Emotion: gentle, kind, slightly teasing. Soft, mellow, wise alto.",
+  "omni": {
+   "instruct": "female, elderly, moderate pitch",
+   "style_text": "Wiedziałam, że przyjdziecie. Herbata już stygnie, a nasz kronikarz znów opowiada te same historie."
+  }
  },
  "nv_a2q8_kronikarz": {
   "groups": "a2_q8",
   "brief": "kronikarz opactwa, stary kotoczłek, dawny wędrowiec; ciepły, gadatliwy, chichocze, pije herbatę",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 70-80, cat-folk chronicler and former adventurer, drinks tea. Emotion: warm, chatty, chuckling. Purring, crackly old tenor."
+  "el": "Native Polish. Studio quality. Male, 70-80, cat-folk chronicler and former adventurer, drinks tea. Emotion: warm, chatty, chuckling. Purring, crackly old tenor.",
+  "omni": {
+   "instruct": "male, elderly, high pitch",
+   "style_text": "He, he, za moich czasów przemierzyłem pół świata z jednym kijem i kubkiem herbaty. Siadajcie, opowiem wam."
+  }
  },
  "nv_a2q8_ogrodniczka": {
   "groups": "a2_q8",
   "brief": "gnomka ogrodniczka w opactwie, rozmawia z duchami; pogodna, drobna, podekscytowana, piskliwa",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 40-50, gnome gardener who talks to spirits. Emotion: cheerful, excited. Tiny, squeaky, bubbly voice."
+  "el": "Native Polish. Studio quality. Female, 40-50, gnome gardener who talks to spirits. Emotion: cheerful, excited. Tiny, squeaky, bubbly voice.",
+  "omni": {
+   "instruct": "female, middle-aged, very high pitch",
+   "style_text": "Ojej, ojej, duchy znowu szepczą w różach! Mówią, że jesteście mili. Lubicie stokrotki?"
+  }
  },
  "nv_a2q8_zamiatacz": {
   "groups": "a2_q8",
   "brief": "młodzieniec w opactwie, porzucił czarnoksięstwo; nieśmiały, skrępowany, poważny",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 20-25. Persona: abbey sweeper, a former reluctant sorcerer. Emotion: shy, awkward, earnest. Soft, quiet, hesitant tenor."
+  "el": "Native Polish. Studio quality. Male, 20-25. Persona: abbey sweeper, a former reluctant sorcerer. Emotion: shy, awkward, earnest. Soft, quiet, hesitant tenor.",
+  "omni": {
+   "instruct": "male, young adult, moderate pitch, whisper",
+   "style_text": "Ja tylko zamiatam, naprawdę. Kiedyś… kiedyś robiłem inne rzeczy, ale już nie chcę o tym mówić."
+  }
  },
  "nv_baelziffar": {
   "groups": "a1_q9 (i dalej)",
   "brief": "Baelziffar, demon Ynfernaelu, głos w głowie Galadena; szyderczy, okrutny, rechoczący, drwi z bliskich Galadena; w t1 „głos z Ynfernaelu” (nv_ynfernael)",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, ageless demon lord of the realm of torment. Persona: a voice whispering inside a hero's head. Emotion: mocking, cruel, gleeful, cackling. Silky, deep, resonant voice with a sinister whisper, slow and savouring every word."
+  "el": "Native Polish. Studio quality. Male, ageless demon lord of the realm of torment. Persona: a voice whispering inside a hero's head. Emotion: mocking, cruel, gleeful, cackling. Silky, deep, resonant voice with a sinister whisper, slow and savouring every word.",
+  "omni": {
+   "instruct": "male, elderly, very low pitch, whisper",
+   "style_text": "Słyszę twoje lęki, mały łowco. Każdy z nich smakuje inaczej, a ja mam całą wieczność, by skosztować wszystkich."
+  }
  },
  "nv_bandyta": {
   "groups": "t1 (D101)",
   "brief": "bandyta, okrzyki w walce",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 20-30. Persona: generic bandit shouting in combat. Emotion: aggressive, taunting. High, rough, brash voice."
+  "el": "Native Polish. Studio quality. Male, 20-30. Persona: generic bandit shouting in combat. Emotion: aggressive, taunting. High, rough, brash voice.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_crayleth": {
   "groups": "a2_q5",
   "brief": "Crayleth, Pierwsza Włóczniczka Levirax; ryczy, dumna, okrutna, fanatycznie oddana smoczej władczyni",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 35-45, dragon-blooded first spearwoman of a dragon queen. Emotion: roaring, proud, cruel, fanatical. Powerful, harsh, growling voice."
+  "el": "Native Polish. Studio quality. Female, 35-45, dragon-blooded first spearwoman of a dragon queen. Emotion: roaring, proud, cruel, fanatical. Powerful, harsh, growling voice.",
+  "omni": {
+   "instruct": "female, middle-aged, very low pitch",
+   "style_text": "Za smoczą władczynię! Moja włócznia przebiła już stu takich jak wy i przebije setnego pierwszego!",
+   "seeds": [
+    11,
+    23,
+    37,
+    51,
+    67,
+    89,
+    101
+   ]
+  }
  },
  "nv_czerwona_gwiazda": {
   "groups": "travel_act2",
   "brief": "Czerwona Gwiazda, najmłodsza z poległych, uzdrowicielka we śnie; łagodna, uśmiechnięta, mądra",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 18-25, young elven healer appearing in a dream. Emotion: gentle, smiling, wise. Light, clear, serene soprano."
+  "el": "Native Polish. Studio quality. Female, 18-25, young elven healer appearing in a dream. Emotion: gentle, smiling, wise. Light, clear, serene soprano.",
+  "omni": {
+   "instruct": "female, young adult, high pitch",
+   "style_text": "Jesteśmy tylko snem, wiesz o tym. Ale sny też potrafią pocieszyć, jeśli im na to pozwolisz."
+  }
  },
  "nv_dalavel": {
   "groups": "a1_q9",
   "brief": "Dalavel, starsza elfka, mentorka Galadena (wizja); surowa nauczycielka, wyrzut, zawód",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 60-70, elven mentor appearing in a vision. Persona: stern archery teacher. Emotion: reproachful, disappointed, cold. Clear, firm, measured alto."
+  "el": "Native Polish. Studio quality. Female, 60-70, elven mentor appearing in a vision. Persona: stern archery teacher. Emotion: reproachful, disappointed, cold. Clear, firm, measured alto.",
+  "omni": {
+   "instruct": "female, elderly, moderate pitch",
+   "style_text": "Uczyłam cię lepiej. Łuk to nie zabawka, a twoje ręce drżą jak liście. Zawiodłeś mnie, chłopcze."
+  }
  },
  "nv_denavel": {
   "groups": "travel_act2",
   "brief": "Denavel, poległy kuzyn Galadena we śnie (elf, mówi na migi); ciepły, przyjacielski, lekko kpiący",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 25-35, elf, fallen cousin appearing in a dream, speaks in sign language. Emotion: warm, friendly, gently teasing. Soft, airy, dreamy tenor."
+  "el": "Native Polish. Studio quality. Male, 25-35, elf, fallen cousin appearing in a dream, speaks in sign language. Emotion: warm, friendly, gently teasing. Soft, airy, dreamy tenor.",
+  "omni": {
+   "instruct": "male, young adult, moderate pitch, whisper",
+   "style_text": "Znowu atakujesz bez namysłu, kuzynie. Oddychaj. Patrz na jej stopy, nie na miecz. Jeszcze raz."
+  }
  },
  "nv_edgar": {
   "groups": "a2_q3",
   "brief": "Edgar Przecieracz Szlaków, posłaniec Carthridge; uprzejmy, honorowy, odważny, z toporem",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 35-45. Persona: honourable trailblazer messenger with an axe. Emotion: polite, brave. Steady, warm, noble baritone."
+  "el": "Native Polish. Studio quality. Male, 35-45. Persona: honourable trailblazer messenger with an axe. Emotion: polite, brave. Steady, warm, noble baritone.",
+  "omni": {
+   "instruct": "male, middle-aged, low pitch",
+   "style_text": "Edgar, do usług. Niosę wieści przez lasy i góry, a mój topór dba o to, żeby dotarły na czas."
+  }
  },
  "nv_eurth": {
   "groups": "t1 (D101)",
   "brief": "Pani Kości (boss)",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 45-55. Persona: the Lady of Bones, necromancer boss. Emotion: cold, imperious, scornful. Low, dark, velvety alto."
+  "el": "Native Polish. Studio quality. Female, 45-55. Persona: the Lady of Bones, necromancer boss. Emotion: cold, imperious, scornful. Low, dark, velvety alto.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_fae": {
   "groups": "t1 (D101)",
   "brief": "fae, okrzyki w walce",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, childlike fae creature shouting in combat. Emotion: mischievous, giggling. Very high, tinkling, impish voice."
+  "el": "Native Polish. Studio quality. Female, childlike fae creature shouting in combat. Emotion: mischievous, giggling. Very high, tinkling, impish voice.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_fanatyk": {
   "groups": "t1 (D101)",
   "brief": "fanatyk, okrzyki w walce",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 25-35. Persona: zealot shouting in combat. Emotion: fanatical, fervent. Low, intense, chanting voice."
+  "el": "Native Polish. Studio quality. Male, 25-35. Persona: zealot shouting in combat. Emotion: fanatical, fervent. Low, intense, chanting voice.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_fof_kapitan": {
   "groups": "q6",
   "brief": "kapitan straży Fallowhearth, mężczyzna, kusznik; zmęczony walką weteran, szanuje Brynn („moja pani”), rzeczowy, pod presją oblężenia Uthuków",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 45-55. Persona: battle-weary crossbow captain of a besieged town guard. Emotion: tired, matter-of-fact, loyal and respectful to his lady. Rough baritone, clipped military delivery."
+  "el": "Native Polish. Studio quality. Male, 45-55. Persona: battle-weary crossbow captain of a besieged town guard. Emotion: tired, matter-of-fact, loyal and respectful to his lady. Rough baritone, clipped military delivery.",
+  "omni": {
+   "instruct": "male, middle-aged, low pitch",
+   "style_text": "Bełty na cięciwy, chłopcy, i głowy nisko. Wytrzymaliśmy dwa szturmy, wytrzymamy i trzeci, choćby do rana."
+  }
  },
  "nv_fof_mieszkanka": {
   "groups": "q6",
   "brief": "kobieta z Fallowhearth; wystraszona mieszkanka, małomówna, tajemnicza",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 35-45. Persona: frightened townswoman hiding a secret. Emotion: wary, hushed, reluctant. Thin, soft mezzo, hesitant pauses."
+  "el": "Native Polish. Studio quality. Female, 35-45. Persona: frightened townswoman hiding a secret. Emotion: wary, hushed, reluctant. Thin, soft mezzo, hesitant pauses.",
+  "omni": {
+   "instruct": "female, middle-aged, moderate pitch",
+   "style_text": "Nie pytaj mnie o to, proszę. Są rzeczy, o których w tym mieście lepiej milczeć, zwłaszcza po zmroku."
+  }
  },
  "nv_fulminar": {
   "groups": "a2_q4",
   "brief": "Fulminar, potężny smok, władca Navoth; grzmiący jak bęben, władczy, gniewny",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, colossal ancient dragon lord. Emotion: imperious, wrathful. Thunderous, drum-like, booming bass, slow and overwhelming."
+  "el": "Native Polish. Studio quality. Male, colossal ancient dragon lord. Emotion: imperious, wrathful. Thunderous, drum-like, booming bass, slow and overwhelming.",
+  "omni": {
+   "instruct": "male, elderly, very low pitch",
+   "style_text": "Kto śmie zakłócać mój spoczynek? Mów szybko, śmiertelniku, zanim ogień wypali ci słowa z gardła."
+  }
  },
  "nv_gap": {
   "groups": "t1 (D101)",
   "brief": "gap przy procesji (podróż)",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 40-50. Persona: onlooker at a procession. Emotion: gossipy, curious. Ordinary, chatty mezzo."
+  "el": "Native Polish. Studio quality. Female, 40-50. Persona: onlooker at a procession. Emotion: gossipy, curious. Ordinary, chatty mezzo.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_glos": {
   "groups": "t1 (D101)",
   "brief": "odległy głos z lasu (podróż)",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 70-80. Persona: distant voice calling from a forest. Emotion: eerie, beckoning. High, thin, faraway voice."
+  "el": "Native Polish. Studio quality. Male, 70-80. Persona: distant voice calling from a forest. Emotion: eerie, beckoning. High, thin, faraway voice.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_gnom": {
   "groups": "t1 (D101)",
   "brief": "gnom na drodze (podróż)",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, gnome youth on the road. Emotion: excited, chattering. Very high, quick, squeaky voice."
+  "el": "Native Polish. Studio quality. Male, gnome youth on the road. Emotion: excited, chattering. Very high, quick, squeaky voice.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_gont": {
   "groups": "t1 (D101)",
   "brief": "mistrzyni Gont, orczyca (podróż Syrusa)",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 25-35, orc master craftswoman. Emotion: proud, blunt, competitive. Low, strong, confident voice."
+  "el": "Native Polish. Studio quality. Female, 25-35, orc master craftswoman. Emotion: proud, blunt, competitive. Low, strong, confident voice.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_gorzae": {
   "groups": "a2_q2",
   "brief": "Gorzae, nadzorczyni sądowa; formalna, zaniepokojona",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 45-55. Persona: court overseer. Emotion: formal, worried. Precise, clipped, official voice."
+  "el": "Native Polish. Studio quality. Female, 45-55. Persona: court overseer. Emotion: formal, worried. Precise, clipped, official voice.",
+  "omni": {
+   "instruct": "female, middle-aged, moderate pitch",
+   "style_text": "Zgodnie z przepisami sąd zbiera się o świcie. Proszę nie utrudniać, sytuacja jest wystarczająco napięta."
+  }
  },
  "nv_gravia": {
   "groups": "a2_q1",
   "brief": "Gravia Kein, Opiekunka Cytadeli, umierająca od trucizny; dostojna wojowniczka, słabnący głos, przysięga służby",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 55-65. Persona: noble warden of a fortress, dying of poison. Emotion: dignified, weakening, swearing an oath. Firm but fading alto."
+  "el": "Native Polish. Studio quality. Female, 55-65. Persona: noble warden of a fortress, dying of poison. Emotion: dignified, weakening, swearing an oath. Firm but fading alto.",
+  "omni": {
+   "instruct": "female, elderly, low pitch",
+   "style_text": "Przysięgałam bronić tych murów do ostatniego tchu. Ten oddech jeszcze nie nadszedł. Słuchajcie uważnie.",
+   "seeds": [
+    11,
+    23,
+    37,
+    51,
+    67,
+    89,
+    101
+   ]
+  }
  },
  "nv_honora": {
   "groups": "a2_q4",
   "brief": "Honora, dowódczyni lojalistów, artystka; zdyszana, rzeczowa",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 35-45. Persona: loyalist commander and artist. Emotion: breathless, matter-of-fact. Clear, cultured mezzo."
+  "el": "Native Polish. Studio quality. Female, 35-45. Persona: loyalist commander and artist. Emotion: breathless, matter-of-fact. Clear, cultured mezzo.",
+  "omni": {
+   "instruct": "female, middle-aged, moderate pitch",
+   "style_text": "Ludzie na pozycjach, zapasy policzone. Mamy może godzinę. Wystarczy, jeśli nikt nie będzie się ociągał."
+  }
  },
  "nv_kowalka": {
   "groups": "t1 (D101)",
   "brief": "kowalka, smocza hybryda (podróż Vaerix)",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 45-55, dragon-blooded blacksmith. Emotion: gruff, reserved. Very low, smoky, heavy voice."
+  "el": "Native Polish. Studio quality. Female, 45-55, dragon-blooded blacksmith. Emotion: gruff, reserved. Very low, smoky, heavy voice.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_lisb_naukowiec": {
   "groups": "q7",
   "brief": "człowiek w szatach, naukowiec/agent; pogardliwy, nerwowy, chciwy wiedzy, mężczyzna średniego wieku",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 45-55. Persona: robed scholar and spy, greedy for knowledge. Emotion: disdainful, nervous, sneering. Nasal, reedy tenor, fast and fussy."
+  "el": "Native Polish. Studio quality. Male, 45-55. Persona: robed scholar and spy, greedy for knowledge. Emotion: disdainful, nervous, sneering. Nasal, reedy tenor, fast and fussy.",
+  "omni": {
+   "instruct": "male, middle-aged, high pitch",
+   "style_text": "Nie dotykaj tego, ignorancie! Te zapiski są warte więcej niż cała twoja wioska razem z jej kozami."
+  }
  },
  "nv_lisb_wartownik_a": {
   "groups": "q7",
   "brief": "wartownik hybryda (pierwszy); najemnik znudzony, rozmowa z kolegą",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 25-35, dragon-blooded hybrid mercenary. Persona: bored sentry chatting with a colleague. Emotion: lazy, grumbling. Rasping, lazy drawl."
+  "el": "Native Polish. Studio quality. Male, 25-35, dragon-blooded hybrid mercenary. Persona: bored sentry chatting with a colleague. Emotion: lazy, grumbling. Rasping, lazy drawl.",
+  "omni": {
+   "instruct": "male, young adult, moderate pitch",
+   "style_text": "Znowu nocna warta? Mówię ci, za te grosze nawet szczur by tu nie siedział. Podaj no tę manierkę."
+  }
  },
  "nv_lisb_wartownik_b": {
   "groups": "q7",
   "brief": "wartownik hybryda (drugi); najemnik pragmatyczny, lojalny wobec Mezy",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 40-50, dragon-blooded hybrid mercenary. Persona: pragmatic sentry loyal to his commander. Emotion: dry, sensible. Low, gritty voice, steady pace."
+  "el": "Native Polish. Studio quality. Male, 40-50, dragon-blooded hybrid mercenary. Persona: pragmatic sentry loyal to his commander. Emotion: dry, sensible. Low, gritty voice, steady pace.",
+  "omni": {
+   "instruct": "male, middle-aged, very low pitch",
+   "style_text": "Płacą, to pilnujemy. Dowódczyni wie, co robi, a ty mniej gadaj, więcej patrz w ciemność."
+  }
  },
  "nv_lisb_zwiadowca": {
   "groups": "q7",
   "brief": "zwiadowca smoczych hybryd; żołnierski meldunek do dowódczyni, krótko, służbiście",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 30-40, dragon-blooded hybrid soldier. Persona: scout reporting to his commander. Emotion: dutiful, brisk. Hard, slightly hissing baritone, short sentences."
+  "el": "Native Polish. Studio quality. Male, 30-40, dragon-blooded hybrid soldier. Persona: scout reporting to his commander. Emotion: dutiful, brisk. Hard, slightly hissing baritone, short sentences.",
+  "omni": {
+   "instruct": "male, young adult, low pitch",
+   "style_text": "Pani, teren na wschodzie czysty. Dwa patrole przy brodzie, żadnego śladu tamtych. Czekam na rozkazy."
+  }
  },
  "nv_nekromanta": {
   "groups": "t1 (D101)",
   "brief": "cień nekromanty",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 60-70, shadow of a necromancer. Emotion: bitter, fleeing. Low, hollow, whispering voice."
+  "el": "Native Polish. Studio quality. Male, 60-70, shadow of a necromancer. Emotion: bitter, fleeing. Low, hollow, whispering voice.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_nicodemus": {
   "groups": "a2_q4",
   "brief": "Nicodemus, młody żołnierz buntowników; jąka się, podekscytowany młodzieniec",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 18-22. Persona: young rebel soldier who stutters. Emotion: excited, nervous. Light, cracking tenor."
+  "el": "Native Polish. Studio quality. Male, 18-22. Persona: young rebel soldier who stutters. Emotion: excited, nervous. Light, cracking tenor.",
+  "omni": {
+   "instruct": "male, teenager, moderate pitch",
+   "style_text": "To-to-to zaszczyt, naprawdę! Ja… ja jeszcze nigdy nie walczyłem u boku prawdziwych bohaterów!"
+  }
  },
  "nv_ocella": {
   "groups": "a1_q3",
   "brief": "ciotka Ocella, stara zielarka w kniei; ciepła, figlarna staruszka, czule o Fuksie, mówi szybko i z humorem, gotuje zupę z grzybów",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 75-85. Persona: playful old herbalist aunt living in the forest, cooking mushroom soup. Emotion: warm, teasing, affectionate, quick humour. Crackly, bright old voice, fast chatter."
+  "el": "Native Polish. Studio quality. Female, 75-85. Persona: playful old herbalist aunt living in the forest, cooking mushroom soup. Emotion: warm, teasing, affectionate, quick humour. Crackly, bright old voice, fast chatter.",
+  "omni": {
+   "instruct": "female, elderly, high pitch",
+   "style_text": "Ojej, ojej, a któż to do mnie zawitał? Siadajcie, zupa grzybowa prawie gotowa, tylko nie mówcie, co do niej wrzuciłam!"
+  }
  },
  "nv_orban": {
   "groups": "t1 (D101)",
   "brief": "rozczochrany mężczyzna z łopatą (boss)",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 45-55. Persona: dishevelled man with a shovel, unhinged cultist boss. Emotion: manic, ranting. High, cracked, frantic voice."
+  "el": "Native Polish. Studio quality. Male, 45-55. Persona: dishevelled man with a shovel, unhinged cultist boss. Emotion: manic, ranting. High, cracked, frantic voice.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_ork": {
   "groups": "t1 (D101)",
   "brief": "ork z karawany (podróż)",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 40-50, orc caravan driver. Emotion: friendly, gruff. Very deep, rumbling bass."
+  "el": "Native Polish. Studio quality. Male, 40-50, orc caravan driver. Emotion: friendly, gruff. Very deep, rumbling bass.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_patralis": {
   "groups": "a2_q3",
   "brief": "Patralis, karczmarka; ostrożna, potem chichocząca konspiratorka, prosta mowa („ludziska”)",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 50-60. Persona: tavern keeper and conspirator, simple speech. Emotion: cautious, then giggling. Homely, earthy, warm voice."
+  "el": "Native Polish. Studio quality. Female, 50-60. Persona: tavern keeper and conspirator, simple speech. Emotion: cautious, then giggling. Homely, earthy, warm voice.",
+  "omni": {
+   "instruct": "female, middle-aged, moderate pitch",
+   "style_text": "Ludziska tu różne gadają, ale ja nic nie słyszałam, he, he. Chyba że coś mi postawicie, kochani."
+  }
  },
  "nv_preesha": {
   "groups": "a1_q11",
   "brief": "Preesha, kobieta-hyrrinx z bimbrem; chrapliwy śmiech, ostre zęby, rubaszna",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 40-50, cat-folk moonshiner. Persona: bawdy, sharp-toothed. Emotion: amused, raucous. Raspy, smoky voice with a hoarse laugh."
+  "el": "Native Polish. Studio quality. Female, 40-50, cat-folk moonshiner. Persona: bawdy, sharp-toothed. Emotion: amused, raucous. Raspy, smoky voice with a hoarse laugh.",
+  "omni": {
+   "instruct": "female, middle-aged, low pitch",
+   "style_text": "Ha! Mój bimber postawi na nogi nawet trupa, kochanieńki. Jeden łyk i zapomnisz, jak się nazywasz!"
+  }
  },
  "nv_protektor": {
   "groups": "t1 (D101)",
   "brief": "Protektor Cytadeli (podróż Brynn)",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 40-50. Persona: protector of a fortress talking with a baroness on the road. Emotion: respectful, earnest. Steady, moderate baritone."
+  "el": "Native Polish. Studio quality. Male, 40-50. Persona: protector of a fortress talking with a baroness on the road. Emotion: respectful, earnest. Steady, moderate baritone.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_q10_jezdzczyni": {
   "groups": "a1_q10",
   "brief": "jeźdźczyni alerionów ze złamaną ręką; pospieszna, przepraszająca, zna swojego wierzchowca Jozę",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 25-35. Persona: rider with a broken arm who knows her mount well. Emotion: hurried, apologetic, pained. Bright, breathy mezzo, quick."
+  "el": "Native Polish. Studio quality. Female, 25-35. Persona: rider with a broken arm who knows her mount well. Emotion: hurried, apologetic, pained. Bright, breathy mezzo, quick.",
+  "omni": {
+   "instruct": "female, young adult, high pitch",
+   "style_text": "Przepraszam, ręka mi nie służy, ale znam go jak własną kieszeń. Uważajcie na lewe skrzydło, jest płochliwy."
+  }
  },
  "nv_q10_jezdziec": {
   "groups": "a1_q10",
   "brief": "jeździec alerionów (mężczyzna); uśmiechnięty, przed odejściem, życzliwy",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 30-40. Persona: rider of a winged mount. Emotion: friendly, smiling farewell. Warm, light baritone."
+  "el": "Native Polish. Studio quality. Male, 30-40. Persona: rider of a winged mount. Emotion: friendly, smiling farewell. Warm, light baritone.",
+  "omni": {
+   "instruct": "male, young adult, moderate pitch",
+   "style_text": "Wiatr sprzyja, mój skrzydlaty przyjaciel też. Bywajcie, może jeszcze kiedyś spotkamy się nad chmurami."
+  }
  },
  "nv_q10_straznik": {
   "groups": "a1_q10",
   "brief": "strażnik przy bramie Highmont; spanikowany okrzyk",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 20-30. Persona: young gate guard. Emotion: panicked shout. Strained, high tenor."
+  "el": "Native Polish. Studio quality. Male, 20-30. Persona: young gate guard. Emotion: panicked shout. Strained, high tenor.",
+  "omni": {
+   "instruct": "male, young adult, high pitch",
+   "style_text": "Alarm! Wrogowie pod bramą! Na mury, wszyscy na mury, szybko, nim będzie za późno!"
+  }
  },
  "nv_q11_bandyta_nekromanta": {
   "groups": "a1_q11",
   "brief": "bandyta z kosturem, ożywia zmarłych; mroczny, cyniczny",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 40-50. Persona: bandit with a staff who raises the dead. Emotion: dark, cynical. Hollow, cold, low voice."
+  "el": "Native Polish. Studio quality. Male, 40-50. Persona: bandit with a staff who raises the dead. Emotion: dark, cynical. Hollow, cold, low voice.",
+  "omni": {
+   "instruct": "male, middle-aged, low pitch, whisper",
+   "style_text": "Martwi są posłuszniejsi niż żywi. Nie narzekają, nie uciekają i nie proszą o zapłatę."
+  }
  },
  "nv_q11_kobieta_a": {
   "groups": "a1_q11",
   "brief": "podejrzliwa uchodźczyni; rozgniewana, nieufna, potem łagodnieje",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 40-50. Persona: suspicious refugee woman. Emotion: angry and distrustful, later softening. Sharp, tense alto."
+  "el": "Native Polish. Studio quality. Female, 40-50. Persona: suspicious refugee woman. Emotion: angry and distrustful, later softening. Sharp, tense alto.",
+  "omni": {
+   "instruct": "female, middle-aged, low pitch",
+   "style_text": "A skąd mam wiedzieć, że nie jesteście tacy jak tamci? Już raz zaufaliśmy obcym i źle na tym wyszliśmy."
+  }
  },
  "nv_q11_kobieta_b": {
   "groups": "a1_q11",
   "brief": "uchodźczyni z Highmont; gwałtowna obrończyni bohaterów",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 30-40. Persona: refugee from a highland town who fiercely defends the heroes. Emotion: passionate, fiery. Strong, ringing mezzo."
+  "el": "Native Polish. Studio quality. Female, 30-40. Persona: refugee from a highland town who fiercely defends the heroes. Emotion: passionate, fiery. Strong, ringing mezzo.",
+  "omni": {
+   "instruct": "female, young adult, moderate pitch",
+   "style_text": "Zostawcie ich w spokoju! Gdyby nie oni, połowa z nas leżałaby w rowie. Wstydźcie się!"
+  }
  },
  "nv_q11_kobieta_kufel": {
   "groups": "a1_q11",
   "brief": "kobieta w tawernie Azylu z kuflem; podpita, roztrzęsiona opowieścią o Uthukach",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 40-50. Persona: tipsy woman in a refugee tavern holding a tankard. Emotion: shaken, slurring a little. Husky, wobbly voice."
+  "el": "Native Polish. Studio quality. Female, 40-50. Persona: tipsy woman in a refugee tavern holding a tankard. Emotion: shaken, slurring a little. Husky, wobbly voice.",
+  "omni": {
+   "instruct": "female, middle-aged, low pitch",
+   "style_text": "Widziałam ich, mówię wam, widziałam! Przyszli nocą i spalili wszystko. Nalejcie mi jeszcze jednego."
+  }
  },
  "nv_q11_mlody_ork": {
   "groups": "a1_q11",
   "brief": "młody ork stolarz; ciekawy, nieufny wobec obcych",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 18-22, young orc carpenter. Emotion: curious but distrustful of strangers. Low but youthful voice, guarded."
+  "el": "Native Polish. Studio quality. Male, 18-22, young orc carpenter. Emotion: curious but distrustful of strangers. Low but youthful voice, guarded.",
+  "omni": {
+   "instruct": "male, teenager, low pitch",
+   "style_text": "A ty kto? Nie znam cię. Strugam deski dla obozu i nie potrzebuję, żeby ktoś zaglądał mi przez ramię."
+  }
  },
  "nv_q11_ork_ojciec": {
   "groups": "a1_q11",
   "brief": "ork z synem; opiekuńczy ojciec, gniewny wobec kłamców",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 40-50, orc father with his son. Emotion: protective, angry at liars. Deep, booming, gruff bass."
+  "el": "Native Polish. Studio quality. Male, 40-50, orc father with his son. Emotion: protective, angry at liars. Deep, booming, gruff bass.",
+  "omni": {
+   "instruct": "male, middle-aged, very low pitch",
+   "style_text": "Mój syn nie kłamie, a ja nie znoszę kłamców. Powtórz to jeszcze raz, a pożałujesz."
+  }
  },
  "nv_q11_pacjentka": {
   "groups": "a1_q11",
   "brief": "pacjentka z chorą nogą, haftuje; gadatliwa, senna po naparze",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 60-70. Persona: talkative patient doing embroidery, drowsy from herbal tea. Emotion: chatty, sleepy. Soft, rambling old voice."
+  "el": "Native Polish. Studio quality. Female, 60-70. Persona: talkative patient doing embroidery, drowsy from herbal tea. Emotion: chatty, sleepy. Soft, rambling old voice.",
+  "omni": {
+   "instruct": "female, elderly, moderate pitch",
+   "style_text": "Ach, ten napar tak mnie usypia. Ale spójrzcie, jaki ładny kwiatek wyszyłam, prawie skończony."
+  }
  },
  "nv_q11_rodzic": {
   "groups": "a1_q11",
   "brief": "rodzic dzieci przy studni; ulga, spokojny, ufny wobec Księcia Banity",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 35-45. Persona: refugee father watching his children. Emotion: relieved, calm, trusting. Gentle, even baritone."
+  "el": "Native Polish. Studio quality. Male, 35-45. Persona: refugee father watching his children. Emotion: relieved, calm, trusting. Gentle, even baritone.",
+  "omni": {
+   "instruct": "male, young adult, low pitch",
+   "style_text": "Dzieci są całe i zdrowe, chwała bogom. Wiedziałem, że tu będziemy bezpieczni, tak jak obiecywał."
+  }
  },
  "nv_q11_tlum": {
   "groups": "a1_q11",
   "brief": "ktoś z tłumu uchodźców; okrzyk ostrzeżenia",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 30-40. Persona: someone shouting from a crowd of refugees. Emotion: alarmed warning shout. Loud, rough voice."
+  "el": "Native Polish. Studio quality. Male, 30-40. Persona: someone shouting from a crowd of refugees. Emotion: alarmed warning shout. Loud, rough voice.",
+  "omni": {
+   "instruct": "male, middle-aged, high pitch",
+   "style_text": "Uważajcie! Z tyłu, za wozami, ktoś tam jest! Uciekajcie, prędzej!"
+  }
  },
  "nv_q11_uchodzca": {
   "groups": "a1_q11",
   "brief": "uchodźca opuszczający Azyl; ulga, wdzięczność",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 50-60. Persona: refugee leaving the camp. Emotion: relieved, grateful. Worn, warm voice."
+  "el": "Native Polish. Studio quality. Male, 50-60. Persona: refugee leaving the camp. Emotion: relieved, grateful. Worn, warm voice.",
+  "omni": {
+   "instruct": "male, elderly, moderate pitch",
+   "style_text": "Czas na nas. Dziękuję za dach nad głową i za dobre słowo. Niech was bogowie prowadzą."
+  }
  },
  "nv_q11_uzdrowiciel": {
   "groups": "a1_q11",
   "brief": "uzdrowiciel w Azylu; zmęczony, wdzięczny, przepracowany",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 50-60. Persona: overworked healer in a refugee camp. Emotion: tired, grateful, gentle. Soft, slightly hoarse baritone."
+  "el": "Native Polish. Studio quality. Male, 50-60. Persona: overworked healer in a refugee camp. Emotion: tired, grateful, gentle. Soft, slightly hoarse baritone.",
+  "omni": {
+   "instruct": "male, middle-aged, moderate pitch",
+   "style_text": "Trzeciej doby nie śpię, ale jakoś to będzie. Dziękuję wam, każde ręce do pomocy są tu na wagę złota."
+  }
  },
  "nv_q11_zbir": {
   "groups": "a1_q11",
   "brief": "zbir Księcia Banity przy drzwiach; kpiący, groźny",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 30-40. Persona: thug guarding a door for an outlaw prince. Emotion: mocking, threatening. Thick, gruff bass."
+  "el": "Native Polish. Studio quality. Male, 30-40. Persona: thug guarding a door for an outlaw prince. Emotion: mocking, threatening. Thick, gruff bass.",
+  "omni": {
+   "instruct": "male, middle-aged, very low pitch",
+   "style_text": "Dalej nie przejdziesz, mądralo. Szef nie lubi gości, a ja nie lubię, jak ktoś za dużo gada."
+  }
  },
  "nv_q12_banitka": {
   "groups": "a1_q12",
   "brief": "dawna znajoma Fuksa z bandy; szydercza",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 30-40. Persona: outlaw, old acquaintance of a thief. Emotion: sneering, sarcastic. Smoky, sly voice."
+  "el": "Native Polish. Studio quality. Female, 30-40. Persona: outlaw, old acquaintance of a thief. Emotion: sneering, sarcastic. Smoky, sly voice.",
+  "omni": {
+   "instruct": "female, young adult, low pitch",
+   "style_text": "No, no, stary kumpel. Myślałeś, że zapomniałam, jak nas zostawiłeś? Ja nigdy nie zapominam."
+  }
  },
  "nv_q12_duch": {
   "groups": "a1_q12",
   "brief": "upiór uwięzionej zdrajczyni Forthynu (szkielet); syczący, nienawistny wobec Forthynu, potem zgorzkniały głos z daleka",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, ghost of an imprisoned traitor, now a skeleton. Emotion: hissing, hateful, later bitter and distant. Thin, whispery, echoing voice."
+  "el": "Native Polish. Studio quality. Female, ghost of an imprisoned traitor, now a skeleton. Emotion: hissing, hateful, later bitter and distant. Thin, whispery, echoing voice.",
+  "omni": {
+   "instruct": "female, elderly, low pitch, whisper",
+   "style_text": "Forthyn zgnije tak jak ja. Słyszysz? Każdy kamień tego miasta zapłaci za moją niewolę."
+  }
  },
  "nv_q13_hybryda": {
   "groups": "a1_q13",
   "brief": "smocza hybryda, posłaniec Xenitha; warczący meldunek",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 30-40, dragon-blooded hybrid messenger. Emotion: growling report. Snarling, gravelly voice."
+  "el": "Native Polish. Studio quality. Male, 30-40, dragon-blooded hybrid messenger. Emotion: growling report. Snarling, gravelly voice.",
+  "omni": {
+   "instruct": "male, middle-aged, low pitch",
+   "style_text": "Wiadomość od dowódcy. Macie się stawić przed zmrokiem albo nie stawiać się wcale."
+  }
  },
  "nv_q13_smok": {
   "groups": "a1_q13",
   "brief": "duch martwego smoka (szkielet w klasztorze); potężny, dudniący, starożytny, ulotny; wdzięczny Marzycielowi (Vaerix), ironiczny wobec Xenitha",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, ancient dragon spirit, skeleton in a monastery. Emotion: grateful, ironic, majestic, fading. Enormous, booming, slow, resonant bass with a ghostly airy tail."
+  "el": "Native Polish. Studio quality. Male, ancient dragon spirit, skeleton in a monastery. Emotion: grateful, ironic, majestic, fading. Enormous, booming, slow, resonant bass with a ghostly airy tail.",
+  "omni": {
+   "instruct": "male, elderly, very low pitch",
+   "style_text": "Od tysiąca lat śnię w tych murach. Mało kto pamięta moje imię, ale ty, Marzycielu, wciąż je słyszysz."
+  }
  },
  "nv_q14_kucharz": {
   "groups": "a1_q14",
   "brief": "kucharz zamkowy, więzień; prychający, sarkastyczny, gadatliwy",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 50-60. Persona: castle cook held prisoner. Emotion: snorting, sarcastic, chatty. Fat, nasal, grumbling voice."
+  "el": "Native Polish. Studio quality. Male, 50-60. Persona: castle cook held prisoner. Emotion: snorting, sarcastic, chatty. Fat, nasal, grumbling voice.",
+  "omni": {
+   "instruct": "male, middle-aged, high pitch",
+   "style_text": "Hah! Więzienie, mówią. Gorzej niż w mojej kuchni nie będzie, choć tam przynajmniej było co jeść."
+  }
  },
  "nv_q14_stronnik": {
   "groups": "a1_q14",
   "brief": "stronnik barona Zacharetha; wykrzykuje wiadomość od barona",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 25-35. Persona: follower of a baron delivering a message. Emotion: urgent shouting. Clear, loud tenor."
+  "el": "Native Polish. Studio quality. Male, 25-35. Persona: follower of a baron delivering a message. Emotion: urgent shouting. Clear, loud tenor.",
+  "omni": {
+   "instruct": "male, young adult, moderate pitch",
+   "style_text": "Wiadomość od barona! Baron przesyła pozdrowienia i prosi, byście ruszali natychmiast!"
+  }
  },
  "nv_q14_wiezien_hybryda": {
   "groups": "a1_q14",
   "brief": "uwięziona hybryda (mężczyzna), „zdrajca” Levirax; zmęczony, gorzki",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 40-50, imprisoned dragon-blooded hybrid, branded a traitor. Emotion: tired, bitter. Rough, low, weary voice."
+  "el": "Native Polish. Studio quality. Male, 40-50, imprisoned dragon-blooded hybrid, branded a traitor. Emotion: tired, bitter. Rough, low, weary voice.",
+  "omni": {
+   "instruct": "male, middle-aged, low pitch",
+   "style_text": "Zdrajca, tak mnie nazwali. Bo odmówiłem palenia wiosek. Ciekawe, kto tu naprawdę zdradził."
+  }
  },
  "nv_q14_wskrzeszeniec": {
   "groups": "a1_q14",
   "brief": "wskrzeszeniec z legionu Waiqara; suchy, wątły głos jak pajęczyna na wietrze, urywany",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, undead soldier of a necromancer legion. Emotion: dry, broken. Brittle, frail, wheezing voice like a cobweb in the wind, halting."
+  "el": "Native Polish. Studio quality. Male, undead soldier of a necromancer legion. Emotion: dry, broken. Brittle, frail, wheezing voice like a cobweb in the wind, halting.",
+  "omni": {
+   "instruct": "male, elderly, high pitch, whisper",
+   "style_text": "Pan… mój pan woła… muszę iść… kości… bolą… nie pamiętam… swojego… imienia."
+  }
  },
  "nv_q14_zolnierka": {
   "groups": "a1_q14",
   "brief": "uwięziona żołnierka Forthynu; zmęczona, posiniaczona, ulga i nadzieja",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 25-35. Persona: imprisoned soldier, bruised and exhausted. Emotion: relief and hope. Tired, husky mezzo."
+  "el": "Native Polish. Studio quality. Female, 25-35. Persona: imprisoned soldier, bruised and exhausted. Emotion: relief and hope. Tired, husky mezzo.",
+  "omni": {
+   "instruct": "female, young adult, low pitch",
+   "style_text": "Myślałam, że nikt już po nas nie przyjdzie. Dziękuję. Dam radę iść, tylko pomóżcie mi wstać.",
+   "seeds": [
+    11,
+    23,
+    37,
+    51,
+    67,
+    89,
+    101
+   ]
+  }
  },
  "nv_q3_bandyta_skrzynia": {
   "groups": "a1_q3",
   "brief": "bandyta przy skrzyni, zna Fuksa; zaskoczony, zawistny rywal Fuksa, zuchwały",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 25-35. Persona: cocky bandit, envious old rival of a thief. Emotion: surprised, insolent, jealous. Brash, slightly high, cocky voice."
+  "el": "Native Polish. Studio quality. Male, 25-35. Persona: cocky bandit, envious old rival of a thief. Emotion: surprised, insolent, jealous. Brash, slightly high, cocky voice.",
+  "omni": {
+   "instruct": "male, young adult, high pitch",
+   "style_text": "No proszę, kogo my tu mamy! Zawsze myślałeś, że jesteś lepszy od nas, co? Zaraz zobaczymy!"
+  }
  },
  "nv_q3_herszt": {
   "groups": "a1_q3",
   "brief": "bandyta przy studni, najgroźniejszy z bandy; okrutny, kpiący, pewny siebie",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 35-45. Persona: the most dangerous bandit of a gang. Emotion: cruel, mocking, self-assured. Smooth, dark baritone with a menacing smile."
+  "el": "Native Polish. Studio quality. Male, 35-45. Persona: the most dangerous bandit of a gang. Emotion: cruel, mocking, self-assured. Smooth, dark baritone with a menacing smile.",
+  "omni": {
+   "instruct": "male, middle-aged, low pitch",
+   "style_text": "Ładnie tu, prawda? Cicho, spokojnie. Szkoda by było, gdyby ktoś musiał tu zostać na zawsze."
+  }
  },
  "nv_q9_blizniaki": {
   "groups": "a1_q9",
   "brief": "elfie bliźnięta z wizji; młode elfy, chichoczą, potem wyrzut; dziecięco-młodzieńczy, upiorny",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 16-20, elven twin ghost from a nightmare vision. Emotion: giggling, then reproachful and eerie. Light, youthful, airy tenor with a haunting edge."
+  "el": "Native Polish. Studio quality. Male, 16-20, elven twin ghost from a nightmare vision. Emotion: giggling, then reproachful and eerie. Light, youthful, airy tenor with a haunting edge.",
+  "omni": {
+   "instruct": "male, teenager, moderate pitch",
+   "style_text": "Pobaw się z nami, bracie! Dlaczego odszedłeś bez słowa? Dlaczego zostawiłeś nas samych w tej ciemności?",
+   "seeds": [
+    11,
+    23,
+    37,
+    51,
+    67,
+    89,
+    101
+   ]
+  }
  },
  "nv_saphar": {
   "groups": "a2_q1",
   "brief": "Saphar, uczona z Cytadeli; zapalona, wdzięczna, energiczna młoda kobieta",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 25-30. Persona: eager young scholar of a fortress library. Emotion: enthusiastic, grateful, energetic. Bright, quick soprano."
+  "el": "Native Polish. Studio quality. Female, 25-30. Persona: eager young scholar of a fortress library. Emotion: enthusiastic, grateful, energetic. Bright, quick soprano.",
+  "omni": {
+   "instruct": "female, young adult, high pitch",
+   "style_text": "Och, to wspaniałe! Wiecie, ile lat szukałam tej księgi? Dziękuję, naprawdę, nie wiem, jak wam dziękować!"
+  }
  },
  "nv_siostra_krwi": {
   "groups": "a1_q9 (typ wroga)",
   "brief": "siostra krwi / wiedźma krwi, sługa Ne'Krul; rechocząca, pogardliwa fanatyczka",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 30-40. Persona: blood witch, fanatical servant of a necromancer. Emotion: cackling, scornful, ecstatic. Sharp, sneering, slightly shrill voice."
+  "el": "Native Polish. Studio quality. Female, 30-40. Persona: blood witch, fanatical servant of a necromancer. Emotion: cackling, scornful, ecstatic. Sharp, sneering, slightly shrill voice.",
+  "omni": {
+   "instruct": "female, young adult, high pitch",
+   "style_text": "Krew woła krew! Nasza pani się ucieszy, gdy przyniesiemy jej wasze serca, jeszcze ciepłe!"
+  }
  },
  "nv_sq1_wiedzma": {
   "groups": "a1_sq1",
   "brief": "przemieniona wiedźma-potwór z resztką świadomości; ryczy, desperacja, wolałaby umrzeć",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, witch transformed into a monster with a remnant of mind. Emotion: roaring, desperate, wishing to die. Distorted, guttural, anguished voice."
+  "el": "Native Polish. Studio quality. Female, witch transformed into a monster with a remnant of mind. Emotion: roaring, desperate, wishing to die. Distorted, guttural, anguished voice.",
+  "omni": {
+   "instruct": "female, middle-aged, very low pitch",
+   "style_text": "Zabijcie mnie… proszę… nie mogę dłużej… ono jest we mnie… zróbcie to, zanim znów zapomnę!",
+   "seeds": [
+    11,
+    23,
+    37,
+    51,
+    67,
+    89,
+    101
+   ]
+  }
  },
  "nv_sq1_wyslannik": {
   "groups": "a1_sq1",
   "brief": "blady mężczyzna, nekromanta-wysłannik; drwiący, męski, wyniosły",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 40-50. Persona: pale necromancer envoy. Emotion: mocking, haughty. Cold, aristocratic, refined baritone."
+  "el": "Native Polish. Studio quality. Male, 40-50. Persona: pale necromancer envoy. Emotion: mocking, haughty. Cold, aristocratic, refined baritone.",
+  "omni": {
+   "instruct": "male, middle-aged, moderate pitch, whisper",
+   "style_text": "Mój pan przesyła wyrazy uznania. Szkoda, że nie dożyjecie, by je docenić."
+  }
  },
  "nv_straznik": {
   "groups": "t1 (D101)",
   "brief": "ranny strażnik w piwnicy (Q1)",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 45-55. Persona: wounded guard in a cellar. Emotion: pained, relieved. Low, strained baritone."
+  "el": "Native Polish. Studio quality. Male, 45-55. Persona: wounded guard in a cellar. Emotion: pained, relieved. Low, strained baritone.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_ta2_04_kobieta": {
   "groups": "travel_act2",
   "brief": "młoda kobieta prosząca Fuksa o pomoc; nieśmiała, szepcze, zaniepokojona",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 20-25. Persona: young village woman asking for help. Emotion: shy, whispering, anxious. Soft, timid soprano."
+  "el": "Native Polish. Studio quality. Female, 20-25. Persona: young village woman asking for help. Emotion: shy, whispering, anxious. Soft, timid soprano.",
+  "omni": {
+   "instruct": "female, young adult, high pitch, whisper",
+   "style_text": "Przepraszam, że przeszkadzam… słyszałam, że pan pomaga ludziom. Czy mógłby pan nas wysłuchać?"
+  }
  },
  "nv_ta2_czeladnik": {
   "groups": "travel_act2",
   "brief": "posłaniec Gildii Kamieniarzy (krasnolud); zdyszany, gorliwy, młody",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 18-25, young dwarf guild apprentice messenger. Emotion: out of breath, eager. Bright, youthful, gruff-edged voice."
+  "el": "Native Polish. Studio quality. Male, 18-25, young dwarf guild apprentice messenger. Emotion: out of breath, eager. Bright, youthful, gruff-edged voice.",
+  "omni": {
+   "instruct": "male, teenager, low pitch",
+   "style_text": "Uff, nareszcie was dogoniłem! Mistrz kazał przekazać wiadomość, ważną, bardzo ważną!"
+  }
  },
  "nv_ta2_gospodarz": {
   "groups": "travel_act2",
   "brief": "nieufny gospodarz z kuszą; szorstki, potem odprężony",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 50-60. Persona: wary farmer with a crossbow. Emotion: gruff, then relaxed. Rough, rural baritone."
+  "el": "Native Polish. Studio quality. Male, 50-60. Persona: wary farmer with a crossbow. Emotion: gruff, then relaxed. Rough, rural baritone.",
+  "omni": {
+   "instruct": "male, middle-aged, very low pitch",
+   "style_text": "Stójcie tam, gdzie stoicie. Ach, wy nie od tamtych. No dobrze, chodźcie, woda jest w studni."
+  }
  },
  "nv_ta2_karciarz": {
   "groups": "travel_act2",
   "brief": "wieśniak wygrywający w karty; dobroduszny, pocieszający",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 55-65. Persona: villager winning at cards. Emotion: good-natured, comforting. Jovial, warm, round voice."
+  "el": "Native Polish. Studio quality. Male, 55-65. Persona: villager winning at cards. Emotion: good-natured, comforting. Jovial, warm, round voice.",
+  "omni": {
+   "instruct": "male, elderly, moderate pitch",
+   "style_text": "Ech, nie przejmuj się, chłopcze. Dziś ja, jutro ty. Szczęście to kapryśna dama, wróci do ciebie."
+  }
  },
  "nv_ta2_kupiec": {
   "groups": "travel_act2",
   "brief": "kupiec porzucony przez ochroniarzy; roztrzęsiony, wdzięczny, gadatliwy",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 50-60. Persona: merchant abandoned by his guards. Emotion: shaken, grateful, talkative. Jittery, fast tenor."
+  "el": "Native Polish. Studio quality. Male, 50-60. Persona: merchant abandoned by his guards. Emotion: shaken, grateful, talkative. Jittery, fast tenor.",
+  "omni": {
+   "instruct": "male, middle-aged, moderate pitch",
+   "style_text": "Całe szczęście, że przyszliście! Ci łajdacy wzięli zaliczkę i uciekli w las. Jak ja się wam odwdzięczę?",
+   "seeds": [
+    11,
+    23,
+    37,
+    51,
+    67,
+    89,
+    101
+   ]
+  }
  },
  "nv_ta2_mag": {
   "groups": "travel_act2",
   "brief": "arogancki uczony mag z zepsutym wozem; wyniosły, zniecierpliwiony, protekcjonalny",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 45-55. Persona: arrogant scholarly mage stuck with a broken wagon. Emotion: haughty, impatient, condescending. Pompous, nasal, theatrical voice."
+  "el": "Native Polish. Studio quality. Male, 45-55. Persona: arrogant scholarly mage stuck with a broken wagon. Emotion: haughty, impatient, condescending. Pompous, nasal, theatrical voice.",
+  "omni": {
+   "instruct": "male, middle-aged, high pitch",
+   "style_text": "Doprawdy, czy ktokolwiek tutaj potrafi naprawić zwykłą oś? Nie płacę za to, by marznąć na trakcie!"
+  }
  },
  "nv_ta2_orczyca": {
   "groups": "travel_act2",
   "brief": "zawadiacka orczyca karciarka; urocza, pewna siebie, puszcza oko",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 25-35, orc card shark. Emotion: charming, cocky, winking. Low, playful, husky voice."
+  "el": "Native Polish. Studio quality. Female, 25-35, orc card shark. Emotion: charming, cocky, winking. Low, playful, husky voice.",
+  "omni": {
+   "instruct": "female, young adult, low pitch",
+   "style_text": "Znowu wygrałam? No proszę. Nie smuć się, przystojniaku, karty to tylko karty. Na szczęście!"
+  }
  },
  "nv_ta2_pielgrzym": {
   "groups": "travel_act2",
   "brief": "krasnolud z grupy pielgrzymów; zmęczony, zatroskany, krasnoludzki",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 60-70, dwarf pilgrim. Emotion: tired, worried. Deep, gravelly, earthy voice."
+  "el": "Native Polish. Studio quality. Male, 60-70, dwarf pilgrim. Emotion: tired, worried. Deep, gravelly, earthy voice.",
+  "omni": {
+   "instruct": "male, elderly, low pitch",
+   "style_text": "Szliśmy do świętej kuźni, a teraz nie wiemy, czy wrócimy do domu. Drogi są złe, synku, bardzo złe."
+  }
  },
  "nv_ta2_sierzant": {
   "groups": "travel_act2",
   "brief": "ranny sierżant eskorty uchodźców; zmęczony, wojskowy, salutuje",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 45-55. Persona: wounded sergeant escorting refugees. Emotion: tired, soldierly, saluting. Hoarse, firm baritone."
+  "el": "Native Polish. Studio quality. Male, 45-55. Persona: wounded sergeant escorting refugees. Emotion: tired, soldierly, saluting. Hoarse, firm baritone.",
+  "omni": {
+   "instruct": "male, middle-aged, low pitch",
+   "style_text": "Melduję, wozy całe, ludzie też. Ale ranni są, a tamci wrócą. Potrzebujemy waszej pomocy."
+  }
  },
  "nv_ta2_sluzacy": {
   "groups": "travel_act2",
   "brief": "służący w przydrożnej gospodzie; uprzejmy, usłużny",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 25-35. Persona: servant in a roadside inn. Emotion: polite, obliging. Light, smooth tenor."
+  "el": "Native Polish. Studio quality. Male, 25-35. Persona: servant in a roadside inn. Emotion: polite, obliging. Light, smooth tenor.",
+  "omni": {
+   "instruct": "male, young adult, high pitch",
+   "style_text": "Proszę wybaczyć, szanowni państwo. Zostawiono list, pilnowałem go jak oka w głowie."
+  }
  },
  "nv_uchodzca": {
   "groups": "t1 (D101)",
   "brief": "uchodźcy (podróż)",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 25-35. Persona: refugee on the road. Emotion: desperate, pleading. High, worried voice."
+  "el": "Native Polish. Studio quality. Female, 25-35. Persona: refugee on the road. Emotion: desperate, pleading. High, worried voice.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_warrick": {
   "groups": "q6",
   "brief": "Warrick, stary ork-rolnik; ciepły gawędziarz, zmęczone kości, podnosi ludzi na duchu, opowiada historie o duchach",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 65-75, orc farmer. Persona: old storyteller who cheers people up with ghost stories. Emotion: warm, folksy, chuckling. Deep, gravelly, rumbling bass, slow and cosy."
+  "el": "Native Polish. Studio quality. Male, 65-75, orc farmer. Persona: old storyteller who cheers people up with ghost stories. Emotion: warm, folksy, chuckling. Deep, gravelly, rumbling bass, slow and cosy.",
+  "omni": {
+   "instruct": "male, elderly, very low pitch",
+   "style_text": "Siadaj, siadaj, dziecko. Opowiem ci o duchu, co straszył w mojej stodole, ale najpierw nalej staremu kubek mleka."
+  }
  },
  "nv_widmo": {
   "groups": "t1 (D101)",
   "brief": "widmo, okrzyki w walce",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, ancient wraith shouting in combat. Emotion: hateful, mournful. Low, raspy, whispering, echoing voice."
+  "el": "Native Polish. Studio quality. Female, ancient wraith shouting in combat. Emotion: hateful, mournful. Low, raspy, whispering, echoing voice.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_wiesniak": {
   "groups": "t1 (D101)",
   "brief": "uwolniony wieśniak (Q1)",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 65-75. Persona: freed old villager. Emotion: grateful, shaky. Thin, creaky old voice."
+  "el": "Native Polish. Studio quality. Male, 65-75. Persona: freed old villager. Emotion: grateful, shaky. Thin, creaky old voice.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_wiezien": {
   "groups": "t1 (D101)",
   "brief": "uwolniony więzień (Q1)",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 25-35. Persona: freed prisoner. Emotion: relieved, nervous. Plain, moderate tenor."
+  "el": "Native Polish. Studio quality. Male, 25-35. Persona: freed prisoner. Emotion: relieved, nervous. Plain, moderate tenor.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_xain": {
   "groups": "t1 (D101)",
   "brief": "porucznik smoczego miotu (boss)",
   "gender": "male",
-  "el": "Native Polish. Studio quality. Male, 25-35, dragon-blooded brood lieutenant boss. Emotion: arrogant, menacing. Very deep, growling bass."
+  "el": "Native Polish. Studio quality. Male, 25-35, dragon-blooded brood lieutenant boss. Emotion: arrogant, menacing. Very deep, growling bass.",
+  "omni": "referencja z t1 (docs/CASTING.md, E16)"
  },
  "nv_zarzadczyni": {
   "groups": "a1_q10",
   "brief": "zarządczyni zamku Highmont; opanowana, zdyszana, oddana służąca baronessy",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 50-60. Persona: castle stewardess, devoted servant of a baroness. Emotion: composed but breathless, efficient. Clear, proper, mid-low voice."
+  "el": "Native Polish. Studio quality. Female, 50-60. Persona: castle stewardess, devoted servant of a baroness. Emotion: composed but breathless, efficient. Clear, proper, mid-low voice.",
+  "omni": {
+   "instruct": "female, middle-aged, moderate pitch",
+   "style_text": "Pani, posłaniec czeka w sieni, a kuchnia pyta o wieczerzę. Wszystko przygotuję, proszę się nie martwić."
+  }
  },
  "nv_zerai": {
   "groups": "a1_q14",
   "brief": "porucznik Zerai, smocza hybryda w zbroi oficera (kobieta); drwiąca, pewna siebie",
   "gender": "female",
-  "el": "Native Polish. Studio quality. Female, 35-45, dragon-blooded hybrid lieutenant in officer armour. Emotion: mocking, confident. Cold, metallic, low alto."
+  "el": "Native Polish. Studio quality. Female, 35-45, dragon-blooded hybrid lieutenant in officer armour. Emotion: mocking, confident. Cold, metallic, low alto.",
+  "omni": {
+   "instruct": "female, middle-aged, low pitch",
+   "style_text": "Ach, bohaterowie. Jakie to urocze. Moi żołnierze dawno nie mieli tak zabawnego przeciwnika."
+  }
  }
 }

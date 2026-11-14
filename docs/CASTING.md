@@ -140,7 +140,94 @@ Bohater wskazany luką (`{0}`) mówi głosem bohatera z argumentu okna (`arg:N`)
 
 ## E17: mówcy bez imienia w wersji produkcyjnej (D107, wydanie `m4`)
 
-Każda postać bez imienia ma własny głos ElevenLabs, a typ wroga jeden głos. Mówców pogrupowaliśmy według misji i kontekstu w ręcznym przeglądzie wszystkich okien narratora (`src/lektor/data/speakers_prod.json`). Głosy testowe t1 (tabela wyżej) też dostają głosy ElevenLabs. `nv_ynfernael` to Baelziffar (`nv_baelziffar`).
+Każda postać bez imienia ma własny głos, a typ wroga jeden głos. Mówców pogrupowaliśmy według misji i kontekstu w ręcznym przeglądzie wszystkich okien narratora (`src/lektor/data/speakers_prod.json`). `nv_ynfernael` z t1 to Baelziffar (`nv_baelziffar`, nowy projekt).
 
-- 99 głosów: 80 nowych i 19 z t1. Opisy (kto mówi, z kontekstu wszystkich kwestii, oraz opis do `text_to_voice`) są w `analysis/tools/voice_designs_prod.json`.
-- Projekt, odsłuch i wybór głosów przez QA, z portretem z gry tam, gdzie postać go ma (D41). Wybrane `voice_id` trafiają do `direction.ELEVEN_VOICES_PROD` i do tej sekcji.
+- Głosy nagrywa model lokalny OmniVoice (decyzja użytkownika 2026-11-14). Profilu ElevenLabs nie da się odtworzyć, a 99 głosów nie mieści się na koncie.
+- 19 głosów z t1 (tabela wyżej) zostaje przy swoich referencjach.
+- 80 nowych głosów ma profil postaci z kontekstu wszystkich jej kwestii (`omni` w `analysis/tools/voice_designs_prod.json`): płeć, wiek, wysokość, szept i własne zdanie w stylu postaci (nie tekst gry).
+- Projekt i wybór: `analysis/tools/new_voices_prod.py`, trzy ziarna na profil, wybór automatem bez odsłuchu (QA 2026-11-14).
+
+Wybrane głosy (automat: najmniejszy CER, wysokość w zakresie płci, a z dobrych najdalej od narratora, obsady i głosów wybranych wcześniej). `nv_q9_blizniaki` i `nv_ta2_kupiec` dostały nowe zdanie po nieudanym pierwszym projekcie (CER 6,35 i 0,85). Cztery głosy za bliskie innym dostały siedem ziaren zamiast trzech. Najbliższe pary barwy po wyborze: `nv_kowalka`~`nv_crayleth` 0,943, `nv_gont`~`nv_crayleth` 0,934, `nv_nekromanta`~`nv_a2q8_zamiatacz` 0,933.
+
+| Głos | Kto mówi | Opis OmniVoice | Ziarno | Referencja | Fragmenty |
+|---|---|---|---:|---|---:|
+| `nv_a2q11_medyk` | uratowany medyk Cytadeli | `male, young adult, moderate pitch` | 23 | 6,36 s, SHA `654af252` | 1 |
+| `nv_a2q11_protektor` | uratowany Protektor Cytadeli | `male, middle-aged, moderate pitch` | 23 | 7,16 s, SHA `80cd3497` | 1 |
+| `nv_a2q11_wojowniczka` | ranna wojowniczka Cytadeli | `female, middle-aged, low pitch` | 11 | 6,52 s, SHA `98c51557` | 1 |
+| `nv_a2q11_zolnierz` | ranny żołnierz z manierką | `male, young adult, high pitch` | 11 | 6,68 s, SHA `4dd136a6` | 1 |
+| `nv_a2q2_straznik` | strażnik więzienia (most zwodzony) | `male, middle-aged, moderate pitch` | 37 | 4,23 s, SHA `5b8a38b5` | 1 |
+| `nv_a2q3_bandyta` | banita z zasadzki | `male, young adult, moderate pitch` | 11 | 3,32 s, SHA `4385d679` | 1 |
+| `nv_a2q3_strazniczka` | strażniczka w karczmie | `female, middle-aged, low pitch` | 11 | 7,24 s, SHA `5b797414` | 1 |
+| `nv_a2q3_straznik` | strażnik pod urokiem (nieobecny wzrok) | `male, middle-aged, low pitch` | 37 | 5,16 s, SHA `9fbb184e` | 1 |
+| `nv_a2q3_zolnierz` | żołnierz w karczmie | `male, middle-aged, low pitch` | 37 | 7,61 s, SHA `7d09f2e6` | 1 |
+| `nv_a2q5_hybryda` | hybryda zwiadowca | `male, young adult, low pitch` | 37 | 3,74 s, SHA `8d91ea40` | 2 |
+| `nv_a2q5_lowczyni` | łowczyni (hybryda) ścigająca Narę | `female, young adult, low pitch` | 37 | 5,82 s, SHA `d82d73f7` | 1 |
+| `nv_a2q7_wygnaniec` | mężczyzna przy płonącej studni (wygnaniec w Jaskini Snów) | `male, young adult, low pitch` | 23 | 6,73 s, SHA `d14b35e0` | 1 |
+| `nv_a2q8_bibliotekarka` | bibliotekarka opactwa, widzi przyszłość | `female, elderly, moderate pitch` | 37 | 7,71 s, SHA `59179837` | 10 |
+| `nv_a2q8_kronikarz` | kronikarz opactwa, stary kotoczłek, dawny wędrowiec | `male, elderly, high pitch` | 11 | 8,53 s, SHA `6af22bf9` | 11 |
+| `nv_a2q8_ogrodniczka` | gnomka ogrodniczka w opactwie, rozmawia z duchami | `female, middle-aged, very high pitch` | 11 | 7,08 s, SHA `50b8928a` | 18 |
+| `nv_a2q8_zamiatacz` | młodzieniec w opactwie, porzucił czarnoksięstwo | `male, young adult, moderate pitch, whisper` | 23 | 7,72 s, SHA `d4397af7` | 10 |
+| `nv_baelziffar` | Baelziffar, demon Ynfernaelu, głos w głowie Galadena | `male, elderly, very low pitch, whisper` | 11 | 9,08 s, SHA `1bdbb154` | 14 |
+| `nv_crayleth` | Crayleth, Pierwsza Włóczniczka Levirax | `female, middle-aged, very low pitch` | 101 | 7,67 s, SHA `303e32bd` | 5 |
+| `nv_czerwona_gwiazda` | Czerwona Gwiazda, najmłodsza z poległych, uzdrowicielka we śnie | `female, young adult, high pitch` | 37 | 7,48 s, SHA `e1b41445` | 1 |
+| `nv_dalavel` | Dalavel, starsza elfka, mentorka Galadena (wizja) | `female, elderly, moderate pitch` | 11 | 7,51 s, SHA `e7d16fdb` | 3 |
+| `nv_denavel` | Denavel, poległy kuzyn Galadena we śnie (elf, mówi na migi) | `male, young adult, moderate pitch, whisper` | 11 | 7,72 s, SHA `f388a369` | 2 |
+| `nv_edgar` | Edgar Przecieracz Szlaków, posłaniec Carthridge | `male, middle-aged, low pitch` | 37 | 7,48 s, SHA `b8279ecc` | 9 |
+| `nv_fof_kapitan` | kapitan straży Fallowhearth, mężczyzna, kusznik | `male, middle-aged, low pitch` | 23 | 8,41 s, SHA `0321dd00` | 18 |
+| `nv_fof_mieszkanka` | kobieta z Fallowhearth | `female, middle-aged, moderate pitch` | 23 | 8,2 s, SHA `59ea416d` | 1 |
+| `nv_fulminar` | Fulminar, potężny smok, władca Navoth | `male, elderly, very low pitch` | 11 | 7,68 s, SHA `41ef5a0a` | 8 |
+| `nv_gorzae` | Gorzae, nadzorczyni sądowa | `female, middle-aged, moderate pitch` | 23 | 8,52 s, SHA `dd42c551` | 4 |
+| `nv_gravia` | Gravia Kein, Opiekunka Cytadeli, umierająca od trucizny | `female, elderly, low pitch` | 67 | 8,09 s, SHA `bc7a7084` | 14 |
+| `nv_honora` | Honora, dowódczyni lojalistów, artystka | `female, middle-aged, moderate pitch` | 23 | 8,44 s, SHA `692eb144` | 3 |
+| `nv_lisb_naukowiec` | człowiek w szatach, naukowiec/agent | `male, middle-aged, high pitch` | 23 | 8,04 s, SHA `0df29c99` | 3 |
+| `nv_lisb_wartownik_a` | wartownik hybryda (pierwszy) | `male, young adult, moderate pitch` | 11 | 7,71 s, SHA `20cbeba2` | 1 |
+| `nv_lisb_wartownik_b` | wartownik hybryda (drugi) | `male, middle-aged, very low pitch` | 23 | 7,24 s, SHA `5f0ba5e9` | 2 |
+| `nv_lisb_zwiadowca` | zwiadowca smoczych hybryd | `male, young adult, low pitch` | 11 | 7,85 s, SHA `09671894` | 2 |
+| `nv_nicodemus` | Nicodemus, młody żołnierz buntowników | `male, teenager, moderate pitch` | 11 | 7,64 s, SHA `db12f2a6` | 2 |
+| `nv_ocella` | ciotka Ocella, stara zielarka w kniei | `female, elderly, high pitch` | 23 | 9,31 s, SHA `ec6cc6b2` | 25 |
+| `nv_patralis` | Patralis, karczmarka | `female, middle-aged, moderate pitch` | 23 | 7,88 s, SHA `327c5fe4` | 10 |
+| `nv_preesha` | Preesha, kobieta-hyrrinx z bimbrem | `female, middle-aged, low pitch` | 11 | 7,7 s, SHA `c96d3623` | 4 |
+| `nv_q10_jezdzczyni` | jeźdźczyni alerionów ze złamaną ręką | `female, young adult, high pitch` | 11 | 8,23 s, SHA `d2a0a294` | 3 |
+| `nv_q10_jezdziec` | jeździec alerionów (mężczyzna) | `male, young adult, moderate pitch` | 37 | 7,91 s, SHA `5840b71c` | 4 |
+| `nv_q10_straznik` | strażnik przy bramie Highmont | `male, young adult, high pitch` | 37 | 6,43 s, SHA `c3d24e2a` | 1 |
+| `nv_q11_bandyta_nekromanta` | bandyta z kosturem, ożywia zmarłych | `male, middle-aged, low pitch, whisper` | 11 | 7,0 s, SHA `27788e15` | 1 |
+| `nv_q11_kobieta_a` | podejrzliwa uchodźczyni | `female, middle-aged, low pitch` | 37 | 8,36 s, SHA `b5e86193` | 4 |
+| `nv_q11_kobieta_b` | uchodźczyni z Highmont | `female, young adult, moderate pitch` | 23 | 7,0 s, SHA `58bb629a` | 1 |
+| `nv_q11_kobieta_kufel` | kobieta w tawernie Azylu z kuflem | `female, middle-aged, low pitch` | 23 | 8,12 s, SHA `bd0acf8f` | 3 |
+| `nv_q11_mlody_ork` | młody ork stolarz | `male, teenager, low pitch` | 23 | 8,2 s, SHA `41f37cac` | 1 |
+| `nv_q11_ork_ojciec` | ork z synem | `male, middle-aged, very low pitch` | 37 | 6,18 s, SHA `54d240fe` | 1 |
+| `nv_q11_pacjentka` | pacjentka z chorą nogą, haftuje | `female, elderly, moderate pitch` | 37 | 7,64 s, SHA `aa13f172` | 5 |
+| `nv_q11_rodzic` | rodzic dzieci przy studni | `male, young adult, low pitch` | 37 | 7,53 s, SHA `b4773d22` | 1 |
+| `nv_q11_tlum` | ktoś z tłumu uchodźców | `male, middle-aged, high pitch` | 11 | 5,25 s, SHA `70697be9` | 1 |
+| `nv_q11_uchodzca` | uchodźca opuszczający Azyl | `male, elderly, moderate pitch` | 11 | 7,0 s, SHA `98b24987` | 1 |
+| `nv_q11_uzdrowiciel` | uzdrowiciel w Azylu | `male, middle-aged, moderate pitch` | 11 | 8,1 s, SHA `188a7b65` | 1 |
+| `nv_q11_zbir` | zbir Księcia Banity przy drzwiach | `male, middle-aged, very low pitch` | 11 | 7,48 s, SHA `93afae20` | 2 |
+| `nv_q12_banitka` | dawna znajoma Fuksa z bandy | `female, young adult, low pitch` | 23 | 7,48 s, SHA `7d35654a` | 1 |
+| `nv_q12_duch` | upiór uwięzionej zdrajczyni Forthynu (szkielet) | `female, elderly, low pitch, whisper` | 11 | 7,01 s, SHA `a9e71a3b` | 3 |
+| `nv_q13_hybryda` | smocza hybryda, posłaniec Xenitha | `male, middle-aged, low pitch` | 11 | 6,14 s, SHA `ebe99ec7` | 1 |
+| `nv_q13_smok` | duch martwego smoka (szkielet w klasztorze) | `male, elderly, very low pitch` | 23 | 8,18 s, SHA `7056dd92` | 27 |
+| `nv_q14_kucharz` | kucharz zamkowy, więzień | `male, middle-aged, high pitch` | 37 | 7,29 s, SHA `ae8ebaee` | 4 |
+| `nv_q14_stronnik` | stronnik barona Zacharetha | `male, young adult, moderate pitch` | 37 | 6,43 s, SHA `946a798f` | 2 |
+| `nv_q14_wiezien_hybryda` | uwięziona hybryda (mężczyzna), „zdrajca” Levirax | `male, middle-aged, low pitch` | 37 | 6,89 s, SHA `280320b3` | 2 |
+| `nv_q14_wskrzeszeniec` | wskrzeszeniec z legionu Waiqara | `male, elderly, high pitch, whisper` | 11 | 6,12 s, SHA `a3393aed` | 3 |
+| `nv_q14_zolnierka` | uwięziona żołnierka Forthynu | `female, young adult, low pitch` | 101 | 7,09 s, SHA `8a04e14b` | 5 |
+| `nv_q3_bandyta_skrzynia` | bandyta przy skrzyni, zna Fuksa | `male, young adult, high pitch` | 23 | 6,67 s, SHA `2a5a7fc0` | 1 |
+| `nv_q3_herszt` | bandyta przy studni, najgroźniejszy z bandy | `male, middle-aged, low pitch` | 23 | 6,85 s, SHA `d46bc649` | 2 |
+| `nv_q9_blizniaki` | elfie bliźnięta z wizji | `male, teenager, moderate pitch` | 37 | 8,44 s, SHA `44eb9e4f` | 2 |
+| `nv_saphar` | Saphar, uczona z Cytadeli | `female, young adult, high pitch` | 11 | 8,24 s, SHA `f07b2b27` | 10 |
+| `nv_siostra_krwi` | siostra krwi / wiedźma krwi, sługa Ne'Krul | `female, young adult, high pitch` | 23 | 7,32 s, SHA `c7149646` | 6 |
+| `nv_sq1_wiedzma` | przemieniona wiedźma-potwór z resztką świadomości | `female, middle-aged, very low pitch` | 11 | 7,17 s, SHA `2602754f` | 11 |
+| `nv_sq1_wyslannik` | blady mężczyzna, nekromanta-wysłannik | `male, middle-aged, moderate pitch, whisper` | 11 | 6,04 s, SHA `40b65840` | 25 |
+| `nv_ta2_04_kobieta` | młoda kobieta prosząca Fuksa o pomoc | `female, young adult, high pitch, whisper` | 11 | 7,64 s, SHA `a9216373` | 2 |
+| `nv_ta2_czeladnik` | posłaniec Gildii Kamieniarzy (krasnolud) | `male, teenager, low pitch` | 11 | 6,92 s, SHA `f64cd205` | 4 |
+| `nv_ta2_gospodarz` | nieufny gospodarz z kuszą | `male, middle-aged, very low pitch` | 11 | 7,56 s, SHA `11bc334e` | 1 |
+| `nv_ta2_karciarz` | wieśniak wygrywający w karty | `male, elderly, moderate pitch` | 37 | 7,65 s, SHA `39518c70` | 1 |
+| `nv_ta2_kupiec` | kupiec porzucony przez ochroniarzy | `male, middle-aged, moderate pitch` | 51 | 8,44 s, SHA `59bfa80e` | 1 |
+| `nv_ta2_mag` | arogancki uczony mag z zepsutym wozem | `male, middle-aged, high pitch` | 23 | 8,04 s, SHA `49f39b7c` | 5 |
+| `nv_ta2_orczyca` | zawadiacka orczyca karciarka | `female, young adult, low pitch` | 23 | 6,93 s, SHA `a25d6f9a` | 1 |
+| `nv_ta2_pielgrzym` | krasnolud z grupy pielgrzymów | `male, elderly, low pitch` | 37 | 7,96 s, SHA `9e1640d6` | 1 |
+| `nv_ta2_sierzant` | ranny sierżant eskorty uchodźców | `male, middle-aged, low pitch` | 37 | 7,07 s, SHA `b6bb1fa5` | 2 |
+| `nv_ta2_sluzacy` | służący w przydrożnej gospodzie | `male, young adult, high pitch` | 23 | 6,42 s, SHA `dd19feb5` | 1 |
+| `nv_warrick` | Warrick, stary ork-rolnik | `male, elderly, very low pitch` | 11 | 8,88 s, SHA `e78b95f3` | 15 |
+| `nv_zarzadczyni` | zarządczyni zamku Highmont | `female, middle-aged, moderate pitch` | 37 | 8,44 s, SHA `7dae77c3` | 5 |
+| `nv_zerai` | porucznik Zerai, smocza hybryda w zbroi oficera (kobieta) | `female, middle-aged, low pitch` | 37 | 7,48 s, SHA `3a8e73e5` | 1 |

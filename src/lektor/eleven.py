@@ -183,12 +183,6 @@ def generate(limit=None, voices=None, retake_file=None, dry_run=False, max_credi
     state = load_state()
     done = inherited(con)
     todo = [j for j in jobs(con, voices, retake) if (j[0], j[1]) not in state and j[0] not in done]
-    pending = [j for j in todo if j[3] not in D.ELEVEN_VOICES]     # D107: głosy nv_* przed projektem (bez voice_id)
-    if pending:
-        print('bez voice_id: %d głosów, %d podejść, %d znaków (ok. %d kredytów)' % (
-            len({j[3] for j in pending}), len(pending), sum(len(j[2]) for j in pending),
-            round(sum(len(j[2]) for j in pending) * RATE)), file=sys.stderr, flush=True)
-        todo = [j for j in todo if j[3] in D.ELEVEN_VOICES]
     if limit:
         todo = todo[:limit]
     chars = sum(len(j[2]) for j in todo)

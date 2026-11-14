@@ -62,8 +62,8 @@ def test_needed_takes_by_engine():
 
 
 def test_m4_inherits_own_engine_and_adopts_unchosen_takes(tmp_path, monkeypatch):
-    """D107: m4 przejmuje wybory t1 i m3 tylko w silniku głosu (nv_* w t1 z OmniVoice odpada), a podejścia
-    OmniVoice z m3 bez wyboru trafiają do takes.jsonl m4 do oceny."""
+    """D107: m4 przejmuje wybory t1 i m3 tylko w silniku głosu (głos ElevenLabs nagrany w t1 przez OmniVoice odpada),
+    a podejścia OmniVoice z m3 bez wyboru trafiają do takes.jsonl m4 do oceny."""
     monkeypatch.setattr(paths, 'WORK', str(tmp_path))
 
     def release(name, choice=None, takes=()):
@@ -76,18 +76,19 @@ def test_m4_inherits_own_engine_and_adopts_unchosen_takes(tmp_path, monkeypatch)
         for t in takes:
             (d / 'takes' / ('%s_t%d.wav' % (t['fragment'], t['take']))).write_bytes(b'x')
 
-    release('t1', {'n': {'take': 1, 'voice': 'narrator'}, 'v': {'take': 1, 'voice': 'nv_bandyta'}})
+    release('t1', {'n': {'take': 1, 'voice': 'narrator'}, 'v': {'take': 1, 'voice': 'nv_bandyta'}, 'm': {'take': 1, 'voice': 'magrit'}})
     release('m3', {'n': {'take': 2, 'voice': 'narrator'}, 'x': {'take': 1, 'voice': 'syrus'}},
             [{'fragment': 'u', 'take': 1, 'voice': 'syrus'}, {'fragment': 'x', 'take': 1, 'voice': 'syrus'}])
     paths.use('m4')
     try:
         (tmp_path / 'audio' / 'm4').mkdir(parents=True)
         monkeypatch.setattr(paths, 'AUDIO', str(tmp_path / 'audio' / 'm4'))
-        con = fragments_db([('n', 'narrator', 1.4, 'a'), ('v', 'nv_bandyta', None, 'b'), ('x', 'syrus', None, 'c'),
+        con = fragments_db([('n', 'narrator', 1.4, 'a'), ('v', 'nv_bandyta', None, 'b'), ('m', 'magrit', None, 'e'), ('x', 'syrus', None, 'c'),
                             ('u', 'syrus', None, 'd')])
         done = synth.inherit(con)
-        assert done == {'n': {'take': 1, 'voice': 'narrator'}, 'x': {'take': 1, 'voice': 'syrus'}}
-        assert D.engine('nv_bandyta') == 'elevenlabs'
+        assert done == {'n': {'take': 1, 'voice': 'narrator'}, 'v': {'take': 1, 'voice': 'nv_bandyta'},
+                        'x': {'take': 1, 'voice': 'syrus'}}
+        assert D.engine('nv_bandyta') == 'omnivoice' and D.engine('magrit') == 'elevenlabs'
         assert synth.adopt(con, done) == 1 and ('u', 1) in synth.load_state()
         assert synth.adopt(con, done) == 0
     finally:

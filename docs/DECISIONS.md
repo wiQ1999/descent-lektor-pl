@@ -1078,12 +1078,12 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - Reguły t1 (D101–D106) obowiązują w całej grze. Narrator ma jedno tempo `SPEED_MAX` w całej grze.
 - Głosy w oknach narratora pochodzą z ręcznego przeglądu wszystkich 915 okien spoza t1: `src/lektor/data/speakers_prod.json`, budowany przez `analysis/tools/speakers_freeze.py`.
 - Mówców bez imienia grupujemy według misji i kontekstu. Każda postać ma własny głos, a typ wroga jeden głos. Głos z Ynfernaelu z t1 to Baelziffar.
-- Wszystkie głosy `nv_*` (99, w tym 19 z t1) czyta ElevenLabs. Opis głosu powstaje z kontekstu wszystkich kwestii postaci (`analysis/tools/voice_designs_prod.json`), a `voice_id` trafia do `direction.ELEVEN_VOICES_PROD`.
+- Głosy `nv_*` (99) powstają w modelu lokalnym OmniVoice, żeby nie usuwać profili z konta ElevenLabs (plan Creator ma 30 miejsc). 19 głosów z t1 zostaje, a 80 nowych ma profil postaci z kontekstu wszystkich jej kwestii (`omni` w `analysis/tools/voice_designs_prod.json`: płeć, wiek, wysokość, szept i własne zdanie w stylu postaci). Wybór ziarna robi automat (`analysis/tools/new_voices_prod.py`), bez odsłuchu.
 - Opcje wyboru z półpauzą czyta narrator, jak w t1.
-- Limit ElevenLabs dla m4 to 60 tys. kredytów, jak limit klucza API (`MAX_CREDITS` w `e14_run.sh`). Głosy `nv_*` wybiera automat, bez odsłuchu przed generowaniem.
-- OmniVoice rusza od razu (2026-11-14 wieczorem, `ELEVEN=0`), ElevenLabs po odnowieniu limitu i projekcie głosów. Sposób zmieszczenia 99 głosów na koncie (plan Creator, 30 miejsc) czeka na decyzję.
+- Limit ElevenLabs dla m4 to 60 tys. kredytów, jak limit klucza API (`MAX_CREDITS` w `e14_run.sh`). 
+- OmniVoice rusza od razu (2026-11-14 wieczorem, `ELEVEN=0`), ElevenLabs po odnowieniu limitu.
 
-**Uzasadnienie:** QA użytkownika 2026-11-14 (tempo w całej grze, mówcy bez imienia w ElevenLabs, bo nie są kopią głosów z dubbingu, opcje bez zmian). Liczby i szacunek: `analysis/E17_PREP.md`.
+**Uzasadnienie:** QA użytkownika 2026-11-14 (tempo w całej grze, unikatowy głos każdej postaci bez imienia, opcje bez zmian, limit kredytów, wybór automatem). Mówcy bez imienia mieli najpierw dostać głosy ElevenLabs; po pytaniu o odtwarzalność profili użytkownik wybrał model lokalny z opisanymi profilami. Liczby i szacunek: `analysis/E17_PREP.md`.
 
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 

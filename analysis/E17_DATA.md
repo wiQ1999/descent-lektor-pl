@@ -1,6 +1,6 @@
 # E17: baza kwestii wersji produkcyjnej (m4)
 
-Wygenerowano przez `python -I -m lektor report` z `analysis/work/lektor/m4.sqlite` (zbudowana 2026-11-14T21:34:42, pakiet 0.1.0, model `omnivoice-08be0b4-fp32-s32-cfg2.0`, manifest gry `fddf8aedeb14`). Raport zawiera tylko liczby i klucze techniczne.
+Wygenerowano przez `python -I -m lektor report` z `analysis/work/lektor/m4.sqlite` (zbudowana 2026-11-15T00:47:29, pakiet 0.1.0, model `omnivoice-08be0b4-fp32-s32-cfg2.0`, manifest gry `fddf8aedeb14`). Raport zawiera tylko liczby i klucze techniczne.
 
 ## Kwestie
 
@@ -490,7 +490,7 @@ Opcje wyboru z cytatem bez rozpoznanego bohatera (cytat głosem narratora): 53.
 - `TANGERINE_EVENT_8B_THE_GATES_OF_THELGRIM_13F_I14F`
 - `TANGERINE_EVENT_8B_THE_GATES_OF_THELGRIM_13F_R14F`
 
-Głosy fragmentów bez referencji w bazie: `alys`, `arden`, `balthain`, `button`, `drys`, `ducard`, `grace`, `greigory`, `laurel`, `magrit`, `meza`, `morant`, `nara`, `nv_a2q11_medyk`, `nv_a2q11_protektor`, `nv_a2q11_wojowniczka`, `nv_a2q11_zolnierz`, `nv_a2q2_straznik`, `nv_a2q3_bandyta`, `nv_a2q3_strazniczka`, `nv_a2q3_straznik`, `nv_a2q3_zolnierz`, `nv_a2q5_hybryda`, `nv_a2q5_lowczyni`, `nv_a2q7_wygnaniec`, `nv_a2q8_bibliotekarka`, `nv_a2q8_kronikarz`, `nv_a2q8_ogrodniczka`, `nv_a2q8_zamiatacz`, `nv_baelziffar`, `nv_crayleth`, `nv_czerwona_gwiazda`, `nv_dalavel`, `nv_denavel`, `nv_edgar`, `nv_fof_kapitan`, `nv_fof_mieszkanka`, `nv_fulminar`, `nv_gorzae`, `nv_gravia`, `nv_honora`, `nv_lisb_naukowiec`, `nv_lisb_wartownik_a`, `nv_lisb_wartownik_b`, `nv_lisb_zwiadowca`, `nv_nicodemus`, `nv_ocella`, `nv_patralis`, `nv_preesha`, `nv_q10_jezdzczyni`, `nv_q10_jezdziec`, `nv_q10_straznik`, `nv_q11_bandyta_nekromanta`, `nv_q11_kobieta_a`, `nv_q11_kobieta_b`, `nv_q11_kobieta_kufel`, `nv_q11_mlody_ork`, `nv_q11_ork_ojciec`, `nv_q11_pacjentka`, `nv_q11_rodzic`, `nv_q11_tlum`, `nv_q11_uchodzca`, `nv_q11_uzdrowiciel`, `nv_q11_zbir`, `nv_q12_banitka`, `nv_q12_duch`, `nv_q13_hybryda`, `nv_q13_smok`, `nv_q14_kucharz`, `nv_q14_stronnik`, `nv_q14_wiezien_hybryda`, `nv_q14_wskrzeszeniec`, `nv_q14_zolnierka`, `nv_q3_bandyta_skrzynia`, `nv_q3_herszt`, `nv_q9_blizniaki`, `nv_saphar`, `nv_siostra_krwi`, `nv_sq1_wiedzma`, `nv_sq1_wyslannik`, `nv_ta2_04_kobieta`, `nv_ta2_czeladnik`, `nv_ta2_gospodarz`, `nv_ta2_karciarz`, `nv_ta2_kupiec`, `nv_ta2_mag`, `nv_ta2_orczyca`, `nv_ta2_pielgrzym`, `nv_ta2_sierzant`, `nv_ta2_sluzacy`, `nv_warrick`, `nv_zarzadczyni`, `nv_zerai`, `pryor`, `trevalyn`, `veta`, `waiqar`.
+Głosy fragmentów bez referencji w bazie: `alys`, `arden`, `balthain`, `button`, `drys`, `ducard`, `grace`, `greigory`, `laurel`, `magrit`, `meza`, `morant`, `nara`, `pryor`, `trevalyn`, `veta`, `waiqar`.
 
 ## Szacunek generowania
 
@@ -531,86 +531,86 @@ Z T1 przejęte 7381 fragmentów. Nowe: **12553** (1092343 znaków).
 | narrator | omnivoice | 7297 | 663965 | 1 |
 | navoth | omnivoice | 37 | 3708 | 1 |
 | nekrul | omnivoice | 18 | 1078 | 1 |
-| nv_a2q11_medyk | elevenlabs | 1 | 48 | 1 |
-| nv_a2q11_protektor | elevenlabs | 1 | 68 | 1 |
-| nv_a2q11_wojowniczka | elevenlabs | 1 | 95 | 1 |
-| nv_a2q11_zolnierz | elevenlabs | 1 | 65 | 1 |
-| nv_a2q2_straznik | elevenlabs | 1 | 15 | 1 |
-| nv_a2q3_bandyta | elevenlabs | 1 | 6 | 1 |
-| nv_a2q3_strazniczka | elevenlabs | 1 | 163 | 1 |
-| nv_a2q3_straznik | elevenlabs | 1 | 5 | 1 |
-| nv_a2q3_zolnierz | elevenlabs | 1 | 161 | 1 |
-| nv_a2q5_hybryda | elevenlabs | 2 | 60 | 1 |
-| nv_a2q5_lowczyni | elevenlabs | 1 | 123 | 1 |
-| nv_a2q7_wygnaniec | elevenlabs | 1 | 147 | 1 |
-| nv_a2q8_bibliotekarka | elevenlabs | 10 | 643 | 1 |
-| nv_a2q8_kronikarz | elevenlabs | 11 | 1154 | 1 |
-| nv_a2q8_ogrodniczka | elevenlabs | 18 | 1459 | 1 |
-| nv_a2q8_zamiatacz | elevenlabs | 10 | 801 | 1 |
-| nv_baelziffar | elevenlabs | 14 | 1296 | 1 |
-| nv_crayleth | elevenlabs | 5 | 613 | 1 |
-| nv_czerwona_gwiazda | elevenlabs | 1 | 209 | 1 |
-| nv_dalavel | elevenlabs | 3 | 246 | 1 |
-| nv_denavel | elevenlabs | 2 | 116 | 1 |
-| nv_edgar | elevenlabs | 9 | 596 | 1 |
-| nv_fof_kapitan | elevenlabs | 18 | 2167 | 1 |
-| nv_fof_mieszkanka | elevenlabs | 1 | 27 | 1 |
-| nv_fulminar | elevenlabs | 8 | 535 | 1 |
-| nv_gorzae | elevenlabs | 4 | 400 | 1 |
-| nv_gravia | elevenlabs | 14 | 1125 | 1 |
-| nv_honora | elevenlabs | 3 | 177 | 1 |
-| nv_lisb_naukowiec | elevenlabs | 3 | 302 | 1 |
-| nv_lisb_wartownik_a | elevenlabs | 1 | 213 | 1 |
-| nv_lisb_wartownik_b | elevenlabs | 2 | 67 | 1 |
-| nv_lisb_zwiadowca | elevenlabs | 2 | 73 | 1 |
-| nv_nicodemus | elevenlabs | 2 | 67 | 1 |
-| nv_ocella | elevenlabs | 25 | 1490 | 1 |
-| nv_patralis | elevenlabs | 10 | 801 | 1 |
-| nv_preesha | elevenlabs | 4 | 477 | 1 |
-| nv_q10_jezdzczyni | elevenlabs | 3 | 103 | 1 |
-| nv_q10_jezdziec | elevenlabs | 4 | 263 | 1 |
-| nv_q10_straznik | elevenlabs | 1 | 35 | 1 |
-| nv_q11_bandyta_nekromanta | elevenlabs | 1 | 72 | 1 |
-| nv_q11_kobieta_a | elevenlabs | 4 | 283 | 1 |
-| nv_q11_kobieta_b | elevenlabs | 1 | 126 | 1 |
-| nv_q11_kobieta_kufel | elevenlabs | 3 | 271 | 1 |
-| nv_q11_mlody_ork | elevenlabs | 1 | 65 | 1 |
-| nv_q11_ork_ojciec | elevenlabs | 1 | 93 | 1 |
-| nv_q11_pacjentka | elevenlabs | 5 | 382 | 1 |
-| nv_q11_rodzic | elevenlabs | 1 | 164 | 1 |
-| nv_q11_tlum | elevenlabs | 1 | 6 | 1 |
-| nv_q11_uchodzca | elevenlabs | 1 | 179 | 1 |
-| nv_q11_uzdrowiciel | elevenlabs | 1 | 161 | 1 |
-| nv_q11_zbir | elevenlabs | 2 | 89 | 1 |
-| nv_q12_banitka | elevenlabs | 1 | 113 | 1 |
-| nv_q12_duch | elevenlabs | 3 | 270 | 1 |
-| nv_q13_hybryda | elevenlabs | 1 | 29 | 1 |
-| nv_q13_smok | elevenlabs | 27 | 2037 | 1 |
-| nv_q14_kucharz | elevenlabs | 4 | 395 | 1 |
-| nv_q14_stronnik | elevenlabs | 2 | 306 | 1 |
-| nv_q14_wiezien_hybryda | elevenlabs | 2 | 130 | 1 |
-| nv_q14_wskrzeszeniec | elevenlabs | 3 | 77 | 1 |
-| nv_q14_zolnierka | elevenlabs | 5 | 402 | 1 |
-| nv_q3_bandyta_skrzynia | elevenlabs | 1 | 113 | 1 |
-| nv_q3_herszt | elevenlabs | 2 | 140 | 1 |
-| nv_q9_blizniaki | elevenlabs | 2 | 102 | 1 |
-| nv_saphar | elevenlabs | 10 | 1118 | 1 |
-| nv_siostra_krwi | elevenlabs | 6 | 728 | 1 |
-| nv_sq1_wiedzma | elevenlabs | 11 | 1117 | 1 |
-| nv_sq1_wyslannik | elevenlabs | 25 | 1941 | 1 |
-| nv_ta2_04_kobieta | elevenlabs | 2 | 269 | 1 |
-| nv_ta2_czeladnik | elevenlabs | 4 | 445 | 1 |
-| nv_ta2_gospodarz | elevenlabs | 1 | 63 | 1 |
-| nv_ta2_karciarz | elevenlabs | 1 | 70 | 1 |
-| nv_ta2_kupiec | elevenlabs | 1 | 210 | 1 |
-| nv_ta2_mag | elevenlabs | 5 | 366 | 1 |
-| nv_ta2_orczyca | elevenlabs | 1 | 13 | 1 |
-| nv_ta2_pielgrzym | elevenlabs | 1 | 140 | 1 |
-| nv_ta2_sierzant | elevenlabs | 2 | 108 | 1 |
-| nv_ta2_sluzacy | elevenlabs | 1 | 90 | 1 |
-| nv_warrick | elevenlabs | 15 | 1171 | 1 |
-| nv_zarzadczyni | elevenlabs | 5 | 555 | 1 |
-| nv_zerai | elevenlabs | 1 | 37 | 1 |
+| nv_a2q11_medyk | omnivoice | 1 | 48 | 1 |
+| nv_a2q11_protektor | omnivoice | 1 | 68 | 1 |
+| nv_a2q11_wojowniczka | omnivoice | 1 | 95 | 1 |
+| nv_a2q11_zolnierz | omnivoice | 1 | 65 | 1 |
+| nv_a2q2_straznik | omnivoice | 1 | 15 | 1 |
+| nv_a2q3_bandyta | omnivoice | 1 | 6 | 1 |
+| nv_a2q3_strazniczka | omnivoice | 1 | 163 | 1 |
+| nv_a2q3_straznik | omnivoice | 1 | 5 | 1 |
+| nv_a2q3_zolnierz | omnivoice | 1 | 161 | 1 |
+| nv_a2q5_hybryda | omnivoice | 2 | 60 | 1 |
+| nv_a2q5_lowczyni | omnivoice | 1 | 123 | 1 |
+| nv_a2q7_wygnaniec | omnivoice | 1 | 147 | 1 |
+| nv_a2q8_bibliotekarka | omnivoice | 10 | 643 | 1 |
+| nv_a2q8_kronikarz | omnivoice | 11 | 1154 | 1 |
+| nv_a2q8_ogrodniczka | omnivoice | 18 | 1459 | 1 |
+| nv_a2q8_zamiatacz | omnivoice | 10 | 801 | 1 |
+| nv_baelziffar | omnivoice | 14 | 1296 | 1 |
+| nv_crayleth | omnivoice | 5 | 613 | 1 |
+| nv_czerwona_gwiazda | omnivoice | 1 | 209 | 1 |
+| nv_dalavel | omnivoice | 3 | 246 | 1 |
+| nv_denavel | omnivoice | 2 | 116 | 1 |
+| nv_edgar | omnivoice | 9 | 596 | 1 |
+| nv_fof_kapitan | omnivoice | 18 | 2167 | 1 |
+| nv_fof_mieszkanka | omnivoice | 1 | 27 | 1 |
+| nv_fulminar | omnivoice | 8 | 535 | 1 |
+| nv_gorzae | omnivoice | 4 | 400 | 1 |
+| nv_gravia | omnivoice | 14 | 1125 | 1 |
+| nv_honora | omnivoice | 3 | 177 | 1 |
+| nv_lisb_naukowiec | omnivoice | 3 | 302 | 1 |
+| nv_lisb_wartownik_a | omnivoice | 1 | 213 | 1 |
+| nv_lisb_wartownik_b | omnivoice | 2 | 67 | 1 |
+| nv_lisb_zwiadowca | omnivoice | 2 | 73 | 1 |
+| nv_nicodemus | omnivoice | 2 | 67 | 1 |
+| nv_ocella | omnivoice | 25 | 1490 | 1 |
+| nv_patralis | omnivoice | 10 | 801 | 1 |
+| nv_preesha | omnivoice | 4 | 477 | 1 |
+| nv_q10_jezdzczyni | omnivoice | 3 | 103 | 1 |
+| nv_q10_jezdziec | omnivoice | 4 | 263 | 1 |
+| nv_q10_straznik | omnivoice | 1 | 35 | 1 |
+| nv_q11_bandyta_nekromanta | omnivoice | 1 | 72 | 1 |
+| nv_q11_kobieta_a | omnivoice | 4 | 283 | 1 |
+| nv_q11_kobieta_b | omnivoice | 1 | 126 | 1 |
+| nv_q11_kobieta_kufel | omnivoice | 3 | 271 | 1 |
+| nv_q11_mlody_ork | omnivoice | 1 | 65 | 1 |
+| nv_q11_ork_ojciec | omnivoice | 1 | 93 | 1 |
+| nv_q11_pacjentka | omnivoice | 5 | 382 | 1 |
+| nv_q11_rodzic | omnivoice | 1 | 164 | 1 |
+| nv_q11_tlum | omnivoice | 1 | 6 | 1 |
+| nv_q11_uchodzca | omnivoice | 1 | 179 | 1 |
+| nv_q11_uzdrowiciel | omnivoice | 1 | 161 | 1 |
+| nv_q11_zbir | omnivoice | 2 | 89 | 1 |
+| nv_q12_banitka | omnivoice | 1 | 113 | 1 |
+| nv_q12_duch | omnivoice | 3 | 270 | 1 |
+| nv_q13_hybryda | omnivoice | 1 | 29 | 1 |
+| nv_q13_smok | omnivoice | 27 | 2037 | 1 |
+| nv_q14_kucharz | omnivoice | 4 | 395 | 1 |
+| nv_q14_stronnik | omnivoice | 2 | 306 | 1 |
+| nv_q14_wiezien_hybryda | omnivoice | 2 | 130 | 1 |
+| nv_q14_wskrzeszeniec | omnivoice | 3 | 77 | 1 |
+| nv_q14_zolnierka | omnivoice | 5 | 402 | 1 |
+| nv_q3_bandyta_skrzynia | omnivoice | 1 | 113 | 1 |
+| nv_q3_herszt | omnivoice | 2 | 140 | 1 |
+| nv_q9_blizniaki | omnivoice | 2 | 102 | 1 |
+| nv_saphar | omnivoice | 10 | 1118 | 1 |
+| nv_siostra_krwi | omnivoice | 6 | 728 | 1 |
+| nv_sq1_wiedzma | omnivoice | 11 | 1117 | 1 |
+| nv_sq1_wyslannik | omnivoice | 25 | 1941 | 1 |
+| nv_ta2_04_kobieta | omnivoice | 2 | 269 | 1 |
+| nv_ta2_czeladnik | omnivoice | 4 | 445 | 1 |
+| nv_ta2_gospodarz | omnivoice | 1 | 63 | 1 |
+| nv_ta2_karciarz | omnivoice | 1 | 70 | 1 |
+| nv_ta2_kupiec | omnivoice | 1 | 210 | 1 |
+| nv_ta2_mag | omnivoice | 5 | 366 | 1 |
+| nv_ta2_orczyca | omnivoice | 1 | 13 | 1 |
+| nv_ta2_pielgrzym | omnivoice | 1 | 140 | 1 |
+| nv_ta2_sierzant | omnivoice | 2 | 108 | 1 |
+| nv_ta2_sluzacy | omnivoice | 1 | 90 | 1 |
+| nv_warrick | omnivoice | 15 | 1171 | 1 |
+| nv_zarzadczyni | omnivoice | 5 | 555 | 1 |
+| nv_zerai | omnivoice | 1 | 37 | 1 |
 | outlaw | elevenlabs | 39 | 3291 | 1 |
 | pryor | elevenlabs | 12 | 1812 | 1 |
 | reneyr | omnivoice | 89 | 8727 | 1 |
@@ -624,4 +624,4 @@ Z T1 przejęte 7381 fragmentów. Nowe: **12553** (1092343 znaków).
 | xenith | omnivoice | 26 | 1476 | 1 |
 | zachareth | omnivoice | 58 | 5270 | 1 |
 
-OmniVoice: ok. **95.2 h** GPU bez ponownych podejść, przy 0.235 s na znak (E3). ElevenLabs: 139323 znaków, ok. **61302** kredytów (0.44 na znak, bez ponownych).
+OmniVoice: ok. **97.2 h** GPU bez ponownych podejść, przy 0.235 s na znak (E3). ElevenLabs: 108466 znaków, ok. **47725** kredytów (0.44 na znak, bez ponownych).
