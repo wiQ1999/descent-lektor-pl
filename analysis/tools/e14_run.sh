@@ -36,6 +36,7 @@ mark() { "$PY" -I -m lektor progress --release $REL --mark "$1"; log "== $1"; sn
 snapshot() {
     "$PY" -I -m lektor progress --release $REL > "$AUDIO/progress.tmp" 2>> "$LOGS/run.log" &&
         mv -f "$AUDIO/progress.tmp" "$AUDIO/progress.md"
+    "$PY" -I -m lektor dashboard > /dev/null 2>> "$LOGS/run.log" || true     # analysis/work/dashboard/index.html
 }
 lines() { [ -f "$1" ] && wc -l < "$1" || echo 0; }
 budget() {

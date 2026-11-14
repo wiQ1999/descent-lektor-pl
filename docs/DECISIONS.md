@@ -1031,6 +1031,15 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** test w grze 2026-11-13, zrzuty l6–l10 (`analysis/E16_PLAYTEST.md`) i QA użytkownika. Reguły mowy obowiązują też przy generowaniu wersji produkcyjnej.
 
+### D103 · 2026-11-14 · Dashboard stanu dialogów
+**Decyzja:**
+- `python -I -m lektor dashboard` składa stronę HTML ze stanem dialogów wszystkich wydań (`analysis/work/dashboard/index.html`). `--serve` albo `analysis/tools/dashboard.cmd` pokazuje ją pod `http://127.0.0.1:47811/` i liczy stan przy każdym odświeżeniu. `e14_run.sh` odświeża plik razem z `progress.md`.
+- Każda misja główna i poboczna ma własny wiersz, a pozostałe treści są zebrane w kategorie (sceny, wydarzenia, podróże, miasto i mapa, wrogowie, przedmioty i zdolności, system i łup), rozwijane do grup.
+- Miarą jest kwestia z bazy odniesienia, czyli wydania o najszerszej bazie. Kwestia jest gotowa w wydaniu, gdy wszystkie jej fragmenty są w `manifest.json`, a wygenerowana, gdy mają podejście i czekają na ocenę oraz `finalize`. Wartości luk liczymy osobno, po wartości.
+- Wersja elementu to wydanie z największym pokryciem, a przy remisie starsze: w nim dialogi powstały, nowsze tylko je przejęły.
+
+**Uzasadnienie:** prośba użytkownika 2026-11-14: podgląd stanu w trakcie generowania i podstawa do decyzji o kolejnych wydaniach. Strona zawiera tytuły wydarzeń z gry, więc zostaje w `analysis/work/` (D75).
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

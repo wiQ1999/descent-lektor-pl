@@ -1,4 +1,4 @@
-"""python -I -m lektor build | refs | report | generate | eleven | evaluate | select | finalize | audio-report | progress |
+"""python -I -m lektor build | refs | report | generate | eleven | evaluate | select | finalize | audio-report | progress | dashboard |
 companion | bundle"""
 import argparse
 import sys
@@ -57,6 +57,9 @@ def main(argv=None):
     s = sub.add_parser('progress', parents=[rel], help='postęp generowania według paczek i aktów (E14; bez GPU i sieci)')
     s.add_argument('--all', action='store_true', help='wszystkie paczki, nie tylko bieżące')
     s.add_argument('--mark', help='zapisz krok skryptu generowania (run_state.json) i zakończ')
+    d = sub.add_parser('dashboard', help='strona HTML ze stanem dialogów wszystkich wydań (analysis/work/dashboard)')
+    d.add_argument('--serve', nargs='?', type=int, const=0, metavar='PORT', help='serwer lokalny z bieżącym stanem')
+    d.add_argument('--out', help='plik wynikowy')
     c = sub.add_parser('companion', help='companion lektora (serwer TCP dla pluginu) albo replay dziennika E1')
     from .companion.app import add_args
     add_args(c)
@@ -108,6 +111,12 @@ def main(argv=None):
             progress.mark(a.mark)
         else:
             print(progress.report(a.all))
+    elif a.cmd == 'dashboard':
+        from . import dashboard
+        if a.serve is not None:
+            dashboard.serve(a.serve or dashboard.PORT)
+        else:
+            print(dashboard.write(a.out))
     elif a.cmd == 'companion':
         from .companion import app
         app.main(a)
