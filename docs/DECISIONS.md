@@ -1080,6 +1080,8 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - Mówców bez imienia grupujemy według misji i kontekstu. Każda postać ma własny głos, a typ wroga jeden głos. Głos z Ynfernaelu z t1 to Baelziffar.
 - Wszystkie głosy `nv_*` (99, w tym 19 z t1) czyta ElevenLabs. Opis głosu powstaje z kontekstu wszystkich kwestii postaci (`analysis/tools/voice_designs_prod.json`), a `voice_id` trafia do `direction.ELEVEN_VOICES_PROD`.
 - Opcje wyboru z półpauzą czyta narrator, jak w t1.
+- Limit ElevenLabs dla m4 to 60 tys. kredytów, jak limit klucza API (`MAX_CREDITS` w `e14_run.sh`). Głosy `nv_*` wybiera automat, bez odsłuchu przed generowaniem.
+- OmniVoice rusza od razu (2026-11-14 wieczorem, `ELEVEN=0`), ElevenLabs po odnowieniu limitu i projekcie głosów. Sposób zmieszczenia 99 głosów na koncie (plan Creator, 30 miejsc) czeka na decyzję.
 
 **Uzasadnienie:** QA użytkownika 2026-11-14 (tempo w całej grze, mówcy bez imienia w ElevenLabs, bo nie są kopią głosów z dubbingu, opcje bez zmian). Liczby i szacunek: `analysis/E17_PREP.md`.
 

@@ -19,7 +19,7 @@ PY=.venv/Scripts/python
 OMNI="$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe"
 AUDIO=analysis/work/audio/$REL
 LOGS=$AUDIO/logs
-MAX_CREDITS=${MAX_CREDITS:-58000}       # zatwierdzone w QA B1 (D95): ok. 44 tys. + ponowne podejścia
+MAX_CREDITS=${MAX_CREDITS:-$([ "$REL" = m4 ] && echo 60000 || echo 58000)}   # D95: 58 tys.; m4 (D107): limit klucza API 60 tys.
 ROUNDS=${ROUNDS:-3}
 SNAPSHOT_S=${SNAPSHOT_S:-600}
 ACTS=${ACTS:-}
