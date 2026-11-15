@@ -95,3 +95,18 @@ def test_write_page_and_signature(work, tmp_path):
         fh.write('\n' + json.dumps({'fragment': 't1', 'take': 1}) + '\n')
     assert dashboard.signature() != before
     assert dashboard.collect()['releases'][0]['made'] == 1
+
+
+def test_complete_needs_all_first_takes():
+    assert dashboard.complete({1}, 'narrator') and dashboard.complete({101}, 'adelynn')
+    assert not dashboard.complete({1, 2}, 'brynn') and dashboard.complete({1, 2, 3}, 'brynn')
+    assert dashboard.complete({1, 101}, 'ronan')
+
+
+def test_active_release_shows_progress_in_page(work):
+    make_release(work, 'm1', {'A': ('scene_q1', ['a1']), 'B': ('scene_q1', ['b1'])}, takes=['a1'])
+    data = dashboard.collect()
+    r = data['releases'][0]
+    assert (r['ready'], r['made']) == (0, 1) and dashboard.active(r) and not dashboard.active(r, r['last_take'] + 3600)
+    page = dashboard.render(data)
+    assert 'Trwa generowanie M1.' in page and '+50% w toku' in page and 'M1 w toku' in page

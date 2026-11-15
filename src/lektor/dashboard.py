@@ -5,7 +5,8 @@ inherited.json, dzienniki podejść) i składa jedną stronę HTML: każda misja
 
 Miarą jest kwestia (klucz okna) z bazy odniesienia, czyli wydania o najszerszej bazie. Kwestia jest w wydaniu:
   gotowa        gdy wszystkie jej fragmenty są w manifest.json (pliki końcowe po `finalize`),
-  wygenerowana  gdy wszystkie mają podejście albo są przejęte, ale czekają na ocenę i `finalize`.
+  wygenerowana  gdy wszystkie mają komplet pierwszych podejść albo są przejęte, ale czekają na ocenę i `finalize`
+                (na stronie „w toku”; wydanie z podejściem z ostatnich 30 min ma baner „trwa generowanie”).
 Wartości luk {n} (nazwy wrogów, łup, cele) liczymy osobno, po wartości. Wersja elementu to wydanie z największym
 pokryciem, a przy remisie starsze (nowsze tylko przejęło jego audio). Strona ma tytuły wydarzeń z gry, więc leży tylko w analysis/work/ (D75).
 Bez GPU i sieci; `--serve` liczy stan przy każdym odświeżeniu strony.
@@ -23,6 +24,7 @@ from . import paths
 OUT = os.path.join(paths.WORK, 'dashboard', 'index.html')
 PORT = 47811
 REFRESH_S = 60
+ACTIVE_S = 30 * 60     # tyle po ostatnim podejściu wydanie liczy się jako generowane
 VALUES = '@values'      # element z wartościami luk (poza kwestiami)
 READY, MADE = 0, 1
 SECTIONS = (('a1_main', 'Akt 1: misje główne'), ('a1_side', 'Akt 1: misje poboczne'),
@@ -123,16 +125,25 @@ def read_json(path, default):
         return default
 
 
-def take_fragments(path):
-    out = set()
+def take_numbers(path, out):
+    """Dopisuje do out {fragment: numery podejść} z dziennika podejść."""
     if os.path.exists(path):
         with open(path, encoding='utf-8') as fh:
             for line in fh:
                 try:
-                    out.add(json.loads(line)['fragment'])
-                except (ValueError, KeyError):
+                    r = json.loads(line)
+                    out.setdefault(r['fragment'], set()).add(r['take'])
+                except (ValueError, KeyError, TypeError):
                     continue        # urwany ostatni wiersz po przerwaniu procesu
     return out
+
+
+def complete(takes, voice):
+    """Czy fragment ma komplet pierwszych podejść: jedno z ElevenLabs albo tyle z OmniVoice, ile wymaga głos (D38)."""
+    from . import direction as D
+    from .synth import HERO_TAKES, MANY_TAKES
+    local = sum(1 for t in takes if t <= D.ELEVEN_TAKE0)
+    return len(takes) > local or local >= (HERO_TAKES if voice in MANY_TAKES else 1)
 
 
 def load(release):
@@ -154,12 +165,15 @@ def load(release):
             for g in title_groups(k):
                 titles.setdefault(g, text)
         meta = dict(con.execute("SELECT k, v FROM meta WHERE k IN ('built_at')"))
+        voices = dict(con.execute('SELECT id, voice FROM fragments'))
     finally:
         con.close()
     final = set(read_json(files['manifest.json'], {}).get('fragments', {}))
     made = final | set(read_json(files['inherited.json'], {}))
+    takes = {}
     for name in ('takes.jsonl', 'takes_eleven.jsonl'):
-        made |= take_fragments(files[name])
+        take_numbers(files[name], takes)
+    made |= {f for f, t in takes.items() if complete(t, voices.get(f))}
     logs = [os.path.getmtime(files[n]) for n in ('takes.jsonl', 'takes_eleven.jsonl') if os.path.exists(files[n])]
     return {'id': release, 'lines': {k: v for k, v in lines.items() if v[1]}, 'values': values, 'titles': titles,
             'final': final, 'made': made, 'built_at': json.loads(meta['built_at']) if 'built_at' in meta else None,
@@ -247,9 +261,10 @@ def meter(ready, made, total, label=''):
 def row_html(row, ids, cls='', toggle=''):
     b = best(row)
     cells = ''.join(
-        '<td class="rel" title="%s: gotowe %s, wygenerowane %s z %s"><span class="%s">%s</span>%s</td>' % (
+        '<td class="rel" title="%s: gotowe %s, wygenerowane %s z %s"><span class="%s">%s</span>%s%s</td>' % (
             i.upper(), num(r), num(m), num(row['total']), 'full' if r == row['total'] else 'none' if not r else '',
-            pct(r, row['total']), meter(r, m, row['total'], i.upper()))
+            pct(r, row['total']), meter(r, m, row['total'], i.upper()),
+            '<small>+%s w toku</small>' % pct(m, row['total']) if m else '')
         for i, (r, m) in row['rel'].items())
     if not b:
         version, done = '<span class="tag off">brak</span>', '<td class="done"><b>0%</b></td>'
@@ -264,20 +279,34 @@ def when(ts):
     return time.strftime('%Y-%m-%d %H:%M', time.localtime(ts)) if ts else None
 
 
+def active(r, now=None):
+    """Wydanie w trakcie generowania: ostatnie podejście powstało w ciągu ACTIVE_S."""
+    return bool(r['last_take']) and (now or time.time()) - r['last_take'] < ACTIVE_S
+
+
+def banner(r, total):
+    step = ' Krok: %s (od %s).' % (r['state'].get('step'), r['state'].get('since')) if r['state'] else ''
+    return ('<p class="live"><b>Trwa generowanie %s.</b>%s Wygenerowane %s z %s kwestii (%s), gotowe po finalizacji %s. '
+            'Ostatnie podejście: %s.</p>') % (
+        r['id'].upper(), html.escape(step), num(r['ready'] + r['made']), num(total), pct(r['ready'] + r['made'], total),
+        pct(r['ready'], total), when(r['last_take']))
+
+
 def tile(r, total):
     from .bundle import SCOPES
     facts = ['gotowe %s z %s kwestii' % (num(r['ready']), num(total))]
     if r['made']:
-        facts.append('%s wygenerowanych czeka na finalizację' % num(r['made']))
+        facts.append('%s wygenerowanych (%s) czeka na ocenę i finalizację' % (num(r['made']), pct(r['made'], total)))
     if r['state']:
         facts.append('krok: %s (od %s)' % (r['state'].get('step'), r['state'].get('since')))
     if r['last_take']:
         facts.append('ostatnie podejście: %s' % when(r['last_take']))
     if r['built_at']:
         facts.append('baza z %s' % r['built_at'].replace('T', ' ')[:16])
-    return ('<div class="tile"><div class="k">%s</div><div class="v">%s</div>%s<div class="scope">%s</div>'
+    return ('<div class="tile%s"><div class="k">%s%s</div><div class="v">%s%s</div>%s<div class="scope">%s</div>'
             '<ul>%s</ul></div>') % (
-        r['id'].upper(), pct(r['ready'], total), meter(r['ready'], r['made'], total, r['id'].upper()),
+        ' on' if active(r) else '', r['id'].upper(), ' · trwa generowanie' if active(r) else '', pct(r['ready'], total),
+        ' <small>+%s w toku</small>' % pct(r['made'], total) if r['made'] else '', meter(r['ready'], r['made'], total, r['id'].upper()),
         html.escape(SCOPES.get(r['id'], '')), ''.join('<li>%s</li>' % html.escape(f) for f in facts))
 
 
@@ -300,6 +329,7 @@ def render(data, refresh=REFRESH_S):
         parts.append('<section><h2>%s</h2><div class="scroll"><table><thead>%s</thead><tbody>%s</tbody>'
                      '<tfoot>%s</tfoot></table></div></section>' % (
                          html.escape(s['title']), head, ''.join(rows), row_html(total, ids, 'sum')))
+    live = ''.join(banner(r, data['total']) for r in data['releases'] if active(r))
     body = ('<div class="hero"><div class="v">%s</div><div>kwestii gry ma gotowe audio w co najmniej jednym wydaniu '
             '(%s z %s)</div></div><div class="tiles">%s</div>'
             '<p class="legend"><span class="meter"><i class="ok" style="width:100%%"></i></span> gotowe (po <code>finalize</code>) '
@@ -311,7 +341,7 @@ def render(data, refresh=REFRESH_S):
         pct(data['any'], data['total']), num(data['any']), num(data['total']),
         ''.join(tile(r, data['total']) for r in data['releases']), ''.join(parts),
         time.strftime('%Y-%m-%d %H:%M:%S'), data['reference'].upper(), num(data['total']))
-    return PAGE.replace('{{BODY}}', body).replace('{{REFRESH}}', str(refresh))
+    return PAGE.replace('{{BODY}}', live + body).replace('{{REFRESH}}', str(refresh))
 
 
 def write(out=None):
@@ -333,7 +363,7 @@ def serve(port=PORT):
             if self.path.split('?')[0] != '/':
                 self.send_error(404)
                 return
-            sig = signature()
+            sig = signature(), int(time.time() // 60)       # baner „trwa generowanie” gaśnie z czasem
             if cache.get('sig') != sig:
                 cache.update(sig=sig, page=render(collect()).encode('utf-8'))
             self.send_response(200)
@@ -377,7 +407,9 @@ table{border-collapse:collapse;width:100%;min-width:720px}th,td{padding:6px 10px
 thead th{border-top:0;color:var(--muted);font-weight:500;font-size:12px}tbody th{font-weight:500}
 .n,.rel{text-align:right;font-variant-numeric:tabular-nums}.done{font-variant-numeric:tabular-nums}
 .done b{display:inline-block;width:44px;font-weight:600}.done .meter{width:140px}
-.rel span:first-child{display:block}.rel .meter{width:56px;height:4px}.rel .none{color:var(--muted)}.rel .full{font-weight:600}
+.rel span:first-child{display:block}.rel small{display:block;color:var(--fg2);font-size:11px}
+.live{background:var(--card);border:1px solid var(--ok);border-radius:8px;padding:10px 12px;margin:0 0 16px}
+.tile.on{border-color:var(--ok)}.tile .v small{font-size:13px;font-weight:400;color:var(--fg2)}.rel .meter{width:56px;height:4px}.rel .none{color:var(--muted)}.rel .full{font-weight:600}
 .tag{display:inline-block;padding:1px 8px;border:1px solid var(--line);border-radius:10px;font-size:12px;font-weight:600}
 .tag.off{color:var(--muted);font-weight:400}.tag.wip{font-weight:400}
 tr.has{cursor:pointer}tr.has th::before{content:"▸ ";color:var(--muted)}tr.has.open th::before{content:"▾ "}

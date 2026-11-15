@@ -1049,6 +1049,7 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - Każda misja główna i poboczna ma własny wiersz, a pozostałe treści są zebrane w kategorie (sceny, wydarzenia, podróże, miasto i mapa, wrogowie, przedmioty i zdolności, system i łup), rozwijane do grup.
 - Miarą jest kwestia z bazy odniesienia, czyli wydania o najszerszej bazie. Kwestia jest gotowa w wydaniu, gdy wszystkie jej fragmenty są w `manifest.json`, a wygenerowana, gdy mają podejście i czekają na ocenę oraz `finalize`. Wartości luk liczymy osobno, po wartości.
 - Wersja elementu to wydanie z największym pokryciem, a przy remisie starsze: w nim dialogi powstały, nowsze tylko je przejęły.
+- Postęp przed `finalize` (2026-11-15): wydanie z podejściem z ostatnich 30 min ma baner „trwa generowanie”, a kafelek i komórki wydania pokazują udział kwestii wygenerowanych („w toku”). Fragment liczy się jako wygenerowany przy komplecie pierwszych podejść (bohaterowie: trzy).
 
 **Uzasadnienie:** prośba użytkownika 2026-11-14: podgląd stanu w trakcie generowania i podstawa do decyzji o kolejnych wydaniach. Strona zawiera tytuły wydarzeń z gry, więc zostaje w `analysis/work/` (D75).
 
