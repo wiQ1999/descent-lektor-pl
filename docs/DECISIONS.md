@@ -1086,6 +1086,17 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** QA użytkownika 2026-11-14 (tempo w całej grze, unikatowy głos każdej postaci bez imienia, opcje bez zmian, limit kredytów, wybór automatem). Mówcy bez imienia mieli najpierw dostać głosy ElevenLabs; po pytaniu o odtwarzalność profili użytkownik wybrał model lokalny z opisanymi profilami. Liczby i szacunek: `analysis/E17_PREP.md`.
 
+### D108 · 2026-11-17 · E17: paczka m4 z aktem 1 na 2026-11-18 14:00
+**Decyzja:**
+- Wydanie m4 na 2026-11-18 14:00 obejmuje akt 1 i części wspólne, jak v0.3.0 (D96). Akt 2 dokończymy w następnym wydaniu.
+- Stan przed zmianą:
+  - generowanie całej gry skończone 2026-11-17 17:34: OmniVoice 13 784 podejścia, ElevenLabs 1168 fragmentów obsady za 48 279 kredytów;
+  - pełna ocena Whisperem w fp16 (7,5 s na podejście) dla 19 248 podejść trwałaby ok. 39 h.
+- Ocena i ponowne podejścia obejmują tylko akt 1 i części wspólne: `REL=m4 ELEVEN=1 ACTS="1 3" ASR_FP32=1 bash analysis/tools/e14_run.sh`. Do oceny jest 5027 podejść, Whisper w fp32 potrzebuje ok. 2,5 s na podejście. Rundy ponownych podejść obu silników idą jak w pełnym przebiegu.
+- Wybory przejęte z t1 i m3 dla aktu 2 wchodzą do paczki. Fragmenty aktu 2 bez oceny czekają na następne wydanie.
+
+**Uzasadnienie:** prośba użytkownika 2026-11-17: paczka jest potrzebna na następny dzień o 14:00. W tym terminie mieści się pełna ocena Whisperem aktu 1, a całej gry już nie.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

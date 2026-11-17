@@ -484,6 +484,7 @@ Cel: paczka całej gry z regułami t1. Przygotowanie zrobione 2026-11-14 (`analy
 - Projekt 80 nowych głosów `nv_*` w OmniVoice z profili postaci, wybór automatem (`new_voices_prod.py`).
 - Generowanie: OmniVoice od 2026-11-14, ElevenLabs po odnowieniu limitu (60 tys. kredytów), w kolejności gry (`REL=m4 bash analysis/tools/e14_run.sh`), ocena, ponowne podejścia, `finalize`.
 - Testy, replay dzienników, paczki Windows i Mac, wydanie po akceptacji użytkownika.
+- 2026-11-17 (D108): pierwsza paczka m4 obejmuje akt 1 i części wspólne (termin 2026-11-18 14:00). Ocena aktu 2 i jego ponowne podejścia przyjdą w następnym wydaniu.
 
 **Kryteria ukończenia:** wszystkie fragmenty w manifeście `m4`, testy przechodzą, paczki zbudowane, raport `analysis/E17_AUDIO.md`, commit.
 
