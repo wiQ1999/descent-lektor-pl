@@ -1094,6 +1094,12 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
   - pełna ocena Whisperem w fp16 (7,5 s na podejście) dla 19 248 podejść trwałaby ok. 39 h.
 - Ocena i ponowne podejścia obejmują tylko akt 1 i części wspólne: `REL=m4 ELEVEN=1 ACTS="1 3" ASR_FP32=1 bash analysis/tools/e14_run.sh`. Do oceny jest 5027 podejść, Whisper w fp32 potrzebuje ok. 2,5 s na podejście. Rundy ponownych podejść obu silników idą jak w pełnym przebiegu.
 - Wybory przejęte z t1 i m3 dla aktu 2 wchodzą do paczki. Fragmenty aktu 2 bez oceny czekają na następne wydanie.
+- Wynik (2026-11-18 02:10):
+  - trzy rundy `e14_run.sh` (215, 106 i 81 fragmentów, ElevenLabs 89 kredytów) i trzy rundy `extra_retakes.py` (71, 65 i 60 fragmentów OmniVoice);
+  - pokrycie (`release_coverage.py --release m4`): 7818 z 7818 kwestii aktu 1 i części wspólnych z pełnym audio;
+  - automat odrzuca 108 z 11 839 fragmentów, paczka bierze dla nich najlepsze podejście (`analysis/E17_AUDIO.md`);
+  - replay sześciu dzienników z 2026-11-11 do 2026-11-14: każde okno do czytania ma audio (`coverage_readable` 1,0);
+  - paczki Windows (1,90 GB) i Mac (1,92 GB), commit 1597498.
 
 **Uzasadnienie:** prośba użytkownika 2026-11-17: paczka jest potrzebna na następny dzień o 14:00. W tym terminie mieści się pełna ocena Whisperem aktu 1, a całej gry już nie.
 
