@@ -1115,7 +1115,8 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
   - ElevenLabs: 191 fragmentów nowych profili i ponowne podejścia za 6908 kredytów (licznik projektu 55 983 z limitu 60 tys.); OmniVoice: 76 fragmentów nowych głosów, dwie rundy ponownych podejść (10 i 5 fragmentów);
   - pokrycie (`release_coverage.py --release m4`): 7818 z 7818 kwestii aktu 1 i części wspólnych z pełnym audio; automat odrzuca 4 fragmenty nowych głosów (Laurel 2, Ducard 1, `nv_fof_kapitan` 1), paczka bierze dla nich najlepsze podejście;
   - nowe podejście `nv_q11_uzdrowiciel` wybrane automatem (CER 0);
-  - paczki Windows (1,90 GB) i Mac (1,92 GB).
+  - paczki Windows (1,90 GB) i Mac (1,92 GB); paczkę Windows użytkownik sprawdził w grze.
+- Wydanie v0.4.0 (pre-release, 2026-11-18): https://github.com/wiQ1999/descent-lektor-pl/releases/tag/v0.4.0, paczki z commitu 338760a. Paczki Mac tej wersji nie testowaliśmy jeszcze w grze.
 
 **Uzasadnienie:** uwagi użytkownika z odsłuchu (2026-11-18) i QA: nowe profile ElevenLabs tylko wtedy, gdy ponowne czytanie ich kwestii mieści się w limicie 60 tys. kredytów (stan przed przebiegiem 49 125), mówcy bez imienia tylko w OmniVoice.
 
