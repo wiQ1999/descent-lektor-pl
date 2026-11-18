@@ -265,6 +265,12 @@ Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej 
 .venv/Scripts/python -I analysis/tools/new_voices_prod.py adopt
 ```
 - Generowanie jak w E14 (`REL=m4 bash analysis/tools/e14_run.sh`). `generate` przejmuje wybory z t1 i m3 oraz nieocenione podejścia OmniVoice z m3 (`synth.adopt`). Dodatkowe rundy: `extra_retakes.py --release m4`.
+- Paczka z aktem 1 (D108): `REL=m4 ELEVEN=1 ACTS="1 3" ASR_FP32=1 bash analysis/tools/e14_run.sh`, potem `extra_retakes.py --release m4` z `generate --retake --acts 1 3`, `evaluate --acts 1 3 --fp32`, `select`, `finalize` i `bundle --platform win|mac --release m4`.
+- Zestawienie głosów do odsłuchu (opis, portret z gry, dwie próbki z gotowego audio), wynik w `analysis/work/compare/m4_cast/`. Strona czyta portrety i nagrania z plików obok, więc otwieramy ją w przeglądarce bezpośrednio albo przez `python -m http.server` (konfiguracja `cast-sheet` w `.claude/launch.json`):
+
+```bash
+.venv/Scripts/python -I analysis/tools/cast_sheet.py --release m4 [--acts 1]
+```
 
 ## 7. Plugin i paczka
 

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cast-sheet",
+      "runtimeExecutable": ".venv/Scripts/python.exe",
+      "runtimeArgs": ["-I", "-m", "http.server", "47812", "--bind", "127.0.0.1", "--directory", "analysis/work/compare"],
+      "port": 47812
+    }
+  ]
+}
