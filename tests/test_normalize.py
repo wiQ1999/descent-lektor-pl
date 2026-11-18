@@ -44,6 +44,7 @@ def test_pronounce_spells_name_phonetically():
     from lektor.normalize import pronounce
     assert pronounce('Kehli i kehli, KEHLI oraz Kehlik.') == 'Keli i keli, KELI oraz Kelik.'
     assert pronounce('Bez zmian: Akehli.') == 'Bez zmian: Akehli.'
+    assert pronounce('Warrick, u Warricka, WARRICK.') == 'Łorik, u Łorika, ŁORIK.'
 
 
 def test_number_words():

@@ -22,6 +22,11 @@ ELEVEN_VOICES_E14 = {'magrit': '4z2ttMe9kFzyBLgroafB', 'alys': 'PzYUKC9HYBoJ4OGy
                      'drys': 'UrUMN6EMRqqvJz3oDHD1', 'waiqar': 'IQY1bvB4YbPVoS6Go9q3', 'morant': '3CNDe9njN2kEBkgjZlEi',
                      'nara': 'peH5NmVUWPLR3C6OwCIg', 'meza': '6QqpmxamtHSBJVCpfj8E'}
 ELEVEN_VOICES.update(ELEVEN_VOICES_E14)
+# D109: nowe profile po odsłuchu m4. Znacznik wchodzi do klucza fragmentu (build.voice_tag), więc kwestie tych
+# głosów dostają nowe id i ElevenLabs czyta je od nowa; podgląd projektu leży w elevenlabs/audio/m4_recast/<głos>.
+ELEVEN_RECAST = {'laurel': ('mNYK3E8hLlawETLY1i23', 'D109'), 'ltrand': ('mlfNLSkD2rRJuAjOiqyV', 'D109'),
+                 'ducard': ('HHaHDYNatBEDVYdzrvGp', 'D109')}
+ELEVEN_VOICES.update({v: vid for v, (vid, _) in ELEVEN_RECAST.items()})
 ELEVEN_TAKE0 = 100      # podejścia ElevenLabs mają numery od 101; podejścia OmniVoice tych głosów zostają jako zapas
 
 

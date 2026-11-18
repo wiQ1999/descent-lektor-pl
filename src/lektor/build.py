@@ -35,10 +35,11 @@ def load_refs():
 def voice_tag(voice, refs):
     """Głos w kluczu fragmentu: nazwa, SHA referencji i styl klonu (mnożnik tempa, instrukcja OmniVoice; D94)."""
     r = refs.get(voice)
+    recast = '%' + D.ELEVEN_RECAST[voice][1] if voice in D.ELEVEN_RECAST else ''     # D109: nowy profil ElevenLabs
     if not r:
-        return voice
+        return voice + recast
     style = r.get('style')
-    return voice + '@' + r['sha'][:8] + ('~' + json.dumps(style, sort_keys=True) if style else '')
+    return voice + '@' + r['sha'][:8] + ('~' + json.dumps(style, sort_keys=True) if style else '') + recast
 
 
 def choice_hero(key):

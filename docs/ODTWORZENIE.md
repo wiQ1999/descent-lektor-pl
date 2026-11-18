@@ -272,6 +272,24 @@ Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej 
 .venv/Scripts/python -I analysis/tools/cast_sheet.py --release m4 [--acts 1]
 ```
 
+- Zmiany obsady po odsłuchu (D109): kandydaci OmniVoice (dwa opisy, dwa ziarna, wariant z obróbką) i podglądy ElevenLabs na jednej stronie `analysis/work/compare/m4_recast/index.html`. Wybór z odsłuchu przejmuje `adopt` (litera A–C, `-` bez zmian), nowe profile ElevenLabs wpisujemy do `direction.ELEVEN_RECAST`, potem `build --release m4`:
+
+```bash
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/recast_m4.py design
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/recast_m4.py choose
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/recast_m4.py page
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/recast_m4.py adopt nv_x=A nv_y=-
+```
+
 ## 7. Plugin i paczka
 
 ```bash

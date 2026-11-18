@@ -39,6 +39,7 @@ TOOL = 'lektor_eleven'
 USAGE_LOG = os.path.join(paths.WORK, 'elevenlabs', 'usage', 'elevenlabs.jsonl')
 REF_DIR = os.path.join(paths.WORK, 'elevenlabs', 'audio', 'e11r2')    # nagrania v4 z oceny E11: referencja barwy
 REF_DIR_E14 = os.path.join(paths.WORK, 'elevenlabs', 'audio', 'e14')  # E14: podgląd projektu o id zapisanego głosu
+REF_DIR_RECAST = os.path.join(paths.WORK, 'elevenlabs', 'audio', 'm4_recast')  # D109: nowe profile po odsłuchu m4
 REF_PREFIX = 'elevenlabs:'
 
 
@@ -147,6 +148,10 @@ def refs():
     import glob
     out = {}
     for voice, voice_id in D.ELEVEN_VOICES.items():
+        recast = sorted(glob.glob(os.path.join(REF_DIR_RECAST, voice, 'voice_design_%s_*.mp3' % voice_id)))
+        if recast:      # D109: nowy profil zamiast nagrań z oceny E11
+            out[REF_PREFIX + voice] = {'wav': paths.rel(recast[0])}
+            continue
         folder = os.path.join(REF_DIR, voice, D.ELEVEN_MODEL)
         files = sorted(glob.glob(os.path.join(folder, '*.mp3'))) or             sorted(glob.glob(os.path.join(REF_DIR_E14, voice, '*', 'voice_design_%s_*.mp3' % voice_id)))
         if files:

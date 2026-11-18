@@ -1103,6 +1103,22 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** prośba użytkownika 2026-11-17: paczka jest potrzebna na następny dzień o 14:00. W tym terminie mieści się pełna ocena Whisperem aktu 1, a całej gry już nie.
 
+### D109 · 2026-11-18 · E17: zmiany obsady po odsłuchu m4 i wymowa „Warrick”
+**Decyzja:**
+- Odsłuch zestawienia `m4_cast` wskazał 27 głosów do zmiany. Nowe głosy wybrał użytkownik w odsłuchu kandydatów (`analysis/tools/recast_m4.py`, `docs/CASTING.md`):
+  - ElevenLabs: nowe profile Laurel, L'trand i Ducard (Ducard z akcentem japońskim). Stare profile usunięte z konta za zgodą użytkownika. Znacznik `D109` w `direction.ELEVEN_RECAST` wchodzi do klucza fragmentu, więc ElevenLabs czyta kwestie tych postaci od nowa w całej grze (191 fragmentów, ok. 6,8 tys. kredytów);
+  - OmniVoice: 18 mówców `nv_*` dostało nowe referencje. Cztery zostały bez zmian (`nv_q11_pacjentka`, `nv_q10_jezdziec`, `nv_bandyta`, `nv_q3_herszt`), bo żaden kandydat nie był lepszy. Kandydaci powstają tylko w OmniVoice (instruct, ziarno i obróbka), bez wzorów z ElevenLabs.
+- Imię „Warrick” model czyta „Łorik” z odmianą (`normalize.PHONETIC`, jak „Kehli” w D70). Okno gry zostaje bez zmian.
+- `nv_q11_uzdrowiciel` dostał nowe podejście, bo pierwsze zlało „porcja tynktury” w jedno słowo.
+- Paczka m4 z aktem 1 i częściami wspólnymi zostaje w zakresie D108, termin 2026-11-18 16:30. Przebieg: `REL=m4 ELEVEN=1 ACTS="1 3" ASR_FP32=1 ROUNDS=2 bash analysis/tools/e14_run.sh`.
+- Wynik (2026-11-18 15:20):
+  - ElevenLabs: 191 fragmentów nowych profili i ponowne podejścia za 6908 kredytów (licznik projektu 55 983 z limitu 60 tys.); OmniVoice: 76 fragmentów nowych głosów, dwie rundy ponownych podejść (10 i 5 fragmentów);
+  - pokrycie (`release_coverage.py --release m4`): 7818 z 7818 kwestii aktu 1 i części wspólnych z pełnym audio; automat odrzuca 4 fragmenty nowych głosów (Laurel 2, Ducard 1, `nv_fof_kapitan` 1), paczka bierze dla nich najlepsze podejście;
+  - nowe podejście `nv_q11_uzdrowiciel` wybrane automatem (CER 0);
+  - paczki Windows (1,90 GB) i Mac (1,92 GB).
+
+**Uzasadnienie:** uwagi użytkownika z odsłuchu (2026-11-18) i QA: nowe profile ElevenLabs tylko wtedy, gdy ponowne czytanie ich kwestii mieści się w limicie 60 tys. kredytów (stan przed przebiegiem 49 125), mówcy bez imienia tylko w OmniVoice.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

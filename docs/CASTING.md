@@ -30,7 +30,7 @@ Od E11 postacie bez dubbingu czyta ElevenLabs `eleven_v4` z ustawieniami domyśl
 | `ronan` | b | `7ScqSXmT0oXvHenzw9hJ` | 5 / 4 | |
 | `astarra` | b | `B9Xmu9MUTLL4L5SIDsAD` | 5 / 5 | remis z c |
 | `kathryn` | a | `JZzQvOujFtUu9vpAsm2q` | 5 / 5 | remis z c |
-| `ltrand` | a | `OLeMFzYjewG73PEGvePC` | 4 / 3 | |
+| `ltrand` | a | `OLeMFzYjewG73PEGvePC` | 4 / 3 | profil usunięty w D109, nowy `mlfNLSkD2rRJuAjOiqyV` |
 | `bruli` | a | `UDpt5qLmStrzpqQQZI9G` | 5 / 5 | remis z b i c |
 | `herbie` | c | `BFwE7UC8qCq4bda0mhyE` | 5 / 4 | |
 | `mok` | a | `SQ2Rf1tdmOCUqClP6qJ4` | 4 / 4 | remis z b |
@@ -48,12 +48,12 @@ Głosy z opisów w `analysis/tools/voice_designs_e14.json` (`text_to_voice`, jed
 | `alys` | `ALYS` | `PzYUKC9HYBoJ4OGyP1QE` | przyjęty w rundzie 1 |
 | `greigory` | `GREIGORY` | `1iufCs0OK7CV8njHiko7` | przyjęty w rundzie 1 |
 | `button` | `BUTTON` | `RMWgUKFzzgxce9riuhEC` | przyjęty w rundzie 1 |
-| `laurel` | `LAUREL` | `YpSjl2k2ogKW014dXeX3` | przyjęty w rundzie 1 |
+| `laurel` | `LAUREL` | `YpSjl2k2ogKW014dXeX3` | przyjęty w rundzie 1; usunięty w D109, nowy `mNYK3E8hLlawETLY1i23` |
 | `arden` | `ARDEN` | `jl1qd5mvirQo588r4kkX` | przyjęty w rundzie 1 |
 | `veta` | `VETA` | `0rtBIPGtLS4yt8kPC7Cs` | przyjęty w rundzie 1 |
 | `trevalyn` | `TREVALYN` | `PnphcFpQiiZTzbeOcbxp` | przyjęty w rundzie 1 |
 | `balthain` | `SIRBALTHAIN` | `9CdwdaxrlepOclY1rmY5` | przyjęty w rundzie 1 |
-| `ducard` | `COUNTESSDUCARD` | `m5FL5XfqLXQEY9dOd5GJ` | przyjęty w rundzie 1 |
+| `ducard` | `COUNTESSDUCARD` | `m5FL5XfqLXQEY9dOd5GJ` | przyjęty w rundzie 1; usunięty w D109, nowy `HHaHDYNatBEDVYdzrvGp` |
 | `pryor` | `PRYOR` | `6gJmPw2772iK66WdPEKX` | przyjęty w rundzie 1 |
 | `grace` | `GRACE` | `7nGRsoaWpcG4aZ7JLbJW` | przyjęty w rundzie 1; opis z wiekiem 18–20, bo `text_to_voice` odrzuca wiek poniżej 18 |
 | `drys` | `DRYS` | `UrUMN6EMRqqvJz3oDHD1` | przyjęty w rundzie 1 |
@@ -231,3 +231,38 @@ Wybrane głosy (automat: najmniejszy CER, wysokość w zakresie płci, a z dobry
 | `nv_warrick` | Warrick, stary ork-rolnik | `male, elderly, very low pitch` | 11 | 8,88 s, SHA `e78b95f3` | 15 |
 | `nv_zarzadczyni` | zarządczyni zamku Highmont | `female, middle-aged, moderate pitch` | 37 | 8,44 s, SHA `7dae77c3` | 5 |
 | `nv_zerai` | porucznik Zerai, smocza hybryda w zbroi oficera (kobieta) | `female, middle-aged, low pitch` | 37 | 7,48 s, SHA `3a8e73e5` | 1 |
+
+## E17: zmiany po odsłuchu obsady m4 (D109)
+
+Odsłuch zestawienia `m4_cast` (2026-11-18) wskazał głosy zbyt podobne do innych albo generyczne. Nowych kandydatów daje `analysis/tools/recast_m4.py`: dwa opisy OmniVoice na głos, ziarna 5 i 41, wariant z obróbką (wysokość, chrypka, drżenie), automat wybiera trzech najmniej podobnych do całej obsady (CER ≤ 0,10, wysokość w zakresie płci), a użytkownik wybiera w odsłuchu.
+
+ElevenLabs (nowe projekty `text_to_voice`, wariant C z odsłuchu; stare profile usunięte z konta):
+
+| Głos | Uwaga z odsłuchu | Nowy profil | `voice_id` |
+|---|---|---|---|
+| `laurel` | za podobna do Adelynn | jasny, eteryczny sopran elfki | `mNYK3E8hLlawETLY1i23` |
+| `ltrand` | za podobna do Adelynn i Laurel | chropowaty, niski alt oficerki | `mlfNLSkD2rRJuAjOiqyV` |
+| `ducard` | za podobna do Adelynn, Laurel i L'trand; akcent japoński albo koreański | hrabina z japońskim akcentem, jasny, cienki głos | `HHaHDYNatBEDVYdzrvGp` |
+
+OmniVoice (`nv_*`, nowe referencje; bez zmian zostały `nv_q11_pacjentka`, `nv_q10_jezdziec`, `nv_bandyta` i `nv_q3_herszt`):
+
+| Głos | Wybór | Opis OmniVoice i obróbka | Ziarno | Referencja |
+|---|---|---|---:|---|
+| `nv_baelziffar` | C | `male, middle-aged, very low pitch` | 41 | 9,02 s, SHA `7828963f` |
+| `nv_fof_kapitan` | C | `male, middle-aged, very low pitch` | 5 | 8,84 s, SHA `66fa51dd` |
+| `nv_gnom` | C | `male, middle-aged, high pitch` | 41 | 8,44 s, SHA `a4d4866a` |
+| `nv_gont` | C | `female, middle-aged, low pitch, rasp 0.25` | 41 | 8,35 s, SHA `5a383c8f` |
+| `nv_lisb_wartownik_a` | B | `male, young adult, high pitch` | 5 | 8,05 s, SHA `72669911` |
+| `nv_lisb_zwiadowca` | C | `male, young adult, moderate pitch` | 5 | 7,37 s, SHA `59ac34fb` |
+| `nv_q11_bandyta_nekromanta` | B | `male, elderly, moderate pitch` | 41 | 8,05 s, SHA `c89e35a8` |
+| `nv_q11_mlody_ork` | A | `male, young adult, very low pitch` | 5 | 8,44 s, SHA `9ccd037a` |
+| `nv_q11_rodzic` | C | `male, middle-aged, moderate pitch` | 41 | 8,74 s, SHA `e3ef01c8` |
+| `nv_q12_duch` | C | `female, middle-aged, low pitch, rasp 0.45` | 41 | 9,11 s, SHA `a18ed490` |
+| `nv_q13_hybryda` | A | `male, middle-aged, very low pitch` | 41 | 7,92 s, SHA `b2c04264` |
+| `nv_q14_kucharz` | B | `male, elderly, high pitch` | 5 | 8,68 s, SHA `da1ece02` |
+| `nv_q14_stronnik` | B | `male, young adult, high pitch` | 5 | 7,44 s, SHA `c4c076ff` |
+| `nv_q14_wskrzeszeniec` | B | `male, elderly, high pitch` | 41 | 7,57 s, SHA `94c697ca` |
+| `nv_q3_bandyta_skrzynia` | C | `male, middle-aged, high pitch` | 5 | 8,36 s, SHA `1e815568` |
+| `nv_straznik` | C | `male, elderly, moderate pitch` | 5 | 8,23 s, SHA `88ff7f9f` |
+| `nv_wiesniak` | C | `male, middle-aged, moderate pitch` | 5 | 8,28 s, SHA `d1996431` |
+| `nv_wiezien` | A | `male, middle-aged, high pitch, tremor 0.3` | 41 | 7,96 s, SHA `2ca64846` |

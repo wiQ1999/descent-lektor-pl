@@ -352,9 +352,15 @@ def _icons(text):
     return re.sub(r'(?:(\w+)\s+)?\x01(TERM_[A-Z_]+)\x01', standalone, text)
 
 
+PHONETIC = ((r'(?<!\w)KEHL', 'KEL'), (r'(?<!\w)([Kk])ehl', r'\1el'),          # D70
+            (r'(?<!\w)WARRICK', 'ŁORIK'), (r'(?<!\w)Warrick', 'Łorik'))        # D109: wymowa angielska, z odmianą
+
+
 def pronounce(text):
-    """Zapis fonetyczny do syntezy (D70): okno gry dalej ma „Kehli”, model czyta „Keli”."""
-    return re.sub(r'(?<!\w)KEHL', 'KEL', re.sub(r'(?<!\w)([Kk])ehl', r'\1el', text))
+    """Zapis fonetyczny do syntezy (D70): okno gry dalej ma „Kehli” i „Warricka”, model czyta „Keli” i „Łorika”."""
+    for pattern, repl in PHONETIC:
+        text = re.sub(pattern, repl, text)
+    return text
 
 
 def normalize(text, drop_directions=True):

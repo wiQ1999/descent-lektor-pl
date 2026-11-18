@@ -104,6 +104,7 @@ Wersja produkcyjna (E17, D107): `--release m4`, baza `m4.sqlite`, audio `audio/m
 - Mówcy bez imienia (`nv_*`, 99) mają własne głosy OmniVoice: 19 z t1 i 80 z profili postaci (`omni` w `analysis/tools/voice_designs_prod.json`), projekt i wybór automatem `analysis/tools/new_voices_prod.py design|choose|adopt`.
 - `generate` przejmuje wybory z t1 i m3 (tylko silnik głosu w m4) i nieocenione podejścia OmniVoice z m3 (`paths.ADOPT`, `synth.adopt`).
 - Pierwsza paczka m4 obejmuje akt 1 i części wspólne (D108, `ACTS="1 3" ASR_FP32=1`). Test w grze: `docs/E17_M4_TEST1.md`. Zestawienie głosów do odsłuchu: `analysis/tools/cast_sheet.py` (`analysis/work/compare/m4_cast/index.html`).
+- Zmiany obsady po odsłuchu (D109): `analysis/tools/recast_m4.py design|choose|page|adopt` (kandydaci OmniVoice i podglądy ElevenLabs w `analysis/work/compare/m4_recast/`). Nowe profile ElevenLabs wpisujemy do `direction.ELEVEN_RECAST` (znacznik w kluczu fragmentu). „Warrick” model czyta „Łorik” (`normalize.PHONETIC`).
 
 - `build --release m2 --only event_e5b map` buduje tylko wybrane grupy spoza M1.
 - Fazę B E14 prowadzi `bash analysis/tools/e14_run.sh` (D95). Skrypt jest wznawialny i działa w aplikacji Claude:
