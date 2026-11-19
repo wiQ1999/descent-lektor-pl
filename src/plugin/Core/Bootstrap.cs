@@ -34,6 +34,9 @@ namespace LektorPL.Core
         /// </summary>
         public int DiagnosticStage = 4;
 
+        /// <summary>Nakładka w grze (próba): skróty, komunikaty, menu lektora, przycisk na dolnym pasku, zgłoszenia.</summary>
+        public bool Overlay = true;
+
         /// <summary>Komunikaty diagnostyczne dla loadera (np. log BepInEx).</summary>
         public Action<string> Info;
     }
@@ -41,7 +44,7 @@ namespace LektorPL.Core
     /// <summary>Punkt wejścia rdzenia, niezależny od loadera.</summary>
     public static class Bootstrap
     {
-        public const string Version = "0.4.5";
+        public const string Version = "0.5.0-nakladka";
         private static GameObject s_host;
 
         /// <summary>Tworzy ukryty obiekt z <see cref="Runner"/>; zwraca ścieżkę dziennika. Kolejne wywołania nic nie robią.</summary>
@@ -82,7 +85,13 @@ namespace LektorPL.Core
                 sender = new Sender(options.CompanionPort);
                 log.Sink = sender.Enqueue;
             }
-            runner.Init(tracker, log, sender);
+            Overlay overlay = null;
+            if (sender != null && tracker != null && options.Overlay)
+            {
+                try { overlay = new Overlay(log, sender, options.LogDirectory); }
+                catch (Exception e) { log.Error("overlay_init", e); }
+            }
+            runner.Init(tracker, log, sender, overlay);
             options.Info?.Invoke(prefix + ": dziennik " + log.FilePath);
             return log.FilePath;
         }
@@ -93,15 +102,27 @@ namespace LektorPL.Core
         private Tracker _tracker;
         private EventLog _log;
         private Sender _sender;
+        private Overlay _overlay;
         private bool _stopped;
 
         public string LogPath => _log?.FilePath;
 
-        internal void Init(Tracker tracker, EventLog log, Sender sender)
+        internal void Init(Tracker tracker, EventLog log, Sender sender, Overlay overlay = null)
         {
             _tracker = tracker;
             _log = log;
             _sender = sender;
+            _overlay = overlay;
+        }
+
+        private void Update()
+        {
+            if (!_stopped) _overlay?.Update();
+        }
+
+        private void OnGUI()
+        {
+            if (!_stopped) _overlay?.OnGUI();
         }
 
         private void LateUpdate()
@@ -130,6 +151,7 @@ namespace LektorPL.Core
         {
             if (_stopped || _log == null) return;
             _stopped = true;
+            _overlay = null;
             if (_tracker != null)
             {
                 try { _tracker.Shutdown(); } catch (Exception e) { _log.Error("shutdown", e); }

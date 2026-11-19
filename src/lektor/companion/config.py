@@ -3,6 +3,7 @@ import os
 import tomllib
 
 from .. import paths
+from .control import KEYS
 
 TOGGLES = ('narracja', 'dialogi', 'komunikaty_questu', 'walka_teren', 'ui', 'okna_wyboru', 'nagrody',
            'aktywacje', 'cele', 'podroze', 'miasto', 'opis_misji', 'zdolnosci')    # D21, D30, D31, D66, D55, E16 (D101)
@@ -20,9 +21,16 @@ audio = "{audio}"
 volume = 1.0
 device = ""
 
+# Tempo lektora 0.8–1.6 (zmieniane też w grze: skróty i menu lektora).
+tempo = 1.0
+
 # Przełączniki kategorii (D21): false wycisza kategorię.
 [toggles]
 {toggles}
+
+# Skróty w grze: nazwy klawiszy Unity (KeyCode) z Ctrl, Alt albo Shift; kilka wariantów po przecinku.
+[skroty]
+{keys}
 '''
 
 
@@ -33,7 +41,8 @@ def path():
 
 def default_text():
     slash = lambda p: p.replace(os.sep, '/')
-    return DEFAULT.format(db=slash(paths.DB), audio=slash(paths.AUDIO), toggles='\n'.join('%s = true' % t for t in TOGGLES))
+    return DEFAULT.format(db=slash(paths.DB), audio=slash(paths.AUDIO), toggles='\n'.join('%s = true' % t for t in TOGGLES),
+                          keys='\n'.join('%s = "%s"' % kv for kv in KEYS.items()))
 
 
 def load(file=None):
@@ -48,6 +57,7 @@ def load(file=None):
     defaults = tomllib.loads(default_text())
     out = {**defaults, **cfg}
     out['toggles'] = {**defaults['toggles'], **cfg.get('toggles', {})}
+    out['skroty'] = {**defaults['skroty'], **cfg.get('skroty', {})}
     for k in ('db', 'audio'):           # ścieżki względne liczymy od pliku ustawień (paczka D60)
         out[k] = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(file)), out[k]))
     out['file'] = file

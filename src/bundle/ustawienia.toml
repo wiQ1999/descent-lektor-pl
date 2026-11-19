@@ -1,9 +1,13 @@
-# Lektor PL: ustawienia. Zmiany działają od następnego uruchomienia gry.
+# Lektor PL: ustawienia. Zmiany w tym pliku działają od następnego uruchomienia gry.
+# Głośność, tempo i kategorie można też zmieniać w grze (przycisk lektora na dolnym pasku): zapisują się tutaj.
 # Po zmianie uruchom Test dźwięku: sprawdzi głośnik, głośność i poprawność tego pliku.
 # Wartości true/false i liczby piszemy bez cudzysłowów, tekst w cudzysłowach.
 
 # Głośność lektora: od 0.0 (cisza) do 1.0 (pełna).
 volume = 1.0
+
+# Tempo lektora: od 0.8 (wolniej) do 1.6 (szybciej), 1.0 to tempo nagrań.
+tempo = 1.0
 
 # Głośnik albo słuchawki. Puste "" to urządzenie domyślne systemu.
 # Można podać fragment nazwy urządzenia, np. "Headphones".
@@ -29,6 +33,16 @@ podroze = true              # wydarzenia w podróży
 miasto = true               # teksty w mieście
 opis_misji = true           # nazwa i opis misji po wybraniu jej na mapie
 zdolnosci = true            # okno ataku: obrona wroga oraz nazwa i opis zdolności broni albo talizmanu
+
+# Skróty w grze. Nazwy klawiszy jak w Unity (KeyCode), z Ctrl, Alt albo Shift; kilka wariantów po przecinku.
+[skroty]
+szybciej = "Ctrl+Equals, Ctrl+KeypadPlus"
+wolniej = "Ctrl+Minus, Ctrl+KeypadMinus"
+wycisz = "Ctrl+M"                       # wycisza albo włącza lektora
+powtorz = "Ctrl+R"                      # powtarza ostatnią kwestię
+utnij = "Ctrl+S"                        # ucina bieżącą kwestię
+zglos = "Ctrl+B"                        # zgłoszenie błędu: zrzut ekranu, potem cyfra 1–6 (kategoria)
+menu = "Ctrl+L"                         # otwiera albo zamyka menu lektora
 
 # Start lektora razem z grą.
 [plugin]

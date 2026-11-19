@@ -12,6 +12,7 @@ namespace LektorPL.Core
     /// Bez wątków i operacji blokujących: gniazdo jest nieblokujące, a połączenie i wysyłka idą w LateUpdate.
     /// Plugin nie dokłada więc nic, co musiałoby się zakończyć przy wyjściu z gry (D40). Bez połączenia
     /// zdarzenia przepadają, bo companion po starcie czyta tylko nowe okna. Połączenie jest ponawiane.
+    /// Companion odsyła stan dla nakładki (linie JSON): odczyt też jest nieblokujący, każda pełna linia trafia do OnLine.
     /// </summary>
     internal sealed class Sender : IDisposable
     {
@@ -26,6 +27,12 @@ namespace LektorPL.Core
         private float _connectStarted, _nextAttempt;
         private byte[] _current;
         private int _offset;
+        private const int MaxLine = 1 << 20;
+        private readonly byte[] _readBuf = new byte[16384];
+        private readonly List<byte> _line = new List<byte>(4096);
+
+        /// <summary>Pełna linia od companiona (bez znaku nowej linii).</summary>
+        public Action<string> OnLine;
 
         public Sender(int port)
         {
@@ -81,8 +88,12 @@ namespace LektorPL.Core
         {
             try
             {
-                // Companion nic nie odsyła: gotowość do odczytu bez danych oznacza zamknięte połączenie.
-                if (_socket.Poll(0, SelectMode.SelectRead) && _socket.Available == 0) { Close(); return "disconnected"; }
+                // Gotowość do odczytu bez danych oznacza zamknięte połączenie; dane to stan od companiona.
+                if (_socket.Poll(0, SelectMode.SelectRead))
+                {
+                    if (_socket.Available == 0) { Close(); return "disconnected"; }
+                    if (!Receive()) { Close(); return "disconnected"; }
+                }
                 while (_current != null || _queue.Count > 0)
                 {
                     if (_current == null) { _current = _queue.Dequeue(); _offset = 0; }
@@ -97,8 +108,28 @@ namespace LektorPL.Core
             return null;
         }
 
+        private bool Receive()
+        {
+            while (_socket.Available > 0)
+            {
+                int n = _socket.Receive(_readBuf, 0, _readBuf.Length, SocketFlags.None, out SocketError err);
+                if (err == SocketError.WouldBlock) return true;
+                if (err != SocketError.Success || n <= 0) return false;
+                for (int i = 0; i < n; i++)
+                {
+                    byte b = _readBuf[i];
+                    if (b != (byte)'\n') { if (_line.Count < MaxLine) _line.Add(b); continue; }
+                    string line = Encoding.UTF8.GetString(_line.ToArray());
+                    _line.Clear();
+                    try { OnLine?.Invoke(line); } catch (Exception) { }
+                }
+            }
+            return true;
+        }
+
         private void Close()
         {
+            _line.Clear();
             try { _socket?.Close(); } catch (Exception) { }
             _socket = null;
             _connecting = false;

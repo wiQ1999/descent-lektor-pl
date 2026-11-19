@@ -45,7 +45,7 @@ GUIDE = os.path.join(paths.ROOT, 'docs', 'INSTRUKCJA.md')
 NOTICES = (os.path.join(paths.ROOT, 'LICENSE.md'), os.path.join(SRC, 'UZNANIE_AUTORSTWA.md'))
 LICENSES = 'licencje'
 LEKTOR = ('__init__.py', 'normalize.py', 'paths.py', 'companion/__init__.py', 'companion/__main__.py',
-          'companion/app.py', 'companion/config.py', 'companion/director.py', 'companion/library.py',
+          'companion/app.py', 'companion/config.py', 'companion/control.py', 'companion/director.py', 'companion/library.py',
           'companion/player.py')     # companion bez modułów E2 i E3
 UV_PLATFORM = {'win': 'x86_64-pc-windows-msvc', 'mac': 'aarch64-apple-darwin'}
 # site-packages względem folderu paczki: Windows od razu, Mac po rozpakowaniu Pythona przez Zainstaluj.command

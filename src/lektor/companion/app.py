@@ -6,8 +6,12 @@
   replay  zdarzenia z dzienników pluginu z zachowaniem odstępów (speed, max_gap), bezpośrednio albo przez TCP
   test    jedna kwestia narratora (Test dźwięku w paczce)
 
+Kanał zwrotny (próba nakładki): companion odsyła pluginowi stan (`{"ev": "state", ...}`, JSON lines) po każdej
+zmianie i co sekundę. Plugin przysyła polecenia (`control`) i zgłoszenia (`report`) w tym samym połączeniu.
+
 Dziennik companiona (--logs, domyślnie %LOCALAPPDATA%/LektorPL/logs/companion-*.jsonl) ma tylko klucze, liczby i czasy.
 """
+import collections
 import errno
 import json
 import os
@@ -18,6 +22,7 @@ import threading
 import time
 
 from . import config as C
+from . import control as K
 from .director import Director
 from .library import Library
 from .player import NullPlayer, Player
@@ -36,12 +41,15 @@ class Log:
         self.path = path
         self._fh = open(path, 'a', encoding='utf-8')
         self._lock = threading.Lock()
+        self.recent = collections.deque(maxlen=600)     # (czas, rekord) do zgłoszeń z gry
 
     def __call__(self, rec):
-        rec = {'t': round(time.perf_counter(), 3), **rec}
+        now = time.perf_counter()
+        rec = {'t': round(now, 3), **rec}
         with self._lock:
             self._fh.write(json.dumps(rec, ensure_ascii=False) + '\n')
             self._fh.flush()
+            self.recent.append((now, rec))
 
     def close(self):
         self._fh.close()
@@ -62,11 +70,29 @@ class Link:
         self.connected, self.ever = False, False
         self._clock = clock
         self.since = clock()
+        self.conn = None
+        self.fresh = False                      # nowe połączenie: stan trzeba wysłać od razu
+        self._lock = threading.Lock()
 
-    def set(self, connected):
+    def set(self, connected, conn=None):
+        with self._lock:
+            self.conn = conn if connected else None
         self.connected = connected
+        self.fresh = connected
         self.ever = self.ever or connected
         self.since = self._clock()
+
+    def send(self, obj):
+        """Linia JSON do pluginu; błąd zapisu zostawia połączenie wątkowi czytającemu (on wykryje rozłączenie)."""
+        with self._lock:
+            conn = self.conn
+            if conn is None:
+                return False
+            try:
+                conn.sendall((json.dumps(obj, ensure_ascii=False, separators=(',', ':')) + '\n').encode('utf-8'))
+                return True
+            except OSError:
+                return False
 
 
 def server(port):
@@ -91,7 +117,7 @@ def listen(srv, inbox, log, once=False, link=None):
             conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             log({'ev': 'client', 'state': 'connected'})
             if link:
-                link.set(True)
+                link.set(True, conn)
             _reader(conn, inbox, (lambda: inbox.put((time.perf_counter(), END))) if once else None)
             log({'ev': 'client', 'state': 'disconnected'})
             if link:
@@ -137,6 +163,68 @@ def exit_reason(link, now, started, parent_alive=None, after_disconnect=None, no
     return None
 
 
+class Remote:
+    """Polecenia i zgłoszenia z gry oraz stan odsyłany do nakładki pluginu."""
+    HEARTBEAT_S = 1.0
+
+    def __init__(self, cfg, director, link, log, logs=None, save=True):
+        self.cfg, self.director, self.link, self.log = cfg, director, link, log
+        self.reports = K.reports_dir(logs or log_dir())
+        self.save = save
+        self.events = collections.deque(maxlen=800)    # (czas odbioru, zdarzenie pluginu)
+        self.sent_version, self.sent_at, self.count = None, -1e9, 0
+
+    def handle(self, ev, recv):
+        """True, gdy zdarzenie było poleceniem albo zgłoszeniem (reżyser go nie dostaje)."""
+        name = ev.get('ev')
+        if name not in ('control', 'report'):
+            self.events.append((recv, ev))
+            return False
+        if name == 'control':
+            what = self.director.control(ev.get('cmd'), ev.get('value'), recv)
+            if what and self.save:
+                self._store(*what)
+        else:
+            self._report(ev, recv)
+        return True
+
+    def _store(self, key, section):
+        d = self.director
+        value = d.toggles[key] if section == 'toggles' else {'tempo': d.tempo, 'volume': d.volume}[key]
+        try:
+            K.set_setting(self.cfg['file'], key, value, section)
+            self.log({'ev': 'setting', 'key': key, 'section': section, 'value': value})
+        except OSError as e:
+            self.log({'ev': 'setting_error', 'key': key, 'error': str(e)})
+
+    def _report(self, ev, recv):
+        folder = ev.get('dir') or os.path.join(self.reports, time.strftime('%Y%m%d-%H%M%S'))
+        try:
+            path = K.write_report(folder, ev, self.director, list(self.events), list(getattr(self.log, 'recent', [])), recv)
+            self.count += 1
+            self.log({'ev': 'report', 'category': ev.get('category'), 'token': ev.get('token'), 'dir': os.path.basename(folder)})
+            self.director._say('Zgłoszenie zapisane: %s' % K.CATEGORIES.get(ev.get('category'), 'inne'))
+            return path
+        except (OSError, ValueError, TypeError) as e:
+            self.log({'ev': 'report_error', 'error': repr(e)})
+            self.director._say('Nie udało się zapisać zgłoszenia')
+            return None
+
+    def message(self, now):
+        return {'ev': 'state', **self.director.state(now), 'keys': self.cfg.get('skroty') or K.KEYS,
+                'categories': [{'id': k, 'label': v} for k, v in K.CATEGORIES.items()],
+                'reports': self.count, 'reports_dir': self.reports, 'model': self.director.lib.model}
+
+    def pump(self, now):
+        if not self.link.connected:
+            return
+        d = self.director
+        if self.link.fresh or d.version != self.sent_version or now - self.sent_at >= self.HEARTBEAT_S:
+            self.link.fresh = False
+            if self.link.send(self.message(now)):
+                self.sent_version, self.sent_at = d.version, now
+
+
 def feed(files, speed, max_gap, put):
     """Linie dzienników z odstępami z pola t (podzielonymi przez speed, przyciętymi do max_gap)."""
     for f in files:
@@ -163,7 +251,7 @@ def run(cfg, replay=None, audio=True, speed=1.0, max_gap=None, tcp=False, drain=
     lib.warm()
     player = Player(lib.sample_rate, cfg.get('device')) if audio else NullPlayer(lib.sample_rate)
     log = Log(os.path.join(logs or log_dir(), 'companion-%s.jsonl' % time.strftime('%Y%m%d-%H%M%S')))
-    director = Director(lib, player, cfg['toggles'], cfg.get('volume', 1.0), log)
+    director = Director(lib, player, cfg['toggles'], cfg.get('volume', 1.0), log, tempo=cfg.get('tempo', 1.0))
     log({'ev': 'start', 'mode': 'replay' if replay else 'serve', 'model': lib.model, 'audio': audio,
          'output_latency': player.output_latency, 'speed': speed, 'max_gap': max_gap, 'tcp': tcp,
          'toggles': cfg['toggles'], 'replay': [os.path.basename(f) for f in replay or []],
@@ -171,6 +259,7 @@ def run(cfg, replay=None, audio=True, speed=1.0, max_gap=None, tcp=False, drain=
     inbox = queue.Queue()
     plugin_lag = []
     link = Link()
+    remote = Remote(cfg, director, link, log, logs, save=not replay)
     started = next_check = time.perf_counter()
     reason = None
     if not replay:
@@ -208,11 +297,13 @@ def run(cfg, replay=None, audio=True, speed=1.0, max_gap=None, tcp=False, drain=
                     continue
                 if ev.get('ev') == 'open' and ev.get('begin_t') is not None:
                     plugin_lag.append(ev['t'] - ev['begin_t'])
-                director.handle(ev, recv)
+                if not remote.handle(ev, recv):
+                    director.handle(ev, recv)
                 if not quiet and not replay and ev.get('ev') in ('open', 'shown', 'objective'):
                     say(quiet, '%-10s %s' % (ev.get('kind') or ev.get('ev'), ev.get('key') or ''))
             director.tick()
             now = time.perf_counter()
+            remote.pump(now)
             if ended is not None and (director.idle or now - ended > drain):
                 reason = 'koniec_replayu'
                 break

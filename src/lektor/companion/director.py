@@ -14,6 +14,9 @@
   scena, stop                                 zatrzymują wszystko
   przełącznik kategorii wyłączony (D21)       okno nie gra, ale zatrzymuje audio poprzedniego okna
 
+Sterowanie z gry (próba nakładki): tempo × 0,8–1,6 dla następnych kwestii, wyciszenie (kwestie trafiają do historii
+bez dźwięku), powtórka kwestii z historii (nie przerywa jej zamknięcie okna, przerywa nowe okno), ucięcie bieżącej.
+
 Każde zdarzenie dostaje czas odbioru (`recv`, perf_counter). Opóźnienie startu to czas od odbioru do wyjścia
 pierwszej próbki z przetwornika, opóźnienie przerwania to czas od odbioru zdarzenia do wyciszenia.
 """
@@ -23,8 +26,10 @@ import itertools
 import re
 import time
 
+from . import control as K
 from .player import CLOSE_FADE_S, FADE_S
 
+HISTORY = 10
 WINDOWS = ('message', 'story')
 QUEUED = ('objective', 'activation', 'details', 'ability', 'defense', 'feat', 'feat_done')
 SETTLE = 0.35           # cisza po zdarzeniu okna, zanim ruszy kolejka: zamknięcie i nowe okno przychodzą razem
@@ -62,10 +67,17 @@ def speaking_hero(ev):
 
 
 class Director:
-    def __init__(self, library, player, toggles=None, volume=1.0, log=None, clock=time.perf_counter):
+    def __init__(self, library, player, toggles=None, volume=1.0, log=None, clock=time.perf_counter, tempo=1.0):
         self.lib, self.player = library, player
         self.toggles = toggles or {}
         self.volume = volume
+        self.tempo = K.clamp_tempo(tempo)
+        self.muted = False
+        self.history = collections.deque(maxlen=HISTORY)   # {'item', 't', 'seconds', 'muted'}, najnowsza na końcu
+        self.seconds = {}                       # token -> długość audio (s) po zmianie tempa
+        self.notice = None                      # (numer, tekst) komunikatu dla nakładki w grze
+        self._notices = itertools.count(1)
+        self.version = 0                        # rośnie przy każdej zmianie stanu widocznej w grze
         self.log = log or (lambda rec: None)
         self.clock = clock
         self.current = None
@@ -318,15 +330,28 @@ class Director:
             if cur.src in QUEUED and not cur.requeued:
                 self.queue.appendleft(dataclasses.replace(cur, token=next(self._tokens), requeued=True))
         t0 = self.clock()
-        audio = self.lib.audio(item.u, self.volume)
-        self.player.play(audio, item.token)
-        self.current = item
-        self.items[item.token] = item
-        self.trigger[item.token] = (trigger, immediate)
         for key in item.u.nested:
             self.nested[key] = item.recv
-        self.log({'ev': 'play', 'token': item.token, 'src': item.src, 'key': item.key, 'seconds': round(len(audio) / self.lib.sample_rate, 2),
-                  'prep_ms': round((self.clock() - t0) * 1000, 1), 'immediate': immediate})
+        self.items[item.token] = item
+        if self.muted and item.src != 'repeat':
+            if cur is not None:
+                self.player.stop(FADE_S)
+            self.current = None
+            self._remember(item, 0.0, muted=True)
+            self.log({'ev': 'muted', 'token': item.token, 'src': item.src, 'key': item.key})
+            return
+        audio = self.lib.audio(item.u, self.volume)
+        audio = K.stretch(audio, self.tempo, self.lib.sample_rate)
+        seconds = len(audio) / self.lib.sample_rate
+        self.player.play(audio, item.token)
+        self.current = item
+        self.trigger[item.token] = (trigger, immediate)
+        self.seconds[item.token] = seconds
+        if item.src != 'repeat':
+            self._remember(item, seconds)
+        self.version += 1
+        self.log({'ev': 'play', 'token': item.token, 'src': item.src, 'key': item.key, 'seconds': round(seconds, 2),
+                  'tempo': self.tempo, 'prep_ms': round((self.clock() - t0) * 1000, 1), 'immediate': immediate})
 
     def _stop(self, recv, fade=CLOSE_FADE_S):
         if self.current is None:
@@ -334,6 +359,7 @@ class Director:
         self.stop_req[self.current.token] = recv
         self.player.stop(fade)
         self.current = None
+        self.version += 1
 
     def _player_event(self, token, what, t):
         item = self.items.get(token)
@@ -355,7 +381,91 @@ class Director:
         elif what == 'end':
             if self.current is not None and self.current.token == token:
                 self.current = None
+                self.version += 1
             self.log({'ev': 'end', 'token': token, 'src': item.src, 'key': item.key, 'played_s': round(t - self.started.get(token, t), 2)})
+
+    # ---------- sterowanie z gry ----------
+
+    def _remember(self, item, seconds, muted=False):
+        self.history.append({'item': item, 't': self.clock(), 'seconds': seconds, 'muted': muted})
+        self.version += 1
+
+    def _say(self, text):
+        self.notice = (next(self._notices), text)
+        self.version += 1
+
+    def find(self, token):
+        for h in self.history:
+            if h['item'].token == token:
+                return h['item']
+        return self.items.get(token)
+
+    def last_item(self):
+        return self.history[-1]['item'] if self.history else None
+
+    def control(self, cmd, value=None, recv=None):
+        """Polecenie z gry (skrót albo menu). Zwraca (klucz, sekcja) ustawienia do zapisania w pliku albo None."""
+        recv = self.clock() if recv is None else recv
+        self.log({'ev': 'control', 'cmd': cmd, 'value': value})
+        save = None
+        if cmd in ('szybciej', 'wolniej', 'tempo'):
+            step = {'szybciej': K.TEMPO_STEP, 'wolniej': -K.TEMPO_STEP}.get(cmd, 0.0)
+            new = K.clamp_tempo(float(value) if cmd == 'tempo' and value is not None else self.tempo + step)
+            if new != self.tempo:
+                self.tempo, save = new, ('tempo', None)
+            self._say('Tempo lektora %s×' % ('%.1f' % self.tempo).replace('.', ','))
+        elif cmd == 'wycisz':
+            self.muted = (not self.muted) if value is None else bool(value)
+            if self.muted:
+                self._stop(recv, FADE_S)
+            self._say('Lektor wyciszony' if self.muted else 'Lektor włączony')
+        elif cmd == 'utnij':
+            if self.current is not None:
+                self._stop(recv, FADE_S)
+                self._say('Ucięto kwestię')
+        elif cmd == 'powtorz':
+            item = self.find(value) if value else self.last_item()
+            if item is None:
+                self._say('Brak kwestii do powtórzenia')
+            else:
+                rep = dataclasses.replace(item, token=next(self._tokens), src='repeat', wid=None, requeued=True)
+                self._start(rep, recv)
+                self._say('Powtórka: %s' % K.speaker_label((self.lib.lines.get(item.u.key) or {}).get('voice')))
+        elif cmd == 'glosnosc' and value is not None:
+            self.volume = round(min(1.0, max(0.0, float(value))), 2)
+            save = ('volume', None)
+            self._say('Głośność lektora %d%%' % round(self.volume * 100))
+        elif cmd == 'przelacznik' and isinstance(value, dict) and value.get('name') in self.toggles:
+            self.toggles[value['name']] = bool(value.get('on'))
+            save = (value['name'], 'toggles')
+        self.version += 1
+        return save
+
+    def state(self, now=None):
+        """Stan dla nakładki w grze (wysyłany do pluginu po każdej zmianie)."""
+        now = self.clock() if now is None else now
+
+        def entry(item, t=None, seconds=None, muted=False):
+            line = self.lib.lines.get(item.u.key) or {}
+            text = ' '.join((line.get('text_norm') or '').split())
+            return {'token': item.token, 'speaker': K.speaker_label(line.get('voice')), 'voice': line.get('voice'),
+                    'key': item.u.key, 'text': text[:90] + ('…' if len(text) > 90 else ''),
+                    'ago': None if t is None else int(now - t),
+                    'seconds': None if seconds is None else round(seconds, 1), 'muted': muted}
+        cur = None
+        if self.current is not None:
+            tok = self.current.token
+            cur = entry(self.current, seconds=self.seconds.get(tok))
+            cur['elapsed'] = round(max(0.0, now - self.started.get(tok, now)), 2)
+        missing = sum(n for (src, outcome), n in self.outcomes.items()
+                      if src in WINDOWS and outcome in ('brak_klucza', 'brak_audio', 'częściowe'))
+        return {
+            'tempo': self.tempo, 'muted': self.muted, 'volume': self.volume, 'toggles': dict(self.toggles),
+            'now': cur, 'queue': len(self.queue) + (1 if self.pending is not None else 0),
+            'history': [entry(h['item'], h['t'], h['seconds'], h['muted']) for h in reversed(self.history)],
+            'missing': missing,
+            'notice': {'id': self.notice[0], 'text': self.notice[1]} if self.notice else None,
+        }
 
     # ---------- podsumowanie ----------
 
