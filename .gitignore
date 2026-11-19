@@ -107,3 +107,8 @@ desktop.ini
 # --- Agenci: ustawienia lokalne i worktree ---
 .claude/settings.local.json
 .claude/worktrees/
+
+# --- Codex (pliki generowane automatycznie) ---
+.codex/
+.agents/
+AGENTS.md
