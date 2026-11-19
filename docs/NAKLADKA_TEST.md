@@ -53,7 +53,7 @@ Zamiast osobnej paczki można też podmienić pliki w rozpakowanej paczce v0.4.0
 2. Klik w „PL” otwiera menu, a drugi klik je zamyka. Otwarcie zębatki albo drużyny zwija menu lektora.
 3. Menu lektora wysuwa się jak menu gry i zasłania zębatkę i drużynę. Klik w menu nie klika w planszę: nic się nie zaznacza i figurki się nie ruszają.
 4. Tempo: Ctrl+= dwa razy. Następna kwestia jest szybsza i ma ten sam głos. Sprawdź też 1,6×.
-5. Wyciszenie, powtórka, ucięcie: skrótem i z menu. Powtórka z historii (▶) gra wybraną kwestię.
+5. Wyciszenie, powtórka, ucięcie: skrótem i z menu. Powtórka z historii („Graj”) gra wybraną kwestię.
 6. Zgłoszenie: Ctrl+B w trakcie kwestii, potem cyfra. Drugie zgłoszenie: „Zgłoś” przy kwestii w historii. Sprawdź oba foldery w `zgloszenia\`. Zrzut nie powinien pokazywać menu.
 7. Kategoria wyłączona w menu przestaje grać. Po ponownym uruchomieniu gry ustawienia zostają.
 8. W mieście i na mapie świata: czy przycisk „PL” jest widoczny i nie zasłania innych elementów.
