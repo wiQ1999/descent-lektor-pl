@@ -296,8 +296,6 @@ Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej 
 dotnet build src/plugin/Loader -c Release
 ```
 
-- Ikona przycisku „PL” to białe logo (`assets/logo/lektor-pl-bialy.svg`) osadzone w `LektorPL.Core.dll`. Plik `src/plugin/Core/Resources/logo-bialy.png` jest w repozytorium. Po zmianie SVG odtwarza go `.venv/Scripts/python -I analysis/tools/logo_png.py assets/logo/lektor-pl-bialy.svg src/plugin/Core/Resources/logo-bialy.png --size 128`.
-
 ```bash
 powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1
 ```

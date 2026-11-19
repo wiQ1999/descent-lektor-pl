@@ -47,6 +47,7 @@ obj/
 *.tga
 *.psd
 !src/plugin/Core/Resources/logo-bialy.png
+!assets/social-preview.png
 # bazy kwestii, zrzuty tekstów, dzienniki hooka, eksporty odsłuchu
 *.sqlite
 *.db

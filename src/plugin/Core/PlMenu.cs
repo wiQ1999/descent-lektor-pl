@@ -59,7 +59,7 @@ namespace LektorPL.Core
         private static Sprite _logo;
         private static bool _logoTried;
 
-        /// <summary>Białe logo z zasobu LektorPL.Core.dll (PNG 128 px z assets/logo, analysis/tools/logo_png.py).</summary>
+        /// <summary>Białe logo z zasobu LektorPL.Core.dll (PNG 128 px z assets/logo).</summary>
         private static Sprite LogoSprite()
         {
             if (_logoTried) return _logo;

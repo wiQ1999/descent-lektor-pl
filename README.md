@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo/lektor-pl.svg" width="128" alt="Logo Lektor PL: mikrofon z literami PL"></p>
+
 # Lektor PL dla Descent: Legends of the Dark
 
 Nieoficjalny, niekomercyjny polski lektor TTS do aplikacji gry planszowej *Descent: Legends of the Dark* (pol. *Descent: Legendy Mroku*, Fantasy Flight Games).

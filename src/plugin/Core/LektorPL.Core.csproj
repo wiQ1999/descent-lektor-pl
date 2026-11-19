@@ -17,7 +17,7 @@
     <Reference Include="UnityEngine.ScreenCaptureModule"><HintPath>$(GameManaged)UnityEngine.ScreenCaptureModule.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
   <ItemGroup>
-    <!-- Ikona przycisku „PL” (E18): białe logo z assets/logo, rasteryzowane analysis/tools/logo_png.py. -->
+    <!-- Ikona przycisku „PL” (E18): białe logo z assets/logo w 128 px. -->
     <EmbeddedResource Include="Resources\logo-bialy.png" LogicalName="LektorPL.Core.logo-bialy.png" />
   </ItemGroup>
 </Project>
