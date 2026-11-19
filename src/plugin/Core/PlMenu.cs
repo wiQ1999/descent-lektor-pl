@@ -55,7 +55,35 @@ namespace LektorPL.Core
         private RectTransform _holder, _panel, _partyHolder, _partyPanel, _body, _content;
         private CanvasGroup _group, _partyGroup;
         private Button _button, _partyButton;
-        private TMP_Text _label;
+        private Graphic _label;                                       // logo (Image) albo zapasowy napis „PL”
+        private static Sprite _logo;
+        private static bool _logoTried;
+
+        /// <summary>Białe logo z zasobu LektorPL.Core.dll (PNG 128 px z assets/logo, analysis/tools/logo_png.py).</summary>
+        private static Sprite LogoSprite()
+        {
+            if (_logoTried) return _logo;
+            _logoTried = true;
+            try
+            {
+                using (var s = typeof(PlMenu).Assembly.GetManifestResourceStream("LektorPL.Core.logo-bialy.png"))
+                {
+                    if (s == null) return null;
+                    var bytes = new byte[s.Length];
+                    int read = 0;
+                    while (read < bytes.Length) { int n = s.Read(bytes, read, bytes.Length - read); if (n <= 0) break; read += n; }
+                    var tex = new Texture2D(2, 2, TextureFormat.RGBA32, true) { name = "LektorPL.Logo", hideFlags = HideFlags.HideAndDontSave };
+                    if (!ImageConversion.LoadImage(tex, bytes, true)) return null;
+                    tex.wrapMode = TextureWrapMode.Clamp;
+                    tex.filterMode = FilterMode.Trilinear;
+                    _logo = Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
+                    _logo.name = "LektorPL.Logo";
+                    _logo.hideFlags = HideFlags.HideAndDontSave;
+                }
+            }
+            catch (Exception) { _logo = null; }
+            return _logo;
+        }
         private GameObject _buttonTemplate, _toggleTemplate;
         private TMP_FontAsset _font;
         private Vector3 _restPos;
@@ -207,14 +235,35 @@ namespace LektorPL.Core
             _button = btn.GetComponent<Button>();
             _button.onClick = new Button.ButtonClickedEvent();
             _button.onClick.AddListener(() => _host.ToggleMenu());
+            // Ikona: białe logo lektora w miejscu ikony drużyny (ten sam rozmiar i położenie); bez logo napis „PL”.
+            Image icon = null;
             foreach (Image img in btn.GetComponentsInChildren<Image>(true))
-                if (img.transform != btn) img.enabled = false;          // ikona drużyny
-            _label = AddText(btn, "PL", Mathf.Max(20f, btn.rect.height * 0.3f), Light, TextAlignmentOptions.Center, true);
-            var lrt = _label.rectTransform;
-            lrt.anchorMin = Vector2.zero;
-            lrt.anchorMax = Vector2.one;
-            lrt.offsetMin = new Vector2(0f, btn.rect.height * 0.22f);   // jak ikona drużyny: nad środkiem (dół przycisku jest pod ekranem)
-            lrt.offsetMax = Vector2.zero;
+            {
+                if (img.transform == btn) continue;
+                if (icon == null && LogoSprite() != null) icon = img;
+                else img.enabled = false;
+            }
+            if (icon != null)
+            {
+                icon.sprite = LogoSprite();
+                icon.type = Image.Type.Simple;
+                icon.preserveAspect = true;
+                icon.overrideSprite = null;
+                icon.material = null;
+                icon.color = Light;
+                icon.enabled = true;
+                _label = icon;
+            }
+            else
+            {
+                var text = AddText(btn, "PL", Mathf.Max(20f, btn.rect.height * 0.3f), Light, TextAlignmentOptions.Center, true);
+                var lrt = text.rectTransform;
+                lrt.anchorMin = Vector2.zero;
+                lrt.anchorMax = Vector2.one;
+                lrt.offsetMin = new Vector2(0f, btn.rect.height * 0.22f);   // jak ikona drużyny: nad środkiem (dół przycisku jest pod ekranem)
+                lrt.offsetMax = Vector2.zero;
+                _label = text;
+            }
 
             BuildBody(panel);
 
