@@ -310,6 +310,21 @@ powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1
 - Nowy plugin i companion bez budowania paczki: `src/plugin/install/nakladka-test.ps1 -Paczka "<paczka>"` podmienia je w rozpakowanej paczce (oryginały w `stan\nakladka-kopia`, powrót: `-Przywroc`). Opis i lista kontrolna: `docs/NAKLADKA_TEST.md`.
 - Każda paczka ma `LICENSE.md`, `UZNANIE_AUTORSTWA.md` (szablon w `src/bundle/`) i licencję Doorstop w `licencje/`.
 
+### Instalacja jedną komendą: części paczki (E19, D111, Windows)
+
+```bash
+.venv/Scripts/python -I -m lektor bundle --platform win --parts [--from DIR] [--out DIR] [--fresh]
+```
+
+- Dzieli gotową paczkę (`analysis/work/dist/win/Descent-Lektor-PL`) na części w `analysis/work/dist/win-online/`: `python-*.zip`, `program-*.zip`, warstwy `audio-*.zip`, manifest `lektor-win.json`, starter `instaluj-win.ps1` i instalator `instalator-win.ps1`.
+- Katalog jest kumulatywny: kolejna budowa dokłada warstwę audio tylko z nowymi i zmienionymi plikami, a części, których manifest już nie używa, usuwa. `--fresh` zaczyna audio od nowa.
+- Próba lokalna bez wydania: serwer `.venv/Scripts/python -I -m http.server 47899 --bind 127.0.0.1 --directory analysis/work/dist/win-online`, potem w PowerShell (folder gry i lektora tymczasowe):
+
+```powershell
+$env:LEKTOR_ZRODLO = 'http://127.0.0.1:47899'; $env:LEKTOR_FOLDER = '<folder testowy>'; $env:LEKTOR_GRA = '<atrapa gry z plikiem Legends of the Dark.exe>'
+irm http://127.0.0.1:47899/instaluj-win.ps1 | iex
+```
+
 ### Wydanie w GitHub Releases (E10, D82)
 
 GitHub CLI działa bez instalacji. Pobierz `gh_2.103.3_windows_amd64.zip` z https://github.com/cli/cli/releases/tag/v2.103.3, sprawdź SHA-256 (`98d0cfa794721665d7973dd728c78aff7bd836d58f10f6d7a03568eccb0a22e0`) i rozpakuj do `analysis/work/bin/gh-2.103.3/gh/`. Token leży w `analysis/work/bin/gh-config` (ignorowane w Git). Logowanie (na pytanie o uwierzytelnienie Git odpowiedz `n`):

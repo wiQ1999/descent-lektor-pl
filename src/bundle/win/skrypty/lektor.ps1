@@ -22,6 +22,7 @@ param(
     [Parameter(ParameterSetName = 'Enable', Mandatory)] [switch] $Enable,
     [Parameter(ParameterSetName = 'Test', Mandatory)] [switch] $Test,
     [Parameter(ParameterSetName = 'Status')] [switch] $Status,
+    [Parameter(ParameterSetName = 'Install')] [switch] $Upgrade,
     [string] $GameDir
 )
 $ErrorActionPreference = 'Stop'
@@ -167,6 +168,13 @@ function Install-Lektor {
     if ($state) {
         $game = $state['game']
         if ((Test-Path -LiteralPath (Join-Path $game 'winhttp.dll')) -and (Test-OurConfig $game)) {
+            if ($Upgrade) {
+                # aktualizacja z instaluj-win.ps1: ścieżka bez zmian, lektor zostaje włączony albo wyłączony
+                $on = (Get-Content -LiteralPath (Join-Path $game $ConfigName) -Raw) -match '(?m)^enabled=true'
+                Write-DoorstopConfig $game $on
+                Say ("Lektor w grze: {0}" -f $(if ($on) { 'włączony' } else { 'wyłączony (Włącz lektora go włączy)' })) Green
+                return
+            }
             Write-DoorstopConfig $game $true
             Say "Lektor był już zainstalowany w: $game" Green
             Say 'Odświeżyłem ścieżkę do folderu paczki i włączyłem lektora. Uruchom grę ze Steama.' Green
@@ -176,7 +184,12 @@ function Install-Lektor {
     }
     $game = if ($GameDir) { (Resolve-Path -LiteralPath $GameDir).Path } else { Find-Game }
     Say "Gra: $game"
-    $foreign = @('winhttp.dll', $ConfigName, '.doorstop_version', 'version.dll', 'BepInEx', 'MelonLoader' |
+    if (Test-OurConfig $game) {
+        $other = [regex]::Match((Get-Content -LiteralPath (Join-Path $game $ConfigName) -Raw), '(?m)^target_assembly=(.+?)\\plugin\\LektorPL\.Loader\.dll').Groups[1].Value
+        throw ("W grze jest już lektor z innego folderu: $other. " +
+            "Uruchom Odinstaluj.cmd w tamtym folderze, a potem tę instalację ponownie.")
+    }
+    $foreign =@('winhttp.dll', $ConfigName, '.doorstop_version', 'version.dll', 'BepInEx', 'MelonLoader' |
             Where-Object { Test-Path -LiteralPath (Join-Path $game $_) })
     if ($foreign) {
         throw ("W folderze gry jest już inny loader modów: {0}. Lektor PL nie nadpisuje cudzych plików. " +

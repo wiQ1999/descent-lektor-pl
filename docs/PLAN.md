@@ -492,6 +492,10 @@ Cel: paczka całej gry z regułami t1. Przygotowanie zrobione 2026-11-14 (`analy
 
 Skróty klawiszowe, przycisk „PL” z menu lektora na dolnym pasku, tempo 0,8–1,6×, zapis ustawień z gry w `ustawienia.toml` i zgłoszenia błędów ze zrzutem i kontekstem w `zgloszenia/`. Sprawdzone w grze na Windows 2026-11-19 (`docs/NAKLADKA_TEST.md`). Wejdzie do następnej paczki; test na Macu razem z nią.
 
+## E19 · Instalacja i aktualizacja jedną komendą (D111)
+
+Starter `instaluj-win.ps1` i instalator `instalator-win.ps1` (`src/bundle/online/`), części paczki z manifestem (`lektor bundle --parts`). Próba lokalna na Windows zrobiona 2026-11-19. Dalej: decyzja o wydaniu (zwykłe wydanie, części ze starszych wydań), wariant dla Maca (`curl … | bash`), opis w `INSTRUKCJA.md`.
+
 ## E12 · Katalog treści gry (później)
 
 Uporządkowanie treści całej gry do nagrania: kategorie, mówcy, scenariusze, przedmioty i miejsce na poprawki, np. zapis fonetyczny. Sposób przechowywania dobieram sam (D77). Katalog leży w projekcie, w `analysis/work/`, poza Git (D76). Plan etapu przedstawię przed startem.

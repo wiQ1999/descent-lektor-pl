@@ -67,6 +67,9 @@ def main(argv=None):
     k.add_argument('--platform', choices=('win', 'mac'), default='win')
     k.add_argument('--dev', action='store_true', help='analysis/work/dev-bundle z Pythonem z .venv (test W1)')
     k.add_argument('--out', help='katalog docelowy')
+    k.add_argument('--parts', action='store_true', help='części i manifest dla instalatora sieciowego (Windows)')
+    k.add_argument('--from', dest='src', help='z --parts: gotowy folder paczki (domyślnie dist/<platform>)')
+    k.add_argument('--fresh', action='store_true', help='z --parts: audio od nowa w jednej warstwie')
     a = ap.parse_args(argv)
     paths.use(getattr(a, 'release', 'm1'))
     if a.cmd == 'build':
@@ -120,6 +123,9 @@ def main(argv=None):
     elif a.cmd == 'companion':
         from .companion import app
         app.main(a)
+    elif a.cmd == 'bundle' and a.parts:
+        from .parts import build
+        print(build(a.platform, a.src, a.out, a.fresh))
     elif a.cmd == 'bundle':
         from .bundle import build
         print(build(a.platform, a.dev, a.out))

@@ -1134,6 +1134,23 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** dotąd błędy lektora użytkownik zgłaszał zrzutami ekranu i dziennikami zbieranymi ręcznie, a tempa nie dało się zmienić w trakcie gry. Formę (skróty + menu na dolnym pasku), zakres poleceń i treść zgłoszenia ustalił QA 2026-11-19; wygląd menu użytkownik poprawiał według zrzutów z gry.
 
+### D111 · 2026-11-19 · E19: instalacja i aktualizacja jedną komendą (Windows, próba lokalna)
+**Decyzja:**
+- Zamiast zipa do rozpakowania i ręcznych kroków: starter `instaluj-win.ps1` uruchamiany w PowerShell przez `irm …/releases/latest/download/instaluj-win.ps1 | iex`. Ta sama komenda instaluje i aktualizuje.
+- Lektor ląduje w stałym folderze `%USERPROFILE%\Descent-Lektor-PL`. Instalator rozpoznaje instalację po `stan\pakiet.json` (manifest zainstalowanej wersji); wcześniejszych wersji paczki nie obsługuje.
+- Wydanie ma manifest `lektor-win.json` i części (`lektor bundle --parts`, `src/lektor/parts.py`): `python`, `program` i warstwy `audio` (nowe i zmienione pliki, zipy do 1 GiB). Nazwa części to rodzaj i początek SHA-256 zipa, więc aktualizacja pobiera tylko zmienione części, a pliki usunięte z paczki kasuje.
+- Aktualizacja zachowuje `ustawienia.toml` (scala wartości użytkownika z nowym plikiem domyślnym, `db` i `audio` zawsze z nowej wersji; kopia w `stan\`), `zgloszenia\`, `logs\` i stan włączenia lektora (`lektor.ps1 -Install -Upgrade`).
+- Starter jest w ASCII i pobiera właściwy instalator `instalator-win.ps1` (UTF-8 z BOM) jako plik: `irm` dekoduje plik z wydania jako ISO-8859-1. Pobrania przez `curl.exe` nie dostają znacznika Mark-of-the-Web, więc nie ma okna SmartScreen ani rozpakowywania.
+- Bez pliku `Aktualizuj` w paczce i bez informacji o nowej wersji w menu „PL”. Zip „wszystko w jednym” zostaje obok.
+- Próba lokalna 2026-11-19 (serwer HTTP na 127.0.0.1, atrapa folderu gry, bez wydania): świeża instalacja 1,8 GB w 4 częściach; aktualizacja z 3 zmienionymi, 1 nowym i 2 usuniętymi plikami audio i zmianą programu pobrała 8 MB, zachowała ustawienia, zgłoszenia i wyłączonego lektora; ponowne uruchomienie mówi „aktualny”; pliki zgodne z paczką.
+
+**Uzasadnienie:** znajomy zgłosił, że każda nowa wersja wymaga instrukcji (najbardziej na Macu). Z dwóch wariantów (inteligentny `Zainstaluj` w zipie albo instalacja jedną komendą z częściami) użytkownik wybrał drugi i próbę tylko na Windows, bez wypychania wydania.
+
+**Otwarte:**
+- `releases/latest/download` pomija wydania oznaczone jako prerelease: wydanie z instalatorem musi być zwykłym wydaniem.
+- Części z poprzednich wydań: albo wgrywamy wszystkie części do każdego wydania, albo manifest dostaje adres części ze starszego wydania.
+- Lektor zainstalowany z innego folderu wychodzi dopiero po pobraniu (`lektor.ps1` przerywa z komunikatem); sprawdzenie przed pobraniem i wariant dla Maca w kolejnym kroku.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
