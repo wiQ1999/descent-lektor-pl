@@ -17,12 +17,12 @@ Branch `feature/in-game-overlay`, plugin `0.5.0-nakladka`. Próba poza planem et
 
   Skróty można zmienić w `ustawienia.toml`, w sekcji `[skroty]`.
 - **Komunikat** u góry ekranu po każdej akcji, np. „Tempo lektora 1,2×”.
-- **Przycisk „PL”** na dolnym pasku, obok zębatki i drużyny. Otwiera menu lektora, które zawiera:
+- **Przycisk „PL”** na dolnym pasku, obok zębatki i drużyny. Otwiera menu lektora w stylu menu gry: czarny panel wysuwany spod ekranu od lewej krawędzi do przycisku „PL”, niebieskie przyciski gry, przewijanie kółkiem myszy. Menu zawiera:
   - bieżącą kwestię z paskiem postępu;
   - przyciski Powtórz, Utnij i Wycisz;
   - tempo i głośność;
-  - 10 ostatnich kwestii: ▶ odtwarza kwestię jeszcze raz, „Zgłoś” zgłasza błąd w tej kwestii;
-  - 13 kategorii „Co czyta lektor”;
+  - 13 kategorii „Co czyta lektor” jako przyciski: przekreślona i szara kategoria jest wyłączona;
+  - 10 ostatnich kwestii: „Graj” odtwarza kwestię jeszcze raz, „Zgłoś” zgłasza błąd w tej kwestii;
   - stan: zgłoszenia, okna bez nagrania, wersje.
 
   Zmiany tempa, głośności i kategorii zapisują się od razu w `ustawienia.toml`.
@@ -49,9 +49,9 @@ Zamiast osobnej paczki można też podmienić pliki w rozpakowanej paczce v0.4.0
 
 ## Co sprawdzić w grze
 
-1. Na planszy misji na dolnym pasku jest przycisk „PL”. Jego wygląd i położenie pasują do zębatki i drużyny. Przycisk znika razem z paskiem.
+1. Na planszy misji na dolnym pasku jest przycisk „PL”. Jego wygląd i położenie pasują do zębatki i drużyny. Po otwarciu zębatki albo drużyny „PL” chowa się pod krawędź ekranu, a po zamknięciu wraca.
 2. Klik w „PL” otwiera menu, a drugi klik je zamyka. Otwarcie zębatki albo drużyny zwija menu lektora.
-3. Klik w menu nie klika w planszę: nic się nie zaznacza i figurki się nie ruszają.
+3. Menu lektora wysuwa się jak menu gry i zasłania zębatkę i drużynę. Klik w menu nie klika w planszę: nic się nie zaznacza i figurki się nie ruszają.
 4. Tempo: Ctrl+= dwa razy. Następna kwestia jest szybsza i ma ten sam głos. Sprawdź też 1,6×.
 5. Wyciszenie, powtórka, ucięcie: skrótem i z menu. Powtórka z historii (▶) gra wybraną kwestię.
 6. Zgłoszenie: Ctrl+B w trakcie kwestii, potem cyfra. Drugie zgłoszenie: „Zgłoś” przy kwestii w historii. Sprawdź oba foldery w `zgloszenia\`. Zrzut nie powinien pokazywać menu.
