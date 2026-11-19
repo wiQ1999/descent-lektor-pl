@@ -488,6 +488,10 @@ Cel: paczka całej gry z regułami t1. Przygotowanie zrobione 2026-11-14 (`analy
 
 **Kryteria ukończenia:** wszystkie fragmenty w manifeście `m4`, testy przechodzą, paczki zbudowane, raport `analysis/E17_AUDIO.md`, commit.
 
+## E18 · Nakładka lektora w grze (D110, zrobione)
+
+Skróty klawiszowe, przycisk „PL” z menu lektora na dolnym pasku, tempo 0,8–1,6×, zapis ustawień z gry w `ustawienia.toml` i zgłoszenia błędów ze zrzutem i kontekstem w `zgloszenia/`. Sprawdzone w grze na Windows 2026-11-19 (`docs/NAKLADKA_TEST.md`). Wejdzie do następnej paczki; test na Macu razem z nią.
+
 ## E12 · Katalog treści gry (później)
 
 Uporządkowanie treści całej gry do nagrania: kategorie, mówcy, scenariusze, przedmioty i miejsce na poprawki, np. zapis fonetyczny. Sposób przechowywania dobieram sam (D77). Katalog leży w projekcie, w `analysis/work/`, poza Git (D76). Plan etapu przedstawię przed startem.

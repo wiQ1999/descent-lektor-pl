@@ -307,6 +307,7 @@ powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1
 - Paczka trafia do `analysis/work/dist/`. Doorstop, Python i koła mają sumy w `src/bundle/pins.toml` i `src/bundle/requirements-<platform>.txt`.
 - Audio w paczce jest w FLAC (D96). Kopie FLAC plików końcowych leżą w `analysis/work/audio/<wydanie>/flac/`.
 - Instalację w grze opisuje `docs/INSTRUKCJA.md`.
+- Nowy plugin i companion bez budowania paczki: `src/plugin/install/nakladka-test.ps1 -Paczka "<paczka>"` podmienia je w rozpakowanej paczce (oryginały w `stan\nakladka-kopia`, powrót: `-Przywroc`). Opis i lista kontrolna: `docs/NAKLADKA_TEST.md`.
 - Każda paczka ma `LICENSE.md`, `UZNANIE_AUTORSTWA.md` (szablon w `src/bundle/`) i licencję Doorstop w `licencje/`.
 
 ### Wydanie w GitHub Releases (E10, D82)

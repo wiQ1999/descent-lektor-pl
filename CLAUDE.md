@@ -162,6 +162,7 @@ Companion (E4). Konfiguracja w `%LOCALAPPDATA%\LektorPL\companion.toml` (tworzon
 .venv/Scripts/python -I -m lektor companion --replay <hook.jsonl ...> [--tcp] [--speed 0] [--no-audio] [--config plik.toml] [--out wynik.json]
 ```
 
+- Nakładka w grze (E18, D110): skróty, przycisk „PL” z menu (kopia podmenu drużyny, `src/plugin/Core/PlMenu.cs`, `Overlay.cs`) i zgłoszenia w `zgloszenia/`. Plugin wysyła `control` i `report`, companion odsyła `state` (`companion/control.py`: tempo WSOLA, zapis `ustawienia.toml`, zgłoszenie). Lista kontrolna w grze: `docs/NAKLADKA_TEST.md`.
 - Replay z `--speed 0 --no-audio` sprawdza samo pokrycie. Opóźnienia mierzymy w czasie rzeczywistym (`--tcp`, wyjście audio wyciszone w configu `volume = 0.0`).
 
 ElevenLabs (E9, D73). Serwer MCP tylko w zakresie projektu (`.mcp.json`), klucz w nieśledzonym `.env.elevenlabs.local`, audio i logi w `analysis/work/elevenlabs/`. Instrukcja: `analysis/tools/elevenlabs/README.md`.

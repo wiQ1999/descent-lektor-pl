@@ -1120,6 +1120,20 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** uwagi użytkownika z odsłuchu (2026-11-18) i QA: nowe profile ElevenLabs tylko wtedy, gdy ponowne czytanie ich kwestii mieści się w limicie 60 tys. kredytów (stan przed przebiegiem 49 125), mówcy bez imienia tylko w OmniVoice.
 
+### D110 · 2026-11-19 · E18: nakładka lektora w grze
+**Decyzja:**
+- W trakcie gry gracz steruje lektorem bez wychodzenia z gry: skróty klawiszowe, przycisk „PL” na dolnym pasku z menu lektora i zgłoszenia błędów.
+- Skróty z Ctrl, bo gra przy wciśniętym Ctrl nie rusza kamerą: tempo Ctrl + + / Ctrl + - (też na klawiaturze numerycznej), wycisz Ctrl+M, powtórz ostatnią kwestię Ctrl+R, utnij bieżącą Ctrl+S, zgłoś błąd Ctrl+B, menu Ctrl+L. Skróty zmienia sekcja `[skroty]` w `ustawienia.toml`. Pominięcia kwestii nie ma; jest ucięcie bieżącej.
+- Tempo lektora 0,8–1,6× (krok 0,1) liczy companion przy starcie kwestii (WSOLA w numpy, bez nowych bibliotek paczki), bez zmiany wysokości głosu.
+- Przycisk „PL” i menu to kopia podmenu drużyny z gry (uGUI, bez skryptów gry): ten sam panel, przyciski, checkboxy z opcji gry i czcionka. Panel przylega do lewej krawędzi, sięga za „PL”, wysuwa się spod ekranu jak menu gry i zasłania zębatkę i drużynę. Przy otwartym menu gry „PL” chowa się pod krawędź ekranu.
+- Menu: bieżąca kwestia z paskiem postępu, Powtórz / Utnij / Wycisz, tempo i głośność, 13 kategorii „Co czyta lektor” (checkbox w wierszu), 3 ostatnie kwestie z „Graj” i „Zgłoś”, „Zgłoś błąd”, lista skrótów i informacja o `ustawienia.toml`. Wyboru głośnika w menu nie ma (zostaje w pliku).
+- Zmiany z menu i skrótów companion zapisuje od razu w `ustawienia.toml` z zachowaniem komentarzy; wyciszenie działa tylko do końca sesji.
+- Zgłoszenie: zrzut ekranu bez menu, kategoria (cyfry 1–6) i kontekst w `zgloszenia/<data-godzina>/` paczki (`ekran.png`, `zgloszenie.json`: kwestia z kluczami, głosem i fragmentami, kolejka, historia 10 kwestii, ustawienia, ostatnie 60 s zdarzeń pluginu i companiona). Pakowania zgłoszeń do pliku nie ma.
+- Plugin i companion rozmawiają w dwie strony po tym samym połączeniu TCP: plugin wysyła `control` i `report`, companion odsyła `state`.
+- Próbę zrobiliśmy na branchu `feature/in-game-overlay` (paczka testowa Windows z v0.4.0, plugin 0.5.0); użytkownik sprawdził ją w grze 2026-11-19 w kilku rundach poprawek wyglądu. Na Macu nakładki jeszcze nie testowaliśmy.
+
+**Uzasadnienie:** dotąd błędy lektora użytkownik zgłaszał zrzutami ekranu i dziennikami zbieranymi ręcznie, a tempa nie dało się zmienić w trakcie gry. Formę (skróty + menu na dolnym pasku), zakres poleceń i treść zgłoszenia ustalił QA 2026-11-19; wygląd menu użytkownik poprawiał według zrzutów z gry.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

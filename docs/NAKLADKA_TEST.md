@@ -1,6 +1,6 @@
 # Próba nakładki lektora w grze
 
-Branch `feature/in-game-overlay`, plugin `0.5.0-nakladka`. Próba poza planem etapów: bez nowej paczki i bez pakowania zgłoszeń.
+Plugin 0.5.0 (E18, D110). Próbę zrobiliśmy na branchu `feature/in-game-overlay` na paczce testowej z v0.4.0, bez pakowania zgłoszeń.
 
 ## Co jest w próbie
 
@@ -8,7 +8,7 @@ Branch `feature/in-game-overlay`, plugin `0.5.0-nakladka`. Próba poza planem et
 
   | Skrót | Działanie |
   |---|---|
-  | Ctrl+= / Ctrl+− (też na klawiaturze numerycznej) | tempo lektora ±0,1 (0,8–1,6×, od następnej kwestii) |
+  | Ctrl + + / Ctrl + - (też na klawiaturze numerycznej) | tempo lektora ±0,1 (0,8–1,6×, od następnej kwestii) |
   | Ctrl+M | wycisza albo włącza lektora |
   | Ctrl+R | powtarza ostatnią kwestię |
   | Ctrl+S | ucina bieżącą kwestię |
@@ -53,7 +53,7 @@ Zamiast osobnej paczki można też podmienić pliki w rozpakowanej paczce v0.4.0
 1. Na planszy misji na dolnym pasku jest przycisk „PL”. Jego wygląd i położenie pasują do zębatki i drużyny. Po otwarciu zębatki albo drużyny „PL” chowa się pod krawędź ekranu, a po zamknięciu wraca.
 2. Klik w „PL” otwiera menu, a drugi klik je zamyka. Otwarcie zębatki albo drużyny zwija menu lektora.
 3. Menu lektora wysuwa się jak menu gry i zasłania zębatkę i drużynę. Klik w menu nie klika w planszę: nic się nie zaznacza i figurki się nie ruszają.
-4. Tempo: Ctrl+= dwa razy. Następna kwestia jest szybsza i ma ten sam głos. Sprawdź też 1,6×.
+4. Tempo: Ctrl + + dwa razy. Następna kwestia jest szybsza i ma ten sam głos. Sprawdź też 1,6×.
 5. Wyciszenie, powtórka, ucięcie: skrótem i z menu. Powtórka z historii („Graj”) gra wybraną kwestię.
 6. Zgłoszenie: Ctrl+B w trakcie kwestii, potem cyfra. Drugie zgłoszenie: „Zgłoś” przy kwestii w historii. Sprawdź oba foldery w `zgloszenia\`. Zrzut nie powinien pokazywać menu.
 7. Kategoria wyłączona w menu przestaje grać. Po ponownym uruchomieniu gry ustawienia zostają.

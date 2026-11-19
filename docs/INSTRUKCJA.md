@@ -50,14 +50,38 @@ Na Windows pliki do dwukliku mają końcówkę `.cmd`, a na Macu `.command`.
 
 Uruchom grę zwykłym przyciskiem *Graj* w Steam. Lektor startuje razem z grą i czyta od pierwszego okna. Po wyjściu z gry zamyka się sam.
 
+### Lektor w trakcie gry
+
+Na dolnym pasku, obok zębatki i drużyny, jest przycisk **PL**. Otwiera menu lektora:
+- bieżąca kwestia oraz przyciski Powtórz, Utnij i Wycisz;
+- tempo (0,8–1,6×) i głośność lektora;
+- „Co czyta lektor”: kategorie do włączenia i wyłączenia;
+- 3 ostatnie kwestie: „Graj” odtwarza kwestię jeszcze raz, „Zgłoś” zgłasza błąd w tej kwestii;
+- „Zgłoś błąd” i lista skrótów.
+
+Zmiany tempa, głośności i kategorii zapisują się od razu w `ustawienia.toml`. Wyciszenie działa do końca sesji.
+
+| Skrót | Działanie |
+|---|---|
+| Ctrl + + / Ctrl + - | szybciej / wolniej (od następnej kwestii) |
+| Ctrl + M | wycisza albo włącza lektora |
+| Ctrl + R | powtarza ostatnią kwestię |
+| Ctrl + S | ucina bieżącą kwestię |
+| Ctrl + B | zgłoszenie błędu: zrzut ekranu, potem cyfra 1–6 z rodzajem błędu (0 anuluje) |
+| Ctrl + L | otwiera albo zamyka menu lektora |
+
+Zgłoszenia trafiają do folderu `zgloszenia` w folderze lektora: każde ma zrzut ekranu i plik z opisem kwestii.
+
 ### Ustawienia
 
 1. Kliknij dwukrotnie `Ustawienia.cmd`. Plik `ustawienia.toml` otworzy się w Notatniku.
 2. Zmień wartości:
    - `volume`: głośność lektora od `0.0` do `1.0`;
+   - `tempo`: tempo lektora od `0.8` do `1.6`, `1.0` to tempo nagrań;
    - `device`: głośnik albo słuchawki. Puste `""` oznacza urządzenie domyślne systemu. Możesz wpisać fragment nazwy urządzenia, np. `"Headphones"`;
-   - sekcja `[toggles]`: `false` wycisza daną kategorię, np. `ui = false` wyłącza komunikaty interfejsu, `opis_misji = false` wyłącza odczyt nazwy i opisu misji na mapie, a `zdolnosci = false` wyłącza w oknie ataku odczyt obrony wroga i zdolności broni oraz talizmanów.
-3. Zapisz plik (Ctrl+S). Zmiany działają od następnego uruchomienia gry.
+   - sekcja `[toggles]`: `false` wycisza daną kategorię, np. `ui = false` wyłącza komunikaty interfejsu, `opis_misji = false` wyłącza odczyt nazwy i opisu misji na mapie, a `zdolnosci = false` wyłącza w oknie ataku odczyt obrony wroga i zdolności broni oraz talizmanów;
+   - sekcja `[skroty]`: skróty klawiszowe w grze.
+3. Zapisz plik (Ctrl+S). Zmiany działają od następnego uruchomienia gry. Głośność, tempo i kategorie zmienisz też w grze, w menu **PL**.
 4. Uruchom `Test dźwięku.cmd`. Test sprawdza też, czy w pliku nie ma błędu.
 
 Głośność lektora zmienisz też w mikserze głośności Windows, gdzie lektor widnieje jako `python`.
@@ -100,7 +124,7 @@ Przy zamkniętej grze kliknij dwukrotnie `Wyłącz lektora.cmd`. Gra startuje wt
 
 ### Granie
 
-Uruchom grę zwykłym przyciskiem *Graj* w Steam. Lektor startuje razem z grą i zamyka się sam po wyjściu z niej.
+Uruchom grę zwykłym przyciskiem *Graj* w Steam. Lektor startuje razem z grą i zamyka się sam po wyjściu z niej. Menu **PL** i skróty działają jak na Windows (zobacz [Lektor w trakcie gry](#lektor-w-trakcie-gry)); skróty używają klawisza Control, nie Command.
 
 ### Ustawienia
 
@@ -132,8 +156,9 @@ Aktualizacja w Steam przywraca oryginalny podpis gry. Gra wtedy uruchomi się be
 | Lektor nic nie mówi | Uruchom `Test dźwięku`. Gdy test milczy, sprawdź `volume` i `device` w Ustawieniach oraz głośność systemu. Gdy test działa, a w grze cisza, uruchom `Zainstaluj` jeszcze raz. |
 | Lektor gra na złym głośniku | Wpisz fragment nazwy właściwego urządzenia w `device` w Ustawieniach. |
 | Pierwsze okno jest czytane z opóźnieniem | Lektor startuje razem z grą. Pierwsze okno może zabrzmieć z opóźnieniem do kilku sekund. |
-| Lektor czyta coś, czego nie chcesz | Wyłącz kategorię w sekcji `[toggles]` Ustawień. |
+| Lektor czyta coś, czego nie chcesz | Wyłącz kategorię w menu **PL** w grze albo w sekcji `[toggles]` Ustawień. |
+| Lektor czyta za wolno albo za szybko | Zmień tempo w menu **PL** albo skrótem Ctrl + + / Ctrl + -. |
 | Gra nie startuje albo działa dziwnie | Uruchom `Wyłącz lektora` i sprawdź, czy problem znika. Napisz do autora paczki. |
 | Test dźwięku pokazuje błąd | W `ustawienia.toml` jest literówka. Popraw ją albo przywróć wartości z tej instrukcji. |
 
-Zgłaszając problem, wyślij plik `wersja.txt` i folder `logs`. Dzienniki zawierają klucze okien, czasy, fragmenty tekstów z gry i ścieżki folderów lektora.
+Błąd lektora najłatwiej zgłosić w chwili, gdy wystąpi: Ctrl + B albo „Zgłoś” w menu **PL**. Zgłaszając problem, wyślij plik `wersja.txt` oraz foldery `zgloszenia` i `logs`. Dzienniki zawierają klucze okien, czasy, fragmenty tekstów z gry i ścieżki folderów lektora.
