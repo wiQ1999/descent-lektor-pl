@@ -270,12 +270,10 @@ namespace LektorPL.Core
             GUILayout.EndArea();
         }
 
-        internal string KeyLabel(string action)
+        /// <summary>Pierwszy wariant skrótu do wyświetlenia (pozostałe działają); separator np. z kolorem rich text.</summary>
+        internal string KeyLabel(string action, string separator = " + ")
         {
-            if (!_keys.TryGetValue(action, out List<Hotkey> list) || list.Count == 0) return "-";
-            var parts = new List<string>();
-            foreach (Hotkey k in list) parts.Add(k.ToString());
-            return string.Join(" lub ", parts.ToArray());
+            return _keys.TryGetValue(action, out List<Hotkey> list) && list.Count > 0 ? list[0].Display(separator) : "-";
         }
 
         private void Styles()
@@ -386,16 +384,19 @@ namespace LektorPL.Core
             return ctrl == _ctrl && alt == _alt && shift == _shift && cmd == _cmd;
         }
 
-        public override string ToString()
+        /// <summary>„Ctrl + M”; klawisz =/+ (też numeryczny) jako „+”, a −/- jako „-”.</summary>
+        public string Display(string separator)
         {
-            string key = _key == KeyCode.Equals ? "=" : _key == KeyCode.Minus ? "–" : _key == KeyCode.KeypadPlus ? "+ (num.)"
-                : _key == KeyCode.KeypadMinus ? "– (num.)" : _key.ToString();
+            string key = _key == KeyCode.Equals || _key == KeyCode.KeypadPlus || _key == KeyCode.Plus ? "+"
+                : _key == KeyCode.Minus || _key == KeyCode.KeypadMinus ? "-" : _key.ToString();
             var sb = new System.Text.StringBuilder();
-            if (_ctrl) sb.Append("Ctrl + ");
-            if (_alt) sb.Append("Alt + ");
-            if (_shift) sb.Append("Shift + ");
-            if (_cmd) sb.Append("Cmd + ");
+            if (_ctrl) sb.Append("Ctrl").Append(separator);
+            if (_alt) sb.Append("Alt").Append(separator);
+            if (_shift) sb.Append("Shift").Append(separator);
+            if (_cmd) sb.Append("Cmd").Append(separator);
             return sb.Append(key).ToString();
         }
+
+        public override string ToString() { return Display(" + "); }
     }
 }

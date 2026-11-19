@@ -27,6 +27,7 @@ namespace LektorPL.Core
         private static readonly FieldInfo PartyVisible = typeof(UIGame).GetField("_isSubMenuPartyVisible", Private);
         private static readonly FieldInfo PartyStart = typeof(UIGame).GetField("_subMenuPartyStartingLocation", Private);
 
+        private const int HistoryShown = 3;              // ostatnie kwestie w menu (companion pamięta 10)
         private const float MinWidth = 400f, Gap = 8f, HideDistance = 120f, TweenSeconds = 0.3f, TopMargin = 330f;
         private static readonly Color Gold = new Color(0.86f, 0.70f, 0.38f);
         private static readonly Color Light = new Color(0.93f, 0.91f, 0.86f);
@@ -36,7 +37,7 @@ namespace LektorPL.Core
         {
             "narracja", "Narracja (opisy narratora)", "dialogi", "Dialogi postaci", "komunikaty_questu", "Komunikaty zadania",
             "cele", "Cele misji", "walka_teren", "Walka i teren", "aktywacje", "Aktywacje wrogów",
-            "zdolnosci", "Okno ataku i obrona wroga", "nagrody", "Nagrody", "okna_wyboru", "Odpowiedź bohatera po wyborze",
+            "zdolnosci", "Okno ataku i obrona wroga", "nagrody", "Nagrody", "okna_wyboru", "Odpowiedź po wyborze",
             "ui", "Interfejs i samouczek", "miasto", "Teksty w mieście", "podroze", "Wydarzenia w podróży",
             "opis_misji", "Opis misji na mapie",
         };
@@ -419,7 +420,7 @@ namespace LektorPL.Core
             var toggles = Json.Obj(state, "toggles");
             if (toggles != null) foreach (var kv in toggles) sb.Append('|').Append(kv.Key).Append(kv.Value is bool b && b);
             var history = Json.List(state, "history");
-            if (history != null) foreach (object h in history) sb.Append('|').Append(Json.Num(h, "token")).Append(Json.Bool(h, "muted"));
+            if (history != null) foreach (object h in history.GetRange(0, Math.Min(HistoryShown, history.Count))) sb.Append('|').Append(Json.Num(h, "token")).Append(Json.Bool(h, "muted"));
             return sb.ToString();
         }
 
@@ -532,7 +533,7 @@ namespace LektorPL.Core
             {
                 if (t.name == "Checkmark") continue;
                 t.text = text;
-                t.fontSize = 20f;
+                t.fontSize = 18f;
                 t.enableAutoSizing = false;
                 t.enableWordWrapping = false;
                 t.overflowMode = TextOverflowModes.Ellipsis;
@@ -561,7 +562,7 @@ namespace LektorPL.Core
                 return;
             }
             float age0 = Time.unscaledTime;
-            foreach (object h in history)
+            foreach (object h in history.GetRange(0, Math.Min(HistoryShown, history.Count)))
             {
                 long token = (long)Json.Num(h, "token");
                 string speaker = Json.Str(h, "speaker", "?");
@@ -579,21 +580,20 @@ namespace LektorPL.Core
 
         private void BuildReports()
         {
-            Section("Zgłoszenia i stan");
+            Section("Zgłoszenia");
             var row = Row(_content);
             Btn(row, "Zgłoś błąd", 0f, () => _host.StartReport(0));
-            Pair("Zgłoszenia w tej sesji", () => ((int)Json.Num(_host.State, "reports")).ToString(CultureInfo.InvariantCulture));
-            Pair("Okna bez nagrania", () => ((int)Json.Num(_host.State, "missing")).ToString(CultureInfo.InvariantCulture));
-            Pair("Nagrania", () => Json.Str(_host.State, "model", "?"));
-            Pair("Plugin", () => Bootstrap.Version);
 
             Section("Skróty klawiszowe");
+            string sep = "<color=#EDE8DB> + </color>";             // „+” między klawiszami biały, klawisze złote
             for (int i = 0; i < KeyOrder.Length; i += 2)
             {
                 string action = KeyOrder[i];
-                Pair(KeyOrder[i + 1], () => _host.KeyLabel(action));
+                Pair(KeyOrder[i + 1], () => _host.KeyLabel(action, sep));
             }
-            AddText(_content, "Zmiana skrótów: ustawienia.toml, sekcja [skroty].", 15f, Dim, TextAlignmentOptions.Left, false);
+            var note = AddText(_content, "Pozostałe ustawienia (m.in. głośnik i skróty) są w pliku ustawienia.toml w folderze lektora.",
+                15f, Dim, TextAlignmentOptions.Left, false);
+            note.margin = new Vector4(0f, 10f, 0f, 0f);
         }
 
         /// <summary>Wiersz „opis – wartość”: opis jasny po lewej, wartość złota po prawej.</summary>
@@ -647,7 +647,7 @@ namespace LektorPL.Core
         private void Section(string title)
         {
             var t = AddText(_content, title, 21f, Gold, TextAlignmentOptions.Left, true);
-            t.margin = new Vector4(0f, 8f, 0f, 0f);
+            t.margin = new Vector4(0f, 18f, 0f, 4f);
         }
 
         private RectTransform Row(Transform parent)
