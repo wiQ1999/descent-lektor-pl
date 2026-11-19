@@ -589,21 +589,22 @@ namespace LektorPL.Core
             for (int i = 0; i < KeyOrder.Length; i += 2)
             {
                 string action = KeyOrder[i];
-                Pair(KeyOrder[i + 1], () => _host.KeyLabel(action, sep));
+                Pair(KeyOrder[i + 1], () => _host.KeyLabel(action, sep), 92f);
             }
-            var note = AddText(_content, "Pozostałe ustawienia (m.in. głośnik i skróty) są w pliku ustawienia.toml w folderze lektora.",
+            var note = AddText(_content, "Pozostałe ustawienia znajdują się w pliku ustawienia.toml w folderze lektora.",
                 15f, Dim, TextAlignmentOptions.Left, false);
             note.margin = new Vector4(0f, 10f, 0f, 0f);
         }
 
         /// <summary>Wiersz „opis – wartość”: opis jasny po lewej, wartość złota po prawej.</summary>
-        private void Pair(string label, Func<string> value)
+        private void Pair(string label, Func<string> value, float valueWidth)
         {
             var row = Row(_content);
             var l = AddText(row, label, 17f, Light, TextAlignmentOptions.Left, false);
             l.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
-            var v = AddText(row, "", 17f, Gold, TextAlignmentOptions.Right, true);
+            var v = AddText(row, "", 17f, Gold, TextAlignmentOptions.Left, true);   // kolumna o stałej szerokości: „Ctrl” równo pod sobą
             v.enableWordWrapping = false;
+            v.gameObject.AddComponent<LayoutElement>().preferredWidth = valueWidth;
             _refresh.Add(() => v.text = value());
         }
 
