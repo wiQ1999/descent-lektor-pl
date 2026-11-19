@@ -32,8 +32,14 @@ Branch `feature/in-game-overlay`, plugin `0.5.0-nakladka`. Próba poza planem et
 
 ## Przygotowanie (Windows)
 
+Paczka testowa: `analysis\work\dist\win-nakladka\Descent-Lektor-PL` w głównym repo. To kopia v0.4.0 z plikami próby; `dane` i `python` są twardymi dowiązaniami do v0.4.0, więc nie zajmują miejsca drugi raz.
+
 1. Zamknij grę.
-2. W PowerShell w folderze tego worktree wgraj próbę do rozpakowanej paczki v0.4.0 (podaj jej ścieżkę):
+2. W paczce v0.4.0 (`analysis\work\dist\win\Descent-Lektor-PL`) uruchom `Odinstaluj.cmd`.
+3. W paczce testowej uruchom `Zainstaluj.cmd`.
+4. Powrót do v0.4.0: `Odinstaluj.cmd` w paczce testowej, potem `Zainstaluj.cmd` w v0.4.0.
+
+Zamiast osobnej paczki można też podmienić pliki w rozpakowanej paczce v0.4.0. W PowerShell w folderze worktree `.claude\feature\in-game-overlay`:
 
    ```powershell
    powershell -ExecutionPolicy Bypass -File src/plugin/install/nakladka-test.ps1 -Paczka "<ścieżka>\Descent-Lektor-PL"
