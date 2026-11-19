@@ -31,14 +31,19 @@ namespace LektorPL.Core
         private static readonly Color Gold = new Color(0.86f, 0.70f, 0.38f);
         private static readonly Color Light = new Color(0.93f, 0.91f, 0.86f);
         private static readonly Color Dim = new Color(0.66f, 0.63f, 0.58f);
-        private static readonly Color Off = new Color(0.42f, 0.42f, 0.42f);
 
         private static readonly string[] ToggleOrder =
         {
-            "narracja", "Narracja", "dialogi", "Dialogi postaci", "komunikaty_questu", "Komunikaty zadania",
+            "narracja", "Narracja (opisy narratora)", "dialogi", "Dialogi postaci", "komunikaty_questu", "Komunikaty zadania",
             "cele", "Cele misji", "walka_teren", "Walka i teren", "aktywacje", "Aktywacje wrogów",
-            "zdolnosci", "Okno ataku", "nagrody", "Nagrody", "okna_wyboru", "Odpowiedź po wyborze",
-            "ui", "Interfejs i samouczek", "miasto", "Miasto", "podroze", "Podróże", "opis_misji", "Opis misji na mapie",
+            "zdolnosci", "Okno ataku i obrona wroga", "nagrody", "Nagrody", "okna_wyboru", "Odpowiedź bohatera po wyborze",
+            "ui", "Interfejs i samouczek", "miasto", "Teksty w mieście", "podroze", "Wydarzenia w podróży",
+            "opis_misji", "Opis misji na mapie",
+        };
+        private static readonly string[] KeyOrder =
+        {
+            "menu", "Menu lektora", "szybciej", "Szybciej", "wolniej", "Wolniej", "wycisz", "Wycisz / włącz",
+            "powtorz", "Powtórz ostatnią kwestię", "utnij", "Utnij bieżącą kwestię", "zglos", "Zgłoś błąd",
         };
 
         private readonly EventLog _log;
@@ -50,7 +55,7 @@ namespace LektorPL.Core
         private CanvasGroup _group, _partyGroup;
         private Button _button, _partyButton;
         private TMP_Text _label;
-        private GameObject _buttonTemplate;
+        private GameObject _buttonTemplate, _toggleTemplate;
         private TMP_FontAsset _font;
         private Vector3 _restPos;
         private float _offset, _from, _to, _t0 = -10f, _maxBody = 600f;
@@ -165,6 +170,7 @@ namespace LektorPL.Core
             if (_buttonTemplate == null) { UnityEngine.Object.Destroy(temp); _failed = true; return; }
             TMP_Text sample = _buttonTemplate.GetComponentInChildren<TMP_Text>(true);
             _font = sample != null ? sample.font : null;
+            _toggleTemplate = ToggleTemplate(templates.transform, panel, dump);
             DescribeTemplate(dump);
 
             // Położenie: uchwyt o „spacing” w prawo od drużyny, lewa krawędź panelu jak w grze, przycisk nad prawym końcem.
@@ -238,6 +244,55 @@ namespace LektorPL.Core
                     UnityEngine.Object.DestroyImmediate(c);
                 }
             }
+        }
+
+        /// <summary>
+        /// Checkbox gry: kopia przełącznika z okna opcji (Toggle_AutoContinue i podobne: Background/Checkmark + Label_Settings).
+        /// Gdy okna opcji nie ma w pamięci, składamy podobny z tła panelu (UISprite) i znaku z czcionki gry.
+        /// </summary>
+        private GameObject ToggleTemplate(Transform templates, RectTransform panel, StringBuilder dump)
+        {
+            Toggle source = null;
+            foreach (Toggle t in Resources.FindObjectsOfTypeAll<Toggle>())
+            {
+                if (t == null || !t.gameObject.scene.IsValid()) continue;
+                if (t.transform.Find("Background/Checkmark") == null || t.GetComponentInChildren<TMP_Text>(true) == null) continue;
+                if (source == null || t.name == "Toggle_AutoContinue") source = t;
+                if (t.name == "Toggle_AutoContinue") break;
+            }
+            GameObject go;
+            if (source != null)
+            {
+                go = UnityEngine.Object.Instantiate(source.gameObject, templates, false);
+                Strip(go, dump);
+                dump.Append("checkbox z ").Append(source.name).Append("; ");
+            }
+            else
+            {
+                go = new GameObject("Toggle", typeof(RectTransform));
+                go.transform.SetParent(templates, false);
+                var bg = NewRect("Background", go.transform);
+                bg.anchorMin = bg.anchorMax = new Vector2(0f, 0.5f);
+                bg.pivot = new Vector2(0f, 0.5f);
+                bg.sizeDelta = new Vector2(40f, 40f);
+                var bimg = bg.gameObject.AddComponent<Image>();
+                var pimg = panel.GetComponent<Image>();
+                if (pimg != null) { bimg.sprite = pimg.sprite; bimg.type = Image.Type.Sliced; }
+                bimg.color = new Color(0.55f, 0.55f, 0.55f, 1f);
+                var mark = AddText(bg, "X", 28f, Gold, TextAlignmentOptions.Center, true);
+                Stretch(mark.rectTransform);
+                mark.name = "Checkmark";
+                var label = AddText(go.transform, "", 20f, Light, TextAlignmentOptions.Left, false);
+                Stretch(label.rectTransform);
+                label.rectTransform.offsetMin = new Vector2(54f, 0f);
+                var tg = go.AddComponent<Toggle>();
+                tg.targetGraphic = bimg;
+                tg.graphic = mark;
+                dump.Append("checkbox własny; ");
+            }
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
+            return go;
         }
 
         private void DescribeTemplate(StringBuilder dump)
@@ -448,28 +503,52 @@ namespace LektorPL.Core
             var toggles = Json.Obj(state, "toggles");
             if (toggles == null) return;
             Section("Co czyta lektor");
-            AddText(_content, "Kliknij, aby włączyć albo wyłączyć. Przekreślone: lektor milczy.", 15f, Dim, TextAlignmentOptions.Left, false);
             var names = new List<KeyValuePair<string, string>>();
             for (int i = 0; i < ToggleOrder.Length; i += 2)
                 if (toggles.ContainsKey(ToggleOrder[i])) names.Add(new KeyValuePair<string, string>(ToggleOrder[i], ToggleOrder[i + 1]));
             foreach (var kv in toggles)
                 if (names.FindIndex(p => p.Key == kv.Key) < 0) names.Add(new KeyValuePair<string, string>(kv.Key, kv.Key));
-            RectTransform row = null;
-            for (int i = 0; i < names.Count; i++)
+            foreach (var n in names)
             {
-                if (i % 2 == 0) row = Row(_content);
-                string key = names[i].Key;
-                bool on = toggles[key] is bool b && b;
-                Button btn = Btn(row, on ? names[i].Value : "<s>" + names[i].Value + "</s>", 0f, () =>
+                string key = n.Key;
+                Check(n.Value, toggles[key] is bool b && b, on =>
                     _host.Send(_host.Log.New("control").Str("cmd", "przelacznik")
-                        .Raw("value", new JsonLine().Str("name", key).Bool("on", !on).ToString())), 18f, 48f);
-                if (!on)
-                {
-                    btn.GetComponent<Image>().color = Off;
-                    btn.GetComponentInChildren<TMP_Text>(true).color = Dim;
-                }
+                        .Raw("value", new JsonLine().Str("name", key).Bool("on", on).ToString())));
             }
-            if (names.Count % 2 == 1) Spacer(row);
+        }
+
+        /// <summary>Checkbox gry w osobnym wierszu.</summary>
+        private void Check(string text, bool on, Action<bool> changed)
+        {
+            GameObject go = UnityEngine.Object.Instantiate(_toggleTemplate, _content, false);
+            go.name = "Check";
+            go.SetActive(true);
+            var le = go.GetComponent<LayoutElement>() ?? go.AddComponent<LayoutElement>();
+            le.ignoreLayout = false;
+            le.minHeight = le.preferredHeight = 44f;
+            le.preferredWidth = -1f;
+            le.flexibleWidth = 1f;
+            foreach (TMP_Text t in go.GetComponentsInChildren<TMP_Text>(true))
+            {
+                if (t.name == "Checkmark") continue;
+                t.text = text;
+                t.fontSize = 20f;
+                t.enableAutoSizing = false;
+                t.enableWordWrapping = false;
+                t.overflowMode = TextOverflowModes.Ellipsis;
+                t.alignment = TextAlignmentOptions.Left;
+                t.color = on ? Light : Dim;
+            }
+            var tg = go.GetComponent<Toggle>();
+            tg.group = null;
+            tg.SetIsOnWithoutNotify(on);
+            tg.onValueChanged = new Toggle.ToggleEvent();
+            tg.onValueChanged.AddListener(v =>
+            {
+                try { changed(v); }
+                catch (Exception e) { _log.Error("pl_menu_check", e); }
+            });
+            tg.interactable = true;
         }
 
         private void BuildHistory(object state)
@@ -502,16 +581,30 @@ namespace LektorPL.Core
         {
             Section("Zgłoszenia i stan");
             var row = Row(_content);
-            Btn(row, "Zgłoś błąd (" + _host.KeyLabel("zglos") + ")", 0f, () => _host.StartReport(0));
-            var info = AddText(_content, "", 15f, Dim, TextAlignmentOptions.Left, false);
-            _refresh.Add(() =>
+            Btn(row, "Zgłoś błąd", 0f, () => _host.StartReport(0));
+            Pair("Zgłoszenia w tej sesji", () => ((int)Json.Num(_host.State, "reports")).ToString(CultureInfo.InvariantCulture));
+            Pair("Okna bez nagrania", () => ((int)Json.Num(_host.State, "missing")).ToString(CultureInfo.InvariantCulture));
+            Pair("Nagrania", () => Json.Str(_host.State, "model", "?"));
+            Pair("Plugin", () => Bootstrap.Version);
+
+            Section("Skróty klawiszowe");
+            for (int i = 0; i < KeyOrder.Length; i += 2)
             {
-                object s = _host.State;
-                info.text = "Zgłoszenia w tej sesji: " + (int)Json.Num(s, "reports") + ". Okna bez nagrania: " + (int)Json.Num(s, "missing")
-                            + ".\nSkróty: menu " + _host.KeyLabel("menu") + ", tempo " + _host.KeyLabel("szybciej") + " / " + _host.KeyLabel("wolniej")
-                            + ", wycisz " + _host.KeyLabel("wycisz") + ", powtórz " + _host.KeyLabel("powtorz") + ", utnij " + _host.KeyLabel("utnij")
-                            + ".\nNagrania: " + Json.Str(s, "model", "?") + ", plugin " + Bootstrap.Version + ".";
-            });
+                string action = KeyOrder[i];
+                Pair(KeyOrder[i + 1], () => _host.KeyLabel(action));
+            }
+            AddText(_content, "Zmiana skrótów: ustawienia.toml, sekcja [skroty].", 15f, Dim, TextAlignmentOptions.Left, false);
+        }
+
+        /// <summary>Wiersz „opis – wartość”: opis jasny po lewej, wartość złota po prawej.</summary>
+        private void Pair(string label, Func<string> value)
+        {
+            var row = Row(_content);
+            var l = AddText(row, label, 17f, Light, TextAlignmentOptions.Left, false);
+            l.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
+            var v = AddText(row, "", 17f, Gold, TextAlignmentOptions.Right, true);
+            v.enableWordWrapping = false;
+            _refresh.Add(() => v.text = value());
         }
 
         private static string Ago(double s)

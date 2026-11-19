@@ -21,9 +21,10 @@ Branch `feature/in-game-overlay`, plugin `0.5.0-nakladka`. Próba poza planem et
   - bieżącą kwestię z paskiem postępu;
   - przyciski Powtórz, Utnij i Wycisz;
   - tempo i głośność;
-  - 13 kategorii „Co czyta lektor” jako przyciski: przekreślona i szara kategoria jest wyłączona;
+  - 13 kategorii „Co czyta lektor”, każda w osobnym wierszu z checkboxem jak w opcjach gry;
   - 10 ostatnich kwestii: „Graj” odtwarza kwestię jeszcze raz, „Zgłoś” zgłasza błąd w tej kwestii;
-  - stan: zgłoszenia, okna bez nagrania, wersje.
+  - przycisk „Zgłoś błąd” i stan: zgłoszenia, okna bez nagrania, wersje;
+  - na dole listę skrótów klawiszowych.
 
   Zmiany tempa, głośności i kategorii zapisują się od razu w `ustawienia.toml`.
 - **Zgłoszenia** trafiają do folderu `zgloszenia\<data-godzina>\` w paczce. Każde ma:

@@ -272,7 +272,10 @@ namespace LektorPL.Core
 
         internal string KeyLabel(string action)
         {
-            return _keys.TryGetValue(action, out List<Hotkey> list) && list.Count > 0 ? list[0].ToString() : "-";
+            if (!_keys.TryGetValue(action, out List<Hotkey> list) || list.Count == 0) return "-";
+            var parts = new List<string>();
+            foreach (Hotkey k in list) parts.Add(k.ToString());
+            return string.Join(" lub ", parts.ToArray());
         }
 
         private void Styles()
@@ -341,7 +344,7 @@ namespace LektorPL.Core
     {
         private KeyCode _key;
         private bool _ctrl, _alt, _shift, _cmd;
-        private string _text;
+
 
         public static List<Hotkey> ParseList(string spec)
         {
@@ -357,7 +360,7 @@ namespace LektorPL.Core
         private static Hotkey Parse(string s)
         {
             if (s.Length == 0) return null;
-            var k = new Hotkey { _text = s };
+            var k = new Hotkey();
             string[] parts = s.Split('+');
             for (int i = 0; i < parts.Length - 1; i++)
             {
@@ -385,7 +388,14 @@ namespace LektorPL.Core
 
         public override string ToString()
         {
-            return _text.Replace("Equals", "=").Replace("Minus", "-");
+            string key = _key == KeyCode.Equals ? "=" : _key == KeyCode.Minus ? "–" : _key == KeyCode.KeypadPlus ? "+ (num.)"
+                : _key == KeyCode.KeypadMinus ? "– (num.)" : _key.ToString();
+            var sb = new System.Text.StringBuilder();
+            if (_ctrl) sb.Append("Ctrl + ");
+            if (_alt) sb.Append("Alt + ");
+            if (_shift) sb.Append("Shift + ");
+            if (_cmd) sb.Append("Cmd + ");
+            return sb.Append(key).ToString();
         }
     }
 }
