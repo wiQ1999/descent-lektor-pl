@@ -1,7 +1,7 @@
 """Zestawienie głosów wydania do odsłuchu (E17, D108): każdy głos podanych części gry z opisem postaci, portretem
 z gry (d3/storymessagecharacters) i dwiema próbkami. Próbki biorą najpierw gotowe audio paczki (manifest), a dla
 części poza paczką (akt 2 w m4, D108) podejścia o bieżącym id fragmentu, czyli z bieżącą referencją głosu: ocenione
-bez uwag, potem nieocenione. Strona i pliki leżą w analysis/work/compare/<wydanie>_cast/ (poza Git, D76). Na
+bez uwag, potem nieocenione, przycięte i wyrównane głośnościowo jak w finalize. Strona i pliki leżą w analysis/work/compare/<wydanie>_cast/ (poza Git, D76). Na
 konsolę idą tylko liczby.
 
     .venv/Scripts/python -I analysis/tools/cast_sheet.py [--release m4] [--acts 1 2 3]
@@ -168,7 +168,7 @@ def samples(con, acts):
         base = {'fragment': fid, 'key': key, 'grp': grp, 'text': frag[fid]['text'], 'chars': frag[fid]['chars']}
         m = manifest.get(fid)
         if m:
-            by_voice[v].append(dict(base, path=os.path.join(paths.AUDIO, m['file']), problems=m['problems'],
+            by_voice[v].append(dict(base, path=os.path.join(paths.AUDIO, m['file']), problems=m['problems'], final=True,
                                     seconds=m['seconds'], rank=0 if not m['problems'] else 3))
             continue
         cands = take_candidates(fid, v, by_fid.get(fid, {}), judged)
@@ -324,10 +324,17 @@ def main():
         if (g or '').startswith('a1_scene_'):
             return 'Scena: ' + g[len('a1_scene_'):].replace('_', ' ')
         return dashboard.group_label(g or 'system', titles)
+    import soundfile as sf
+    from lektor import finalize
     n_samples = 0
     for v, ss in picked.items():
         for i, s in enumerate(ss, 1):
-            shutil.copyfile(s['path'], os.path.join(out, 'samples', '%s_%d.wav' % (v, i)))
+            dst = os.path.join(out, 'samples', '%s_%d.wav' % (v, i))
+            if s.get('final'):
+                shutil.copyfile(s['path'], dst)
+            else:       # podejście poza paczką: przycięcie i głośność jak w finalize, żeby brzmiało jak w grze
+                y, sr = sf.read(s['path'], dtype='float32')
+                sf.write(dst, finalize.level(finalize.trim(y, sr), sr)[0], sr, subtype='PCM_16')
             n_samples += 1
     by_sec = collections.defaultdict(list)
     for v in count:
