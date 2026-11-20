@@ -346,6 +346,12 @@ Wydanie z paczkami z `analysis/work/dist/` (opis z zakresem i sumami SHA-256 w p
 "$GH" release create v0.2.0 --repo wiQ1999/descent-lektor-pl --prerelease --title "..." --notes-file analysis/work/out/e10_release_notes.md analysis/work/dist/Descent-Lektor-PL-win.zip analysis/work/dist/Descent-Lektor-PL-mac.zip
 ```
 
+Od E19 (D111) wydanie jest zwykłe (bez `--prerelease`, bo `releases/latest/download` pomija prerelease) i oprócz zipów ma wszystkie pliki z `analysis/work/dist/win-online/` (części, manifest, starter i instalator):
+
+```bash
+"$GH" release create vX.Y.Z --repo wiQ1999/descent-lektor-pl --title "..." --notes-file analysis/work/out/<opis>.md analysis/work/dist/Descent-Lektor-PL-win.zip analysis/work/dist/Descent-Lektor-PL-mac.zip analysis/work/dist/win-online/*
+```
+
 ## 8. Opcjonalnie
 
 - ElevenLabs: `analysis/tools/elevenlabs/README.md` i skill `.claude/skills/elevenlabs/SKILL.md`.

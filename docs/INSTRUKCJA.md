@@ -6,7 +6,7 @@ Polski lektor do gry *Descent: Legends of the Dark* ze Steama. Czyta okna fabula
 
 - **Zakres:** ta wersja ma nagrania całego aktu 1: prologu, wszystkich scenariuszy głównych i pobocznych ze wstępami i zakończeniami, wydarzeń kampanii, podróży, tekstów miasta i list łupu. Wypowiedzi postaci w oknach narratora czytają głosy tych postaci, a każda postać bez imienia ma własny głos. Akt 2 przyjdzie w kolejnej wersji; do tego czasu lektor czyta w nim tylko wspólne komunikaty. Gra działa wtedy normalnie.
 - **Jak działa:** gra uruchamia lektora sama. Mały dodatek w grze rozpoznaje okna i przekazuje je lektorowi, a lektor odtwarza nagrania przez głośnik komputera. Po wyjściu z gry lektor też się zamyka.
-- **Co zmienia na komputerze:** wszystko leży w folderze `Descent-Lektor-PL`. Instalacja nie potrzebuje hasła administratora i niczego nie instaluje w systemie.
+- **Co zmienia na komputerze:** wszystko leży w folderze `Descent-Lektor-PL` (na Windows w folderze użytkownika, np. `C:\Users\Jan\Descent-Lektor-PL`). Instalacja nie potrzebuje hasła administratora i niczego nie instaluje w systemie.
   - Windows: w folderze gry pojawiają się 3 małe pliki.
   - Mac: gra dostaje nowy podpis, a w Steam pojawia się opcja uruchamiania.
 - **Muzyka:** lektor nie przycisza muzyki gry. Ustaw jej głośność w opcjach gry.
@@ -34,17 +34,29 @@ Na Windows pliki do dwukliku mają końcówkę `.cmd`, a na Macu `.command`.
 
 - Windows 10 albo 11 (64-bit).
 - Gra kupiona i zainstalowana w Steam.
-- Ok. 4 GB wolnego miejsca podczas instalacji: pobrany plik `.zip` ma ok. 1,7 GB, a rozpakowany folder ok. 1,8 GB. Po rozpakowaniu plik `.zip` można usunąć.
+- Ok. 3 GB wolnego miejsca na dysku C: przy pierwszej instalacji (lektor zajmuje ok. 1,8 GB). Aktualizacja pobiera tylko zmienione części.
 
 ### Instalacja
 
-1. Rozpakuj paczkę w stałe miejsce, np. `C:\Gry\Descent-Lektor-PL`. Nie rozpakowuj jej do folderu gry. Folderu nie usuwaj, bo gra wczytuje lektora właśnie z niego.
-2. Zamknij grę.
-3. Kliknij dwukrotnie `Zainstaluj.cmd`.
-   - Jeśli Windows pokaże „System Windows ochronił ten komputer”, kliknij „Więcej informacji”, a potem „Uruchom mimo to”.
-   - Skrypt sam znajduje grę w bibliotekach Steam. Gdy jej nie znajdzie, poprosi o folder gry: w Steam kliknij grę prawym przyciskiem, wybierz *Zarządzaj → Przeglądaj pliki lokalne* i skopiuj ścieżkę z paska adresu.
-   - Na końcu powinien pojawić się napis „Zainstalowano” i lista 3 dodanych plików.
-4. Kliknij dwukrotnie `Test dźwięku.cmd`. Powinna zabrzmieć jedna kwestia narratora.
+1. Zamknij grę.
+2. Otwórz PowerShell: naciśnij klawisz Windows, wpisz `PowerShell` i naciśnij Enter.
+3. Wklej tę komendę (prawy przycisk myszy w oknie PowerShell wkleja) i naciśnij Enter:
+
+   ```powershell
+   irm https://github.com/wiQ1999/descent-lektor-pl/releases/latest/download/instaluj-win.ps1 | iex
+   ```
+
+   - Instalator sam znajduje grę w bibliotekach Steam. Gdy jej nie znajdzie, poprosi o folder gry: w Steam kliknij grę prawym przyciskiem, wybierz *Zarządzaj → Przeglądaj pliki lokalne* i skopiuj ścieżkę z paska adresu.
+   - Gdy w grze jest lektor ze starej paczki w innym folderze, instalator jeszcze przed pobieraniem zapyta, czy go odinstalować. Odpowiedz `T`. Ustawienia ze starego folderu nie przechodzą do nowego; stary folder usuń po instalacji.
+   - Lektor trafia do folderu `Descent-Lektor-PL` w folderze użytkownika (np. `C:\Users\Jan\Descent-Lektor-PL`). Tam są `Ustawienia`, `Test dźwięku`, `Odinstaluj` i pozostałe pliki.
+   - Na końcu powinien pojawić się napis „Zainstalowano” i lista 3 plików dodanych do folderu gry.
+4. W folderze lektora kliknij dwukrotnie `Test dźwięku.cmd`. Powinna zabrzmieć jedna kwestia narratora.
+
+Bez komendy: pobierz z wydania plik `Descent-Lektor-PL-win.zip`, rozpakuj go w stałe miejsce (nie do folderu gry) i kliknij dwukrotnie `Zainstaluj.cmd`. Jeśli Windows pokaże „System Windows ochronił ten komputer”, kliknij „Więcej informacji”, a potem „Uruchom mimo to”. Takiej instalacji komenda nie aktualizuje.
+
+### Aktualizacja
+
+Przy zamkniętej grze uruchom w PowerShell tę samą komendę co przy instalacji. Instalator pobiera tylko części, które zmieniły się od zainstalowanej wersji, i usuwa pliki, których nowa wersja już nie ma. Zostają Twoje ustawienia (nowe opcje dostają wartości domyślne), zgłoszenia, dzienniki i wyłączenie lektora, jeśli był wyłączony. Gdy wersja jest aktualna, instalator to pisze i niczego nie pobiera.
 
 ### Granie
 
@@ -96,10 +108,9 @@ Przy zamkniętej grze kliknij dwukrotnie `Wyłącz lektora.cmd`. Gra startuje wt
 2. Kliknij dwukrotnie `Odinstaluj.cmd`. Skrypt usuwa 3 pliki lektora z folderu gry i sprawdza, czy folder wygląda jak przed instalacją.
 3. Teraz możesz usunąć folder `Descent-Lektor-PL`.
 
-### Przeniesienie folderu i aktualizacje gry
+### Aktualizacje gry
 
-- Po przeniesieniu folderu w inne miejsce uruchom ponownie `Zainstaluj.cmd`.
-- Aktualizacja gry w Steam nie usuwa lektora. Gdy po aktualizacji lektor milczy, uruchom `Zainstaluj.cmd` jeszcze raz.
+Aktualizacja gry w Steam nie usuwa lektora. Gdy po niej lektor milczy, uruchom komendę instalacji jeszcze raz albo `Zainstaluj.cmd` w folderze lektora. Folderu lektora nie przenoś: komenda instaluje i aktualizuje go zawsze w tym samym miejscu.
 
 ## Mac (Apple Silicon)
 
@@ -154,6 +165,7 @@ Aktualizacja w Steam przywraca oryginalny podpis gry. Gra wtedy uruchomi się be
 | Objaw | Co zrobić |
 |---|---|
 | Lektor nic nie mówi | Uruchom `Test dźwięku`. Gdy test milczy, sprawdź `volume` i `device` w Ustawieniach oraz głośność systemu. Gdy test działa, a w grze cisza, uruchom `Zainstaluj` jeszcze raz. |
+| Komenda instalacji kończy się błędem pobierania | Sprawdź internet i uruchom komendę ponownie: pobieranie wznowi się od miejsca przerwania. |
 | Lektor gra na złym głośniku | Wpisz fragment nazwy właściwego urządzenia w `device` w Ustawieniach. |
 | Pierwsze okno jest czytane z opóźnieniem | Lektor startuje razem z grą. Pierwsze okno może zabrzmieć z opóźnieniem do kilku sekund. |
 | Lektor czyta coś, czego nie chcesz | Wyłącz kategorię w menu **PL** w grze albo w sekcji `[toggles]` Ustawień. |

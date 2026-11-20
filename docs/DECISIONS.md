@@ -1146,10 +1146,11 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** znajomy zgłosił, że każda nowa wersja wymaga instrukcji (najbardziej na Macu). Z dwóch wariantów (inteligentny `Zainstaluj` w zipie albo instalacja jedną komendą z częściami) użytkownik wybrał drugi i próbę tylko na Windows, bez wypychania wydania.
 
-**Otwarte:**
-- `releases/latest/download` pomija wydania oznaczone jako prerelease: wydanie z instalatorem musi być zwykłym wydaniem.
-- Części z poprzednich wydań: albo wgrywamy wszystkie części do każdego wydania, albo manifest dostaje adres części ze starszego wydania.
-- Lektor zainstalowany z innego folderu wychodzi dopiero po pobraniu (`lektor.ps1` przerywa z komunikatem); sprawdzenie przed pobraniem i wariant dla Maca w kolejnym kroku.
+**Ustalenia 2026-11-20:**
+- Wydanie z instalatorem jest zwykłym wydaniem, nie prerelease: `releases/latest/download` pomija prerelease.
+- Każde wydanie ma komplet: zipy jak dotąd oraz wszystkie części z `dist/win-online/`, starter, instalator i manifest. Niezmienione części mają te same nazwy i sumy, więc instalator ich nie pobiera, choć leżą w nowym wydaniu. GitHub ogranicza plik wydania do 2 GiB i liczbę plików w wydaniu do 1000, bez limitu łącznego rozmiaru wydań i transferu.
+- Przed pobraniem instalator szuka gry i czyta `doorstop_config.ini` w jej folderze (`target_assembly=<folder lektora>\plugin\LektorPL.Loader.dll`). Lektor z innego folderu: pytanie i odinstalowanie skryptem tamtego folderu albo przerwanie bez pobierania; inny loader modów: przerwanie bez pobierania.
+- Wariant dla Maca w kolejnym kroku.
 
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 

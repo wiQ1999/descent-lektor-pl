@@ -494,7 +494,7 @@ Skróty klawiszowe, przycisk „PL” z menu lektora na dolnym pasku, tempo 0,8�
 
 ## E19 · Instalacja i aktualizacja jedną komendą (D111)
 
-Starter `instaluj-win.ps1` i instalator `instalator-win.ps1` (`src/bundle/online/`), części paczki z manifestem (`lektor bundle --parts`). Próba lokalna na Windows zrobiona 2026-11-19. Dalej: decyzja o wydaniu (zwykłe wydanie, części ze starszych wydań), wariant dla Maca (`curl … | bash`), opis w `INSTRUKCJA.md`.
+Starter `instaluj-win.ps1` i instalator `instalator-win.ps1` (`src/bundle/online/`), części paczki z manifestem (`lektor bundle --parts`). Próba lokalna na Windows zrobiona 2026-11-19. 2026-11-20: sprawdzenie innej instalacji przed pobraniem, instrukcja, zasady wydania (zwykłe, z kompletem części), test użytkownika z lokalnego serwera (`docs/E19_WIN_TEST.md`). Dalej: wariant dla Maca (`curl … | bash`).
 
 ## E12 · Katalog treści gry (później)
 

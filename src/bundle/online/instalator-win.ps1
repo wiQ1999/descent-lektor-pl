@@ -29,6 +29,8 @@ try { & {
     $ManifestName = 'lektor-win.json'
     $Defaults = 'skrypty\ustawienia.domyslne.toml'
     $GameProcess = 'Legends of the Dark'
+    $GameExe = 'Legends of the Dark.exe'
+    $AppId = '1611070'
 
     function Say([string] $msg, [string] $color = 'Gray') { Write-Host $msg -ForegroundColor $color }
 
@@ -107,6 +109,74 @@ try { & {
         if ($LASTEXITCODE -ne 0) { throw 'Instalacja w grze nie powiodła się (komunikat powyżej).' }
     }
 
+    # Folder gry: ze stanu instalacji, z bibliotek Steam (jak lektor.ps1) albo od gracza.
+    function Find-Game {
+        if ($Gra) { return (Resolve-Path -LiteralPath $Gra).Path }
+        $stateFile = Join-Path $state 'instalacja.txt'
+        if (Test-Path -LiteralPath $stateFile) {
+            $m = Select-String -LiteralPath $stateFile -Pattern '^game=(.+)$' -Encoding UTF8 | Select-Object -First 1
+            if ($m -and (Test-Path -LiteralPath (Join-Path $m.Matches[0].Groups[1].Value $GameExe))) { return $m.Matches[0].Groups[1].Value }
+        }
+        $libs = New-Object System.Collections.Generic.List[string]
+        foreach ($key in 'HKCU:\Software\Valve\Steam', 'HKLM:\SOFTWARE\WOW6432Node\Valve\Steam') {
+            $p = Get-ItemProperty -Path $key -ErrorAction SilentlyContinue
+            $steam = if ($p -and $p.SteamPath) { $p.SteamPath } elseif ($p -and $p.InstallPath) { $p.InstallPath } else { $null }
+            if (-not $steam) { continue }
+            $libs.Add($steam)
+            $vdf = Join-Path $steam 'steamapps\libraryfolders.vdf'
+            if (Test-Path -LiteralPath $vdf) {
+                foreach ($m in [regex]::Matches((Get-Content -LiteralPath $vdf -Raw -Encoding UTF8), '"path"\s+"([^"]+)"')) {
+                    $libs.Add(($m.Groups[1].Value -replace '\\\\', '\'))
+                }
+            }
+        }
+        foreach ($lib in $libs | Select-Object -Unique) {
+            $acf = Join-Path $lib "steamapps\appmanifest_$AppId.acf"
+            if (-not (Test-Path -LiteralPath $acf)) { continue }
+            $m = [regex]::Match((Get-Content -LiteralPath $acf -Raw -Encoding UTF8), '"installdir"\s+"([^"]+)"')
+            if (-not $m.Success) { continue }
+            $dir = Join-Path $lib "steamapps\common\$($m.Groups[1].Value)"
+            if (Test-Path -LiteralPath (Join-Path $dir $GameExe)) { return (Resolve-Path -LiteralPath $dir).Path }
+        }
+        Say 'Nie znalazłem gry w bibliotekach Steam.' Yellow
+        Say 'W Steam: prawy klik na grze > Zarządzaj > Przeglądaj pliki lokalne, skopiuj ścieżkę z paska adresu i wklej ją tutaj.'
+        $dir = (Read-Host 'Folder gry').Trim().Trim('"')
+        if (-not $dir -or -not (Test-Path -LiteralPath (Join-Path $dir $GameExe))) { throw "W tym folderze nie ma pliku $GameExe." }
+        (Resolve-Path -LiteralPath $dir).Path
+    }
+
+    # Przed pobraniem: czy w grze nie ma lektora z innego folderu albo innego loadera modów.
+    # Lektor zostawia w folderze gry doorstop_config.ini z wierszem target_assembly=<folder lektora>\plugin\LektorPL.Loader.dll.
+    function Assert-GameReady([string] $game) {
+        $cfg = Join-Path $game 'doorstop_config.ini'
+        $text = if (Test-Path -LiteralPath $cfg) { Get-Content -LiteralPath $cfg -Raw } else { '' }
+        $m = [regex]::Match($text, '(?m)^target_assembly=(.+?)\\plugin\\LektorPL\.Loader\.dll\s*$')
+        if ($m.Success) {
+            $other = $m.Groups[1].Value
+            if ([System.IO.Path]::GetFullPath($other).TrimEnd('\') -eq $Folder.TrimEnd('\')) { return }
+            $uninstall = Join-Path $other 'skrypty\lektor.ps1'
+            Say ''
+            Say "W grze jest lektor zainstalowany z innego folderu: $other" Yellow
+            if (-not (Test-Path -LiteralPath $uninstall)) {
+                throw ("Tamtego folderu już nie ma, a w folderze gry zostały pliki lektora. Usuń z folderu gry pliki " +
+                    "winhttp.dll, .doorstop_version i doorstop_config.ini i uruchom instalację ponownie.")
+            }
+            $answer = Read-Host 'Odinstalować go teraz? Ustawienia i zgłoszenia z tamtego folderu nie przejdą do nowego. [T/N]'
+            if ($answer.Trim() -notmatch '^[TtYy]') { throw "Instalacja przerwana. Odinstaluj lektora plikiem Odinstaluj.cmd w folderze $other i uruchom instalację ponownie." }
+            & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $uninstall -Uninstall
+            if ($LASTEXITCODE -ne 0) { throw "Odinstalowanie z folderu $other nie powiodło się (komunikat powyżej)." }
+            Say "Stary folder możesz teraz usunąć: $other" Green
+            Say ''
+            return
+        }
+        $foreign = @('winhttp.dll', 'doorstop_config.ini', '.doorstop_version', 'version.dll', 'BepInEx', 'MelonLoader' |
+                Where-Object { Test-Path -LiteralPath (Join-Path $game $_) })
+        if ($foreign -and -not (Test-Path -LiteralPath (Join-Path $state 'instalacja.txt'))) {
+            throw ("W folderze gry jest inny loader modów: {0}. Lektor PL nie nadpisuje cudzych plików. " +
+                "Odinstaluj tamten mod (albo usuń te pliki) i uruchom instalację ponownie.") -f ($foreign -join ', ')
+        }
+    }
+
     if (-not $Zrodlo) { $Zrodlo = $Release }
     if (-not $Folder) { $Folder = Join-Path $env:USERPROFILE 'Descent-Lektor-PL' }
     $Folder = [System.IO.Path]::GetFullPath($Folder)
@@ -118,6 +188,9 @@ try { & {
     if (Get-Process -Name $GameProcess -ErrorAction SilentlyContinue) {
         throw 'Gra jest uruchomiona. Zamknij ją i uruchom instalację ponownie.'
     }
+    $game = Find-Game
+    Say "Gra: $game"
+    Assert-GameReady $game
     New-Item -ItemType Directory -Force -Path $downloads | Out-Null
     $manifestPath = Join-Path $downloads $ManifestName
     Remove-Item -LiteralPath $manifestPath -Force -ErrorAction SilentlyContinue
@@ -130,7 +203,7 @@ try { & {
     if ($upgrade -and $installed.id -eq $manifest.id) {
         Say "Lektor jest aktualny: $($manifest.version)" Green
         Say "Folder: $Folder"
-        Invoke-Lektor $Folder @('-Install', '-Upgrade')
+        Invoke-Lektor $Folder @('-Install', '-Upgrade', '-GameDir', $game)
         Remove-Item -LiteralPath $downloads -Recurse -Force
         return
     }
@@ -190,7 +263,7 @@ try { & {
 
     $arguments = @('-Install')
     if ($upgrade) { $arguments += '-Upgrade' }
-    if ($Gra) { $arguments += @('-GameDir', $Gra) }
+    $arguments += @('-GameDir', $game)
     Invoke-Lektor $Folder $arguments
 
     Copy-Item -LiteralPath $manifestPath -Destination $installedPath -Force
