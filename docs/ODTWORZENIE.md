@@ -269,7 +269,26 @@ Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej 
 - Zestawienie głosów do odsłuchu (opis, portret z gry, dwie próbki z gotowego audio), wynik w `analysis/work/compare/m4_cast/`. Strona czyta portrety i nagrania z plików obok, więc otwieramy ją w przeglądarce bezpośrednio albo przez `python -m http.server` (konfiguracja `cast-sheet` w `.claude/launch.json`):
 
 ```bash
-.venv/Scripts/python -I analysis/tools/cast_sheet.py --release m4 [--acts 1]
+.venv/Scripts/python -I analysis/tools/cast_sheet.py --release m4 [--acts 1 2 3]
+```
+
+- Domyślnie zestawienie obejmuje całą grę. Fragmenty spoza paczki (akt 2) mają próbki z podejść o bieżącym id, przycięte i wyrównane jak w `finalize`.
+- Próbki E20 (D114): tempo narracji scen i Vaerixa w dwóch wariantach (nowe generowanie OmniVoice i WSOLA) oraz efekty z `lektor.effects` (duch, głos w głowie). Wynik w `analysis/work/compare/e20_probki/index.html`:
+
+```bash
+.venv/Scripts/python -I analysis/tools/e20_samples.py pick
+```
+
+```bash
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/e20_samples.py gen
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/e20_samples.py check
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/e20_samples.py page
 ```
 
 - Zmiany obsady po odsłuchu (D109): kandydaci OmniVoice (dwa opisy, dwa ziarna, wariant z obróbką) i podglądy ElevenLabs na jednej stronie `analysis/work/compare/m4_recast/index.html`. Wybór z odsłuchu przejmuje `adopt` (litera A–C, `-` bez zmian), nowe profile ElevenLabs wpisujemy do `direction.ELEVEN_RECAST`, potem `build --release m4`:

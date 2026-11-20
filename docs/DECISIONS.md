@@ -1172,8 +1172,8 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 ### D114 · 2026-11-20 · E20: poprawki obsady po odsłuchu całej gry
 **Decyzja:**
-- Zestawienie `m4_cast` obejmuje całą grę: 144 głosy, akt 2 z podejść poza paczką, przyciętych i wyrównanych do −20 LUFS jak w `finalize`. Pierwsza wersja strony dawała próbki aktu 2 bez wyrównania (−24 do −28 LUFS), więc uwagi „za cichy” dla Ogrodniczki, Żołnierza z A2Q11, Gorzae i Czerwonej Gwiazdy wymagają ponownego odsłuchu.
-- Odsłuch wskazał 62 głosy. Prowadzimy je jak D109 w całej grze (etap E20 w `docs/PLAN.md`): nowe głosy i poprawki jakości przez kandydatów OmniVoice z odsłuchem, ponowne podejścia trzech fragmentów.
+- Zestawienie `m4_cast` obejmuje całą grę: 144 głosy, akt 2 z podejść poza paczką, przyciętych i wyrównanych do −20 LUFS jak w `finalize`. Pierwsza wersja strony dawała próbki aktu 2 bez wyrównania (−24 do −28 LUFS), więc Ogrodniczka z A2Q8 i Czerwona Gwiazda, które miały tylko uwagę „za cichy”, wypadają z E20. Żołnierz z A2Q11 i Gorzae zostają z powodu jakości i robotycznego brzmienia.
+- Odsłuch wskazał 62 głosy, po odjęciu dwóch powyżej 60. Prowadzimy je jak D109 w całej grze (etap E20 w `docs/PLAN.md`): nowe głosy i poprawki jakości przez kandydatów OmniVoice z odsłuchem, ponowne podejścia trzech fragmentów.
 - Tempo narracji scen narratora (1508 fragmentów, dziś tempo naturalne) ma być 1,4 jak w oknach gry, a Vaerixa 1,2. Sposób (nowe generowanie albo WSOLA na gotowym audio) wybierzesz po odsłuchu próbek obu wariantów.
 - Efekty na audio robimy własnym łańcuchem per głos w `finalize` (numpy/scipy, bez nowych pakietów): duch dla Kathryn i smoka-ducha z Q13, głos w głowie dla Baelziffara.
 - Głosy ElevenLabs zostają bez zmian do odnowienia limitu 2026-12-15 (licznik okresu 55 983 z 60 tys.). Potem nowe profile Laurel i L'trand oraz chropowatsza Veta (ok. 16,7 tys. znaków, ok. 7,5 tys. kredytów).
