@@ -310,15 +310,16 @@ powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1
 - Nowy plugin i companion bez budowania paczki: `src/plugin/install/nakladka-test.ps1 -Paczka "<paczka>"` podmienia je w rozpakowanej paczce (oryginały w `stan\nakladka-kopia`, powrót: `-Przywroc`). Opis i lista kontrolna: `docs/NAKLADKA_TEST.md`.
 - Każda paczka ma `LICENSE.md`, `UZNANIE_AUTORSTWA.md` (szablon w `src/bundle/`) i licencję Doorstop w `licencje/`.
 
-### Instalacja jedną komendą: części paczki (E19, D111, Windows)
+### Instalacja jedną komendą: części paczki (E19, D111)
 
 ```bash
-.venv/Scripts/python -I -m lektor bundle --platform win --parts [--from DIR] [--out DIR] [--fresh]
+.venv/Scripts/python -I -m lektor bundle --platform win|mac --parts [--from DIR] [--out DIR] [--fresh]
 ```
 
-- Dzieli gotową paczkę (`analysis/work/dist/win/Descent-Lektor-PL`) na części w `analysis/work/dist/win-online/`: `python-*.zip`, `program-*.zip`, warstwy `audio-*.zip`, manifest `lektor-win.json`, starter `instaluj-win.ps1` i instalator `instalator-win.ps1`.
-- Katalog jest kumulatywny: kolejna budowa dokłada warstwę audio tylko z nowymi i zmienionymi plikami, a części, których manifest już nie używa, usuwa. `--fresh` zaczyna audio od nowa.
-- Próba lokalna bez wydania: serwer `.venv/Scripts/python -I -m http.server 47899 --bind 127.0.0.1 --directory analysis/work/dist/win-online`, potem w PowerShell (folder gry i lektora tymczasowe):
+- Dzieli gotową paczkę (`analysis/work/dist/<platform>/Descent-Lektor-PL`) na części we wspólnym katalogu `analysis/work/dist/online/`: `python-*.zip` i `program-*.zip` osobno dla systemów, warstwy `audio-*.zip` wspólne. Obok leżą manifesty `lektor-win.json` i `lektor-mac.json`, indeks `lektor-mac.txt` (dla bash) i skrypty `instaluj-win.ps1`, `instalator-win.ps1`, `instaluj-mac.sh`.
+- Katalog jest kumulatywny: kolejna budowa dokłada warstwę audio tylko z nowymi i zmienionymi plikami, a części, których nie używa żaden manifest, usuwa. `--fresh` zaczyna audio od nowa; wtedy budujemy oba systemy.
+- Instalator Maca sprawdzamy w Git Bash jak skrypty paczki: atrapy `codesign`, `pbcopy`, `pgrep`, `xattr` i `PLISTBUDDY`, sztuczny `HOME` z `Library/Application Support/Steam` (appmanifest i `userdata/*/config/localconfig.vdf`) i `LEKTOR_ZRODLO` wskazujące katalog z częściami. Ścieżki w `PATH` w postaci `/c/...` (`cygpath -u`). Na Macu: skopiować `dist/online` i uruchomić `LEKTOR_ZRODLO=<folder> bash <folder>/instaluj-mac.sh`.
+- Próba lokalna Windows bez wydania: serwer `.venv/Scripts/python -I -m http.server 47899 --bind 127.0.0.1 --directory analysis/work/dist/online`, potem w PowerShell (folder gry i lektora tymczasowe):
 
 ```powershell
 $env:LEKTOR_ZRODLO = 'http://127.0.0.1:47899'; $env:LEKTOR_FOLDER = '<folder testowy>'; $env:LEKTOR_GRA = '<atrapa gry z plikiem Legends of the Dark.exe>'
@@ -346,15 +347,15 @@ Wydanie z paczkami z `analysis/work/dist/` (opis z zakresem i sumami SHA-256 w p
 "$GH" release create v0.2.0 --repo wiQ1999/descent-lektor-pl --prerelease --title "..." --notes-file analysis/work/out/e10_release_notes.md analysis/work/dist/Descent-Lektor-PL-win.zip analysis/work/dist/Descent-Lektor-PL-mac.zip
 ```
 
-Od E19 (D111) wydanie jest zwykłe i oznaczone jako najnowsze (`releases/latest/download` pomija prerelease) i oprócz zipów ma wszystkie pliki z `analysis/work/dist/win-online/` (części, manifest, starter i instalator):
+Od E19 (D111) wydanie jest zwykłe i oznaczone jako najnowsze (`releases/latest/download` pomija prerelease) i oprócz zipów ma wszystkie pliki z `analysis/work/dist/online/` (części, manifesty, indeks i skrypty instalacji):
 
 ```bash
-"$GH" release create vX.Y.Z --repo wiQ1999/descent-lektor-pl --latest --title "..." --notes-file analysis/work/out/<opis>.md analysis/work/dist/Descent-Lektor-PL-win.zip analysis/work/dist/Descent-Lektor-PL-mac.zip analysis/work/dist/win-online/*
+"$GH" release create vX.Y.Z --repo wiQ1999/descent-lektor-pl --latest --title "..." --notes-file analysis/work/out/<opis>.md analysis/work/dist/Descent-Lektor-PL-win.zip analysis/work/dist/Descent-Lektor-PL-mac.zip analysis/work/dist/online/*
 ```
 
 Przed wydaniem z instalatorem:
-- `bundle --platform win` i `--platform mac`, potem `bundle --platform win --parts`. Pierwsze wydanie z `--fresh` (jedna warstwa audio bez śladów testów); w `dist/win-online/` mają leżeć tylko pliki z bieżącego manifestu.
-- W opisie wydania: komenda z `INSTRUKCJA.md` i zdanie dla graczy starej paczki (instalator zapyta o odinstalowanie, odpowiedź `T`).
+- `bundle --platform win` i `--platform mac`, potem `bundle --platform win --parts` i `bundle --platform mac --parts`. Pierwsze wydanie z `--fresh` dla obu systemów (jedna warstwa audio); w `dist/online/` leżą wtedy tylko pliki z bieżących manifestów.
+- W opisie wydania: komenda z `INSTRUKCJA.md` i zdanie dla graczy starej paczki (Windows: instalator zapyta o odinstalowanie, odpowiedź `T`; Mac: nową opcję uruchamiania wkleić w Steam ze schowka).
 - Po wydaniu: komenda z `INSTRUKCJA.md` bez `LEKTOR_ZRODLO` na komputerze z lektorem z komendy (aktualizacja z GitHub) i, jeśli się da, na drugim komputerze (świeża instalacja i ewentualne ostrzeżenie antywirusa).
 
 ## 8. Opcjonalnie

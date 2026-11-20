@@ -13,7 +13,7 @@ Projekt działa na Windows i na Macu z Apple Silicon. Szczegóły i uzasadnienie
 
 - Warunki korzystania: [LICENSE.md](LICENSE.md).
 - Repozytorium nie zawiera treści gry (tekstów, grafik, nagrań, kodu), modeli ani wygenerowanego audio. Narzędzia odtwarzają je lokalnie z kopii aplikacji użytkownika.
-- Gotowe paczki dla Windows i Maca (audio, plugin, companion, instalator i instrukcja) są w [wydaniach GitHub Releases](https://github.com/wiQ1999/descent-lektor-pl/releases). Na Windows lektora instaluje i aktualizuje jedna komenda w PowerShell, która pobiera z wydania tylko zmienione części; na Macu gracz pobiera zip. Instrukcja dla graczy: [docs/INSTRUKCJA.md](docs/INSTRUKCJA.md).
+- Gotowe paczki dla Windows i Maca (audio, plugin, companion, instalator i instrukcja) są w [wydaniach GitHub Releases](https://github.com/wiQ1999/descent-lektor-pl/releases). Lektora instaluje i aktualizuje jedna komenda (PowerShell na Windows, Terminal na Macu), która pobiera z wydania tylko zmienione części. Instrukcja dla graczy: [docs/INSTRUKCJA.md](docs/INSTRUKCJA.md).
 
 ## Odtworzenie od zera
 

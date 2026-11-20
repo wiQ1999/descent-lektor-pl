@@ -6,7 +6,7 @@ Polski lektor do gry *Descent: Legends of the Dark* ze Steama. Czyta okna fabula
 
 - **Zakres:** ta wersja ma nagrania całego aktu 1: prologu, wszystkich scenariuszy głównych i pobocznych ze wstępami i zakończeniami, wydarzeń kampanii, podróży, tekstów miasta i list łupu. Wypowiedzi postaci w oknach narratora czytają głosy tych postaci, a każda postać bez imienia ma własny głos. Akt 2 przyjdzie w kolejnej wersji; do tego czasu lektor czyta w nim tylko wspólne komunikaty. Gra działa wtedy normalnie.
 - **Jak działa:** gra uruchamia lektora sama. Mały dodatek w grze rozpoznaje okna i przekazuje je lektorowi, a lektor odtwarza nagrania przez głośnik komputera. Po wyjściu z gry lektor też się zamyka.
-- **Co zmienia na komputerze:** wszystko leży w folderze `Descent-Lektor-PL` (na Windows w folderze użytkownika, np. `C:\Users\Jan\Descent-Lektor-PL`). Instalacja nie potrzebuje hasła administratora i niczego nie instaluje w systemie.
+- **Co zmienia na komputerze:** wszystko leży w folderze `Descent-Lektor-PL` (na Windows w folderze użytkownika, np. `C:\Users\Jan\Descent-Lektor-PL`, na Macu w katalogu domowym). Instalacja nie potrzebuje hasła administratora i niczego nie instaluje w systemie.
   - Windows: w folderze gry pojawiają się 3 małe pliki.
   - Mac: gra dostaje nowy podpis, a w Steam pojawia się opcja uruchamiania.
 - **Muzyka:** lektor nie przycisza muzyki gry. Ustaw jej głośność w opcjach gry.
@@ -118,20 +118,30 @@ Aktualizacja gry w Steam nie usuwa lektora. Gdy po niej lektor milczy, uruchom k
 
 - Mac z procesorem Apple (M1 lub nowszym) i aktualnym macOS.
 - Gra kupiona i zainstalowana w Steam.
-- Ok. 4 GB wolnego miejsca podczas instalacji: pobrany plik `.zip` ma ok. 1,7 GB, a rozpakowany folder ok. 1,8 GB. Po rozpakowaniu plik `.zip` można usunąć.
+- Ok. 4 GB wolnego miejsca przy pierwszej instalacji (lektor zajmuje ok. 1,8 GB). Aktualizacja pobiera tylko zmienione części.
 
 ### Instalacja
 
-1. Pobierz z [wydań](https://github.com/wiQ1999/descent-lektor-pl/releases/latest) plik `Descent-Lektor-PL-mac.zip` i rozpakuj go dwuklikiem w Finderze.
-2. Przenieś folder `Descent-Lektor-PL` do katalogu domowego (w Finderze: *Idź → Katalog domowy*).
-   - Nie zostawiaj go w Dokumentach, Pobranych ani na Biurku. macOS chroni te foldery i gra nie mogłaby wczytać lektora.
-3. Zamknij grę.
-4. Kliknij dwukrotnie `Zainstaluj.command`. Otworzy się okno Terminala.
-   - Jeśli macOS zablokuje plik („nie można sprawdzić dewelopera”), otwórz *Ustawienia systemowe → Prywatność i ochrona*, na dole kliknij „Otwórz mimo to”, a potem ponownie kliknij plik dwukrotnie.
-   - Skrypt nadaje grze nowy podpis, bo bez niego macOS nie pozwala wczytać dodatku. Jeśli macOS zapyta, czy Terminal może zarządzać aplikacjami, zgódź się. Gdy zgoda wymaga ustawień, włącz Terminal w *Ustawienia systemowe → Prywatność i ochrona → Zarządzanie aplikacjami* i uruchom `Zainstaluj.command` jeszcze raz.
-   - Na końcu skrypt kopiuje do schowka opcję uruchamiania dla Steama.
-5. W Steam kliknij grę prawym przyciskiem i wybierz *Właściwości → Ogólne*. W polu *Opcje uruchamiania* wklej skopiowany tekst (Cmd+V).
-6. Kliknij dwukrotnie `Test dźwięku.command`. Powinna zabrzmieć jedna kwestia narratora.
+1. Zamknij grę.
+2. Otwórz Terminal: Cmd+Spacja, wpisz `Terminal` i naciśnij Enter.
+3. Wklej tę komendę (Cmd+V) i naciśnij Enter:
+
+   ```bash
+   curl -fsSL https://github.com/wiQ1999/descent-lektor-pl/releases/latest/download/instaluj-mac.sh | bash
+   ```
+
+   - Lektor trafia do folderu `Descent-Lektor-PL` w katalogu domowym. Tam są `Ustawienia`, `Test dźwięku`, `Odinstaluj` i pozostałe pliki (w Finderze: *Idź → Katalog domowy*).
+   - Instalator nadaje grze nowy podpis, bo bez niego macOS nie pozwala wczytać dodatku. Jeśli macOS zapyta, czy Terminal może zarządzać aplikacjami, zgódź się. Gdy zgoda wymaga ustawień, włącz Terminal w *Ustawienia systemowe → Prywatność i ochrona → Zarządzanie aplikacjami*, zamknij Terminal (Cmd+Q) i uruchom komendę jeszcze raz.
+   - Na końcu instalator kopiuje do schowka opcję uruchamiania dla Steama i pisze, czy trzeba ją wkleić.
+4. Przy pierwszej instalacji, albo gdy instalator o to prosi: w Steam kliknij grę prawym przyciskiem i wybierz *Właściwości → Ogólne*. W polu *Opcje uruchamiania* zastąp tekst skopiowanym (Cmd+V).
+   - Gdy wcześniej był lektor ze starej paczki w innym folderze, instalator to napisze. Po wklejeniu nowej opcji stary folder możesz usunąć.
+5. W folderze lektora kliknij dwukrotnie `Test dźwięku.command`. Powinna zabrzmieć jedna kwestia narratora.
+
+Bez komendy: pobierz z wydania plik `Descent-Lektor-PL-mac.zip`, rozpakuj go, przenieś folder `Descent-Lektor-PL` do katalogu domowego (nie do Dokumentów, Pobranych ani na Biurko) i kliknij dwukrotnie `Zainstaluj.command`. Jeśli macOS zablokuje plik, otwórz *Ustawienia systemowe → Prywatność i ochrona* i kliknij „Otwórz mimo to”. Opcję uruchamiania wklej jak w kroku 4. Takiej instalacji komenda nie aktualizuje.
+
+### Aktualizacja
+
+Przy zamkniętej grze uruchom w Terminalu tę samą komendę co przy instalacji. Instalator pobiera tylko zmienione części, a ustawienia, zgłoszenia, dzienniki i wyłączenie lektora zostają. Opcji uruchamiania w Steam nie trzeba zmieniać, bo folder lektora się nie zmienia.
 
 ### Granie
 
@@ -158,7 +168,7 @@ Uruchom grę zwykłym przyciskiem *Graj* w Steam. Lektor startuje razem z grą i
 
 ### Aktualizacje gry
 
-Aktualizacja w Steam przywraca oryginalny podpis gry. Gra wtedy uruchomi się bez lektora i pokaże komunikat. Uruchom ponownie `Zainstaluj.command`. Opcja uruchamiania w Steam zostaje bez zmian.
+Aktualizacja w Steam przywraca oryginalny podpis gry. Gra wtedy uruchomi się bez lektora i pokaże komunikat. Uruchom ponownie komendę instalacji albo `Zainstaluj.command` w folderze lektora. Opcja uruchamiania w Steam zostaje bez zmian.
 
 ## Gdy coś nie działa
 

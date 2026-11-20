@@ -85,3 +85,4 @@ Kroki 3–6 i 8–13 przebiegły jak w opisie. Pytania o starą paczkę nie był
 
 - Stary folder `analysis/work/dist/win/Descent-Lektor-PL` nie jest już zainstalowany w grze; zostaje jako paczka do zipa.
 - Powrót do starej instalacji: `Odinstaluj.cmd` w `C:\Users\<Ty>\Descent-Lektor-PL`, potem `Zainstaluj.cmd` w starym folderze.
+- Katalogi `win-online` i `win-online-v2` usunięto po teście; części obu systemów buduje teraz `bundle --parts` we wspólnym `analysis/work/dist/online/`.

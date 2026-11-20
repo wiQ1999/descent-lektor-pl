@@ -1148,11 +1148,12 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Ustalenia 2026-11-20:**
 - Wydanie z instalatorem jest zwykłym wydaniem, nie prerelease: `releases/latest/download` pomija prerelease.
-- Każde wydanie ma komplet: zipy jak dotąd oraz wszystkie części z `dist/win-online/`, starter, instalator i manifest. Niezmienione części mają te same nazwy i sumy, więc instalator ich nie pobiera, choć leżą w nowym wydaniu. GitHub ogranicza plik wydania do 2 GiB i liczbę plików w wydaniu do 1000, bez limitu łącznego rozmiaru wydań i transferu.
+- Każde wydanie ma komplet: zipy jak dotąd oraz wszystkie części z `dist/online/`, skrypty instalacji i manifesty. Niezmienione części mają te same nazwy i sumy, więc instalator ich nie pobiera, choć leżą w nowym wydaniu. GitHub ogranicza plik wydania do 2 GiB i liczbę plików w wydaniu do 1000, bez limitu łącznego rozmiaru wydań i transferu.
 - Przed pobraniem instalator szuka gry i czyta `doorstop_config.ini` w jej folderze (`target_assembly=<folder lektora>\plugin\LektorPL.Loader.dll`). Lektor z innego folderu: pytanie i odinstalowanie skryptem tamtego folderu albo przerwanie bez pobierania; inny loader modów: przerwanie bez pobierania.
 - Test użytkownika w grze 2026-11-20 (`docs/E19_WIN_TEST.md`, lokalny serwer zamiast GitHub): instalacja wersji 1, gra, „aktualny” i aktualizacja do wersji 2 (2 z 5 części, 7 MB, zachowane ustawienia, zgłoszenie i wyłączenie lektora) przebiegły jak w opisie. Pytania o starą paczkę nie było, bo jej pliki zostały wcześniej usunięte z gry ręcznie; ten przypadek sprawdzony na atrapie gry.
 - Porządki w paczce: bez `skrypty/pliki.sha256` (nic go nie sprawdzało; części mają sumy w manifeście), `lektor.ps1 -Quiet` bez końcowych wskazówek, gdy kończy instalator, instrukcja bez rad o przenoszeniu folderu i kopiowaniu zipa na Maca pendrive'em.
-- Wariant dla Maca w kolejnym kroku.
+- Mac (2026-11-20): `curl -fsSL …/instaluj-mac.sh | bash`, folder `~/Descent-Lektor-PL`, stan w `stan/pakiet.txt`. Bash 3.2 z macOS nie ma parsera JSON, więc instalator czyta indeks tekstowy `lektor-mac.txt`. Części rozpakowuje `ditto` (polskie nazwy, prawa wykonywania z zipa), resztę robi `lektor.sh install --quiet [--upgrade]`. Pliki z curl nie dostają kwarantanny, więc Gatekeeper nie blokuje `.command`. Opcja uruchamiania w Steam zostaje między wersjami: instalator czyta ją z `localconfig.vdf` i prosi o wklejenie tylko przy pierwszej instalacji albo gdy wskazuje inny folder. Sprawdzone w Git Bash z atrapami, na Macu jeszcze nie.
+- Części Windows i Maca leżą we wspólnym `dist/online/`: warstwy audio obu systemów są tymi samymi zipami, więc wydanie ma jedną ich kopię (ok. 1,8 GB mniej niż osobne zestawy).
 
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 

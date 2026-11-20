@@ -113,7 +113,37 @@ def test_large_layer_is_chunked(dirs, monkeypatch):
     assert [p['files'] for p in audio] == [['dane/final/a.flac', 'dane/final/b.flac'], ['dane/final/c.flac']]
 
 
-def test_mac_is_not_supported_yet(dirs):
+def test_mac_has_text_index_unix_script_and_exec_bits(dirs):
+    src, out = dirs
+    bundle = make_bundle(src, {'a': b'A1'})
+    with open(os.path.join(bundle, 'Zainstaluj.command'), 'w') as fh:
+        fh.write('#!/bin/bash\n')
+    m = manifest_mac = json.load(open(os.path.join(P.build('mac', bundle, out), 'lektor-mac.json'), encoding='utf-8'))
+    index = open(os.path.join(out, 'lektor-mac.txt'), encoding='utf-8').read().splitlines()
+    assert index[:3] == ['format\t1', 'platform\tmac', 'id\t%s' % m['id']]
+    parts = [line.split('\t') for line in index if line.startswith('part\t')]
+    assert [(p[2], p[3], p[4], int(p[5])) for p in parts] == [(x['kind'], x['name'], x['sha256'], x['size']) for x in manifest_mac['parts']]
+    assert 'file\t3\tdane/final/a.flac' in index
+    script = open(os.path.join(out, 'instaluj-mac.sh'), 'rb').read()
+    assert script.startswith(b'#!/bin/bash\n') and b'\r' not in script
+    program = next(p['name'] for p in m['parts'] if p['kind'] == 'program')
+    with zipfile.ZipFile(os.path.join(out, program)) as z:
+        assert (z.getinfo('Zainstaluj.command').external_attr >> 16) & 0o777 == 0o755
+        assert (z.getinfo('wersja.txt').external_attr >> 16) & 0o777 == 0o644
+
+
+def test_win_and_mac_share_output_and_audio(dirs):
+    src, out = dirs
+    bundle = make_bundle(src, {'a': b'A1'})
+    win = manifest(P.build('win', bundle, out))
+    mac = json.load(open(os.path.join(P.build('mac', bundle, out), 'lektor-mac.json'), encoding='utf-8'))
+    audio = lambda m: [p['name'] for p in m['parts'] if p['kind'] == 'audio']
+    assert audio(win) == audio(mac)
+    for p in win['parts'] + mac['parts']:                   # prune po budowie Maca zostawia części Windows
+        assert os.path.exists(os.path.join(out, p['name']))
+
+
+def test_unknown_platform_stops(dirs):
     src, out = dirs
     with pytest.raises(SystemExit):
-        P.build('mac', make_bundle(src, {}), out)
+        P.build('linux', make_bundle(src, {}), out)

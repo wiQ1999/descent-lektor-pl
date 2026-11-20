@@ -147,7 +147,9 @@ Paczka (E6, D57–D60). Doorstop i Python są przypięte sumami w `src/bundle/pi
 .venv/Scripts/python -I -m lektor bundle --platform win|mac    # analysis/work/dist/<platform>/Descent-Lektor-PL + zip
 ```
 
-- Instalacja jedną komendą (E19, D111, Windows): `bundle --platform win --parts` dzieli paczkę na części z manifestem w `analysis/work/dist/win-online/`; starter `src/bundle/online/instaluj-win.ps1` (tylko ASCII, `irm | iex`) uruchamia `instalator-win.ps1`, który instaluje do `%USERPROFILE%\Descent-Lektor-PL` albo aktualizuje tylko zmienione części (stan w `stan\pakiet.json`). Próba lokalna: `docs/ODTWORZENIE.md`.
+- Instalacja jedną komendą (E19, D111): `bundle --platform win|mac --parts` dzieli paczkę na części z manifestem we wspólnym `analysis/work/dist/online/` (warstwy audio wspólne dla obu systemów). Aktualizacja pobiera tylko zmienione części. Próba lokalna i test Maca z atrapami: `docs/ODTWORZENIE.md`.
+  - Windows: starter `src/bundle/online/instaluj-win.ps1` (tylko ASCII, `irm | iex`) uruchamia `instalator-win.ps1`; folder `%USERPROFILE%\Descent-Lektor-PL`, stan w `stan\pakiet.json`.
+  - Mac: `instaluj-mac.sh` (`curl | bash`, bash 3.2, indeks `lektor-mac.txt`, pytania z `/dev/tty`); folder `~/Descent-Lektor-PL`, stan w `stan/pakiet.txt`.
 - Budowa potrzebuje `uv` (koła dla wybranego systemu, `--python-platform`) i `curl` (pobrania; Python z uv na Windows nie widzi magazynu certyfikatów). Na komputerze z grą żadne z nich nie jest potrzebne.
 
 - Paczka ma pliki do dwukliku (`Zainstaluj`, `Odinstaluj`, `Wyłącz/Włącz lektora`, `Ustawienia`, `Test dźwięku`). Uruchamia je użytkownik według `docs/INSTRUKCJA.md` (kopia w paczce) oraz `docs/E6_W1_TEST.md`, `docs/E6_W2_TEST.md` i `docs/E7_MAC_SESSION.md`.

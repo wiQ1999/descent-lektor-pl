@@ -1,6 +1,6 @@
-"""Paczka w częściach dla instalatora sieciowego (wariant B, Windows).
+"""Paczka w częściach dla instalacji i aktualizacji jedną komendą (E19, D111).
 
-  python -I -m lektor bundle --platform win --parts [--from DIR] [--out DIR] [--fresh]
+  python -I -m lektor bundle --platform win|mac --parts [--from DIR] [--out DIR] [--fresh]
 
 Dzieli gotowy folder paczki (bundle.build) na części i zapisuje manifest lektor-<platform>.json:
   python   Python z bibliotekami (zmienia się rzadko);
@@ -8,13 +8,16 @@ Dzieli gotowy folder paczki (bundle.build) na części i zapisuje manifest lekto
   audio    warstwy z dane/final: każda budowa dokłada warstwę tylko z nowymi i zmienionymi plikami.
 
 Nazwa części to rodzaj i początek sumy SHA-256 zipa, a zip jest deterministyczny (stała data, kolejność),
-więc niezmieniona część ma tę samą nazwę i instalator jej nie pobiera. Katalog wyjściowy jest kumulatywny:
+więc niezmieniona część ma tę samą nazwę i instalator jej nie pobiera. Windows i Mac mają wspólny katalog
+analysis/work/dist/online/: warstwy audio obu systemów to te same zipy, więc wydanie ma jedną ich kopię. Katalog wyjściowy jest kumulatywny:
 leżą w nim wszystkie części, do których odwołuje się manifest, i z nich budowa czyta poprzednie warstwy audio.
 Warstwa, której wszystkie pliki przykryły późniejsze albo zniknęły z paczki, wypada z manifestu.
 --fresh zaczyna audio od jednej warstwy (np. przed dużym wydaniem, gdy warstw jest dużo).
 
-Instalator (starter instaluj-win.ps1 i instalator-win.ps1, obok manifestu) pobiera części, których nie ma w stan/pakiet.json instalacji,
-rozpakowuje je w kolejności manifestu i usuwa pliki poprzednich części, których nowy manifest nie wymienia.
+Instalator (Windows: starter instaluj-win.ps1 i instalator-win.ps1; Mac: instaluj-mac.sh) pobiera części, których
+nie ma w stanie instalacji (stan/pakiet.json albo stan/pakiet.txt), rozpakowuje je w kolejności manifestu i usuwa
+pliki poprzednich części, których nowy manifest nie wymienia. Mac dostaje obok JSON indeks tekstowy lektor-mac.txt,
+bo bash 3.2 z macOS nie ma parsera JSON.
 """
 import hashlib
 import json
@@ -27,16 +30,33 @@ from . import bundle as B
 FORMAT = 1
 AUDIO_DIR = 'dane/final/'
 DEFAULTS = 'skrypty/ustawienia.domyslne.toml'     # ustawienia.toml instalator tworzy albo scala z tym plikiem
-# starter do `irm ... | iex` (tylko ASCII, bez BOM) i właściwy instalator (UTF-8 z BOM dla PowerShell 5.1)
-INSTALLER = {'win': ('instaluj-win.ps1', 'instalator-win.ps1')}
+# Windows: starter do `irm ... | iex` (tylko ASCII, bez BOM) i właściwy instalator (UTF-8 z BOM dla PowerShell 5.1);
+# Mac: jeden skrypt do `curl ... | bash` (UTF-8, końce linii LF)
+INSTALLER = {'win': ('instaluj-win.ps1', 'instalator-win.ps1'), 'mac': ('instaluj-mac.sh',)}
 SKIP = set(B.LOCAL) | {'zgloszenia'}
 STORED = set(B.STORED) | {'.flac', '.zip'}
 DATE = (2020, 1, 1, 0, 0, 0)
+ONLINE = os.path.join(B.DIST, 'online')    # wspólny dla Windows i Maca: warstwy audio są te same
 CHUNK = 1 << 30                 # warstwa audio w zipach do 1 GiB (limit pliku w GitHub Releases to 2 GiB)
 
 
 def manifest_name(platform):
     return 'lektor-%s.json' % platform
+
+
+def index_name(platform):
+    return 'lektor-%s.txt' % platform
+
+
+def index_text(manifest):
+    """Indeks dla bash: wiersze rozdzielone tabulatorem, pliki z numerem części (od 1)."""
+    lines = ['format\t%d' % manifest['format'], 'platform\t%s' % manifest['platform'], 'id\t%s' % manifest['id'],
+             'version\t%s' % manifest['version']]
+    for i, p in enumerate(manifest['parts'], 1):
+        lines.append('part\t%d\t%s\t%s\t%s\t%d' % (i, p['kind'], p['name'], p['sha256'], p['size']))
+    for i, p in enumerate(manifest['parts'], 1):
+        lines += ['file\t%d\t%s' % (i, f) for f in p['files']]
+    return '\n'.join(lines) + '\n'
 
 
 def kind_of(rel):
@@ -66,8 +86,9 @@ def write_part(entries, out, kind):
     with zipfile.ZipFile(tmp, 'w') as z:
         for rel, full in sorted(entries):
             info = zipfile.ZipInfo(rel, DATE)
-            info.create_system = 0
-            info.external_attr = 0
+            info.create_system = 3          # prawa uniksowe: skrypty Maca wykonywalne po rozpakowaniu
+            mode = 0o755 if os.path.splitext(rel)[1] in B.EXEC else 0o644
+            info.external_attr = (0o100000 | mode) << 16
             info.compress_type = zipfile.ZIP_STORED if os.path.splitext(rel)[1] in STORED else zipfile.ZIP_DEFLATED
             with open(full, 'rb') as src, z.open(info, 'w') as fh:
                 shutil.copyfileobj(src, fh, 1 << 20)
@@ -145,7 +166,13 @@ def version_of(src):
 
 
 def copy_installer(platform, out):
-    """Starter i instalator z końcami linii CRLF; starter musi być w ASCII, instalator dostaje BOM."""
+    """Skrypty instalacji. Windows: CRLF, starter tylko w ASCII, instalator z BOM. Mac: LF bez BOM."""
+    if platform == 'mac':
+        for name in INSTALLER[platform]:
+            with open(os.path.join(B.SRC, 'online', name), 'rb') as fh:
+                data = fh.read().replace(b'\r\n', b'\n')
+            replace_file(os.path.join(out, name), data[3:] if data.startswith(b'\xef\xbb\xbf') else data)
+        return
     starter, installer = INSTALLER[platform]
     for name in (starter, installer):
         with open(os.path.join(B.SRC, 'online', name), 'rb') as fh:
@@ -166,9 +193,14 @@ def replace_file(path, data):
     os.replace(path + '.part', path)
 
 
-def prune(out, manifest, platform):
-    """Usuwa z katalogu wyjściowego części, do których manifest już się nie odwołuje."""
-    used = {p['name'] for p in manifest['parts']} | {manifest_name(platform), *INSTALLER[platform]}
+def prune(out):
+    """Usuwa z katalogu wyjściowego części, do których nie odwołuje się żaden manifest (Windows ani Mac)."""
+    used = set()
+    for platform in INSTALLER:
+        path = os.path.join(out, manifest_name(platform))
+        if os.path.exists(path):
+            with open(path, encoding='utf-8') as fh:
+                used |= {p['name'] for p in json.load(fh)['parts']}
     for name in os.listdir(out):
         if name.endswith('.zip') and name not in used:
             os.remove(os.path.join(out, name))
@@ -176,9 +208,9 @@ def prune(out, manifest, platform):
 
 def build(platform='win', src=None, out=None, fresh=False):
     if platform not in INSTALLER:
-        raise SystemExit('Instalator w częściach jest na razie tylko dla Windows.')
+        raise SystemExit('Nieznany system: %s' % platform)
     src = src or os.path.join(B.DIST, platform, B.NAME)
-    out = out or os.path.join(B.DIST, platform + '-online')
+    out = out or ONLINE
     if not os.path.exists(os.path.join(src, 'wersja.txt')):
         raise SystemExit('Brak paczki w %s. Najpierw: python -I -m lektor bundle --platform %s' % (src, platform))
     os.makedirs(out, exist_ok=True)
@@ -189,6 +221,8 @@ def build(platform='win', src=None, out=None, fresh=False):
                 'id': hashlib.sha256(''.join(p['sha256'] for p in parts).encode()).hexdigest()[:12],
                 'parts': parts}
     replace_file(os.path.join(out, manifest_name(platform)), json.dumps(manifest, ensure_ascii=False, indent=1).encode('utf-8'))
+    if platform == 'mac':
+        replace_file(os.path.join(out, index_name(platform)), index_text(manifest).encode('utf-8'))
     copy_installer(platform, out)
-    prune(out, manifest, platform)
+    prune(out)
     return out

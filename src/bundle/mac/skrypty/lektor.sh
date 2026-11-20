@@ -1,9 +1,11 @@
 #!/bin/bash
 # Lektor PL dla Descent: Legends of the Dark (macOS, Apple Silicon). Uruchamiany z plików .command w folderze paczki.
 #
-#   install    zdejmuje kwarantannę z folderu, rozpakowuje Pythona, znajduje grę w Steam, nadaje jej podpis ad-hoc
+#   install [--upgrade] [--quiet]
+#              zdejmuje kwarantannę z folderu, rozpakowuje Pythona, znajduje grę w Steam, nadaje jej podpis ad-hoc
 #              z uprawnieniem do DYLD_* (D25, D58) i kopiuje do schowka opcję uruchamiania dla Steama.
 #              Ponowne uruchomienie naprawia instalację, np. po aktualizacji gry, która przywraca jej podpis.
+#              --upgrade (z instaluj-mac.sh): lektor zostaje wyłączony, jeśli był; --quiet: bez końcowych wskazówek.
 #   uninstall  usuwa stan instalacji i podaje 2 kroki w Steam (opcja uruchamiania, weryfikacja plików gry).
 #   disable    gra startuje bez lektora (plik "wylaczony" czyta start.sh); enable włącza go z powrotem.
 #   test       odtwarza jedną kwestię narratora z ustawieniami z ustawienia.toml (Test dźwięku).
@@ -135,6 +137,13 @@ Potem zamknij Terminal (Cmd+Q) i uruchom Zainstaluj.command ponownie.'
 }
 
 do_install() {
+    local upgrade=0 quiet=0 arg
+    for arg in "$@"; do
+        case "$arg" in
+            --upgrade) upgrade=1 ;;
+            --quiet) quiet=1 ;;
+        esac
+    done
     check_location
     xattr -dr com.apple.quarantine "$BUNDLE" 2>/dev/null
     chmod +x "$BUNDLE"/*.command "$BUNDLE"/skrypty/*.sh 2>/dev/null
@@ -160,10 +169,11 @@ do_install() {
         printf '# Lektor PL: instalacja z %s. Nie usuwaj, dopóki lektor jest zainstalowany.\n' "$(date '+%Y-%m-%d %H:%M:%S')"
         printf 'game=%s\n' "$app"
     } > "$STATE_FILE"
-    rm -f "$BUNDLE/wylaczony"
+    [ "$upgrade" = 1 ] || rm -f "$BUNDLE/wylaczony"
 
     local launch="\"$BUNDLE/skrypty/start.sh\" %command%"
     printf '%s' "$launch" | pbcopy
+    [ "$quiet" = 1 ] && exit 0      # instaluj-mac.sh kończy własnym podsumowaniem
     say ''
     ok 'Zainstalowano.'
     say ''
@@ -229,7 +239,7 @@ do_status() {
 }
 
 case "${1:-status}" in
-    install) do_install ;;
+    install) shift; do_install "$@" ;;
     uninstall) do_uninstall ;;
     disable) do_disable ;;
     enable) do_enable ;;
