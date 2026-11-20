@@ -92,7 +92,7 @@ namespace LektorPL.Core
                     Index = i,
                     HeroId = m.Id,
                     NameKey = m.KeyName,
-                    PortraitPath = m.TextureAssetPath,
+                    PortraitPath = string.IsNullOrEmpty(m.TextureCropAssetPath) ? m.TextureAssetPath : m.TextureCropAssetPath,
                     ColorLight = m.ColorLight,
                     ColorDark = m.ColorDark,
                     Health = p.HealthState,

@@ -47,4 +47,5 @@ menu = "Ctrl+L"                         # otwiera albo zamyka menu lektora
 # Start lektora razem z grą.
 [plugin]
 autostart = true            # false: lektor nie startuje sam (tylko do testów)
+podsumowanie = true         # statystyki przy oknie podsumowania misji; false wyłącza
 @PYTHON@

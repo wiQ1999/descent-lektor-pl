@@ -14,6 +14,7 @@ $kopia = Join-Path $paczka 'stan\nakladka-kopia'
 
 $pliki = @(
     @{ Z = 'build\plugin\LektorPL.Core\bin\Release\LektorPL.Core.dll'; Do = 'plugin\LektorPL.Core.dll' },
+    @{ Z = 'build\plugin\LektorPL.Loader\bin\Release\LektorPL.Loader.dll'; Do = 'plugin\LektorPL.Loader.dll' },
     @{ Z = 'src\lektor\companion\app.py'; Do = 'lektor\companion\app.py' },
     @{ Z = 'src\lektor\companion\config.py'; Do = 'lektor\companion\config.py' },
     @{ Z = 'src\lektor\companion\control.py'; Do = 'lektor\companion\control.py' },

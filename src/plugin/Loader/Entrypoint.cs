@@ -168,6 +168,8 @@ namespace LektorPL.Loader
                 LogDirectory = Boot.LogDir,
                 CompanionPort = s.Int("port", 47810),
                 DiagnosticStage = s.Int("plugin.stage", 4),
+                QuestSummary = s.Bool("plugin.podsumowanie", true),
+                QuestSummaryPreview = s.Bool("plugin.podsumowanie_podglad", false),
                 Info = Boot.Log,
             };
             if (s.Bool("plugin.autostart", true))
