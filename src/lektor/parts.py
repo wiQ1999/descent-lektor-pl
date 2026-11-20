@@ -29,7 +29,7 @@ AUDIO_DIR = 'dane/final/'
 DEFAULTS = 'skrypty/ustawienia.domyslne.toml'     # ustawienia.toml instalator tworzy albo scala z tym plikiem
 # starter do `irm ... | iex` (tylko ASCII, bez BOM) i właściwy instalator (UTF-8 z BOM dla PowerShell 5.1)
 INSTALLER = {'win': ('instaluj-win.ps1', 'instalator-win.ps1')}
-SKIP = set(B.UNSIGNED) | {'zgloszenia'}
+SKIP = set(B.LOCAL) | {'zgloszenia'}
 STORED = set(B.STORED) | {'.flac', '.zip'}
 DATE = (2020, 1, 1, 0, 0, 0)
 CHUNK = 1 << 30                 # warstwa audio w zipach do 1 GiB (limit pliku w GitHub Releases to 2 GiB)

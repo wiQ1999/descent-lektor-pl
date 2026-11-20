@@ -116,9 +116,7 @@ def test_win_bundle_layout_and_line_endings(fake, monkeypatch):
     assert files == sorted(['INSTRUKCJA.md', 'Odinstaluj.cmd', 'Test dźwięku.cmd', 'Ustawienia.cmd', 'Wyłącz lektora.cmd',
                             'Włącz lektora.cmd', 'Zainstaluj.cmd', 'loader/.doorstop_version', 'loader/winhttp.dll',
                             'plugin/LektorPL.Core.dll', 'plugin/LektorPL.Loader.dll', 'skrypty/lektor.ps1',
-                            'skrypty/pliki.sha256', 'ustawienia.toml', 'wersja.txt'] + NOTICES + ['lektor/' + f for f in B.LEKTOR])
-    sums = open(os.path.join(dest, 'skrypty', 'pliki.sha256'), encoding='utf-8').read().splitlines()
-    assert len(sums) == len(files) - 1 and all(len(line.split('  ')[0]) == 64 for line in sums)
+                            'ustawienia.toml', 'wersja.txt'] + NOTICES + ['lektor/' + f for f in B.LEKTOR])
     assert open(os.path.join(dest, 'loader', 'winhttp.dll'), 'rb').read() == b'doorstop x86'
     cmd = open(os.path.join(dest, 'Zainstaluj.cmd'), 'rb').read()
     assert b'\r\n' in cmd and b'\n' not in cmd.replace(b'\r\n', b'')
@@ -135,7 +133,7 @@ def test_mac_bundle_layout_and_unix_scripts(fake, monkeypatch):
     commands = ['Odinstaluj', 'Test dźwięku', 'Ustawienia', 'Wyłącz lektora', 'Włącz lektora', 'Zainstaluj']
     assert sorted(B.files_of(dest)) == sorted(
         ['INSTRUKCJA.md', 'loader/.doorstop_version', 'loader/libdoorstop.dylib', 'plugin/LektorPL.Core.dll',
-         'plugin/LektorPL.Loader.dll', 'skrypty/lektor.sh', 'skrypty/pliki.sha256', 'skrypty/start.sh',
+         'plugin/LektorPL.Loader.dll', 'skrypty/lektor.sh', 'skrypty/start.sh',
          'ustawienia.toml', 'wersja.txt'] + NOTICES + [c + '.command' for c in commands] + ['lektor/' + f for f in B.LEKTOR])
     for rel in [c + '.command' for c in commands] + ['skrypty/lektor.sh', 'skrypty/start.sh']:
         data = open(os.path.join(dest, rel), 'rb').read()

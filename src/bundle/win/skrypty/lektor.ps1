@@ -23,6 +23,7 @@ param(
     [Parameter(ParameterSetName = 'Test', Mandatory)] [switch] $Test,
     [Parameter(ParameterSetName = 'Status')] [switch] $Status,
     [Parameter(ParameterSetName = 'Install')] [switch] $Upgrade,
+    [Parameter(ParameterSetName = 'Install')] [switch] $Quiet,
     [string] $GameDir
 )
 $ErrorActionPreference = 'Stop'
@@ -212,6 +213,7 @@ function Install-Lektor {
     Save-Snapshot $game $after
     Show-Diff $Baseline $after 'Zmiany w folderze gry (oczekiwane: 3 dodane pliki)'
     Say ''
+    if ($Quiet) { return }      # instalator-win.ps1 kończy własnym podsumowaniem
     Say 'Zainstalowano. Uruchom grę normalnie ze Steama: lektor wystartuje razem z nią.' Green
     Say 'Nie przenoś ani nie usuwaj tego folderu bez odinstalowania (po przeniesieniu uruchom Zainstaluj ponownie).'
 }

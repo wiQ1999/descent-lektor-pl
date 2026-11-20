@@ -261,7 +261,7 @@ try { & {
     else { Copy-Item -LiteralPath $fresh -Destination $settings }
     if ($removed) { Say "Usunięto pliki poprzedniej wersji: $removed" }
 
-    $arguments = @('-Install')
+    $arguments = @('-Install', '-Quiet')
     if ($upgrade) { $arguments += '-Upgrade' }
     $arguments += @('-GameDir', $game)
     Invoke-Lektor $Folder $arguments
@@ -272,7 +272,8 @@ try { & {
     if ($upgrade) { Say "Zaktualizowano do: $($manifest.version)" Green }
     else { Say "Zainstalowano: $($manifest.version)" Green }
     Say "Pliki lektora (Ustawienia, Test dźwięku, Odinstaluj): $Folder"
-    Say 'Aktualizacja: uruchom tę samą komendę ponownie.'
+    Say 'Uruchom grę normalnie ze Steama: lektor wystartuje razem z nią.'
+    Say 'Aktualizacja: ta sama komenda. Folderu lektora nie przenoś.'
 } }
 catch {
     # bez exit: przy `irm ... | iex` zamknąłby okno PowerShell

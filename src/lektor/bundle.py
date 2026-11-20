@@ -57,7 +57,7 @@ CRLF = ('.cmd', '.ps1')        # skrypty Windows
 BOM = ('.ps1',)                # PowerShell 5.1 bez BOM czyta plik jako ANSI
 EXEC = ('.command', '.sh')     # prawa wykonywania na Macu
 STORED = ('.wav', '.gz')       # bez kompresji w zipie (i tak nie zyskują)
-UNSIGNED = ('logs', 'stan')    # bez sum w skrypty/pliki.sha256
+LOCAL = ('logs', 'stan')       # dzienniki i stan instalacji: tylko na komputerze gracza, poza zipem i częściami
 
 
 def pins():
@@ -252,19 +252,11 @@ def files_of(dest):
     return out
 
 
-def write_sums(dest):
-    lines = ['%s  %s' % (sha256(os.path.join(dest, f)), f) for f in files_of(dest)
-             if f.split('/', 1)[0] not in UNSIGNED and f != 'skrypty/pliki.sha256']
-    with open(os.path.join(dest, 'skrypty', 'pliki.sha256'), 'w', encoding='utf-8', newline='\n') as fh:
-        fh.write('\n'.join(lines) + '\n')
-    return len(lines)
-
-
 def write_zip(dest, path):
     """Zip z folderem paczki; pliki .command i .sh z prawem wykonywania (Mac), nazwy w UTF-8."""
     with zipfile.ZipFile(path + '.part', 'w') as z:
         for rel in files_of(dest):
-            if rel.split('/', 1)[0] in UNSIGNED:
+            if rel.split('/', 1)[0] in LOCAL:
                 continue
             full = os.path.join(dest, rel)
             info = zipfile.ZipInfo('%s/%s' % (NAME, rel), time.localtime(os.path.getmtime(full))[:6])
@@ -287,7 +279,7 @@ def clean(dest):
     """Czyści folder paczki poza stanem instalacji i dziennikami: gra może być zainstalowana z tego folderu."""
     for name in os.listdir(dest):
         path = os.path.join(dest, name)
-        if name in UNSIGNED:
+        if name in LOCAL:
             continue
         if os.path.isdir(path):
             shutil.rmtree(path)
@@ -317,7 +309,6 @@ def build(platform='win', dev=False, out=None):
         shutil.copy2(path, dest)
     with open(os.path.join(dest, 'wersja.txt'), 'w', encoding='utf-8', newline='\n') as fh:
         fh.write(version_text(platform, fragments))
-    write_sums(dest)
     if out is None:
         write_zip(dest, os.path.join(DIST, '%s-%s.zip' % (NAME, platform)))
     return dest

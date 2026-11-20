@@ -1,6 +1,6 @@
 # Lektor PL do Descent: Legends of the Dark
 
-Polski lektor do gry *Descent: Legends of the Dark* ze Steama. Czyta okna fabularne, dialogi, komunikaty misji i cele głosami z polskiego dubbingu. Nagrania są gotowe w folderze, więc lektor nie potrzebuje internetu.
+Polski lektor do gry *Descent: Legends of the Dark* ze Steama. Czyta okna fabularne, dialogi, komunikaty misji i cele głosami z polskiego dubbingu. Nagrania są gotowe w folderze lektora, więc w trakcie gry lektor nie potrzebuje internetu.
 
 ## Co warto wiedzieć
 
@@ -23,8 +23,8 @@ Polski lektor do gry *Descent: Legends of the Dark* ze Steama. Czyta okna fabula
 | `INSTRUKCJA.md` | ta instrukcja |
 | `wersja.txt` | wersja paczki |
 | `LICENSE.md`, `UZNANIE_AUTORSTWA.md`, `licencje/` | warunki korzystania, autorzy modeli głosu i programów w paczce |
-| `logs/` | dzienniki do zgłaszania problemów |
-| `plugin/`, `loader/`, `python/`, `lektor/`, `dane/`, `skrypty/` | pliki lektora, nie ruszaj ich |
+| `logs/`, `zgloszenia/` | dzienniki i zgłoszenia błędów z gry, do wysłania autorowi |
+| `plugin/`, `loader/`, `python/`, `lektor/`, `dane/`, `skrypty/`, `stan/` | pliki lektora, nie ruszaj ich |
 
 Na Windows pliki do dwukliku mają końcówkę `.cmd`, a na Macu `.command`.
 
@@ -122,7 +122,7 @@ Aktualizacja gry w Steam nie usuwa lektora. Gdy po niej lektor milczy, uruchom k
 
 ### Instalacja
 
-1. Skopiuj plik `Descent-Lektor-PL-mac.zip` na Maca, np. pendrive'em. Rozpakuj go na dysku Maca dwuklikiem w Finderze.
+1. Pobierz z [wydań](https://github.com/wiQ1999/descent-lektor-pl/releases/latest) plik `Descent-Lektor-PL-mac.zip` i rozpakuj go dwuklikiem w Finderze.
 2. Przenieś folder `Descent-Lektor-PL` do katalogu domowego (w Finderze: *Idź → Katalog domowy*).
    - Nie zostawiaj go w Dokumentach, Pobranych ani na Biurku. macOS chroni te foldery i gra nie mogłaby wczytać lektora.
 3. Zamknij grę.

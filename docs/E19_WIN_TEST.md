@@ -71,6 +71,10 @@ Wersja 2 leży w `analysis/work/dist/win-online-v2/`. Różni się od wersji 1 t
 12. Kliknij `Włącz lektora.cmd`, uruchom grę i sprawdź, czy lektor czyta, a menu **PL** pokazuje Twoje ustawienia.
 13. Zamknij grę, uruchom komendę jeszcze raz („Lektor jest aktualny”) i zamknij serwer.
 
+## Wynik 2026-11-20
+
+Kroki 3–6 i 8–13 przebiegły jak w opisie. Pytania o starą paczkę nie było: jej pliki zostały wcześniej usunięte z gry ręcznie (`stan\przed-instalacja.csv` nowej instalacji nie ma plików lektora).
+
 ## Wynik do przekazania
 
 - Czy kroki 3–6 i 8–13 przebiegły jak opisano, a jeśli nie: zrzut okna PowerShell.

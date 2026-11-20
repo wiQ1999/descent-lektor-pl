@@ -346,11 +346,16 @@ Wydanie z paczkami z `analysis/work/dist/` (opis z zakresem i sumami SHA-256 w p
 "$GH" release create v0.2.0 --repo wiQ1999/descent-lektor-pl --prerelease --title "..." --notes-file analysis/work/out/e10_release_notes.md analysis/work/dist/Descent-Lektor-PL-win.zip analysis/work/dist/Descent-Lektor-PL-mac.zip
 ```
 
-Od E19 (D111) wydanie jest zwykłe (bez `--prerelease`, bo `releases/latest/download` pomija prerelease) i oprócz zipów ma wszystkie pliki z `analysis/work/dist/win-online/` (części, manifest, starter i instalator):
+Od E19 (D111) wydanie jest zwykłe i oznaczone jako najnowsze (`releases/latest/download` pomija prerelease) i oprócz zipów ma wszystkie pliki z `analysis/work/dist/win-online/` (części, manifest, starter i instalator):
 
 ```bash
-"$GH" release create vX.Y.Z --repo wiQ1999/descent-lektor-pl --title "..." --notes-file analysis/work/out/<opis>.md analysis/work/dist/Descent-Lektor-PL-win.zip analysis/work/dist/Descent-Lektor-PL-mac.zip analysis/work/dist/win-online/*
+"$GH" release create vX.Y.Z --repo wiQ1999/descent-lektor-pl --latest --title "..." --notes-file analysis/work/out/<opis>.md analysis/work/dist/Descent-Lektor-PL-win.zip analysis/work/dist/Descent-Lektor-PL-mac.zip analysis/work/dist/win-online/*
 ```
+
+Przed wydaniem z instalatorem:
+- `bundle --platform win` i `--platform mac`, potem `bundle --platform win --parts`. Pierwsze wydanie z `--fresh` (jedna warstwa audio bez śladów testów); w `dist/win-online/` mają leżeć tylko pliki z bieżącego manifestu.
+- W opisie wydania: komenda z `INSTRUKCJA.md` i zdanie dla graczy starej paczki (instalator zapyta o odinstalowanie, odpowiedź `T`).
+- Po wydaniu: komenda z `INSTRUKCJA.md` bez `LEKTOR_ZRODLO` na komputerze z lektorem z komendy (aktualizacja z GitHub) i, jeśli się da, na drugim komputerze (świeża instalacja i ewentualne ostrzeżenie antywirusa).
 
 ## 8. Opcjonalnie
 
