@@ -85,6 +85,14 @@ namespace LektorPL.Core
         private object _featList;                   // _completedFeatIds: nowa lista = wczytany zapis, nowa baza (l16)
         private readonly HashSet<string> _featsDone = new HashSet<string>();
 
+        // Podsumowanie misji (E20, D113). Gra zeruje QuestId zaraz po pokazaniu okna (RecordQuestCompletion),
+        // więc pamiętamy ostatni niepusty.
+        private bool _summaryVisible;
+        private string _lastQuestId;
+
+        /// <summary>Statystyki z ostatniego pokazania okna podsumowania misji (null, gdy okno jest zamknięte).</summary>
+        public QuestStats Summary { get; private set; }
+
         // Wybrany cel na mapie (panel DestinationDetails).
         private DestinationNode _detailsNode;
         private float _nextDetailsCheck;
@@ -132,6 +140,7 @@ namespace LektorPL.Core
             try { PollActivation(); } catch (Exception e) { _log.Error("activation", e); }
             try { PollDetails(); } catch (Exception e) { _log.Error("details", e); }
             try { PollAbility(); } catch (Exception e) { _log.Error("ability", e); }
+            try { PollQuestSummary(); } catch (Exception e) { _summaryVisible = true; _log.Error("quest_summary", e); }
             try { if (_options.SniffText) Sniff(); } catch (Exception e) { _log.Error("sniff", e); }
             _work.Stop();
             Perf(_work.Elapsed.TotalMilliseconds);
@@ -495,6 +504,27 @@ namespace LektorPL.Core
                     .Str("hero_key", hero != null ? hero + "_NAME" : null)
                     .Str("name", feat != null ? feat.GetLocalizedFeatName() : null));
             }
+        }
+
+        // Okno podsumowania misji (UIQuestSummary): GameController.OnQuestFinished pokazuje je i wypełnia w jednej klatce,
+        // po SetQuestTime, więc w LateUpdate dane misji są kompletne. Liczymy raz na pokazanie.
+        private void PollQuestSummary()
+        {
+            var gd = SingletonBehaviour<GameData>.IsInitialized ? SingletonBehaviour<GameData>.Instance.Data : null;
+            if (gd != null && !string.IsNullOrEmpty(gd.QuestId)) _lastQuestId = gd.QuestId;
+            var dialog = SingletonBehaviour<UIGame>.IsInitialized ? SingletonBehaviour<UIGame>.Instance.QuestSummaryDialog : null;
+            bool visible = dialog != null && dialog.IsVisible;
+            if (visible == _summaryVisible) return;
+            _summaryVisible = visible;
+            if (!visible)
+            {
+                Summary = null;
+                _log.Write(_log.New("close").Str("kind", "quest_summary").Str("via", "poll"));
+                return;
+            }
+            Summary = QuestStats.Read(gd, _lastQuestId);
+            var line = _log.New("quest_summary").Str("kind", "quest_summary").Int("id", ++_nextId);
+            _log.Write(Summary != null ? Summary.Describe(line) : line.Bool("empty", true));
         }
 
         private static List<KeyValuePair<string, string>> AbilityCandidates(UIHeroAttackDialog dialog, out string extraKey)
