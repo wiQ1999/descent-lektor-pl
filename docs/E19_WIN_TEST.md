@@ -35,9 +35,45 @@ Lektor jest teraz zainstalowany w grze ze starej paczki (`analysis/work/dist/win
 6. Zamknij grę i w drugim oknie uruchom komendę z kroku 3 jeszcze raz. Oczekiwane: „Lektor jest aktualny”, nic się nie pobiera.
 7. Zamknij serwer (Ctrl+C w pierwszym oknie).
 
+## Aktualizacja do wersji 2
+
+Wersja 2 leży w `analysis/work/dist/win-online-v2/`. Różni się od wersji 1 tylko tym, co sprawdza aktualizację:
+- 3 nagrania mają nowy znacznik w pliku FLAC (ta sama mowa, inne bajty, jak ponowny eksport): `000ab757eed838b0`, `000ff2bc5d5bb4ae`, `001422a83aa7a0a9`;
+- 1 nowy plik `dane/final/e19-test-nowy.flac`, którego lektor nie używa;
+- nowa opcja `test_e19 = true` w `ustawienia.toml` (companion jej nie używa) i nowy opis wersji w `wersja.txt`.
+
+8. Przygotuj zmiany, które aktualizacja ma zachować:
+   - w grze, w menu **PL**, zmień głośność albo tempo i wyłącz jedną kategorię „Co czyta lektor”;
+   - zrób jedno zgłoszenie (Ctrl + B, potem cyfra);
+   - zamknij grę i kliknij `Wyłącz lektora.cmd` w folderze lektora.
+9. W pierwszym oknie uruchom serwer wersji 2:
+
+   ```powershell
+   & 'D:\Projects\Descent Legendy Mroku - lektor\.venv\Scripts\python.exe' -I -m http.server 47899 --bind 127.0.0.1 --directory 'D:\Projects\Descent Legendy Mroku - lektor\analysis\work\dist\win-online-v2'
+   ```
+
+10. W drugim oknie (z ustawionym `LEKTOR_ZRODLO`; w nowym oknie ustaw je jak w kroku 3) uruchom tę samą komendę:
+
+    ```powershell
+    irm http://127.0.0.1:47899/instaluj-win.ps1 | iex
+    ```
+
+    Oczekiwane:
+    - bez pytania o odinstalowanie;
+    - „Aktualizacja: plugin 0.5.0, zbudowano 2026-11-20 10:31 -> plugin 0.5.0, zbudowano 2026-11-20 10:49”;
+    - „Do pobrania: 2 z 5 części, 7 MB” (program i mała warstwa audio);
+    - „Ustawienia zachowane” i „Lektor w grze: wyłączony”;
+    - „Zaktualizowano do: …”.
+11. Sprawdź w folderze lektora:
+    - `ustawienia.toml`: Twoje zmiany z kroku 8 i nowa linia `test_e19 = true`; kopia sprzed aktualizacji w `stan\ustawienia.przed-aktualizacja.toml`;
+    - zgłoszenie z kroku 8 w `zgloszenia\`;
+    - `wersja.txt` z opisem wersji 2.
+12. Kliknij `Włącz lektora.cmd`, uruchom grę i sprawdź, czy lektor czyta, a menu **PL** pokazuje Twoje ustawienia.
+13. Zamknij grę, uruchom komendę jeszcze raz („Lektor jest aktualny”) i zamknij serwer.
+
 ## Wynik do przekazania
 
-- Czy kroki 3–6 przebiegły jak opisano, a jeśli nie: zrzut okna PowerShell.
+- Czy kroki 3–6 i 8–13 przebiegły jak opisano, a jeśli nie: zrzut okna PowerShell.
 - Czas pobierania i rozpakowania w kroku 3 (orientacyjnie).
 - Czy jakiś komunikat był niejasny.
 

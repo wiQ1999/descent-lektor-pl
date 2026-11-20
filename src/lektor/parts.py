@@ -156,8 +156,14 @@ def copy_installer(platform, out):
             data.decode('ascii')      # irm czyta plik z wydania jako ISO-8859-1
         else:
             data = b'\xef\xbb\xbf' + data
-        with open(os.path.join(out, name), 'wb') as fh:
-            fh.write(data.replace(b'\n', b'\r\n'))
+        replace_file(os.path.join(out, name), data.replace(b'\n', b'\r\n'))
+
+
+def replace_file(path, data):
+    """Nowy plik zamiast zapisu w miejscu: katalog części może mieć twarde dowiązania do plików innego katalogu."""
+    with open(path + '.part', 'wb') as fh:
+        fh.write(data)
+    os.replace(path + '.part', path)
 
 
 def prune(out, manifest, platform):
@@ -182,8 +188,7 @@ def build(platform='win', src=None, out=None, fresh=False):
     manifest = {'format': FORMAT, 'platform': platform, 'version': version_of(src),
                 'id': hashlib.sha256(''.join(p['sha256'] for p in parts).encode()).hexdigest()[:12],
                 'parts': parts}
-    with open(os.path.join(out, manifest_name(platform)), 'w', encoding='utf-8', newline='\n') as fh:
-        json.dump(manifest, fh, ensure_ascii=False, indent=1)
+    replace_file(os.path.join(out, manifest_name(platform)), json.dumps(manifest, ensure_ascii=False, indent=1).encode('utf-8'))
     copy_installer(platform, out)
     prune(out, manifest, platform)
     return out
