@@ -8,8 +8,6 @@
               i po niej zapisuje listę plików gry i pokazuje różnice. Ponowne uruchomienie odświeża ścieżkę
               (np. po przeniesieniu folderu paczki).
   -Uninstall  usuwa z folderu gry tylko pliki dodane przez -Install i porównuje folder ze stanem sprzed instalacji.
-  -Disable    wyłącza lektora (enabled=false w doorstop_config.ini); gra startuje bez niego.
-  -Enable     włącza lektora z powrotem.
   -Test       odtwarza jedną kwestię narratora z ustawieniami z ustawienia.toml (Test dźwięku).
   -Status     stan instalacji i najnowsze dzienniki.
   Stan instalacji leży w folderze paczki (stan\), dzienniki w logs\.
@@ -18,8 +16,6 @@
 param(
     [Parameter(ParameterSetName = 'Install', Mandatory)] [switch] $Install,
     [Parameter(ParameterSetName = 'Uninstall', Mandatory)] [switch] $Uninstall,
-    [Parameter(ParameterSetName = 'Disable', Mandatory)] [switch] $Disable,
-    [Parameter(ParameterSetName = 'Enable', Mandatory)] [switch] $Enable,
     [Parameter(ParameterSetName = 'Test', Mandatory)] [switch] $Test,
     [Parameter(ParameterSetName = 'Status')] [switch] $Status,
     [Parameter(ParameterSetName = 'Install')] [switch] $Upgrade,
@@ -133,12 +129,11 @@ function Note([string] $path) {
     ''
 }
 
-function Write-DoorstopConfig([string] $game, [bool] $enabled) {
-    $flag = if ($enabled) { 'true' } else { 'false' }
+function Write-DoorstopConfig([string] $game) {
     $text = @(
-        '# Lektor PL (Doorstop 4.6). Plik zapisuje Zainstaluj, a Wyłącz/Włącz lektora zmienia "enabled".'
+        '# Lektor PL (Doorstop 4.6). Plik zapisuje Zainstaluj, a Odinstaluj usuwa.'
         '[General]'
-        "enabled=$flag"
+        'enabled=true'
         "target_assembly=$LoaderDll"
         'redirect_output_log=false'
         'boot_config_override='
@@ -169,16 +164,10 @@ function Install-Lektor {
     if ($state) {
         $game = $state['game']
         if ((Test-Path -LiteralPath (Join-Path $game 'winhttp.dll')) -and (Test-OurConfig $game)) {
-            if ($Upgrade) {
-                # aktualizacja z instaluj-win.ps1: ścieżka bez zmian, lektor zostaje włączony albo wyłączony
-                $on = (Get-Content -LiteralPath (Join-Path $game $ConfigName) -Raw) -match '(?m)^enabled=true'
-                Write-DoorstopConfig $game $on
-                Say ("Lektor w grze: {0}" -f $(if ($on) { 'włączony' } else { 'wyłączony (Włącz lektora go włączy)' })) Green
-                return
-            }
-            Write-DoorstopConfig $game $true
+            Write-DoorstopConfig $game
+            if ($Upgrade) { Say 'Lektor w grze: zainstalowany.' Green; return }     # aktualizacja z instalatora
             Say "Lektor był już zainstalowany w: $game" Green
-            Say 'Odświeżyłem ścieżkę do folderu paczki i włączyłem lektora. Uruchom grę ze Steama.' Green
+            Say 'Odświeżyłem ścieżkę do folderu paczki. Uruchom grę ze Steama.' Green
             return
         }
         throw "Stan instalacji wskazuje $game, ale nie ma tam plików lektora. Usuń folder $StateDir i uruchom Zainstaluj ponownie."
@@ -200,7 +189,7 @@ function Install-Lektor {
     New-Item -ItemType Directory -Force -Path $StateDir | Out-Null
     Save-Snapshot $game $Baseline
     foreach ($f in $DoorstopFiles) { Copy-Item -LiteralPath (Join-Path $DoorstopDir $f) -Destination (Join-Path $game $f) }
-    Write-DoorstopConfig $game $true
+    Write-DoorstopConfig $game
     $winhttp = (Get-FileHash -LiteralPath (Join-Path $game 'winhttp.dll') -Algorithm SHA256).Hash
     @(
         "# Lektor PL: instalacja z $(Get-Date -Format s). Nie usuwaj, dopóki lektor jest zainstalowany."
@@ -246,15 +235,6 @@ function Uninstall-Lektor {
     Say 'Odinstalowano. Ten folder można teraz usunąć.' Green
 }
 
-function Set-Enabled([bool] $enabled) {
-    Assert-GameClosed
-    $game = (Get-InstalledGame)['game']
-    if (-not (Test-OurConfig $game)) { throw "Nie ma pliku lektora $ConfigName w $game. Uruchom Zainstaluj." }
-    Write-DoorstopConfig $game $enabled
-    if ($enabled) { Say 'Lektor włączony. Uruchom grę ze Steama.' Green }
-    else { Say 'Lektor wyłączony: gra startuje bez niego. Włączysz go plikiem Włącz lektora.' Green }
-}
-
 function Get-Python {
     $override = Select-String -LiteralPath $Settings -Pattern '^\s*python\s*=\s*[''"]([^''"]+)[''"]' -Encoding UTF8 | Select-Object -First 1
     if ($override) { return $override.Matches[0].Groups[1].Value }
@@ -267,7 +247,7 @@ function Start-SoundTest {
     Say 'Odtwarzam jedną kwestię narratora...'
     & $py -I -m lektor.companion --test --config $Settings --logs $Logs
     if ($LASTEXITCODE -ne 0) { throw "Test dźwięku nie powiódł się (kod $LASTEXITCODE). Sprawdź ustawienia.toml." }
-    Say 'Jeśli nic nie było słychać: sprawdź głośność (volume) i urządzenie (device) w Ustawieniach.' Green
+    Say 'Jeśli nic nie było słychać: sprawdź głośność (volume) i urządzenie (device) w ustawienia.toml.' Green
 }
 
 function Show-Status {
@@ -276,8 +256,6 @@ function Show-Status {
     $game = $state['game']
     Say "Gra: $game"
     if (-not (Test-OurConfig $game)) { Say "Brak pliku lektora $ConfigName w folderze gry. Uruchom Zainstaluj." Yellow; return }
-    $on = (Get-Content -LiteralPath (Join-Path $game $ConfigName) -Raw) -match '(?m)^enabled=true'
-    Say ("Lektor: {0}" -f $(if ($on) { 'włączony' } else { 'wyłączony' }))
     Say "Loader: $((Get-Item -LiteralPath $LoaderDll).VersionInfo.FileVersion)"
     foreach ($pattern in 'loader-*.log', 'hook-*.jsonl', 'companion-*.jsonl') {
         $last = Get-ChildItem -LiteralPath $Logs -Filter $pattern -ErrorAction SilentlyContinue | Sort-Object LastWriteTime | Select-Object -Last 1
@@ -288,8 +266,6 @@ function Show-Status {
 try {
     if ($Install) { Install-Lektor }
     elseif ($Uninstall) { Uninstall-Lektor }
-    elseif ($Disable) { Set-Enabled $false }
-    elseif ($Enable) { Set-Enabled $true }
     elseif ($Test) { Start-SoundTest }
     else { Show-Status }
 }

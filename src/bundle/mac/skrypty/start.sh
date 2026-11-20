@@ -1,9 +1,8 @@
 #!/bin/bash
 # Lektor PL: opcja uruchamiania w Steam  "<folder paczki>/skrypty/start.sh" %command%
 #
-# Uruchamia grę z Doorstop 4.6 i loaderem lektora (D58). Grę bez lektora uruchamia, gdy:
-#   - w folderze paczki jest plik "wylaczony" (Wyłącz lektora.command);
-#   - podpis gry nie pozwala wczytać dodatku, np. po aktualizacji w Steam; wtedy pokazuje komunikat.
+# Uruchamia grę z Doorstop 4.6 i loaderem lektora (D58). Gdy podpis gry nie pozwala wczytać dodatku, np. po
+# aktualizacji w Steam, uruchamia grę bez lektora i pokazuje komunikat.
 #
 # /bin/bash i arch to pliki systemowe, więc macOS usuwa z ich środowiska zmienne DYLD_*. Dlatego
 # DYLD_INSERT_LIBRARIES przekazujemy grze przez `arch -e`, a biblioteki Steama (overlay) bierzemy
@@ -31,11 +30,6 @@ case "$exe" in
 esac
 app="${exe%%.app/Contents/MacOS/*}.app"
 export ARCHPREFERENCE="arm64,x86_64"
-
-if [ -f "$BUNDLE/wylaczony" ]; then
-    note "lektor wyłączony, gra bez lektora"
-    exec arch "$exe" "$@"
-fi
 
 if ! codesign -d --entitlements - --xml "$app" 2>/dev/null | grep -q "$ENT"; then
     note "podpis gry bez $ENT (aktualizacja gry?), gra bez lektora"

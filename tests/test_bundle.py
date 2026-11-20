@@ -74,7 +74,7 @@ def test_zip_keeps_exec_bits_and_utf8_names(tmp_path):
     dest = tmp_path / 'Descent-Lektor-PL'
     (dest / 'skrypty').mkdir(parents=True)
     (dest / 'Zainstaluj.command').write_text('#!/bin/bash\n', encoding='utf-8')
-    (dest / 'Wyłącz lektora.command').write_text('#!/bin/bash\n', encoding='utf-8')
+    (dest / 'Test dźwięku.command').write_text('#!/bin/bash\n', encoding='utf-8')
     (dest / 'skrypty' / 'start.sh').write_text('#!/bin/bash\n', encoding='utf-8')
     (dest / 'ustawienia.toml').write_text('volume = 1.0\n', encoding='utf-8')
     path = B.write_zip(str(dest), str(tmp_path / 'p.zip'))
@@ -82,7 +82,7 @@ def test_zip_keeps_exec_bits_and_utf8_names(tmp_path):
         modes = {i.filename: (i.external_attr >> 16) & 0o777 for i in z.infolist()}
         assert modes['Descent-Lektor-PL/Zainstaluj.command'] == 0o755 and modes['Descent-Lektor-PL/skrypty/start.sh'] == 0o755
         assert modes['Descent-Lektor-PL/ustawienia.toml'] == 0o644 and 'Descent-Lektor-PL/logs/' in modes
-        assert z.getinfo('Descent-Lektor-PL/Wyłącz lektora.command').flag_bits & 0x800
+        assert z.getinfo('Descent-Lektor-PL/Test dźwięku.command').flag_bits & 0x800
 
 
 def test_settings_template_is_valid_toml_with_relative_paths(tmp_path):
@@ -113,8 +113,8 @@ def test_win_bundle_layout_and_line_endings(fake, monkeypatch):
     monkeypatch.setattr(B, 'copy_data', lambda dest: 0)
     dest = B.build('win', out=str(fake / 'out'))
     files = sorted(B.files_of(dest))
-    assert files == sorted(['INSTRUKCJA.md', 'Odinstaluj.cmd', 'Test dźwięku.cmd', 'Ustawienia.cmd', 'Wyłącz lektora.cmd',
-                            'Włącz lektora.cmd', 'Zainstaluj.cmd', 'loader/.doorstop_version', 'loader/winhttp.dll',
+    assert files == sorted(['INSTRUKCJA.md', 'Odinstaluj.cmd', 'Test dźwięku.cmd', 'Zainstaluj.cmd',
+                            'loader/.doorstop_version', 'loader/winhttp.dll',
                             'plugin/LektorPL.Core.dll', 'plugin/LektorPL.Loader.dll', 'skrypty/lektor.ps1',
                             'ustawienia.toml', 'wersja.txt'] + NOTICES + ['lektor/' + f for f in B.LEKTOR])
     assert open(os.path.join(dest, 'loader', 'winhttp.dll'), 'rb').read() == b'doorstop x86'
@@ -130,7 +130,7 @@ def test_mac_bundle_layout_and_unix_scripts(fake, monkeypatch):
     monkeypatch.setattr(B, 'copy_python', lambda platform, dest: None)
     monkeypatch.setattr(B, 'copy_data', lambda dest: 0)
     dest = B.build('mac', out=str(fake / 'out'))
-    commands = ['Odinstaluj', 'Test dźwięku', 'Ustawienia', 'Wyłącz lektora', 'Włącz lektora', 'Zainstaluj']
+    commands = ['Odinstaluj', 'Test dźwięku', 'Zainstaluj']
     assert sorted(B.files_of(dest)) == sorted(
         ['INSTRUKCJA.md', 'loader/.doorstop_version', 'loader/libdoorstop.dylib', 'plugin/LektorPL.Core.dll',
          'plugin/LektorPL.Loader.dll', 'skrypty/lektor.sh', 'skrypty/start.sh',
@@ -213,3 +213,24 @@ def test_copy_data_writes_flac_and_manifest(tmp_path, monkeypatch):
     assert m['fragments']['abc']['file'] == 'final/abc.flac'
     back, sr = sf.read(dest / 'dane' / 'final' / 'abc.flac', dtype='int16')
     assert sr == 24000 and (back == y).all()
+
+
+def test_platform_bundles_share_common_files_by_hard_links(fake, monkeypatch):
+    monkeypatch.setattr(B, 'copy_python', lambda platform, dest: None)
+    monkeypatch.setattr(B, 'copy_data', lambda dest: 0)
+    common = str(fake / 'wspolne')
+    win = B.build('win', out=str(fake / 'win' / 'Descent-Lektor-PL'), common=common)
+    mac = B.build('mac', out=str(fake / 'mac' / 'Descent-Lektor-PL'), common=common)
+    assert os.path.samefile(os.path.join(win, 'plugin', 'LektorPL.Core.dll'), os.path.join(mac, 'plugin', 'LektorPL.Core.dll'))
+    assert not os.path.samefile(os.path.join(win, 'ustawienia.toml'), os.path.join(mac, 'ustawienia.toml'))   # gracz go zmienia
+
+
+def test_guide_is_cut_to_platform():
+    full = open(B.GUIDE, encoding='utf-8').read()
+    win, mac = B.guide_text('win'), B.guide_text('mac')
+    assert '<!--' in full and '<!--' not in win + mac
+    assert 'instaluj-win.ps1' in win and 'instaluj-mac.sh' not in win and 'Notatnik' in win and 'TextEdit' not in win
+    assert 'instaluj-mac.sh' in mac and 'instaluj-win.ps1' not in mac and 'TextEdit' in mac and 'Notatnik' not in mac
+    for text in (win, mac):
+        assert '| Ctrl + L |' in text and '\n\n\n' not in text
+    assert len(win.splitlines()) < 140 and len(mac.splitlines()) < 140

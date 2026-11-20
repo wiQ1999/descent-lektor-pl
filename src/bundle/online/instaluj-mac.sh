@@ -7,7 +7,7 @@
 # (stan/pakiet.txt), sprawdza ich sumy SHA-256 i rozpakowuje je do stałego folderu ~/Descent-Lektor-PL.
 # Potem wywołuje skrypty/lektor.sh install (Python, podpis gry, opcja uruchamiania w schowku). Aktualizacja
 # podmienia tylko zmienione części, usuwa pliki, których nowa wersja już nie ma, i zachowuje ustawienia (scalone
-# z nowymi domyślnymi), zgłoszenia, dzienniki i wyłączenie lektora.
+# z nowymi domyślnymi), zgłoszenia i dzienniki.
 #
 # Pliki pobrane przez curl nie dostają kwarantanny, więc Gatekeeper nie blokuje plików .command.
 # Pytania czytamy z /dev/tty: przy `curl ... | bash` standardowe wejście to treść skryptu.
@@ -60,7 +60,7 @@ main() {
     if [ "$upgrade" = 1 ] && [ "$old_id" = "$id" ]; then
         ok "Lektor jest aktualny: $version"
         say "Folder: $F"
-        run_lektor --upgrade
+        run_lektor
         rm -rf "$DL"
         summary "$paste"
         return 0
@@ -127,7 +127,7 @@ main() {
         cp "$F/skrypty/ustawienia.domyslne.toml" "$F/ustawienia.toml"
     fi
 
-    if [ "$upgrade" = 1 ]; then run_lektor --upgrade; else run_lektor; fi
+    run_lektor
     cp "$DL/index.txt" "$INSTALLED"
     rm -rf "$DL"
     say ''
@@ -188,7 +188,7 @@ run_lektor() {
 }
 
 summary() {
-    say "Pliki lektora (Ustawienia, Test dźwięku, Odinstaluj): $F"
+    say "Folder lektora (ustawienia.toml, Test dźwięku, Odinstaluj): $F"
     if [ "$1" = 1 ]; then
         say ''
         say 'Opcja uruchamiania jest w schowku. Wklej ją w Steam:'

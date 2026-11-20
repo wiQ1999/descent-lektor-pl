@@ -152,7 +152,8 @@ Paczka (E6, D57–D60). Doorstop i Python są przypięte sumami w `src/bundle/pi
   - Mac: `instaluj-mac.sh` (`curl | bash`, bash 3.2, indeks `lektor-mac.txt`, pytania z `/dev/tty`); folder `~/Descent-Lektor-PL`, stan w `stan/pakiet.txt`.
 - Budowa potrzebuje `uv` (koła dla wybranego systemu, `--python-platform`) i `curl` (pobrania; Python z uv na Windows nie widzi magazynu certyfikatów). Na komputerze z grą żadne z nich nie jest potrzebne.
 
-- Paczka ma pliki do dwukliku (`Zainstaluj`, `Odinstaluj`, `Wyłącz/Włącz lektora`, `Ustawienia`, `Test dźwięku`). Uruchamia je użytkownik według `docs/INSTRUKCJA.md` (kopia w paczce) oraz `docs/E6_W1_TEST.md`, `docs/E6_W2_TEST.md` i `docs/E7_MAC_SESSION.md`.
+- Części wspólne paczek powstają raz w `analysis/work/dist/wspolne/`, a `dist/win` i `dist/mac` mają je jako twarde dowiązania (D112). Instrukcję paczka dostaje tylko dla swojego systemu (bloki `<!-- win -->`/`<!-- mac -->` w `docs/INSTRUKCJA.md`).
+- Paczka ma pliki do dwukliku (`Zainstaluj`, `Odinstaluj`, `Test dźwięku`). Ustawienia gracz zmienia w `ustawienia.toml` (D112). Uruchamia je użytkownik według `docs/INSTRUKCJA.md` (kopia w paczce) oraz `docs/E6_W1_TEST.md`, `docs/E6_W2_TEST.md` i `docs/E7_MAC_SESSION.md`.
 - Skrypty Maca (`src/bundle/mac/skrypty/lektor.sh`, `start.sh`, bash 3.2) sprawdzamy `bash -n` i w Git Bash z atrapami `codesign`, `arch`, `pbcopy`, `pgrep` i `defaults` na początku `PATH`. Ścieżkę PlistBuddy nadpisuje zmienna `PLISTBUDDY`.
 - Instalator Windows (`skrypty/lektor.ps1`) zapisuje stan w `stan/` paczki, a dzienniki loadera, pluginu i companiona trafiają do `logs/` paczki.
 - Plugin uruchamia companion (`python -I -m lektor.companion --config ustawienia.toml --logs logs --parent-pid <gra>`), a companion kończy się po zamknięciu gry (D59).

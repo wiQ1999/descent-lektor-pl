@@ -1,13 +1,12 @@
 #!/bin/bash
 # Lektor PL dla Descent: Legends of the Dark (macOS, Apple Silicon). Uruchamiany z plików .command w folderze paczki.
 #
-#   install [--upgrade] [--quiet]
+#   install [--quiet]
 #              zdejmuje kwarantannę z folderu, rozpakowuje Pythona, znajduje grę w Steam, nadaje jej podpis ad-hoc
 #              z uprawnieniem do DYLD_* (D25, D58) i kopiuje do schowka opcję uruchamiania dla Steama.
 #              Ponowne uruchomienie naprawia instalację, np. po aktualizacji gry, która przywraca jej podpis.
-#              --upgrade (z instaluj-mac.sh): lektor zostaje wyłączony, jeśli był; --quiet: bez końcowych wskazówek.
+#              --quiet (z instaluj-mac.sh): bez końcowych wskazówek.
 #   uninstall  usuwa stan instalacji i podaje 2 kroki w Steam (opcja uruchamiania, weryfikacja plików gry).
-#   disable    gra startuje bez lektora (plik "wylaczony" czyta start.sh); enable włącza go z powrotem.
 #   test       odtwarza jedną kwestię narratora z ustawieniami z ustawienia.toml (Test dźwięku).
 #   status     stan instalacji i najnowsze dzienniki.
 #
@@ -137,13 +136,8 @@ Potem zamknij Terminal (Cmd+Q) i uruchom Zainstaluj.command ponownie.'
 }
 
 do_install() {
-    local upgrade=0 quiet=0 arg
-    for arg in "$@"; do
-        case "$arg" in
-            --upgrade) upgrade=1 ;;
-            --quiet) quiet=1 ;;
-        esac
-    done
+    local quiet=0
+    [ "$1" = --quiet ] && quiet=1
     check_location
     xattr -dr com.apple.quarantine "$BUNDLE" 2>/dev/null
     chmod +x "$BUNDLE"/*.command "$BUNDLE"/skrypty/*.sh 2>/dev/null
@@ -169,7 +163,6 @@ do_install() {
         printf '# Lektor PL: instalacja z %s. Nie usuwaj, dopóki lektor jest zainstalowany.\n' "$(date '+%Y-%m-%d %H:%M:%S')"
         printf 'game=%s\n' "$app"
     } > "$STATE_FILE"
-    [ "$upgrade" = 1 ] || rm -f "$BUNDLE/wylaczony"
 
     local launch="\"$BUNDLE/skrypty/start.sh\" %command%"
     printf '%s' "$launch" | pbcopy
@@ -191,7 +184,6 @@ do_uninstall() {
     assert_closed
     assert_installed
     rm -rf "$STATE"
-    rm -f "$BUNDLE/wylaczony"
     ok 'Odinstalowano lektora z paczki. Zostały 2 kroki w Steam:'
     say '  1. Prawy przycisk na grze > Właściwości > Ogólne > Opcje uruchamiania: usuń cały tekst.'
     say '  2. Właściwości > Zainstalowane pliki > Zweryfikuj spójność plików gry.'
@@ -200,26 +192,12 @@ do_uninstall() {
     finish 0
 }
 
-do_disable() {
-    assert_installed
-    touch "$BUNDLE/wylaczony"
-    ok 'Lektor wyłączony: gra startuje bez niego. Włączysz go plikiem Włącz lektora.command.'
-    finish 0
-}
-
-do_enable() {
-    assert_installed
-    rm -f "$BUNDLE/wylaczony"
-    ok 'Lektor włączony. Uruchom grę ze Steama.'
-    finish 0
-}
-
 do_test() {
     [ -x "$PY" ] || fail 'Python z paczki nie jest rozpakowany. Najpierw uruchom Zainstaluj.command.'
     say 'Odtwarzam jedną kwestię narratora...'
     "$PY" -I -m lektor.companion --test --config "$SETTINGS" --logs "$BUNDLE/logs" ||
         fail 'Test dźwięku nie powiódł się. Sprawdź ustawienia.toml (literówka?).'
-    ok 'Jeśli nic nie było słychać: sprawdź głośność (volume) i urządzenie (device) w Ustawieniach.'
+    ok 'Jeśli nic nie było słychać: sprawdź głośność (volume) i urządzenie (device) w ustawienia.toml.'
     finish 0
 }
 
@@ -229,7 +207,6 @@ do_status() {
     app="$(state_value game)"
     say "Gra: $app"
     if has_entitlement "$app"; then say 'Podpis gry: pozwala wczytać lektora'; else warn 'Podpis gry: oryginalny (po aktualizacji?), uruchom Zainstaluj.command'; fi
-    if [ -f "$BUNDLE/wylaczony" ]; then say 'Lektor: wyłączony'; else say 'Lektor: włączony'; fi
     local f
     for f in loader hook companion start; do
         f="$(ls -t "$BUNDLE/logs/$f"-*.* "$BUNDLE/logs/$f".* 2>/dev/null | head -1)"
@@ -241,8 +218,6 @@ do_status() {
 case "${1:-status}" in
     install) shift; do_install "$@" ;;
     uninstall) do_uninstall ;;
-    disable) do_disable ;;
-    enable) do_enable ;;
     test) do_test ;;
     status) do_status ;;
     *) fail "Nieznane polecenie: $1" ;;

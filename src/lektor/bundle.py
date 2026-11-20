@@ -3,8 +3,13 @@
   python -I -m lektor bundle --platform win|mac [--dev] [--out DIR]
 
 Pełna paczka (analysis/work/dist/<platform>/Descent-Lektor-PL + zip obok) ma wszystko, czego potrzeba w grze:
-plugin, Doorstop, Python 3.12 z bibliotekami companiona, część pakietu lektor, bazę i audio M1, instrukcję
-i pliki do dwukliku. Pobrania (Doorstop, Python, koła) mają przypięte sumy SHA-256 (pins.toml,
+plugin, Doorstop, Python 3.12 z bibliotekami companiona, część pakietu lektor, bazę i audio, instrukcję
+i pliki do dwukliku.
+
+Części wspólne obu systemów (plugin, pakiet lektor, baza, audio, licencje, ustawienia) powstają raz
+w analysis/work/dist/wspolne/, a paczka systemu dostaje je twardymi dowiązaniami (audio nie leży na dysku dwa razy;
+ustawienia.toml jest kopią, bo gracz go zmienia). Do tego dochodzą Doorstop, Python, skrypty systemu i instrukcja
+przycięta do systemu (bloki <!-- win --> i <!-- mac --> w docs/INSTRUKCJA.md). Pobrania (Doorstop, Python, koła) mają przypięte sumy SHA-256 (pins.toml,
 requirements-<platform>.txt). Koła instaluje uv, tylko przy budowie: na komputerze z grą uv nie jest potrzebny.
 
 --dev buduje analysis/work/dev-bundle: plugin z builda, Doorstop, skrypty i ustawienia ze ścieżkami do bazy
@@ -13,6 +18,7 @@ instalacji (stan/), dzienniki (logs/) i zmienione ustawienia.
 
 Paczka zawiera audio, więc powstaje w analysis/work/ (ignorowane w Git). Gotowe paczki idą do GitHub Releases (D76).
 """
+import filecmp
 import hashlib
 import json
 import os
@@ -41,6 +47,8 @@ CACHE = os.path.join(paths.WORK, 'bin')
 DEV = os.path.join(paths.WORK, 'dev-bundle')
 DIST = os.path.join(paths.WORK, 'dist')
 GUIDE = os.path.join(paths.ROOT, 'docs', 'INSTRUKCJA.md')
+COMMON = os.path.join(DIST, 'wspolne')
+PLATFORMS = ('win', 'mac')
 # E10: licencja projektu (pkt 3 wymaga jej w każdej kopii) i uznanie autorstwa modeli i programów w paczce
 NOTICES = (os.path.join(paths.ROOT, 'LICENSE.md'), os.path.join(SRC, 'UZNANIE_AUTORSTWA.md'))
 LICENSES = 'licencje'
@@ -203,7 +211,7 @@ def copy_data(dest):
         m['file'] = 'final/' + name
         dst = os.path.join(out, m['file'])
         os.makedirs(os.path.dirname(dst), exist_ok=True)
-        shutil.copy2(flac, dst)
+        link(flac, dst)
     with open(os.path.join(out, 'manifest.json'), 'w', encoding='utf-8') as fh:
         json.dump(manifest, fh, indent=1)
     return len(manifest['fragments'])
@@ -241,6 +249,77 @@ def version_text(platform, fragments):
             'system: %s\nplugin: %s\nzakres: %s, %d fragmentów audio\nzbudowano: %s, commit %s\n'
             % ({'win': 'Windows', 'mac': 'macOS (Apple Silicon)'}[platform], plugin, SCOPES[paths.RELEASE], fragments,
                time.strftime('%Y-%m-%d %H:%M'), commit))
+
+
+def link(src, dst):
+    """Twarde dowiązanie (ten sam plik bez drugiej kopii na dysku), a gdy się nie da, kopia."""
+    try:
+        os.link(src, dst)
+    except OSError:
+        shutil.copy2(src, dst)
+
+
+def guide_text(platform):
+    """Instrukcja dla systemu: bez bloków <!-- inny --> ... <!-- /inny --> i bez samych znaczników."""
+    with open(GUIDE, encoding='utf-8') as fh:
+        lines = fh.read().split('\n')
+    out, skip = [], None
+    for line in lines:
+        tag = line.strip()
+        if skip:
+            if tag == '<!-- /%s -->' % skip:
+                skip = None
+            continue
+        other = [p for p in PLATFORMS if p != platform and tag == '<!-- %s -->' % p]
+        if other:
+            skip = other[0]
+        elif tag not in ['<!-- %s -->' % platform, '<!-- /%s -->' % platform]:
+            out.append(line)
+    text = '\n'.join(out)
+    while '\n\n\n' in text:
+        text = text.replace('\n\n\n', '\n\n')
+    return text
+
+
+def build_common(common):
+    """Pliki wspólne obu systemów; zwraca liczbę fragmentów audio.
+
+    Budowa idzie do folderu obok i przechodzi do common tylko ze zmianami: niezmieniony plik zostaje tym samym plikiem,
+    więc paczki win i mac zbudowane po kolei dowiązują te same pliki."""
+    new = common + '.nowy'
+    if os.path.exists(new):
+        shutil.rmtree(new)
+    os.makedirs(new)
+    copy_plugin(new)
+    copy_lektor(new)
+    fragments = copy_data(new)
+    for path in NOTICES:
+        shutil.copy2(path, new)
+    with open(os.path.join(new, 'ustawienia.toml'), 'w', encoding='utf-8', newline='\n') as fh:
+        fh.write(settings_text(False))
+    os.makedirs(common, exist_ok=True)
+    fresh = set(files_of(new))
+    for rel in files_of(common):
+        if rel not in fresh:
+            os.remove(os.path.join(common, *rel.split('/')))
+    for rel in fresh:
+        src, dst = os.path.join(new, *rel.split('/')), os.path.join(common, *rel.split('/'))
+        if os.path.exists(dst) and (os.path.samefile(src, dst) or filecmp.cmp(src, dst, shallow=False)):
+            continue
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        os.replace(src, dst)
+    shutil.rmtree(new)
+    return fragments
+
+
+def link_common(common, dest):
+    for rel in files_of(common):
+        dst = os.path.join(dest, *rel.split('/'))
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        if rel == 'ustawienia.toml':
+            shutil.copy2(os.path.join(common, rel), dst)
+        else:
+            link(os.path.join(common, *rel.split('/')), dst)
 
 
 def files_of(dest):
@@ -287,26 +366,30 @@ def clean(dest):
             os.remove(path)
 
 
-def build(platform='win', dev=False, out=None):
+def build(platform='win', dev=False, out=None, common=None):
+    if platform not in PLATFORMS:
+        raise SystemExit('Nieznany system: %s' % platform)
     dest = out or (DEV if dev else os.path.join(DIST, platform, NAME))
     if not dev and os.path.exists(dest):
         clean(dest)
     os.makedirs(os.path.join(dest, 'logs'), exist_ok=True)
-    copy_plugin(dest)
+    if dev:
+        copy_plugin(dest)
+        copy_loader(platform, dest)
+        copy_scripts(platform, dest)
+        settings = os.path.join(dest, 'ustawienia.toml')
+        if not keep_settings(settings, dev):
+            with open(settings, 'w', encoding='utf-8', newline='\n') as fh:
+                fh.write(settings_text(dev))
+        return dest
+    common = common or (os.path.join(os.path.dirname(out), 'wspolne') if out else COMMON)
+    fragments = build_common(common)
+    link_common(common, dest)
     copy_loader(platform, dest)
     copy_scripts(platform, dest)
-    settings = os.path.join(dest, 'ustawienia.toml')
-    if not keep_settings(settings, dev):
-        with open(settings, 'w', encoding='utf-8', newline='\n') as fh:
-            fh.write(settings_text(dev))
-    if dev:
-        return dest
     copy_python(platform, dest)
-    copy_lektor(dest)
-    fragments = copy_data(dest)
-    shutil.copy2(GUIDE, os.path.join(dest, 'INSTRUKCJA.md'))
-    for path in NOTICES:
-        shutil.copy2(path, dest)
+    with open(os.path.join(dest, 'INSTRUKCJA.md'), 'w', encoding='utf-8', newline='\n') as fh:
+        fh.write(guide_text(platform))
     with open(os.path.join(dest, 'wersja.txt'), 'w', encoding='utf-8', newline='\n') as fh:
         fh.write(version_text(platform, fragments))
     if out is None:

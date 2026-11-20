@@ -1155,6 +1155,16 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - Mac (2026-11-20): `curl -fsSL …/instaluj-mac.sh | bash`, folder `~/Descent-Lektor-PL`, stan w `stan/pakiet.txt`. Bash 3.2 z macOS nie ma parsera JSON, więc instalator czyta indeks tekstowy `lektor-mac.txt`. Części rozpakowuje `ditto` (polskie nazwy, prawa wykonywania z zipa), resztę robi `lektor.sh install --quiet [--upgrade]`. Pliki z curl nie dostają kwarantanny, więc Gatekeeper nie blokuje `.command`. Opcja uruchamiania w Steam zostaje między wersjami: instalator czyta ją z `localconfig.vdf` i prosi o wklejenie tylko przy pierwszej instalacji albo gdy wskazuje inny folder. Sprawdzone w Git Bash z atrapami, na Macu jeszcze nie.
 - Części Windows i Maca leżą we wspólnym `dist/online/`: warstwy audio obu systemów są tymi samymi zipami, więc wydanie ma jedną ich kopię (ok. 1,8 GB mniej niż osobne zestawy).
 
+### D112 · 2026-11-20 · E19: prostsza paczka po przeglądzie użytkownika
+**Decyzja:**
+- Bez skryptów `Ustawienia` (`.cmd` i `.command`): gracz otwiera `ustawienia.toml` w Notatniku albo TextEdit.
+- Bez skryptów `Wyłącz lektora` i `Włącz lektora`: znikają `lektor.ps1 -Disable/-Enable`, `lektor.sh disable/enable`, plik `wylaczony` i zachowywanie wyłączenia przy aktualizacji. Do wyłączenia wystarcza `[plugin] autostart = false` w `ustawienia.toml`: lektor nie startuje, a plugin zostaje w grze. Instrukcja tego nie opisuje. W tabeli „Gdy coś nie działa” zamiast wyłączenia jest `Odinstaluj`.
+- Instrukcja zostaje jednym plikiem w repozytorium. Bloki `<!-- win -->` i `<!-- mac -->` dotyczą jednego systemu, a paczka dostaje tylko swój system: ok. 130 zamiast 190 wierszy. Tabela skrótów jest wspólna; na Macu skróty używają klawisza Control.
+- Części wspólne paczek (plugin, pakiet `lektor`, baza, audio, licencje, ustawienia) powstają raz w `dist/wspolne/`, a paczki `win` i `mac` mają je jako twarde dowiązania. Do nich dochodzą Doorstop, Python, skrypty systemu i instrukcja. `ustawienia.toml` jest kopią. Na dysku oszczędza to ok. 1,8 GB; dla gracza nic się nie zmienia.
+- `UZNANIE_AUTORSTWA.md` zostaje obok `LICENSE.md`. Licencje OmniVoice (CC BY-NC), Higgs Audio v2, Doorstop (LGPL) i pakietów wymagają uznania autorstwa w paczce (D82).
+
+**Uzasadnienie:** przegląd paczki Windows przez użytkownika i QA z 2026-11-20. Mniej plików w folderze lektora, a instrukcja w paczce jest krótsza.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

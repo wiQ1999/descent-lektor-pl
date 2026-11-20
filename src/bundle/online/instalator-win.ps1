@@ -271,7 +271,7 @@ try { & {
     Say ''
     if ($upgrade) { Say "Zaktualizowano do: $($manifest.version)" Green }
     else { Say "Zainstalowano: $($manifest.version)" Green }
-    Say "Pliki lektora (Ustawienia, Test dźwięku, Odinstaluj): $Folder"
+    Say "Folder lektora (ustawienia.toml, Test dźwięku, Odinstaluj): $Folder"
     Say 'Uruchom grę normalnie ze Steama: lektor wystartuje razem z nią.'
     Say 'Aktualizacja: ta sama komenda. Folderu lektora nie przenoś.'
 } }
