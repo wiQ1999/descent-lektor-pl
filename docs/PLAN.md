@@ -498,7 +498,42 @@ Starter `instaluj-win.ps1` i instalator `instalator-win.ps1` (`src/bundle/online
 
 ## E20 · Podsumowanie misji w oknie gry (D113, czeka na akceptację)
 
-Plugin dokłada do okna podsumowania misji gry (`UIQuestSummary`) kafelki, wykres ataków według broni, pasek walka / interakcje, tabelę drużyny i łup według rodzaju, tylko z danych zapisu gry (`SerializedQuestSummary`). Układ: pole pod „Czasem” w oknie i dwa panele boczne, z mniejszą skalą okna na ekranach węższych niż 16:9 (D113). Bez przechwytywania „Dalej”, bez nowych nagrań. Sprawdzenie w grze na koniec misji (zwycięstwo i porażka), także po wczytaniu zapisu z połowy misji. Szczegółowy plan przedstawię przed startem.
+Plugin dokłada do okna podsumowania misji gry (`UIQuestSummary`) kafelki, wykres ataków według broni, pasek walka / interakcje, tabelę drużyny i łup według rodzaju, tylko z danych zapisu gry (`SerializedQuestSummary`). Układ: pole pod „Czasem” w oknie i dwa panele boczne, z mniejszą skalą okna na ekranach węższych niż 16:9 (D113). Bez przechwytywania „Dalej”, bez nowych nagrań. Gałąź `feature/quest-summary`.
+
+**Kroki** (commit po każdym):
+
+1. **Dane** (`src/plugin/Core/QuestStats.cs`). Gdy okno jest widoczne, plugin raz czyta przez refleksję `GameData.Data` (bez getterów z leniwą inicjalizacją):
+   - `QuestSummary`: czas, `CurrentRound`, `ObtainedGold`, łup, `CoreWeaponClassUsage`, `UniqueWeaponClassUsage`, `ActionsPerformed`, `CompletedFeatsInQuest`, `StartingFeatPoints`;
+   - `ActivePlayers`: bohater, `HealthState`, klasy broni (`EquippedWeapons[].PartA.Class`, tak jak liczy gra), kolor (`HeroModel.ColorLight/ColorDark`), portret (`TextureAssetPath`);
+   - `GameDifficulty`, `FeatProgresses`.
+
+   Wyliczenia:
+   - kafelki: rundy, czas ÷ rundy, suma ataków, interakcje, złoto ÷ rundy, trudność;
+   - broń: klasa → bohaterowie, którzy ją noszą (wspólna klasa: „wspólnie z X”), nazwa z kluczy gry `WEAPON_<KLASA>`;
+   - drużyna: ataki z broni bohatera i ulubiona broń; przyrost postępu wyzwań według wzoru z `UIQuestSummary.SyncTo`;
+   - łup według typu modelu: przedmioty (broń, pancerz, talizmany), materiały, przepisy, mikstury.
+
+   Wynik trafia też do dziennika pluginu jako wiersz `quest_summary` (same liczby i klucze).
+2. **Wzorzec liczb** (`analysis/tools/quest_summary_preview.py`). Liczy to samo z pliku `.sav`, np. dla kopii z `analysis/work/saves/`. Testy pytest działają na własnym, sztucznym JSON-ie. Służy do porównania z wierszem `quest_summary` z gry.
+3. **Wykrycie okna**: odpytywanie `UIGame.QuestSummaryDialog`, tak jak inne okna w `Tracker`. Panel powstaje przy pokazaniu okna, a znika przy jego ukryciu albo zmianie sceny. Dotyczy też ostatniej misji aktu (`OnEndGame`).
+4. **Wygląd** (`src/plugin/Core/SummaryPanel.cs`). Klocki z grafik i czcionek okna gry (tło `Image_ScrollBG`, nagłówki jak `Group_Time/Text_Title`): kafelek, poziomy wykres słupkowy, pasek proporcji, tabela z portretami. Wykresy powstają ze zwykłych `Image` uGUI, bez bibliotek. Pojawienie płynne, razem z animacją okna gry. Kolejne przyciski gry pozostają klikalne.
+5. **Układ** (D113):
+   - kafelki i pasek proporcji w polu pod „Czasem”;
+   - broń w panelu lewym, drużyna i łup w panelu prawym nad „Dalej”;
+   - szerokość płótna = 1080 × proporcje ekranu. Gdy na panel boczny zostaje mniej niż ok. 300 jednostek, plugin zmniejsza `Image_ScrollBG` skalą i przywraca ją po zamknięciu okna;
+   - przy dużej liczbie klas broni wykres pokazuje najwyżej 8 słupków, resztę jako „inne”.
+6. **Podgląd do testów**: ustawienie deweloperskie `[plugin] podsumowanie_podglad` (domyślnie wyłączone) i skrót, który w trakcie misji pokazuje panel z bieżących danych bez kończenia misji. Do tego przełącznik `[plugin] podsumowanie = true` w `ustawienia.toml`.
+7. **Test w grze** (`docs/E20_TEST.md`):
+   - zwycięstwo i porażka; 2, 3 i 4 bohaterów; wspólna klasa broni;
+   - wczytanie zapisu z połowy misji;
+   - okno 16:9 i 16:10 (tryb okienkowy) na Windows;
+   - porównanie z `quest_summary_preview.py`;
+   - na Macu w najbliższej sesji Mac.
+8. **Dokumentacja i paczka**: wersja pluginu, `CLAUDE.md`, krótka wzmianka w `docs/INSTRUKCJA.md`, `docs/ODTWORZENIE.md` (skrypt podglądu), raport `analysis/E20_SUMMARY.md` (liczby i zrzuty, bez tekstów gry).
+
+**Ograniczenia:**
+- Przypisanie broni do bohatera bierzemy ze stanu na koniec misji. Broń wspólna (`SharedWeaponIds`) przekazana w trakcie misji trafi do bohatera, który ją ma na końcu.
+- Ataki runą gra liczy osobno dla bohatera, więc tu przypisanie jest pewne.
 
 ## E12 · Katalog treści gry (później)
 
