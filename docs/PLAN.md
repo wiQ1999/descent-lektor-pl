@@ -496,6 +496,10 @@ Skróty klawiszowe, przycisk „PL” z menu lektora na dolnym pasku, tempo 0,8�
 
 Starter `instaluj-win.ps1` i instalator `instalator-win.ps1` (`src/bundle/online/`), części paczki z manifestem (`lektor bundle --parts`). Próba lokalna na Windows zrobiona 2026-11-19. 2026-11-20: sprawdzenie innej instalacji przed pobraniem, instrukcja, zasady wydania (zwykłe, z kompletem części), test użytkownika z lokalnego serwera (`docs/E19_WIN_TEST.md`) przeszedł. Instalator Maca (`curl … | bash`) zrobiony i sprawdzony z atrapami; części obu systemów we wspólnym `dist/online/`. Po przeglądzie paczki Windows (D112): bez skryptów `Ustawienia` i `Wyłącz/Włącz lektora`, instrukcja przycięta do systemu, części wspólne paczek w `dist/wspolne/`. Dalej: test na Macu, pierwsze wydanie z instalatorem (lista kontrolna w `docs/ODTWORZENIE.md`).
 
+## E20 · Podsumowanie misji w oknie gry (D113, czeka na akceptację)
+
+Plugin dokłada panel do okna podsumowania misji gry (`UIQuestSummary`): rundy, użycie klas broni i akcje z `SerializedQuestSummary`. Bez przechwytywania „Dalej”, bez nowych nagrań. Sprawdzenie w grze na koniec misji (zwycięstwo i porażka), także po wczytaniu zapisu z połowy misji. Szczegółowy plan przedstawię przed startem.
+
 ## E12 · Katalog treści gry (później)
 
 Uporządkowanie treści całej gry do nagrania: kategorie, mówcy, scenariusze, przedmioty i miejsce na poprawki, np. zapis fonetyczny. Sposób przechowywania dobieram sam (D77). Katalog leży w projekcie, w `analysis/work/`, poza Git (D76). Plan etapu przedstawię przed startem.

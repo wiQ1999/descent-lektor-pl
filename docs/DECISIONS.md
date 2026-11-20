@@ -1170,6 +1170,16 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** prośba użytkownika z 2026-11-20. Wcześniejsze wydania v0.2.0–v0.4.0 były testowe (prerelease), a to wydanie jest pierwszym docelowym dla graczy.
 
+### D113 · 2026-11-20 · E20: podsumowanie misji w oknie gry
+**Decyzja:**
+- Podsumowanie pokazujemy jako panel dodatku w oknie podsumowania misji gry (`UIQuestSummary`). Gra przechodzi dalej dopiero po jej przycisku „Dalej”; przycisku nie przechwytujemy.
+- Pierwsza wersja ma tylko statystyki bieżącej misji z `SerializedQuestSummary`, których okno gry nie pokazuje: rundy, użycie klas broni (także broń unikatowa bohatera) i akcje według typu. Działa także wtedy, gdy dodatek doszedł w trakcie misji.
+- Bez statystyk walki z `MessageCache`, bez danych kampanii z zapisu i bez własnej księgi sum od instalacji (możliwe później).
+- Po ostatniej misji aktu (przejście do napisów, `OnEndGame`) nic nie dodajemy poza tym samym panelem w oknie gry.
+- Narrator nie czyta podsumowania.
+
+**Uzasadnienie:** analiza zapisu i kodu gry z 2026-11-20 i QA. Panel w istniejącym oknie nie zmienia przebiegu gry i najmniej ryzykuje przy jej aktualizacji. Dane misji gra już liczy i zapisuje, więc nie potrzeba nowego śledzenia.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
