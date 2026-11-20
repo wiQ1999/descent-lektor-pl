@@ -1170,6 +1170,16 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** prośba użytkownika z 2026-11-20. Wcześniejsze wydania v0.2.0–v0.4.0 były testowe (prerelease), a to wydanie jest pierwszym docelowym dla graczy.
 
+### D114 · 2026-11-20 · E20: poprawki obsady po odsłuchu całej gry
+**Decyzja:**
+- Zestawienie `m4_cast` obejmuje całą grę: 144 głosy, akt 2 z podejść poza paczką, przyciętych i wyrównanych do −20 LUFS jak w `finalize`. Pierwsza wersja strony dawała próbki aktu 2 bez wyrównania (−24 do −28 LUFS), więc uwagi „za cichy” dla Ogrodniczki, Żołnierza z A2Q11, Gorzae i Czerwonej Gwiazdy wymagają ponownego odsłuchu.
+- Odsłuch wskazał 62 głosy. Prowadzimy je jak D109 w całej grze (etap E20 w `docs/PLAN.md`): nowe głosy i poprawki jakości przez kandydatów OmniVoice z odsłuchem, ponowne podejścia trzech fragmentów.
+- Tempo narracji scen narratora (1508 fragmentów, dziś tempo naturalne) ma być 1,4 jak w oknach gry, a Vaerixa 1,2. Sposób (nowe generowanie albo WSOLA na gotowym audio) wybierzesz po odsłuchu próbek obu wariantów.
+- Efekty na audio robimy własnym łańcuchem per głos w `finalize` (numpy/scipy, bez nowych pakietów): duch dla Kathryn i smoka-ducha z Q13, głos w głowie dla Baelziffara.
+- Głosy ElevenLabs zostają bez zmian do odnowienia limitu 2026-12-15 (licznik okresu 55 983 z 60 tys.). Potem nowe profile Laurel i L'trand oraz chropowatsza Veta (ok. 16,7 tys. znaków, ok. 7,5 tys. kredytów).
+
+**Uzasadnienie:** QA 2026-11-20 po odsłuchu zestawienia. Zmiany w ElevenLabs nie mieszczą się w limicie bieżącego okresu.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
@@ -1215,3 +1225,4 @@ Kwestie a–u są rozstrzygnięte po porównaniu modeli (D33–D38), x i y w D30
 | – | Model dla całej gry | E7 na OmniVoice (D65); cała gra przy większym zakresie (D39) |
 | – | `VARIABLE_HERO` bez testu w grze | w sesji E5 |
 | – | Wydanie paczek w GitHub Releases | E10 (D76) |
+| – | Nowe profile ElevenLabs Laurel i L'trand, chropowatsza Veta | po odnowieniu limitu 2026-12-15 (D114) |

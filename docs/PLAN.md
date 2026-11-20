@@ -496,6 +496,23 @@ Skróty klawiszowe, przycisk „PL” z menu lektora na dolnym pasku, tempo 0,8�
 
 Starter `instaluj-win.ps1` i instalator `instalator-win.ps1` (`src/bundle/online/`), części paczki z manifestem (`lektor bundle --parts`). Próba lokalna na Windows zrobiona 2026-11-19. 2026-11-20: sprawdzenie innej instalacji przed pobraniem, instrukcja, zasady wydania (zwykłe, z kompletem części), test użytkownika z lokalnego serwera (`docs/E19_WIN_TEST.md`) przeszedł. Instalator Maca (`curl … | bash`) zrobiony i sprawdzony z atrapami; części obu systemów we wspólnym `dist/online/`. Po przeglądzie paczki Windows (D112): bez skryptów `Ustawienia` i `Wyłącz/Włącz lektora`, instrukcja przycięta do systemu, części wspólne paczek w `dist/wspolne/`. Dalej: test na Macu, pierwsze wydanie z instalatorem (lista kontrolna w `docs/ODTWORZENIE.md`).
 
+## E20 · Poprawki obsady po drugim odsłuchu (D114)
+
+Cel: zmiany i poprawki 62 głosów z odsłuchu zestawienia całej gry `m4_cast` (2026-11-20) w akcie 1, akcie 2 i częściach wspólnych. Pełna lista uwag leży w `analysis/work/compare/m4_cast/uwagi_2026-11-20.txt` w worktree `.claude/worktrees/game-character-voice-analysis-0ff4e5` (poza Git, początki kwestii z gry).
+1. Tempo: próbki narracji scen narratora w tempie 1,4 i Vaerixa w 1,2 w dwóch wariantach (nowe generowanie OmniVoice z parametrem tempa i przyspieszenie gotowego audio WSOLA). Wariant wybierasz po odsłuchu.
+2. Efekty na audio: własny łańcuch per głos w `finalize` (numpy/scipy z `.venv`, efekt wypalony w pliku końcowym). Duch dla Kathryn (ElevenLabs bez zmian) i smoka-ducha z Q13, głos w głowie dla Baelziffara (inny niż duch). Po 2–3 warianty do odsłuchu.
+3. Kandydaci OmniVoice jak w D109: dla każdego głosu trzy wyraźnie różne kandydatury i obecny głos na stronie odsłuchu.
+   - Nowy głos (31): Levirax (za podobny do narratora), smok-duch z Q13 (bez opisu ducha), Siostra krwi (klon Ne'Krul z obróbką) i mówcy bez imienia oznaczeni jako generyczni albo niepasujący do postaci (bossowie, smoki, ork, kobieta zamiast szeptu).
+   - Ten sam profil, lepsza jakość (21): nowe ziarna i oczyszczona referencja dla szeptu, robotycznego brzmienia, echa, nosowego brzmienia, szelestu (Gilliam), słabej jakości oraz okrzyków za mało dynamicznych.
+4. Ponowne podejścia trzech fragmentów (Kapitan z FoF, Więzień, Bandyta-nekromanta): pauza na początku, błędy wymowy i ucięte końcówki.
+5. Wybór z odsłuchu (`adopt`), wpis w `docs/CASTING.md`.
+6. Generowanie zmienionych głosów w całej grze, ocena, ponowne podejścia, `finalize` z efektami i tempem z kroku 1, zestawienie `m4_cast` do kontroli.
+7. Paczka z aktem 1 i częściami wspólnymi jako aktualizacja (instalator pobiera tylko zmienione części), wydanie po Twojej akceptacji.
+
+Poza E20 (po odnowieniu limitu ElevenLabs 2026-12-15): nowe profile Laurel (mniej dziecięcy) i L'trand (kobieta czarnoskóra) oraz chropowatsza Veta (jak u orka).
+
+**Kryteria ukończenia:** wybrane głosy w `refs.json` i `docs/CASTING.md`, wszystkie kwestie aktu 1 i części wspólnych z pełnym audio (`release_coverage.py`), testy przechodzą, zestawienie po zmianach, paczki zbudowane, commit.
+
 ## E12 · Katalog treści gry (później)
 
 Uporządkowanie treści całej gry do nagrania: kategorie, mówcy, scenariusze, przedmioty i miejsce na poprawki, np. zapis fonetyczny. Sposób przechowywania dobieram sam (D77). Katalog leży w projekcie, w `analysis/work/`, poza Git (D76). Plan etapu przedstawię przed startem.
