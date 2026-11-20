@@ -1165,6 +1165,11 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** przegląd paczki Windows przez użytkownika i QA z 2026-11-20. Mniej plików w folderze lektora, a instrukcja w paczce jest krótsza.
 
+### D113 · 2026-11-20 · Wydanie v1.0.0
+**Decyzja:** pierwsze zwykłe wydanie (nie prerelease) z instalacją i aktualizacją jedną komendą ma numer 1.0.0 zamiast 0.5.0 (plugin, `Bootstrap.Version`, pola `<Version>` w csproj). Obejmuje akt 1 i części wspólne m4 (audio kompletne: 7818/7818 kwestii). Części budujemy z `--fresh` (jedna warstwa audio).
+
+**Uzasadnienie:** prośba użytkownika z 2026-11-20. Wcześniejsze wydania v0.2.0–v0.4.0 były testowe (prerelease), a to wydanie jest pierwszym docelowym dla graczy.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
