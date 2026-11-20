@@ -1177,8 +1177,18 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - Bez statystyk walki z `MessageCache`, bez danych kampanii z zapisu i bez własnej księgi sum od instalacji (możliwe później).
 - Po ostatniej misji aktu (przejście do napisów, `OnEndGame`) nic nie dodajemy poza tym samym panelem w oknie gry.
 - Narrator nie czyta podsumowania.
-
-**Uzasadnienie:** analiza zapisu i kodu gry z 2026-11-20 i QA. Panel w istniejącym oknie nie zmienia przebiegu gry i najmniej ryzykuje przy jej aktualizacji. Dane misji gra już liczy i zapisuje, więc nie potrzeba nowego śledzenia.
+- Tylko dane, które gra zapisuje sama; plugin nie zbiera nic dodatkowo. Podział na bohaterów wynika z klas ich broni w zapisie.
+- Elementy panelu (QA 2026-11-20):
+  - kafelki: rundy, średni czas rundy, ataki, interakcje, złoto na rundę, poziom trudności;
+  - ataki według broni: poziome słupki klas z atakami, malejąco, w kolorze bohatera, który tę broń nosi (runa osobno dla bohatera);
+  - charakter misji: pasek proporcji walka / interakcje (akcji „ogólnych” gra nie liczy);
+  - drużyna: tabela bohaterów (stan zdrowia, ataki z jego broni, ulubiona broń, ukończone wyzwania, przyrost postępu wyzwań). Gdy dwóch bohaterów nosi broń tej samej klasy, oba wiersze mają wspólną liczbę z dopiskiem „wspólnie z X”;
+  - łup według rodzaju: przedmioty, materiały, przepisy, mikstury (mikstur okno gry nie pokazuje).
+- Styl gry: tło, ramki i czcionki skopiowane z okien gry, jak przy menu „PL”.
+- Panel jest zawsze widoczny. Układ wynika z prefabu okna (`Panel_QuestSummary`): okno ma stały rozmiar 1250×920 jednostek, a łup przewija się w nim, więc wysokość nie zależy od łupu. Pod oknem zostaje ok. 50 jednostek, w prawym dolnym rogu ekranu jest „Dalej”. Dlatego:
+  - kafelki i pasek charakteru misji idą do wolnego pola okna pod „Czasem” (ok. 440×260);
+  - ataki według broni idą do panelu po lewej stronie okna, drużyna i łup do panelu po prawej, nad „Dalej”;
+  - płótno gry ma wysokość 1080 i szerokość zależną od proporcji ekranu (16:9: 1920, 16:10: 1728, MacBook Air: ok. 1660). Gdy na panele boczne zostaje mniej niż ok. 300 jednostek, plugin zmniejsza okno gry skalą (na MacBooku ok. 0,82).
 
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
