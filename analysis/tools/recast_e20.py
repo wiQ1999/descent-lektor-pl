@@ -1,12 +1,13 @@
 """Kandydaci głosów E20 (D114) po odsłuchu całej gry: nowe głosy, poprawki jakości, klony i oczyszczona referencja.
 
-Profile w analysis/tools/voice_designs_e20.json (rodzaj, opisy OmniVoice, własne zdanie w stylu postaci, obróbka).
+Profile w analysis/tools/voice_designs_e20.json (rodzaj, opisy OmniVoice, własne zdanie w stylu postaci jak w D41: profil leży w publicznym repo, więc bez tekstu gry; obróbka).
 - new: kilka opisów × dwa ziarna i wariant z obróbką; na stronę idą trzy kandydatury najdalej od całej obsady.
 - fix: ten sam profil bez szeptu, trzy ziarna; kandydatury najbliżej obecnej barwy, z żywszą intonacją.
 - clone: klon referencji `src` (Ne'Krul, Levirax) z obróbką, przy Levirax także projekty.
 - clean: referencja `src` odszumiona w trzech siłach (Gilliam).
 Każdy kandydat czyta też kwestię z gry (tę samą co próbka 1 w zestawieniu m4_cast), żeby było słychać głos w grze.
-Kandydaci do ponownego odsłuchu mają też obecny głos i głosy zbyt podobne.
+Strona: portret z gry (postać albo typ wroga), opis, obecny głos i głosy zbyt podobne; wybór A–C, „bez zmian”, „żaden nie pasuje”,
+kandydat „niepoprawny” z uwagą i uwaga do postaci.
 
     <omni> -I analysis/tools/recast_e20.py design     # <omni> = "$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe"
     .venv/Scripts/python -I analysis/tools/recast_e20.py choose
@@ -295,7 +296,39 @@ h2{margin:4px 0;font-size:17px} h3{margin:26px 0 4px}
 button{font:inherit;padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
 #out{white-space:pre-wrap;font-family:monospace;font-size:13px}
 .lab{font-size:12px;color:var(--muted);margin-top:4px}
+.who{display:grid;grid-template-columns:120px 1fr;gap:14px;margin-bottom:8px}
+.pic{width:120px;height:120px;border-radius:6px;background:var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;text-align:center;overflow:hidden}
+.pic img{width:100%;height:100%;object-fit:cover;object-position:top}
+.desc{margin:2px 0 6px}
+.pick{display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 4px;font-size:14px}
+.cand.bad{border-color:#b91c1c;background:color-mix(in srgb,#b91c1c 8%,var(--card))}
+.cand.sel{outline:2px solid var(--accent)}
+textarea{width:100%;font:inherit;font-size:13px;margin-top:6px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg)}
+.cand textarea{display:none}.cand.bad textarea{display:block}
+.gray{font-size:12px;color:var(--muted)}
+@media (max-width:600px){.who{grid-template-columns:1fr}.pic{width:96px;height:96px}}
 """
+ENEMY_TABS = {     # mówcy, którzy są typem wroga: portret z karty wroga (d3/enemies/_portraits)
+    'nv_fae': 'Fae_Tab', 'nv_bandyta': 'Bandit_Tab', 'nv_a2q3_bandyta': 'Bandit_Tab', 'nv_q3_herszt': 'Bandit_Boss_Tab',
+    'nv_fanatyk': 'Zealot_Tab', 'nv_widmo': 'Specter_Tab', 'nv_siostra_krwi': 'Blood Sister_Tab'}
+
+
+def enemy_portraits(out_dir):
+    """{głos: plik} portretów typu wroga z kopii gry (tylko analysis/work)."""
+    import UnityPy
+    from lektor import game as G
+    want = set(ENEMY_TABS.values())
+    env = UnityPy.load(os.path.join(paths.BUNDLES, G.Game().files['d3/enemies/_portraits']))
+    saved = set()
+    for o in env.objects:
+        if o.type.name == 'Texture2D':
+            d = o.read()
+            if d.m_Name in want and d.m_Name not in saved:
+                d.image.save(os.path.join(out_dir, d.m_Name.replace(' ', '_') + '.png'))
+                saved.add(d.m_Name)
+    return {v: t.replace(' ', '_') + '.png' for v, t in ENEMY_TABS.items() if t in saved}
+
+
 SECTIONS = (('new', 'Nowe głosy'), ('clone', 'Klony z obróbką'), ('clean', 'Oczyszczona referencja'),
             ('fix', 'Ten sam profil, lepsza jakość'))
 
@@ -319,6 +352,24 @@ def page():
 
     def audio(rel):
         return '<audio controls preload="none" src="%s"></audio>' % e(rel)
+
+    import cast_sheet
+    desc = cast_sheet.descriptions()[0]
+    pic_src = os.path.join(paths.WORK, 'compare', 'm4_cast', 'portraits')     # portrety z gry (cast_sheet)
+    os.makedirs(os.path.join(OUT, 'portrety'), exist_ok=True)
+
+    enemy = enemy_portraits(os.path.join(OUT, 'portrety'))
+
+    def portrait(voice):
+        if voice in enemy:
+            return '<img src="portrety/%s" alt="Portret typu wroga: %s" title="portret typu wroga" loading="lazy">' % (
+                e(enemy[voice]), e(voice))
+        for v in (voice, cast_sheet.SHARED_PORTRAIT.get(voice)):
+            src = v and os.path.join(pic_src, v + '.png')
+            if src and os.path.exists(src):
+                shutil.copyfile(src, os.path.join(OUT, 'portrety', v + '.png'))
+                return '<img src="portrety/%s.png" alt="Portret: %s" loading="lazy">' % (e(v), e(voice))
+        return 'brak portretu w grze'
 
     def current(voice):
         src = os.path.join(cast, voice + '_1.wav')
@@ -352,19 +403,29 @@ def page():
                         leveled(lw, os.path.join(OUT, 'linie_poziom', '%s_%s_fx.wav' % (voice, L)), p['fx_final'])
                         line += '<div class="lab">kwestia z gry z efektem %s</div>' % e(p['fx_final']) + \
                             audio('linie_poziom/%s_%s_fx.wav' % (voice, L))
-                cands.append('<div class="cand%s"><label><input type="radio" name="%s" value="%s"%s> <b>%s</b>%s</label>'
-                             '<div class="muted">%s · CER %s · F0 %s Hz · melodia %s st</div>'
-                             '<div class="lab">referencja (własne zdanie)</div>%s%s</div>' % (
-                                 ' auto' if i == 0 else '', voice, L, ' checked' if i == 0 else '', L,
-                                 ' (automat)' if i == 0 else '', e(s['instruct']), s.get('cer', '–'), s.get('f0', '–'),
-                                 s.get('f0_sd', '–'), audio('kandydaci/%s_%s.wav' % (voice, L)), line))
+                cands.append('<div class="cand%s" data-l="%s"><b>%s</b>%s'
+                             '<div class="muted">%s · CER %s · F0 %s Hz · melodia %s st</div>%s'
+                             '<div class="gray">zdanie z projektu głosu (referencja modelu)</div>%s'
+                             '<label class="gray"><input type="checkbox" class="bad"> niepoprawny</label>'
+                             '<textarea placeholder="Co jest nie tak z kandydatem %s?"></textarea></div>' % (
+                                 ' auto' if i == 0 else '', L, L, ' (propozycja automatu)' if i == 0 else '',
+                                 e(s['instruct']), s.get('cer', '–'), s.get('f0', '–'), s.get('f0_sd', '–'),
+                                 line, audio('kandydaci/%s_%s.wav' % (voice, L)), L))
             near = ''.join('<div class="row"><code>%s</code> %s</div>' % (e(n), current(n)) for n in p.get('near', []))
             quote = '<q>%s</q>' % e(g['text']) if g else ''
-            cards.append('<div class="card"><h2>%s</h2><div class="muted">uwaga z odsłuchu: %s</div>'
+            picks = ''.join('<label><input type="radio" name="%s" value="%s"> %s</label>' % (voice, L, L)
+                            for L in LETTERS[:len(cands)])
+            picks += ('<label><input type="radio" name="%s" value="-"> bez zmian (obecny głos)</label>'
+                      '<label><input type="radio" name="%s" value="0"> żaden nie pasuje</label>' % (voice, voice))
+            cards.append('<div class="card" data-voice="%s"><div class="who"><div class="pic">%s</div><div>'
+                         '<h2>%s</h2><div class="desc">%s</div><div class="muted">Twoja uwaga z odsłuchu gry: %s</div>'
+                         '</div></div>'
                          '<div class="row"><span class="muted">obecny głos, kwestia z gry:</span> %s</div>%s%s'
-                         '<div class="row">%s</div><label><input type="radio" name="%s" value="-"> bez zmian</label></div>' % (
-                             e(voice), e(p['note']), current(voice), quote,
-                             ('<div class="muted">głosy zbyt podobne:</div>' + near) if near else '', ''.join(cands), voice))
+                         '<div class="row">%s</div><div class="pick"><b>Wybór:</b>%s</div>'
+                         '<textarea class="note" placeholder="Uwaga do postaci (opcjonalnie)"></textarea></div>' % (
+                             e(voice), portrait(voice), e(voice), e(desc.get(voice, '–')), e(p['note']), current(voice),
+                             quote, ('<div class="muted">głosy zbyt podobne:</div>' + near) if near else '',
+                             ''.join(cands), picks))
         if cards:
             body += '<h3>%s (%d)</h3>%s' % (e(title), len(cards), ''.join(cards))
             n_cards += len(cards)
@@ -374,19 +435,41 @@ const KEY='recast-e20';
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return {}}}
 function store(s){try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}}
 const st=load();
-document.querySelectorAll('input[type=radio]').forEach(r=>{if(st[r.name]===r.value)r.checked=true;
- r.addEventListener('change',()=>{const s=load();s[r.name]=r.value;store(s)})});
+function get(v){let x=st[v];if(typeof x==='string')x={pick:x};return st[v]=x||{pick:'',bad:{},note:''}}
+function put(){store(st);count()}
+function count(){const all=document.querySelectorAll('.card').length;
+ const n=[...document.querySelectorAll('.card')].filter(c=>get(c.dataset.voice).pick).length;
+ document.getElementById('cnt').textContent='wybrano: '+n+' / '+all}
+document.querySelectorAll('.card').forEach(card=>{const v=card.dataset.voice,s=get(v);s.bad=s.bad||{};
+ const mark=()=>card.querySelectorAll('.cand').forEach(c=>c.classList.toggle('sel',c.dataset.l===s.pick));
+ card.querySelectorAll('input[type=radio]').forEach(r=>{r.checked=s.pick===r.value;
+  r.addEventListener('change',()=>{s.pick=r.value;mark();put()})});
+ card.querySelectorAll('.cand').forEach(c=>{const L=c.dataset.l,cb=c.querySelector('input.bad'),ta=c.querySelector('textarea');
+  const b=s.bad[L];cb.checked=!!b;ta.value=(b&&b.note)||'';c.classList.toggle('bad',cb.checked);
+  cb.addEventListener('change',()=>{if(cb.checked)s.bad[L]={note:ta.value};else delete s.bad[L];c.classList.toggle('bad',cb.checked);put()});
+  ta.addEventListener('input',()=>{s.bad[L]={note:ta.value};put()})});
+ const note=card.querySelector('textarea.note');note.value=s.note||'';
+ note.addEventListener('input',()=>{s.note=note.value;put()});mark()});
 document.querySelectorAll('audio').forEach(a=>a.addEventListener('play',()=>document.querySelectorAll('audio').forEach(b=>{if(b!==a)b.pause()})));
-function copyList(){const names=[...new Set([...document.querySelectorAll('input[type=radio]')].map(r=>r.name))];
- const lines=names.map(n=>{const c=document.querySelector('input[name="'+n+'"]:checked');return n+'='+(c?c.value:'?')});
+const LAB={'-':'bez zmian','0':'żaden nie pasuje'};
+function copyList(){const lines=[];
+ document.querySelectorAll('.card').forEach(c=>{const v=c.dataset.voice,s=get(v);
+  let t=v+'='+(s.pick||'?')+(LAB[s.pick]?' ('+LAB[s.pick]+')':'');
+  if((s.note||'').trim())t+=' — '+s.note.trim().replace(/\\s+/g,' ');
+  lines.push(t);
+  Object.entries(s.bad||{}).sort().forEach(([L,b])=>lines.push('  '+L+' niepoprawny'+((b.note||'').trim()?': '+b.note.trim().replace(/\\s+/g,' '):'')))});
  const t='Wybór głosów E20:\\n'+lines.join('\\n');document.getElementById('out').textContent=t;
  try{navigator.clipboard.writeText(t)}catch(e){}}
+count();
 </script>"""
     doc = ('<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
            '<title>Głosy E20</title><style>%s</style></head><body><h1>Głosy E20: kandydaci</h1>'
-           '<p class="muted">Każdy kandydat ma referencję (własne zdanie w stylu postaci) i tę samą kwestię z gry co obecny '
-           'głos, wyrównaną do −20 LUFS jak w paczce. Zaznaczony A to wybór automatu: przy nowych głosach najdalej od całej '
-           'obsady, przy poprawkach najbliżej obecnej barwy z żywszą melodią. Wybierz i kliknij przycisk na dole.</p>'
+           '<p class="muted">Postać z portretem z gry i opisem. Każdy kandydat czyta tę samą kwestię z gry co obecny głos '
+           '(wyrównaną do −20 LUFS jak w paczce), a pod nią jest zdanie, z którego model zaprojektował głos. Kandydat A to '
+           'propozycja automatu: przy nowych głosach najdalej od całej obsady, przy poprawkach najbliżej obecnej barwy z '
+           'żywszą melodią. Wybierz kandydata, „bez zmian” albo „żaden nie pasuje”; kandydata możesz oznaczyć jako '
+           'niepoprawnego z uwagą. Stan zapisuje się w przeglądarce. Na końcu kliknij „Kopiuj wybór” i wklej go do czatu.</p>'
+           '<p class="muted" id="cnt"></p>'
            '%s<p><button onclick="copyList()">Kopiuj wybór</button></p><div id="out"></div>%s</body></html>'
            % (CSS, body, script))
     open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(doc)
