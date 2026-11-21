@@ -19,7 +19,8 @@ namespace LektorPL.Core
     /// <see cref="SideMin"/>, zmniejszamy okno gry skalą i przywracamy ją po zamknięciu.
     ///
     /// Panel jest dzieckiem okna gry, więc znika i zanika razem z nim; przycisku „Dalej” nie dotykamy. Grafiki i czcionkę
-    /// bierzemy z okna gry (tło listy łupu, tło pola „Czas”, czcionka nazwy misji).
+    /// bierzemy z gry: tabliczka pola „Czas” i czcionka nazwy misji z okna, kamienne tło i ramka panelu wroga, ornament nagłówka,
+    /// ikony akcji i łupu z pakietu d3/uitextures oraz okrągłe portrety bohaterów jak w UIHeroProgress.
     ///
     /// Podgląd (ustawienie <c>podsumowanie_podglad</c>, skrót Ctrl+P w misji): ten sam panel nad planszą, z ramką
     /// w miejscu okna gry, bez otwierania okna gry. Drugie naciśnięcie zamyka podgląd.
@@ -29,6 +30,8 @@ namespace LektorPL.Core
         private const float WindowW = 1250f, WindowH = 920f, WindowY = 30f;
         private const float SideMin = 280f, SideMax = 380f, Gap = 16f, Edge = 16f, ContinueClear = 140f, MinScale = 0.72f;
         private const int MaxBars = 8;
+        private const float PadX = 22f, PadTop = 36f, PadBottom = 26f, FrameScale = 1.3f, TileInset = 20f, Portrait = 68f;
+        private const string UiBundle = "d3/uitextures", UiPath = "assets/d3/textures/ui/";
         // Dół pola „Czas” w oknie gry według prefabu (Group_Time na -69,7, tło 84,6 od -64) i wysokość naszego pola:
         // dwa rzędy kafelków (2×58 + 6), pasek 20 i podpis 20 z odstępami 6.
         private const float TimeBottom = -218.3f, TileH = 58f, InnerHeight = 2f * 58f + 6f + 6f + 20f + 6f + 20f;
@@ -37,7 +40,10 @@ namespace LektorPL.Core
         private static readonly Color Gold = new Color(0.86f, 0.70f, 0.38f);
         private static readonly Color CombatColor = new Color(0.72f, 0.30f, 0.24f);
         private static readonly Color InteractColor = new Color(0.30f, 0.52f, 0.76f);
-        private static readonly Color Track = new Color(0f, 0f, 0f, 0.35f);
+        private static readonly Color Track = new Color(0f, 0f, 0f, 0.45f);
+        private static readonly Color StoneTint = new Color(0.50f, 0.47f, 0.45f, 0.97f);
+        private static readonly Color FrameTint = new Color(0.82f, 0.70f, 0.48f, 1f);
+        private static readonly Color PanelFallback = new Color(0.12f, 0.10f, 0.09f, 0.94f);
         private static readonly CultureInfo Pl = CultureInfo.GetCultureInfo("pl-PL");
 
         private readonly EventLog _log;
@@ -52,9 +58,10 @@ namespace LektorPL.Core
 
         // Styl z okna gry.
         private TMP_FontAsset _font;
-        private Sprite _boxSprite, _tileSprite;
-        private Image.Type _boxType, _tileType;
-        private Color _boxColor = new Color(0.5f, 0.5f, 0.5f, 0.8f), _tileColor = new Color(0.5f, 0.4f, 0.3f, 1f);
+        private Sprite _tileSprite;
+        private Image.Type _tileType;
+        private Color _tileColor = new Color(0.5f, 0.4f, 0.3f, 1f);
+        private readonly Dictionary<string, Sprite> _sprites = new Dictionary<string, Sprite>();
 
         public SummaryPanel(EventLog log, bool enabled, bool previewEnabled)
         {
@@ -198,12 +205,12 @@ namespace LektorPL.Core
             }
             else
             {
-                Tiles(left, s, side - 24f);
+                Tiles(left, s, side - 2f * PadX);
                 Ratio(left, s, true);
             }
-            Weapons(left, s);
+            Weapons(left, s, side - 2f * PadX);
             Team(right, s);
-            Loot(right, s, side - 24f);
+            Loot(right, s);
 
             _shown = s;
             _preview = preview;
@@ -239,11 +246,8 @@ namespace LektorPL.Core
         {
             if (dialog.TextQuestName != null) _font = dialog.TextQuestName.font;
             var t = dialog.transform;
-            var box = t.Find("Image_ScrollBG/Group_Items/Scroll View");
-            var img = box != null ? box.GetComponent<Image>() : null;
-            if (img != null) { _boxSprite = img.sprite; _boxType = img.type; _boxColor = img.color; }
             var tile = t.Find("Image_ScrollBG/Group_Time/Image_BG");
-            img = tile != null ? tile.GetComponent<Image>() : null;
+            var img = tile != null ? tile.GetComponent<Image>() : null;
             if (img != null) { _tileSprite = img.sprite; _tileType = img.type; _tileColor = img.color; }
         }
 
@@ -273,23 +277,21 @@ namespace LektorPL.Core
             var rt = NewRect("Tile", grid);
             var bg = rt.gameObject.AddComponent<Image>();
             Paint(bg, _tileSprite, _tileType, _tileColor);
+            // Tabliczka gry ma zwężone końce (ok. 20 jednostek z każdej strony), więc tekst trzymamy w środku.
             var v = AddText(rt, value, 26f, Light, TextAlignmentOptions.Center, true);
-            v.enableAutoSizing = true;
-            v.fontSizeMin = 14f;
-            v.fontSizeMax = 26f;
-            v.enableWordWrapping = false;
-            Anchor(v.rectTransform, 0f, 0.38f, 1f, 1f, 6f, 0f, -6f, -3f);
+            Fit(v, 13f);
+            Anchor(v.rectTransform, 0f, 0.40f, 1f, 1f, TileInset, 0f, -TileInset, -3f);
             var l = AddText(rt, label, 14f, Dim, TextAlignmentOptions.Center, false);
-            l.enableWordWrapping = false;
-            Anchor(l.rectTransform, 0f, 0f, 1f, 0.40f, 4f, 3f, -4f, 0f);
+            Fit(l, 10f);
+            Anchor(l.rectTransform, 0f, 0f, 1f, 0.42f, TileInset - 4f, 4f, -(TileInset - 4f), 0f);
         }
 
         private void Ratio(RectTransform parent, QuestStats s, bool header)
         {
             int total = s.CombatActions + s.Interactions;
-            if (header) Header(parent, "Charakter misji", 22f);
+            if (header) Header(parent, "Charakter misji");
             var bar = NewRect("Ratio", parent);
-            Fixed(bar, 20f);
+            Fixed(bar, 16f);
             var track = bar.gameObject.AddComponent<Image>();
             track.color = Track;
             track.raycastTarget = false;
@@ -300,20 +302,26 @@ namespace LektorPL.Core
                 Fill(bar, p, 1f, InteractColor);
             }
             var legend = NewRect("Legend", parent);
-            Fixed(legend, 20f);
-            int pc = total > 0 ? Mathf.RoundToInt(p * 100f) : 0;
-            var a = AddText(legend, total > 0 ? "walka " + pc + "%" : "brak akcji", 18f, Light, TextAlignmentOptions.Left, false);
-            Stretch(a.rectTransform);
-            if (total > 0)
+            Fixed(legend, 26f);
+            if (total == 0)
             {
-                var b = AddText(legend, "interakcje " + (100 - pc) + "%", 18f, Light, TextAlignmentOptions.Right, false);
-                Stretch(b.rectTransform);
+                var none = AddText(legend, "brak akcji", 18f, Dim, TextAlignmentOptions.Left, false);
+                Stretch(none.rectTransform);
+                return;
             }
+            int pc = Mathf.RoundToInt(p * 100f);
+            bool icons = Icon(legend, "icon_action_combat", Color.white, 0f, 24f) != null;
+            Icon(legend, "icon_action_interact", Color.white, 1f, 24f);
+            float inset = icons ? 30f : 0f;
+            var a = AddText(legend, "walka " + pc + "%", 18f, Light, TextAlignmentOptions.Left, false);
+            Anchor(a.rectTransform, 0f, 0f, 0.5f, 1f, inset, 0f, 0f, 0f);
+            var b = AddText(legend, "interakcje " + (100 - pc) + "%", 18f, Light, TextAlignmentOptions.Right, false);
+            Anchor(b.rectTransform, 0.5f, 0f, 1f, 1f, 0f, 0f, -inset, 0f);
         }
 
-        private void Weapons(RectTransform panel, QuestStats s)
+        private void Weapons(RectTransform panel, QuestStats s, float width)
         {
-            Header(panel, "Ataki według broni", 26f);
+            Header(panel, "Ataki według broni");
             var rows = new List<KeyValuePair<string, KeyValuePair<int, List<Color>>>>();
             foreach (var w in s.Weapons)
             {
@@ -333,27 +341,31 @@ namespace LektorPL.Core
                 rows.Add(Row("inne", rest, new List<Color> { Dim }));
             }
             if (rows.Count == 0)
-            {
-                Line(panel, "W tej misji nikt nie atakował.", 18f, Dim);
-            }
+                Line(panel, "W tej misji nikt nie atakował.", 17f, Dim);
             int max = 1;
             foreach (var r in rows) max = Mathf.Max(max, r.Value.Key);
             foreach (var r in rows) Bar(panel, r.Key, r.Value.Key, max, r.Value.Value);
 
-            // Legenda: kolory bohaterów.
-            var spacer = NewRect("Spacer", panel);
-            Fixed(spacer, 10f);
+            // Legenda: kolory bohaterów w dwóch kolumnach.
+            Spacer(panel, 8f);
+            var grid = NewRect("Legend", panel);
+            var g = grid.gameObject.AddComponent<GridLayoutGroup>();
+            g.cellSize = new Vector2((width - 8f) / 2f, 24f);
+            g.spacing = new Vector2(8f, 2f);
+            g.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            g.constraintCount = 2;
+            Fixed(grid, ((s.Heroes.Count + 1) / 2) * 26f);
             foreach (var hero in s.Heroes)
             {
-                var row = NewRect("LegendRow", panel);
-                Fixed(row, 24f);
-                var dot = NewRect("Dot", row);
-                Anchor(dot, 0f, 0.5f, 0f, 0.5f, 0f, -8f, 16f, 8f);
+                var cell = NewRect("LegendItem", grid);
+                var dot = NewRect("Dot", cell);
+                Anchor(dot, 0f, 0.5f, 0f, 0.5f, 0f, -7f, 14f, 7f);
                 var di = dot.gameObject.AddComponent<Image>();
                 di.color = hero.ColorLight;
                 di.raycastTarget = false;
-                var t = AddText(row, HeroName(hero), 17f, Light, TextAlignmentOptions.Left, false);
-                Anchor(t.rectTransform, 0f, 0f, 1f, 1f, 24f, 0f, 0f, 0f);
+                var t = AddText(cell, HeroName(hero), 16f, Light, TextAlignmentOptions.Left, false);
+                Fit(t, 12f);
+                Anchor(t.rectTransform, 0f, 0f, 1f, 1f, 20f, 0f, 0f, 0f);
             }
         }
 
@@ -362,16 +374,18 @@ namespace LektorPL.Core
             return new KeyValuePair<string, KeyValuePair<int, List<Color>>>(name, new KeyValuePair<int, List<Color>>(value, colors));
         }
 
+        /// <summary>Wiersz broni: nazwa i liczba nad paskiem na całą szerokość (nazwa nie dzieli miejsca z paskiem).</summary>
         private void Bar(RectTransform panel, string name, int value, int max, List<Color> colors)
         {
             var row = NewRect("Bar", panel);
-            Fixed(row, 32f);
+            Fixed(row, 38f);
             var label = AddText(row, name, 17f, Light, TextAlignmentOptions.Left, false);
-            label.enableWordWrapping = false;
-            label.overflowMode = TextOverflowModes.Ellipsis;
-            Anchor(label.rectTransform, 0f, 0f, 0.46f, 1f, 0f, 0f, -6f, 0f);
+            Fit(label, 13f);
+            Anchor(label.rectTransform, 0f, 1f, 1f, 1f, 0f, -22f, -40f, 0f);
+            var v = AddText(row, value.ToString(Pl), 17f, Light, TextAlignmentOptions.Right, true);
+            Anchor(v.rectTransform, 1f, 1f, 1f, 1f, -40f, -22f, 0f, 0f);
             var track = NewRect("Track", row);
-            Anchor(track, 0.46f, 0.2f, 1f, 0.8f, 0f, 0f, -38f, 0f);
+            Anchor(track, 0f, 0f, 1f, 0f, 0f, 3f, 0f, 14f);
             var ti = track.gameObject.AddComponent<Image>();
             ti.color = Track;
             ti.raycastTarget = false;
@@ -379,79 +393,70 @@ namespace LektorPL.Core
             if (colors.Count == 0) colors = new List<Color> { Dim };
             for (int i = 0; i < colors.Count; i++)                     // wspólna klasa: pasek dzielony między bohaterów
                 Fill(track, frac * i / colors.Count, frac * (i + 1) / colors.Count, colors[i]);
-            var v = AddText(row, value.ToString(Pl), 18f, Light, TextAlignmentOptions.Right, true);
-            Anchor(v.rectTransform, 1f, 0f, 1f, 1f, -34f, 0f, 0f, 0f);
         }
 
         private void Team(RectTransform panel, QuestStats s)
         {
-            Header(panel, "Drużyna", 26f);
+            Header(panel, "Drużyna");
             foreach (var hero in s.Heroes)
             {
+                bool shared = hero.SharedWith.Count > 0;
                 var row = NewRect("Hero", panel);
-                Fixed(row, 92f);
+                Fixed(row, shared ? 92f : 76f);
                 var frame = NewRect("Portrait", row);
-                Anchor(frame, 0f, 0.5f, 0f, 0.5f, 0f, -36f, 72f, 36f);
-                var bg = frame.gameObject.AddComponent<Image>();
-                bg.color = hero.ColorDark;
-                bg.raycastTarget = false;
-                var sprite = Portrait(hero.PortraitPath);
-                if (sprite != null)
-                {
-                    var pic = NewRect("Image", frame);
-                    Stretch(pic);
-                    var pi = pic.gameObject.AddComponent<Image>();
-                    pi.sprite = sprite;
-                    pi.preserveAspect = true;
-                    pi.raycastTarget = false;
-                }
+                Anchor(frame, 0f, 0.5f, 0f, 0.5f, 0f, -Portrait / 2f, Portrait, Portrait / 2f);
+                var sprite = PortraitSprite(hero.PortraitPath);
+                var pi = frame.gameObject.AddComponent<Image>();
+                pi.raycastTarget = false;
+                if (sprite != null) { pi.sprite = sprite; pi.preserveAspect = true; }
+                else pi.color = hero.ColorDark;
+
                 var text = NewRect("Text", row);
-                Anchor(text, 0f, 0f, 1f, 1f, 82f, 2f, 0f, -2f);
-                Column(text, 1f, 0);
-                var name = Line(text, HeroName(hero) + "  <size=15><color=#" + Hex(HealthColor(hero.Health)) + ">"
-                    + HealthText(hero.Health) + "</color></size>", 19f, hero.ColorLight, true);
-                name.enableWordWrapping = false;
-                string fav = hero.Favorite.HasValue ? ClassName(hero.Favorite.Value) : "–";
-                Line(text, "Ataki: " + hero.Attacks + " · ulubiona: " + fav, 16f, Light);
-                if (hero.SharedWith.Count > 0)
+                Anchor(text, 0f, 0f, 1f, 1f, Portrait + 10f, 0f, 0f, 0f);
+                var col = Column(text, 0f, 0);
+                col.childAlignment = TextAnchor.MiddleLeft;
+                var name = Line(text, HeroName(hero), 19f, hero.ColorLight, true);
+                name.fontSizeMin = 14f;
+                Line(text, HealthText(hero.Health), 14f, HealthColor(hero.Health));
+                string fav = hero.Favorite.HasValue ? " · " + ClassName(hero.Favorite.Value) : "";
+                IconLine(text, "icon_action_combat", hero.Attacks.ToString(Pl) + fav, 15f, Light);
+                string feats = "wyzwania: " + hero.FeatsCompleted.ToString(Pl);
+                if (hero.FeatGained > 0.001f) feats += " · postęp +" + hero.FeatGained.ToString("0.##", Pl);
+                Line(text, feats, 14f, Dim);
+                if (shared)
                 {
                     var names = new List<string>();
                     foreach (int i in hero.SharedWith) names.Add(HeroName(s.Heroes[i]));
-                    Line(text, "wspólna broń z: " + string.Join(", ", names.ToArray()), 14f, Dim);
+                    Line(text, "wspólna broń: " + string.Join(", ", names.ToArray()), 13f, Dim);
                 }
-                Line(text, "Wyzwania: " + hero.FeatsCompleted + " · postęp +" + hero.FeatGained.ToString("0.##", Pl), 16f, Light);
             }
         }
 
-        private void Loot(RectTransform panel, QuestStats s, float width)
+        private void Loot(RectTransform panel, QuestStats s)
         {
-            Header(panel, "Łup według rodzaju", 26f);
-            var grid = NewRect("Loot", panel);
-            var g = grid.gameObject.AddComponent<GridLayoutGroup>();
-            g.cellSize = new Vector2((width - 8f) / 2f, 60f);
-            g.spacing = new Vector2(8f, 8f);
-            g.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            g.constraintCount = 2;
-            Fixed(grid, 60f * 2f + 8f);
-            LootTile(grid, s.LootItems, "przedmioty");
-            LootTile(grid, s.LootMaterials, "materiały");
-            LootTile(grid, s.LootRecipes, "przepisy");
-            LootTile(grid, s.LootConsumables, "mikstury");
+            Header(panel, "Łup");
+            LootRow(panel, "icon_coins", Color.white, "złoto", s.Gold);
+            LootRow(panel, "icon_trinket", Light, "przedmioty", s.LootItems);
+            LootRow(panel, "icon_materials", Light, "materiały", s.LootMaterials);
+            LootRow(panel, "miniviewrecipe_bg", Color.white, "przepisy", s.LootRecipes);
+            LootRow(panel, "icon_consumables", Light, "mikstury", s.LootConsumables);
         }
 
-        private void LootTile(RectTransform grid, int value, string label)
+        private void LootRow(RectTransform panel, string icon, Color tint, string label, int value)
         {
-            var rt = NewRect("Tile", grid);
-            var bg = rt.gameObject.AddComponent<Image>();
-            Paint(bg, _tileSprite, _tileType, _tileColor);
-            var v = AddText(rt, value.ToString(Pl), 26f, value > 0 ? Light : Dim, TextAlignmentOptions.Left, true);
-            Anchor(v.rectTransform, 0f, 0f, 0.4f, 1f, 12f, 0f, 0f, 0f);
-            var l = AddText(rt, label, 16f, Dim, TextAlignmentOptions.Left, false);
-            Anchor(l.rectTransform, 0.4f, 0f, 1f, 1f, 0f, 0f, -6f, 0f);
+            var row = NewRect("LootRow", panel);
+            Fixed(row, 28f);
+            bool hasIcon = Icon(row, icon, value > 0 ? tint : tint * new Color(1f, 1f, 1f, 0.45f), 0f, 24f) != null;
+            var l = AddText(row, label, 17f, value > 0 ? Light : Dim, TextAlignmentOptions.Left, false);
+            Fit(l, 13f);
+            Anchor(l.rectTransform, 0f, 0f, 1f, 1f, hasIcon ? 32f : 0f, 0f, -56f, 0f);
+            var v = AddText(row, value.ToString(Pl), 18f, value > 0 ? Light : Dim, TextAlignmentOptions.Right, true);
+            Anchor(v.rectTransform, 1f, 0f, 1f, 1f, -56f, 0f, 0f, 0f);
         }
 
         // ---------- klocki ----------
 
+        /// <summary>Panel boczny: kamienne tło i ozdobna ramka z panelu wroga gry; bez grafik zwykły ciemny prostokąt.</summary>
         private RectTransform Box(string name, RectTransform root, Vector2 pivot, Vector2 pos, Vector2 size)
         {
             var rt = NewRect(name, root);
@@ -461,8 +466,25 @@ namespace LektorPL.Core
             rt.anchoredPosition = pos;
             rt.sizeDelta = size;
             var bg = rt.gameObject.AddComponent<Image>();
-            Paint(bg, _boxSprite, _boxType, _boxColor);
-            Column(rt, 4f, 12);
+            bg.raycastTarget = false;
+            var stone = Ui("enemytab_bg");
+            if (stone != null) { bg.sprite = stone; bg.type = Image.Type.Tiled; bg.color = StoneTint; }   // rozciągnięty kamień robi smugi
+            else bg.color = PanelFallback;
+            var frameSprite = Ui("enemytab_frame");
+            if (frameSprite != null)
+            {
+                var fr = NewRect("Frame", rt);
+                Stretch(fr);
+                fr.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
+                var fi = fr.gameObject.AddComponent<Image>();
+                fi.sprite = frameSprite;
+                fi.type = Image.Type.Sliced;
+                fi.pixelsPerUnitMultiplier = FrameScale;              // mniejsze narożniki ramki niż w panelu wroga
+                fi.color = FrameTint;
+                fi.raycastTarget = false;
+            }
+            var col = Column(rt, 4f, 0);
+            col.padding = new RectOffset((int)PadX, (int)PadX, (int)PadTop, (int)PadBottom);   // narożniki ramki nad nagłówkiem
             return rt;
         }
 
@@ -474,7 +496,7 @@ namespace LektorPL.Core
             img.raycastTarget = false;
         }
 
-        private static void Column(RectTransform rt, float spacing, int padding)
+        private static VerticalLayoutGroup Column(RectTransform rt, float spacing, int padding)
         {
             var v = rt.gameObject.AddComponent<VerticalLayoutGroup>();
             v.padding = new RectOffset(padding, padding, padding, padding);
@@ -483,6 +505,7 @@ namespace LektorPL.Core
             v.childControlWidth = v.childControlHeight = true;
             v.childForceExpandWidth = true;
             v.childForceExpandHeight = false;
+            return v;
         }
 
         private static void Fixed(RectTransform rt, float height)
@@ -492,19 +515,73 @@ namespace LektorPL.Core
             le.flexibleHeight = 0f;
         }
 
-        private void Header(RectTransform parent, string text, float size)
+        private static void Spacer(RectTransform parent, float height)
         {
-            var t = AddText(parent, text, size, Gold, TextAlignmentOptions.Left, true);
-            t.enableWordWrapping = false;
-            Fixed(t.rectTransform, size + 12f);
+            Fixed(NewRect("Spacer", parent), height);
+        }
+
+        /// <summary>Nagłówek sekcji jak w oknach gry: złoty tekst na środku i ornament pod spodem.</summary>
+        private void Header(RectTransform parent, string text)
+        {
+            var t = AddText(parent, text, 24f, Gold, TextAlignmentOptions.Center, true);
+            Fit(t, 17f);
+            Fixed(t.rectTransform, 30f);
+            var line = Ui("underline");
+            if (line == null) { Spacer(parent, 4f); return; }
+            var rt = NewRect("Underline", parent);
+            Fixed(rt, 18f);
+            var img = rt.gameObject.AddComponent<Image>();
+            img.sprite = line;
+            img.preserveAspect = true;
+            img.color = Gold;
+            img.raycastTarget = false;
         }
 
         private TMP_Text Line(RectTransform parent, string text, float size, Color color, bool bold = false)
         {
             var t = AddText(parent, text, size, color, TextAlignmentOptions.Left, bold);
-            t.overflowMode = TextOverflowModes.Ellipsis;
-            Fixed(t.rectTransform, size + 5f);
+            Fit(t, Mathf.Max(10f, size - 4f));
+            Fixed(t.rectTransform, size + 4f);
             return t;
+        }
+
+        /// <summary>Wiersz z ikoną gry na początku (np. skrzyżowane miecze przy atakach).</summary>
+        private void IconLine(RectTransform parent, string icon, string text, float size, Color color)
+        {
+            var row = NewRect("IconLine", parent);
+            Fixed(row, size + 4f);
+            bool has = Icon(row, icon, Color.white, 0f, size + 4f) != null;
+            var t = AddText(row, text, size, color, TextAlignmentOptions.Left, false);
+            Fit(t, Mathf.Max(10f, size - 4f));
+            Anchor(t.rectTransform, 0f, 0f, 1f, 1f, has ? size + 8f : 0f, 0f, 0f, 0f);
+        }
+
+        /// <summary>Ikona z grafik gry przy lewej (side 0) albo prawej (side 1) krawędzi wiersza; null, gdy jej brak.</summary>
+        private Image Icon(RectTransform row, string sprite, Color tint, float side, float size)
+        {
+            var sp = Ui(sprite);
+            if (sp == null) return null;
+            var rt = NewRect("Icon", row);
+            rt.anchorMin = rt.anchorMax = new Vector2(side, 0.5f);
+            rt.pivot = new Vector2(side, 0.5f);
+            rt.anchoredPosition = Vector2.zero;
+            rt.sizeDelta = new Vector2(size, size);
+            var img = rt.gameObject.AddComponent<Image>();
+            img.sprite = sp;
+            img.preserveAspect = true;
+            img.color = tint;
+            img.raycastTarget = false;
+            return img;
+        }
+
+        /// <summary>Tekst w jednym wierszu: najpierw zmniejsza czcionkę do <paramref name="min"/>, dopiero potem skraca.</summary>
+        private static void Fit(TMP_Text t, float min)
+        {
+            t.enableWordWrapping = false;
+            t.enableAutoSizing = true;
+            t.fontSizeMax = t.fontSize;
+            t.fontSizeMin = Mathf.Min(min, t.fontSize);
+            t.overflowMode = TextOverflowModes.Ellipsis;
         }
 
         private static void Fill(RectTransform track, float from, float to, Color color)
@@ -565,6 +642,25 @@ namespace LektorPL.Core
             rt.sizeDelta = new Vector2(w, h);
         }
 
+        /// <summary>Grafika z pakietu interfejsu gry (<c>d3/uitextures</c>, wczytany przy starcie gry); null, gdy jej nie ma.</summary>
+        private Sprite Ui(string name)
+        {
+            if (_sprites.TryGetValue(name, out Sprite s)) return s;
+            s = null;
+            try
+            {
+                if (SingletonBehaviour<PersistentGameObject>.IsInitialized)
+                {
+                    var bundle = SingletonBehaviour<PersistentGameObject>.Instance.ABLoader.GetBundle(UiBundle);
+                    if (bundle != null) s = bundle.LoadAsset<Sprite>(UiPath + name + ".png");
+                }
+            }
+            catch (Exception e) { _log.Error("summary_sprite", e); }
+            if (s == null) _log.Write(_log.New("summary_sprite").Str("missing", name));
+            _sprites[name] = s;
+            return s;
+        }
+
         // ---------- teksty ----------
 
         private static string Loc(string key)
@@ -618,7 +714,7 @@ namespace LektorPL.Core
                                  : (total / 60) + ":" + (total % 60).ToString("00");
         }
 
-        private Sprite Portrait(string path)
+        private Sprite PortraitSprite(string path)
         {
             if (string.IsNullOrEmpty(path) || !SingletonBehaviour<PersistentGameObject>.IsInitialized) return null;
             try { return SingletonBehaviour<PersistentGameObject>.Instance.ABLoader.LoadAsset<Sprite>(path); }
