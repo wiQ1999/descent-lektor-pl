@@ -313,6 +313,24 @@ Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej 
 .venv/Scripts/python -I analysis/tools/recast_e20.py adopt nv_x=B gilliam=A nv_y=-
 ```
 
+- Runda 2 E20: te same kroki z `--round 2`, profile w `analysis/tools/voice_designs_e20_r2.json` (czyste projekty bez obróbki referencji, `keep` z rundy 1, klon z opisem w `clone_instructs`), wyniki w `analysis/work/compare/e20_recast/r2/`. Grupy wrogów o tej samej nazwie (`_groups`: jeden głos dla członków) mają własną stronę `r2/grupy.html`, a wybór numeru opcji przejmuje `group-adopt`:
+
+```bash
+.venv/Scripts/python -I analysis/tools/recast_e20.py group-plan --round 2
+```
+
+```bash
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/recast_e20.py group-lines --round 2
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/recast_e20.py group-page --round 2
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/recast_e20.py group-adopt --round 2 bandyta=3 hybryda=1
+```
+
 - Zmiany obsady po odsłuchu (D109): kandydaci OmniVoice (dwa opisy, dwa ziarna, wariant z obróbką) i podglądy ElevenLabs na jednej stronie `analysis/work/compare/m4_recast/index.html`. Wybór z odsłuchu przejmuje `adopt` (litera A–C, `-` bez zmian), nowe profile ElevenLabs wpisujemy do `direction.ELEVEN_RECAST`, potem `build --release m4`:
 
 ```bash

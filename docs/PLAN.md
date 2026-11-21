@@ -504,6 +504,7 @@ Cel: zmiany i poprawki 60 głosów z odsłuchu zestawienia całej gry `m4_cast` 
 3. Kandydaci OmniVoice jak w D109: dla każdego głosu trzy wyraźnie różne kandydatury i obecny głos na stronie odsłuchu.
    - Nowy głos (31): Levirax (za podobny do narratora), smok-duch z Q13 (bez opisu ducha), Siostra krwi (klon Ne'Krul z obróbką) i mówcy bez imienia oznaczeni jako generyczni albo niepasujący do postaci (bossowie, smoki, ork, kobieta zamiast szeptu).
    - Ten sam profil, lepsza jakość (19): nowe ziarna i oczyszczona referencja dla szeptu, robotycznego brzmienia, echa, nosowego brzmienia, szelestu (Gilliam), słabej jakości oraz okrzyków za mało dynamicznych.
+   - Runda 1 (2026-11-21): 17 głosów przyjętych. Runda 2: czyste projekty bez obróbki referencji, jeden głos dla męskich bandytów (wybór z istniejących), przegląd innych typów wrogów z kilkoma głosami, Gilliam z projektu, fae jako chochlik.
 4. Ponowne podejścia sześciu fragmentów: Kapitan z FoF (pauza na początku, wymowa końcówki), Więzień (wymowa końcówki), Bandyta-nekromanta (ucięta końcówka) i trzy fragmenty Baelziffara z „ocalić” i „najgłośniej” (błąd wymowy, którego Whisper nie wychwycił). Gdy nowe podejście dalej myli słowo, zapis fonetyczny w `normalize.PHONETIC`.
 5. Wybór z odsłuchu (`adopt`), wpis w `docs/CASTING.md`.
 6. Generowanie zmienionych głosów w całej grze, ocena, ponowne podejścia, `finalize` z efektami i tempem z kroku 1, zestawienie `m4_cast` do kontroli.
