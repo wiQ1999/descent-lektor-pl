@@ -15,7 +15,7 @@ namespace LektorPL.Core
     /// Panel statystyk w oknie podsumowania misji gry (E20, D114). Okno gry (<c>Panel_QuestSummary</c>) ma stały rozmiar
     /// 1250×920 (<c>Image_ScrollBG</c>), a łup przewija się w środku, więc panele stoją po bokach okna:
     /// po lewej wykresy bohaterów (ataki bohaterów, ataki broni, wyzwania; portret i nazwa, słupki malejąco),
-    /// po prawej przebieg misji i łup (ikona, nazwa, wartość) oraz na dole walka i interakcje, nad przyciskiem „Dalej”.
+    /// po prawej przebieg misji i łup (ikona, nazwa, wartość) oraz balans gry (walka/interakcje), nad przyciskiem „Dalej”.
     /// Płótno gry ma wysokość 1080 i szerokość zależną od proporcji ekranu; gdy na panel boczny zostaje mniej niż
     /// <see cref="SideMin"/>, zmniejszamy okno gry skalą i przywracamy ją po zamknięciu.
     ///
@@ -188,7 +188,7 @@ namespace LektorPL.Core
             Weapons(left, s, bars);
             Spacer(left, 10f);
             Feats(left, s);
-            // Prawy panel: przebieg misji, łup i na dole walka i interakcje.
+            // Prawy panel: przebieg misji, łup i balans gry (walka/interakcje).
             Mission(right, s);
             Loot(right, s);
             Balance(right, s);
@@ -314,14 +314,14 @@ namespace LektorPL.Core
             else { img.sprite = Ui("generic_circle_sprite"); img.color = hero.ColorLight; }
         }
 
-        // ---------- sekcje: prawy panel (przebieg misji, łup, walka i interakcje) ----------
+        // ---------- sekcje: prawy panel (przebieg misji, łup, balans gry) ----------
 
         /// <summary>Przebieg misji: wartości jedna pod drugą, każda z ikoną gry.</summary>
         private void Mission(RectTransform panel, QuestStats s)
         {
             Header(panel, "Przebieg misji");
             StatRow(panel, "icon_movement", false, "rundy", s.Rounds.ToString(Pl));
-            StatRow(panel, "generic_loadingindicator", false, "śr. czas rundy", Clock(s.SecondsPerRound));
+            StatRow(panel, "generic/generic_loadingindicator", false, "śr. czas rundy", Clock(s.SecondsPerRound));
             StatRow(panel, "icon_action_combat", true, "ataki", s.Attacks.ToString(Pl));
             StatRow(panel, "icon_action_interact", true, "interakcje", s.Interactions.ToString(Pl));
             StatRow(panel, "icon_coins", false, "złoto na rundę", s.GoldPerRound.ToString(s.GoldPerRound < 10f ? "0.#" : "0", Pl));
@@ -339,14 +339,11 @@ namespace LektorPL.Core
             StatRow(panel, "icon_consumables", false, "mikstury", s.LootConsumables.ToString(Pl));
         }
 
-        /// <summary>Walka i interakcje: osobna sekcja na dole panelu, pasek proporcji z ikonami i procentami pod spodem.</summary>
+        /// <summary>Balans gry: osobna sekcja pod łupem, pasek walka/interakcje z ikonami i procentami pod spodem.</summary>
         private void Balance(RectTransform panel, QuestStats s)
         {
-            var push = NewRect("Push", panel);                      // dosuwa sekcję do dołu panelu
-            var le = push.gameObject.AddComponent<LayoutElement>();
-            le.minHeight = 10f;
-            le.flexibleHeight = 1f;
-            Header(panel, "Walka i interakcje");
+            Spacer(panel, 10f);
+            Header(panel, "Balans gry");
             int total = s.CombatActions + s.Interactions;
             var bar = NewRect("Ratio", panel);
             Fixed(bar, 14f);
