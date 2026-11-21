@@ -8,7 +8,7 @@ Efekty: duch (Kathryn, smok z Q13) i głos w głowie (Baelziffar) na gotowych pl
 
     .venv/Scripts/python -I analysis/tools/e20_samples.py pick
     <omni> -I analysis/tools/e20_samples.py gen        # <omni> = "$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe"
-    .venv/Scripts/python -I analysis/tools/e20_samples.py page
+    .venv/Scripts/python -I analysis/tools/e20_samples.py page [--effects]     # --effects: tylko efekty (runda 2)
 
 Wyniki w analysis/work/compare/e20_probki/ (poza Git). Na konsolę idą tylko liczby.
 """
@@ -28,10 +28,13 @@ OUT = os.path.join(paths.WORK, 'compare', 'e20_probki')
 PICKS = os.path.join(OUT, 'picks.json')
 VAERIX_FACTOR = 1.2
 SCENE_SPEED = 1.4
-EFFECTS = {'kathryn': ('ghost_a', 'ghost_b', 'ghost_c'), 'nv_q13_smok': ('ghost_a', 'ghost_b', 'ghost_c'),
-           'nv_baelziffar': ('mind_a', 'mind_b', 'mind_c')}
+EFFECTS = {'kathryn': ('ghost_b2', 'ghost_b3', 'ghost_c2', 'ghost_c3'), 'nv_q13_smok': ('ghost_b2', 'ghost_b3', 'ghost_c2', 'ghost_c3'),
+           'nv_baelziffar': ('mind_d', 'mind_e', 'mind_f', 'mind_g')}    # runda 2 (2026-11-21); runda 1: ghost_a–c, mind_a–c
 FX_LABELS = {'ghost_a': 'duch eteryczny', 'ghost_b': 'duch z zaświatów (warstwa niżej)', 'ghost_c': 'widmo (pogłos narastający)',
-             'mind_a': 'w głowie: blisko, podwojony', 'mind_b': 'demon: oktawa niżej i szept', 'mind_c': 'telepatia: modulacja i echo'}
+             'mind_a': 'w głowie: blisko, podwojony', 'mind_b': 'demon: oktawa niżej i szept', 'mind_c': 'telepatia: modulacja i echo',
+             'ghost_b2': 'z zaświatów, słabiej', 'ghost_b3': 'z zaświatów, najsłabiej', 'ghost_c2': 'widmo, słabiej',
+             'ghost_c3': 'widmo, najsłabiej', 'mind_d': 'chór szeptów wokół głosu', 'mind_e': 'wnętrze czaszki: stłumiony, pulsujący',
+             'mind_f': 'piekielny: niżej, nasycenie, narastanie', 'mind_g': 'echo w myślach: ciemniejące powtórzenia'}
 COUNT = {'scene': 5, 'window': 2, 'vaerix': 5, 'kathryn': 3, 'nv_q13_smok': 2, 'nv_baelziffar': 3}
 
 
@@ -147,7 +150,7 @@ document.querySelectorAll('audio').forEach(a => a.addEventListener('play', () =>
 '''
 
 
-def page():
+def page(effects_only=False):
     import soundfile as sf
     from lektor import effects, finalize
     from lektor.companion.control import stretch
@@ -169,6 +172,8 @@ def page():
     sections = collections.OrderedDict((k, []) for k in ('scene', 'window', 'vaerix', 'kathryn', 'nv_q13_smok', 'nv_baelziffar'))
     counts = collections.Counter()
     for i in picks['items']:
+        if effects_only and i['kind'] not in EFFECTS:
+            continue
         y, sr = sf.read(os.path.join(paths.AUDIO, i['file']), dtype='float32')
         fid, rows = i['fid'], []
         rows.append(row('obecne', *write('%s_obecne.wav' % fid, y, sr), i['chars']))
@@ -185,7 +190,7 @@ def page():
         for fx in EFFECTS.get(i['kind'], ()):
             rows.append(row(FX_LABELS[fx], *write('%s_%s.wav' % (fid, fx), effects.apply(y, sr, fx), sr), i['chars']))
             counts[fx] += 1
-        sections[i['kind']].append('<div class="card"><q>%s</q>%s<div class="meta"><code>%s</code> · %s · tempo %s</div></div>' % (
+        sections[i['kind']].append('<div class="card"><q>%s</q>%s<div class="meta"><code>%s</code> · %s · tempo fragmentu %s</div></div>' % (
             e(i['text']), ''.join(rows), e(fid), e(i['grp']), 'naturalne' if i['speed'] is None else '%.2f' % i['speed']))
     titles = {'scene': 'Narracja scen: obecnie tempo naturalne, cel jak w oknach narratora',
               'window': 'Dla porównania: narrator w oknach gry (tempo 1,4, bez zmian)',
@@ -194,13 +199,22 @@ def page():
               'nv_q13_smok': 'Smok-duch z Q13: efekt ducha na obecnym głosie (nowy głos przyjdzie w kroku 3)',
               'nv_baelziffar': 'Baelziffar: głos w głowie Galadena'}
     body = ''.join('<h2>%s</h2>%s' % (e(titles[k]), ''.join(v)) for k, v in sections.items() if v)
-    lead = ('Wszystkie pliki przycięte i wyrównane do −20 LUFS jak w paczce. WSOLA dla narracji scen przyspiesza o '
-            'stosunek tempa okien do scen w akcie 1 (× %.2f), model czyta od nowa z tempem 1,4.' % ratio)
-    with open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8') as f:
+    if effects_only:
+        lead = ('Runda 2 efektów: ghost_b i ghost_c słabiej (wariant 2 mocniej, 3 najsłabiej) z ogonem najwyżej 0,35 s '
+                'po mowie, wyciszanym na końcu, oraz cztery nowe propozycje głosu w głowie. Pliki wyrównane do −20 LUFS.')
+        name = 'efekty_r2.html'
+    else:
+        lead = ('Wszystkie pliki przycięte i wyrównane do −20 LUFS jak w paczce. WSOLA dla narracji scen przyspiesza o '
+                'stosunek tempa okien do scen w akcie 1 (× %.2f), model czyta od nowa z tempem 1,4.' % ratio)
+        name = 'index.html'
+    with open(os.path.join(OUT, name), 'w', encoding='utf-8') as f:
         f.write(PAGE.format(lead=e(lead), body=body))
     print('próbki: %s' % dict(counts))
-    print(os.path.join(OUT, 'index.html'))
+    print(os.path.join(OUT, name))
 
 
 if __name__ == '__main__':
-    {'pick': pick, 'gen': gen, 'check': check, 'page': page}[sys.argv[1]]()
+    if sys.argv[1] == 'page':
+        page('--effects' in sys.argv)
+    else:
+        {'pick': pick, 'gen': gen, 'check': check}[sys.argv[1]]()

@@ -11,6 +11,8 @@ Warianty:
     mind_a   głos w głowie: blisko i sucho, podwojenie z odstrojeniem, krótkie wczesne odbicia, pasmo zawężone
     mind_b   demon w głowie: warstwa oktawę niżej i szept z tej samej mowy, krótkie odbicia
     mind_c   telepatia: lekka modulacja kołowa, flanger i echo 140 ms
+Runda 2 (2026-11-21): ghost_b2/b3 i ghost_c2/c3 to ghost_b i ghost_c słabiej (2 mocniej, 3 najsłabiej), z ogonem
+najwyżej 0,35 s po mowie wyciszanym na końcu; mind_d–mind_g to nowe propozycje głosu w głowie (opisy przy funkcjach).
 """
 import numpy as np
 
@@ -158,8 +160,107 @@ def mind_c(y, sr):
     return out
 
 
+def _tail(out, n_dry, sr, keep=0.35, fade=0.25):
+    """Ogon efektu po końcu mowy najwyżej `keep` s, ostatnie `fade` s wyciszane cosinusem (bez urwania)."""
+    end = min(len(out), n_dry + int(keep * sr))
+    out = out[:end].copy()
+    f = min(int(fade * sr), end)
+    out[end - f:] *= (0.5 + 0.5 * np.cos(np.linspace(0, np.pi, f))).astype(np.float32)
+    return out
+
+
+def _ghost_b(y, sr, low_mix, rev_s, wet):
+    n = len(y)
+    y = _filt(y, 'highpass', 120, sr)
+    c = _chorus(y + low_mix * _shift(y, sr, -5), sr, 0.3)
+    c = _filt(c, 'lowpass', 7000, sr)
+    rev = _conv(c, _ir(sr, rev_s, 0.03, 4000))
+    return _tail(_mix(c, _wet(c, rev, wet)), n, sr)
+
+
+def ghost_b2(y, sr):
+    return _ghost_b(y, sr, 0.3, 1.6, 0.45)
+
+
+def ghost_b3(y, sr):
+    return _ghost_b(y, sr, 0.18, 1.2, 0.3)
+
+
+def _ghost_c(y, sr, swell_mix, rev_mix, chorus):
+    n = len(y)
+    y = _filt(y, 'highpass', 150, sr)
+    ir = _ir(sr, 0.8, 0.0, 5000)
+    pre = len(ir) - 1
+    swell = _conv(y[::-1], ir)[::-1]
+    dry = np.concatenate([np.zeros(pre, np.float32), _chorus(y, sr, chorus)])
+    rev = _conv(dry, _ir(sr, 1.0, 0.02, 4500))
+    out = _mix(_mix(dry, _wet(dry, swell, swell_mix)), _wet(dry, rev, rev_mix))
+    lead = int(0.25 * sr)       # narastanie najwyżej 0,25 s przed słowem
+    out = out[max(0, pre - lead):]
+    return _tail(out, n + min(pre, lead), sr)
+
+
+def ghost_c2(y, sr):
+    return _ghost_c(y, sr, 0.35, 0.22, 0.2)
+
+
+def ghost_c3(y, sr):
+    return _ghost_c(y, sr, 0.22, 0.15, 0.15)
+
+
+def mind_d(y, sr):
+    """Chór szeptów: sucha mowa i trzy szepty z niej, odstrojone i lekko opóźnione, jak głosy wokół myśli."""
+    y = _filt(y, 'highpass', 120, sr)
+    wh = _whisper(y, sr)
+    out = y.copy()
+    for ms, steps, g in ((35, 0.5, 0.22), (60, -0.7, 0.2), (90, 1.2, 0.16)):
+        layer = _shift(wh, sr, steps)
+        d = int(ms * sr / 1000)
+        out[d:] += _wet(y, layer, g)[:len(y) - d]
+    return out
+
+
+def mind_e(y, sr):
+    """Wnętrze czaszki: stłumiony, bliski głos, ciasne odbicia 80 ms i powolne pulsowanie."""
+    from scipy.signal import iirpeak, lfilter
+    y = _filt(_filt(y, 'highpass', 90, sr), 'lowpass', 3200, sr)
+    b, a = iirpeak(420, 2.0, fs=sr)
+    y = y + 0.6 * lfilter(b, a, y).astype(np.float32)
+    n = np.arange(len(y))
+    y = y * (1 - 0.12 * (0.5 + 0.5 * np.sin(2 * np.pi * 4.5 * n / sr))).astype(np.float32)
+    room = _conv(y, _ir(sr, 0.08, 0.002, 2500))
+    return _mix(y, _wet(y, room, 0.45))
+
+
+def mind_f(y, sr):
+    """Piekielny: całość 3 półtony niżej, nasycenie tanh w tle i krótkie narastanie przed słowem."""
+    n = len(y)
+    low = _shift(_filt(y, 'highpass', 80, sr), sr, -3)
+    sat = np.tanh(4.0 * low / (np.max(np.abs(low)) + 1e-9)).astype(np.float32)
+    d = low + _wet(low, _filt(sat, 'lowpass', 5000, sr), 0.35)
+    ir = _ir(sr, 0.4, 0.0, 4000)
+    pre = len(ir) - 1
+    swell = _conv(d[::-1], ir)[::-1]
+    out = _mix(np.concatenate([np.zeros(pre, np.float32), d]), _wet(d, swell, 0.3))
+    return _tail(out[pre - int(0.15 * sr):], n + int(0.15 * sr), sr)
+
+
+def mind_g(y, sr):
+    """Echo w myślach: dwa powtórzenia po 230 ms, coraz ciemniejsze i niższe, sucha mowa na wierzchu."""
+    n = len(y)
+    out = _pad(y, sr, 0.8)
+    rep = y
+    for k in (1, 2):
+        rep = _filt(_shift(rep, sr, -0.6), 'lowpass', 3500 / k, sr)
+        d = int(0.23 * k * sr)
+        out[d:d + n] += _wet(y, rep, 0.38 / k)
+    return _tail(out, n, sr, keep=0.5, fade=0.3)
+
+
 VARIANTS = {'ghost_a': ghost_a, 'ghost_b': ghost_b, 'ghost_c': ghost_c,
-            'mind_a': mind_a, 'mind_b': mind_b, 'mind_c': mind_c}
+            'ghost_b2': ghost_b2, 'ghost_b3': ghost_b3, 'ghost_c2': ghost_c2, 'ghost_c3': ghost_c3,
+            'mind_a': mind_a, 'mind_b': mind_b, 'mind_c': mind_c,
+            'mind_d': mind_d, 'mind_e': mind_e, 'mind_f': mind_f, 'mind_g': mind_g}
 
 
 def apply(y, sr, name):
