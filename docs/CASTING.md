@@ -266,3 +266,38 @@ OmniVoice (`nv_*`, nowe referencje; bez zmian zostały `nv_q11_pacjentka`, `nv_q
 | `nv_straznik` | C | `male, elderly, moderate pitch` | 5 | 8,23 s, SHA `88ff7f9f` |
 | `nv_wiesniak` | C | `male, middle-aged, moderate pitch` | 5 | 8,28 s, SHA `d1996431` |
 | `nv_wiezien` | A | `male, middle-aged, high pitch, tremor 0.3` | 41 | 7,96 s, SHA `2ca64846` |
+
+## E20: zmiany po odsłuchu całej gry (D114)
+
+Kandydaci OmniVoice: `analysis/tools/recast_e20.py`, profile w `analysis/tools/voice_designs_e20.json` (50 głosów: 31 nowych, 19 poprawek jakości). Strona odsłuchu ma portret z gry (postać albo typ wroga), opis postaci, obecny głos i tę samą kwestię z gry u każdego kandydata.
+
+Runda 1 (2026-11-21), 17 głosów przyjętych. Smok-duch z Q13 dostaje w `finalize` efekt `ghost_c2`.
+
+| Głos | Wybór | Opis OmniVoice i obróbka | Ziarno | Referencja |
+|---|---|---|---:|---|
+| `nv_a2q11_medyk` | A | `male, young adult, moderate pitch` | 53 | 6,36 s, SHA `39d8111c` |
+| `nv_a2q8_bibliotekarka` | C | `female, middle-aged, moderate pitch` | 7 | 9,48 s, SHA `432bd498` |
+| `nv_a2q8_kronikarz` | B | `male, middle-aged, high pitch, tremor 0.3, shift +1` | 7 | 10,68 s, SHA `ac9daacc` |
+| `nv_crayleth` | C | `female, middle-aged, low pitch` | 29 | 9,04 s, SHA `e3d5419e` |
+| `nv_gorzae` | C | `female, middle-aged, low pitch` | 29 | 8,52 s, SHA `5b688317` |
+| `nv_orban` | A | `male, middle-aged, high pitch` | 7 | 8,36 s, SHA `34eebd8f` |
+| `nv_q10_straznik` | C | `male, middle-aged, high pitch` | 7 | 7,00 s, SHA `9bc9c226` |
+| `nv_q11_pacjentka` | C | `female, middle-aged, high pitch` | 29 | 9,36 s, SHA `9d5b0194` |
+| `nv_q11_rodzic` | B | `male, elderly, moderate pitch, tremor 0.2` | 7 | 9,56 s, SHA `07e86603` |
+| `nv_q13_smok` | C | `male, middle-aged, very low pitch, shift -2, growl 0.25` | 29 | 9,56 s, SHA `f3e98b62` |
+| `nv_q14_kucharz` | C | `male, elderly, high pitch` | 29 | 10,59 s, SHA `b6828526` |
+| `nv_q14_wiezien_hybryda` | B | `male, middle-aged, very low pitch` | 7 | 9,48 s, SHA `7174d460` |
+| `nv_q9_blizniaki` | C | `male, teenager, moderate pitch` | 53 | 8,10 s, SHA `9238f4f9` |
+| `nv_ta2_mag` | B | `male, middle-aged, high pitch` | 7 | 9,00 s, SHA `064681cf` |
+| `nv_ta2_sierzant` | B | `male, middle-aged, very low pitch` | 7 | 9,68 s, SHA `7ebd11c7` |
+| `nv_ta2_sluzacy` | B | `male, middle-aged, high pitch` | 29 | 9,65 s, SHA `782f8d00` |
+| `nv_zarzadczyni` | C | `female, middle-aged, low pitch` | 53 | 8,44 s, SHA `4903bdff` |
+
+Pozostałe 33 głosy idą do rundy 2. W 30 żaden kandydat nie pasował, a przy 3 (`nv_fae`, `gilliam`, `nv_a2q3_bandyta`) zabrakło decyzji. Uwagi z odsłuchu:
+
+- Trzaski i chrypienie artefaktów (uwaga „czester”) dotyczyły prawie tylko wariantów z obróbką referencji (rasp, growl, przesunięcie tonu) i odszumionej referencji Gilliama. Wyjątek to lekki trzask w czystym projekcie A fanatyka.
+- Fae to stado drapieżnych stworów z kłami (portret typu wroga), nie wróżka. Głos B brzmiał jak dziecko.
+- Bandyci i inni wrogowie o tej samej nazwie w grze mają mieć jeden głos.
+- `nv_q12_duch` dostaje efekt ducha, a `nv_denavel` klon Galadena ze zmianami.
+- `nv_bandyta` i `nv_q3_herszt`: najlepsze były czyste projekty C. Bandyta ma brzmieć przebiegle i mówić szybciej, herszt kpiąco i złowieszczo.
+- `nv_ta2_04_kobieta`: C, ale czystszy. `nv_q11_zbir` brzmiał robotycznie, a `nv_q11_tlum` za mało wykrzykuje.
