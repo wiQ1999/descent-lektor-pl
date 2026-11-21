@@ -13,8 +13,9 @@ CATALOG = {
 }
 
 
-def player(hero, index, health=0, parts=()):
+def player(hero, index, health=0, parts=(), virtues=(12, 12)):
     return {'HeroId': hero, 'Index': index, 'HealthState': health,
+            'VirtueOneValue': virtues[0], 'VirtueTwoValue': virtues[1],
             'EquippedWeapons': [{'Id': p, 'PartAId': p} for p in parts]}   # ekwipunek nie wpływa na przypisanie klas
 
 
@@ -25,7 +26,7 @@ def save(**summary):
          'StartingFeatPoints': [0.0] * 4}
     q.update(summary)
     return {'AllPlayers': [player('HERO_GALADEN', 0, 0, ['SWORD_A', 'BOW_A']), player('HERO_SYRUS', -1, 0, ['STAFF_A']),
-                           player('HERO_BRYNN', 1, 1, ['SWORD_B', 'STAFF_A'])],
+                           player('HERO_BRYNN', 1, 1, ['SWORD_B', 'STAFF_A'], (16, 10))],
             'GameSceneData': {'GameState': {'QuestId': 'Q_TEST', 'GameDifficulty': 2, 'QuestSummary': q,
                                             'FeatProgresses': [{'RealFeatId': 'F_GAL_2', 'Count': 2}]}}}
 
@@ -65,6 +66,11 @@ def test_weapons_sorted_and_owned_by_class():
 def test_rune_wins_tie_as_favorite():
     r = qs.compute(save(CoreWeaponClassUsage=usage(Sword=2), UniqueWeaponClassUsage=[0, 2, 0, 0]), CATALOG)
     assert r['heroes'][1]['favorite'] == 'Rune'
+
+
+def test_virtues_current_values():
+    r = qs.compute(save(), CATALOG)
+    assert [h['virtues'] for h in r['heroes']] == [[12, 12], [16, 10]]
 
 
 def test_loot_by_kind_with_quantities():

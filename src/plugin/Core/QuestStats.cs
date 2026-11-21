@@ -8,7 +8,7 @@ namespace LektorPL.Core
 {
     /// <summary>
     /// Statystyki misji do panelu podsumowania (E20, D114), wyłącznie z danych, które gra zapisuje sama:
-    /// <c>SerializedGame.QuestSummary</c>, <c>ActivePlayers</c>, <c>GameDifficulty</c> i <c>FeatProgresses</c>.
+    /// <c>SerializedGame.QuestSummary</c>, <c>ActivePlayers</c>, <c>GameDifficulty</c>, <c>FeatProgresses</c> i postawy graczy.
     ///
     /// Liczymy raz, gdy gra pokazuje okno podsumowania. Ataki według klasy broni gra sumuje dla całej drużyny
     /// (<c>CoreWeaponClassUsage</c>, klasa z <c>PartA</c> broni, którą bohater atakował). Każda z 12 zwykłych klas należy
@@ -41,6 +41,8 @@ namespace LektorPL.Core
             public WeaponClasses? Favorite;        // klasa z największą liczbą ataków
             public int FeatsCompleted;
             public float FeatStart, FeatGained;    // pasek gry: część ułamkowa na starcie i przyrost w misji
+            public string VirtueOneKey, VirtueTwoKey;   // postawy bohatera (HeroModel), jak w oknie bohatera gry
+            public int VirtueOne, VirtueTwo;            // bieżące wartości z zapisu (SerializedPlayer)
         }
 
         public string QuestId;
@@ -96,6 +98,10 @@ namespace LektorPL.Core
                     ColorLight = m.ColorLight,
                     ColorDark = m.ColorDark,
                     Health = p.HealthState,
+                    VirtueOneKey = m.VirtueOneKey,
+                    VirtueTwoKey = m.VirtueTwoKey,
+                    VirtueOne = p.VirtueOneValue,
+                    VirtueTwo = p.VirtueTwoValue,
                 };
                 for (int c = 0; c < (int)WeaponClasses.Rune; c++)
                     if (ClassHero((WeaponClasses)c) == m.Id) h.Classes.Add((WeaponClasses)c);
@@ -218,7 +224,8 @@ namespace LektorPL.Core
                 heroesArr.Add(new JsonLine().Str("hero", h.HeroId).Str("health", h.Health.ToString()).Int("attacks", h.Attacks)
                     .Int("rune", h.RuneAttacks).Str("favorite", h.Favorite.HasValue ? h.Favorite.Value.ToString() : null)
                     .Int("feats", h.FeatsCompleted)
-                    .Num("feat_start", h.FeatStart).Num("feat_gained", h.FeatGained));
+                    .Num("feat_start", h.FeatStart).Num("feat_gained", h.FeatGained)
+                    .Raw("virtues", "[" + h.VirtueOne + "," + h.VirtueTwo + "]"));
             }
             return line.Raw("heroes", heroesArr.ToString());
         }

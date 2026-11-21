@@ -53,7 +53,8 @@ def compute(save, catalog):
     for p in active_players(save):
         classes = [c for c, hero in CLASS_HERO.items() if hero == p['HeroId']]
         heroes.append({'hero': p['HeroId'], 'health': HEALTH[p.get('HealthState', 0)], 'classes': classes,
-                       'rune': _at(q.get('UniqueWeaponClassUsage'), p['Index'])})   # gra liczy runę po indeksie gracza
+                       'rune': _at(q.get('UniqueWeaponClassUsage'), p['Index']),   # gra liczy runę po indeksie gracza
+                       'virtues': [p.get('VirtueOneValue', 0), p.get('VirtueTwoValue', 0)]})
 
     usage = q.get('CoreWeaponClassUsage') or []
     weapons = [{'class': c, 'attacks': n, 'heroes': [h for h in range(len(heroes)) if c in heroes[h]['classes']]}
@@ -107,7 +108,7 @@ def compute(save, catalog):
         'heroes': [{'hero': h['hero'], 'health': h['health'], 'attacks': h['attacks'], 'rune': h['rune'],
                     'favorite': h['favorite'],
                     'feats': h['feats'], 'feat_start': round(h['feat_start'], 3),
-                    'feat_gained': round(h['feat_gained'], 3)} for h in heroes],
+                    'feat_gained': round(h['feat_gained'], 3), 'virtues': h['virtues']} for h in heroes],
     }
 
 

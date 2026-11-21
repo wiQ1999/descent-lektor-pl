@@ -498,7 +498,7 @@ Starter `instaluj-win.ps1` i instalator `instalator-win.ps1` (`src/bundle/online
 
 ## E20 · Podsumowanie misji w oknie gry (D114, czeka na akceptację)
 
-Plugin dokłada do okna podsumowania misji gry (`UIQuestSummary`) wykresy ataków bohaterów, ataków broni i wyzwań, przebieg misji, łup według rodzaju i pasek walka / interakcje, tylko z danych zapisu gry (`SerializedQuestSummary`). Układ: dwa panele boczne obok okna, z mniejszą skalą okna na ekranach węższych niż 16:9 (D114). Bez przechwytywania „Dalej”, bez nowych nagrań. Gałąź `feature/quest-summary`.
+Plugin dokłada do okna podsumowania misji gry (`UIQuestSummary`) wykresy ataków bohaterów, wyzwań i postaw, przebieg misji, łup według rodzaju i pasek walka / interakcje, tylko z danych zapisu gry (`SerializedQuestSummary`). Układ: dwa panele boczne obok okna, z mniejszą skalą okna na ekranach węższych niż 16:9 (D114). Bez przechwytywania „Dalej”, bez nowych nagrań. Gałąź `feature/quest-summary`.
 
 **Kroki** (commit po każdym):
 
