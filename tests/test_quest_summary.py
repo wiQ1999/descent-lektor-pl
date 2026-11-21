@@ -9,13 +9,13 @@ CATALOG = {
     'items': {'MAT_A': 'CraftingMaterialModel', 'REC_A': 'RecipeModel', 'POT_A': 'ConsumableModel',
               'ARM_A': 'ArmorModel'},
     'weapons': {'SWORD_A': 2, 'BOW_A': 11, 'STAFF_A': 7, 'SWORD_B': 2, 'RUNE_A': 12},
-    'feats': {'F_ANNA_1': ['HERO_ANNA', 3], 'F_ANNA_2': ['HERO_ANNA', 4], 'F_BOB_1': ['HERO_BOB', 2]},
+    'feats': {'F_GAL_1': ['HERO_GALADEN', 3], 'F_GAL_2': ['HERO_GALADEN', 4], 'F_BRY_1': ['HERO_BRYNN', 2]},
 }
 
 
 def player(hero, index, health=0, parts=()):
     return {'HeroId': hero, 'Index': index, 'HealthState': health,
-            'EquippedWeapons': [{'Id': p, 'PartAId': p} for p in parts]}
+            'EquippedWeapons': [{'Id': p, 'PartAId': p} for p in parts]}   # ekwipunek nie wpływa na przypisanie klas
 
 
 def save(**summary):
@@ -24,10 +24,10 @@ def save(**summary):
          'ObtainedTreasureIDs': [], 'ObtainedTreasureQty': [], 'CompletedFeatsInQuest': [],
          'StartingFeatPoints': [0.0] * 4}
     q.update(summary)
-    return {'AllPlayers': [player('HERO_ANNA', 0, 0, ['SWORD_A', 'BOW_A']), player('HERO_CID', -1, 0, ['STAFF_A']),
-                           player('HERO_BOB', 1, 1, ['SWORD_B', 'STAFF_A'])],
+    return {'AllPlayers': [player('HERO_GALADEN', 0, 0, ['SWORD_A', 'BOW_A']), player('HERO_SYRUS', -1, 0, ['STAFF_A']),
+                           player('HERO_BRYNN', 1, 1, ['SWORD_B', 'STAFF_A'])],
             'GameSceneData': {'GameState': {'QuestId': 'Q_TEST', 'GameDifficulty': 2, 'QuestSummary': q,
-                                            'FeatProgresses': [{'RealFeatId': 'F_ANNA_2', 'Count': 2}]}}}
+                                            'FeatProgresses': [{'RealFeatId': 'F_GAL_2', 'Count': 2}]}}}
 
 
 def usage(**by_class):
@@ -45,24 +45,25 @@ def test_tiles_and_actions():
 
 def test_active_players_by_index():
     r = qs.compute(save(), CATALOG)
-    assert [h['hero'] for h in r['heroes']] == ['HERO_ANNA', 'HERO_BOB']
+    assert [h['hero'] for h in r['heroes']] == ['HERO_GALADEN', 'HERO_BRYNN']
     assert [h['health'] for h in r['heroes']] == ['Normal', 'MinorInjury']
 
 
-def test_weapons_sorted_and_shared_class():
+def test_weapons_sorted_and_owned_by_class():
+    # Klasa wskazuje bohatera (WeaponPartsModel.GetHero), nie ekwipunek: miecz to zawsze Brynn, łuk Galaden.
     r = qs.compute(save(CoreWeaponClassUsage=usage(Sword=3, Bow=5, Staff=2), UniqueWeaponClassUsage=[0, 1, 0, 0]),
                    CATALOG)
     assert [(w['class'], w['attacks']) for w in r['weapons']] == [('Bow', 5), ('Sword', 3), ('Staff', 2)]
-    assert r['weapons'][1]['heroes'] == ['HERO_ANNA', 'HERO_BOB']
+    assert [w['heroes'] for w in r['weapons']] == [['HERO_GALADEN'], ['HERO_BRYNN'], []]   # Syrus poza drużyną
     assert r['attacks'] == 11
-    anna, bob = r['heroes']
-    assert (anna['attacks'], anna['favorite'], anna['shared']) == (8, 'Bow', ['HERO_BOB'])
-    # Bob: miecz wspólny (3) + kostur (2) + runa (1); ulubiona to miecz
-    assert (bob['attacks'], bob['favorite'], bob['rune'], bob['shared']) == (6, 'Sword', 1, ['HERO_ANNA'])
+    galaden, brynn = r['heroes']
+    assert (galaden['attacks'], galaden['favorite']) == (5, 'Bow')
+    # Brynn: miecz (3) + runa (1, indeks gracza 1); ulubiona to miecz
+    assert (brynn['attacks'], brynn['favorite'], brynn['rune']) == (4, 'Sword', 1)
 
 
 def test_rune_wins_tie_as_favorite():
-    r = qs.compute(save(CoreWeaponClassUsage=usage(Staff=2), UniqueWeaponClassUsage=[0, 2, 0, 0]), CATALOG)
+    r = qs.compute(save(CoreWeaponClassUsage=usage(Sword=2), UniqueWeaponClassUsage=[0, 2, 0, 0]), CATALOG)
     assert r['heroes'][1]['favorite'] == 'Rune'
 
 
@@ -73,7 +74,7 @@ def test_loot_by_kind_with_quantities():
 
 
 def test_feat_progress_like_game_bar():
-    r = qs.compute(save(CompletedFeatsInQuest=['F_ANNA_1'], StartingFeatPoints=[2.25, 1.0, 0.0, 0.0]), CATALOG)
+    r = qs.compute(save(CompletedFeatsInQuest=['F_GAL_1'], StartingFeatPoints=[2.25, 1.0, 0.0, 0.0]), CATALOG)
     anna, bob = r['heroes']
     assert anna['feats'] == 1
     assert anna['feat_start'] == pytest.approx(0.25)

@@ -3,7 +3,7 @@
 Liczy to samo co `src/plugin/Core/QuestStats.cs`, ale z `.sav` (JSON) i katalogu identyfikatorów z bundli gry.
 Katalog zawiera tylko identyfikatory, klasy modeli i liczby (bez tekstów gry):
   items:   {id przedmiotu: klasa modelu}            (CraftingMaterialModel, RecipeModel, ConsumableModel, ...)
-  weapons: {id części broni: numer WeaponClasses}
+  weapons: {id części broni: numer WeaponClasses}  (spis do kontroli; klasę przypisuje bohaterowi CLASS_HERO)
   feats:   {id wyzwania: [id bohatera, Goal]}
 """
 import json
@@ -12,6 +12,9 @@ from decimal import Decimal
 WEAPON_CLASSES = ('Hammer', 'Crossbow', 'Sword', 'Warhammer', 'Warbell', 'Spear', 'Wand', 'Staff', 'Gauntlet',
                   'ThrowingKnives', 'DualBlades', 'Bow', 'Rune')
 RUNE = 12
+# Właściciel zwykłej klasy broni jak WeaponPartsModel.GetHero: każda klasa należy do jednego bohatera.
+CLASS_HERO = {0: 'HERO_KEHLI', 1: 'HERO_KEHLI', 2: 'HERO_BRYNN', 3: 'HERO_BRYNN', 4: 'HERO_VAERIX', 5: 'HERO_VAERIX',
+              6: 'HERO_SYRUS', 7: 'HERO_SYRUS', 8: 'HERO_CHANCE', 9: 'HERO_CHANCE', 10: 'HERO_GALADEN', 11: 'HERO_GALADEN'}
 HEALTH = ('Normal', 'MinorInjury', 'MajorInjury', 'Defeated')
 DIFFICULTY = ('Journey', 'Standard', 'Heroic', 'Warfare')
 ACTION_INTERACT, ACTION_COMBAT = 1, 2
@@ -43,18 +46,14 @@ def compute(save, catalog):
     """Słownik o tym samym kształcie co wiersz `quest_summary` z dziennika pluginu."""
     state = save['GameSceneData']['GameState']
     q = state['QuestSummary']
-    weapons_cat, items_cat, feats_cat = catalog.get('weapons', {}), catalog.get('items', {}), catalog.get('feats', {})
+    items_cat, feats_cat = catalog.get('items', {}), catalog.get('feats', {})
     actions = q.get('ActionsPerformed') or []
 
     heroes = []
-    for i, p in enumerate(active_players(save)):
-        classes = []
-        for w in p.get('EquippedWeapons') or []:
-            c = weapons_cat.get(w.get('PartAId'))
-            if c is not None and c != RUNE and c not in classes:
-                classes.append(c)
+    for p in active_players(save):
+        classes = [c for c, hero in CLASS_HERO.items() if hero == p['HeroId']]
         heroes.append({'hero': p['HeroId'], 'health': HEALTH[p.get('HealthState', 0)], 'classes': classes,
-                       'rune': _at(q.get('UniqueWeaponClassUsage'), i)})
+                       'rune': _at(q.get('UniqueWeaponClassUsage'), p['Index'])})   # gra liczy runę po indeksie gracza
 
     usage = q.get('CoreWeaponClassUsage') or []
     weapons = [{'class': c, 'attacks': n, 'heroes': [h for h in range(len(heroes)) if c in heroes[h]['classes']]}
@@ -63,15 +62,13 @@ def compute(save, catalog):
     attacks = sum(usage) + sum(h['rune'] for h in heroes)
 
     for idx, h in enumerate(heroes):
-        best, h['favorite'], h['attacks'], shared = h['rune'], ('Rune' if h['rune'] > 0 else None), h['rune'], []
+        best, h['favorite'], h['attacks'] = h['rune'], ('Rune' if h['rune'] > 0 else None), h['rune']
         for w in weapons:
             if idx not in w['heroes']:
                 continue
             h['attacks'] += w['attacks']
             if w['attacks'] > best:
                 best, h['favorite'] = w['attacks'], WEAPON_CLASSES[w['class']]
-            shared += [o for o in w['heroes'] if o != idx and o not in shared]
-        h['shared'] = shared
 
     for idx, h in enumerate(heroes):
         points = done = 0
@@ -108,7 +105,7 @@ def compute(save, catalog):
         'weapons': [{'class': WEAPON_CLASSES[w['class']], 'attacks': w['attacks'],
                      'heroes': [heroes[h]['hero'] for h in w['heroes']]} for w in weapons],
         'heroes': [{'hero': h['hero'], 'health': h['health'], 'attacks': h['attacks'], 'rune': h['rune'],
-                    'favorite': h['favorite'], 'shared': [heroes[o]['hero'] for o in h['shared']],
+                    'favorite': h['favorite'],
                     'feats': h['feats'], 'feat_start': round(h['feat_start'], 3),
                     'feat_gained': round(h['feat_gained'], 3)} for h in heroes],
     }

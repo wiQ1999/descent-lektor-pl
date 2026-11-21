@@ -504,12 +504,12 @@ Plugin dokłada do okna podsumowania misji gry (`UIQuestSummary`) kafelki, wykre
 
 1. **Dane** (`src/plugin/Core/QuestStats.cs`). Gdy okno jest widoczne, plugin raz czyta przez refleksję `GameData.Data` (bez getterów z leniwą inicjalizacją):
    - `QuestSummary`: czas, `CurrentRound`, `ObtainedGold`, łup, `CoreWeaponClassUsage`, `UniqueWeaponClassUsage`, `ActionsPerformed`, `CompletedFeatsInQuest`, `StartingFeatPoints`;
-   - `ActivePlayers`: bohater, `HealthState`, klasy broni (`EquippedWeapons[].PartA.Class`, tak jak liczy gra), kolor (`HeroModel.ColorLight/ColorDark`), portret (`TextureAssetPath`);
+   - `ActivePlayers`: bohater, `HealthState`, klasy broni (właściciel klasy jak `WeaponPartsModel.GetHero`), kolor (`HeroModel.ColorLight/ColorDark`), portret (`TextureAssetPath`);
    - `GameDifficulty`, `FeatProgresses`.
 
    Wyliczenia:
    - kafelki: rundy, czas ÷ rundy, suma ataków, interakcje, złoto ÷ rundy, trudność;
-   - broń: klasa → bohaterowie, którzy ją noszą (wspólna klasa: „wspólnie z X”), nazwa z kluczy gry `WEAPON_<KLASA>`;
+   - broń: klasa → jej stały właściciel (runa osobno dla bohatera), nazwa z kluczy gry `WEAPON_<KLASA>`;
    - drużyna: ataki z broni bohatera i ulubiona broń; przyrost postępu wyzwań według wzoru z `UIQuestSummary.SyncTo`;
    - łup według typu modelu: przedmioty (broń, pancerz, talizmany), materiały, przepisy, mikstury.
 
@@ -532,7 +532,7 @@ Plugin dokłada do okna podsumowania misji gry (`UIQuestSummary`) kafelki, wykre
 8. **Dokumentacja i paczka**: wersja pluginu, `CLAUDE.md`, krótka wzmianka w `docs/INSTRUKCJA.md`, `docs/ODTWORZENIE.md` (skrypt podglądu), raport `analysis/E20_SUMMARY.md` (liczby i zrzuty, bez tekstów gry).
 
 **Ograniczenia:**
-- Przypisanie broni do bohatera bierzemy ze stanu na koniec misji. Broń wspólna (`SharedWeaponIds`) przekazana w trakcie misji trafi do bohatera, który ją ma na końcu.
+- Przypisanie broni do bohatera nie zależy od ekwipunku: zwykła klasa ma jednego właściciela, a runę gra liczy dla bohatera, który nią atakował.
 - Ataki runą gra liczy osobno dla bohatera, więc tu przypisanie jest pewne.
 
 ## E12 · Katalog treści gry (później)

@@ -12,9 +12,9 @@ namespace LektorPL.Core
 {
     /// <summary>
     /// Panel statystyk w oknie podsumowania misji gry (E20, D114). Okno gry (<c>Panel_QuestSummary</c>) ma stały rozmiar
-    /// 1250×920 (<c>Image_ScrollBG</c>), a łup przewija się w środku, więc panel dzielimy:
-    /// kafelki i pasek walka/interakcje w wolnym polu okna pod „Czasem” (<c>Group_Time</c>), ataki według broni
-    /// w panelu po lewej, drużyna i łup w panelu po prawej, nad przyciskiem „Dalej” (prawy dolny róg ekranu).
+    /// 1250×920 (<c>Image_ScrollBG</c>), a łup przewija się w środku, więc panele stoją po bokach okna:
+    /// po lewej przebieg misji (kafelki, pasek walka/interakcje) i ataki według broni, po prawej drużyna i łup,
+    /// nad przyciskiem „Dalej” (prawy dolny róg ekranu).
     /// Płótno gry ma wysokość 1080 i szerokość zależną od proporcji ekranu; gdy na panel boczny zostaje mniej niż
     /// <see cref="SideMin"/>, zmniejszamy okno gry skalą i przywracamy ją po zamknięciu.
     ///
@@ -29,12 +29,13 @@ namespace LektorPL.Core
     {
         private const float WindowW = 1250f, WindowH = 920f, WindowY = 30f;
         private const float SideMin = 280f, SideMax = 380f, Gap = 16f, Edge = 16f, ContinueClear = 140f, MinScale = 0.72f;
-        private const int MaxBars = 8;
-        private const float PadX = 22f, PadTop = 36f, PadBottom = 26f, FrameScale = 1.3f, TileInset = 20f, Portrait = 68f;
+        private const int MaxBars = 8, MinBars = 3;
+        private const float PadX = 22f, PadTop = 36f, PadBottom = 26f, FrameScale = 1.3f, Portrait = 68f;
+        // Kafelki w lewym panelu: 2 kolumny × 3 rzędy; tabliczka gry z węższymi końcami (mnożnik), tekst między nimi.
+        private const float TileH = 50f, TileGap = 6f, TileEnds = 1.6f, TileInset = 16f, BarH = 42f;
+        // Lewy panel bez słupków broni: marginesy, dwa nagłówki, kafelki, pasek z podpisem, legenda i odstępy.
+        private const float LeftFixed = 36f + 26f + 2f * 52f + 3f * 50f + 2f * 6f + 16f + 26f + 10f + 60f + 48f;
         private const string UiBundle = "d3/uitextures", UiPath = "assets/d3/textures/ui/";
-        // Dół pola „Czas” w oknie gry według prefabu (Group_Time na -69,7, tło 84,6 od -64) i wysokość naszego pola:
-        // dwa rzędy kafelków (2×58 + 6), pasek 20 i podpis 20 z odstępami 6.
-        private const float TimeBottom = -218.3f, TileH = 58f, InnerHeight = 2f * 58f + 6f + 6f + 20f + 6f + 20f;
         private static readonly Color Light = new Color(0.93f, 0.91f, 0.86f);
         private static readonly Color Dim = new Color(0.70f, 0.67f, 0.62f);
         private static readonly Color Gold = new Color(0.86f, 0.70f, 0.38f);
@@ -177,57 +178,24 @@ namespace LektorPL.Core
             float top = winY + winH * scale / 2f, bottom = winY - winH * scale / 2f;
             float halfW = winW * scale / 2f;
 
-            // Pole w oknie pod „Czasem” (współrzędne okna, przed skalą).
-            // Tło „Czasu” (Image_BG) wystaje pod Group_Time, więc dół liczymy z prostokątów jego elementów.
-            var timeGroup = preview ? null : window.Find("Group_Time") as RectTransform;
-            float tx = timeGroup != null ? timeGroup.anchoredPosition.x : 242f;
-            float tTop = (timeGroup != null ? BottomIn(window, timeGroup) : TimeBottom) - 12f;
-            float tW = timeGroup != null ? timeGroup.rect.width : 442f;
-            float tBottom = -winH / 2f + 24f;
-            bool innerFits = tTop - tBottom >= InnerHeight;
-
             var left = Box("LektorPL.SummaryLeft", root, new Vector2(1f, 1f), new Vector2(-halfW - Gap, top), new Vector2(side, top - bottom));
             float rightBottom = Mathf.Max(bottom, -h / 2f + ContinueClear);
             var right = Box("LektorPL.SummaryRight", root, new Vector2(0f, 1f), new Vector2(halfW + Gap, top), new Vector2(side, top - rightBottom));
 
-            if (innerFits)
-            {
-                var inner = NewRect("LektorPL.SummaryInner", window);
-                _built.Add(inner.gameObject);
-                inner.anchorMin = inner.anchorMax = new Vector2(0.5f, 0.5f);
-                inner.pivot = new Vector2(0.5f, 1f);
-                inner.anchoredPosition = new Vector2(tx, tTop);
-                inner.sizeDelta = new Vector2(tW, tTop - tBottom);
-                Column(inner, 6f, 0);
-                Tiles(inner, s, tW);
-                Ratio(inner, s, false);
-            }
-            else
-            {
-                Tiles(left, s, side - 2f * PadX);
-                Ratio(left, s, true);
-            }
-            Weapons(left, s, side - 2f * PadX);
+            float content = side - 2f * PadX;
+            Header(left, "Przebieg misji");
+            Tiles(left, s, content);
+            Ratio(left, s);
+            Spacer(left, 10f);
+            int bars = Mathf.Clamp(Mathf.FloorToInt((top - bottom - LeftFixed) / BarH), MinBars, MaxBars);
+            Weapons(left, s, content, bars);
             Team(right, s);
             Loot(right, s);
 
             _shown = s;
             _preview = preview;
             _log.Write(_log.New("summary_panel").Bool("preview", preview).Num("canvas_w", w).Num("scale", scale).Num("side", side)
-                .Bool("inner", innerFits));
-        }
-
-        /// <summary>Najniższy punkt grupy i jej dzieci we współrzędnych okna (bez skali okna).</summary>
-        private static float BottomIn(RectTransform window, RectTransform group)
-        {
-            var corners = new Vector3[4];
-            float min = float.MaxValue;
-            foreach (RectTransform rt in group.GetComponentsInChildren<RectTransform>(false))
-            {
-                rt.GetWorldCorners(corners);
-                foreach (var c in corners) min = Mathf.Min(min, window.InverseTransformPoint(c).y);
-            }
-            return min == float.MaxValue ? TimeBottom : min;
+                .Int("bars", bars));
         }
 
         private void Teardown()
@@ -256,13 +224,12 @@ namespace LektorPL.Core
         {
             var grid = NewRect("Tiles", parent);
             var g = grid.gameObject.AddComponent<GridLayoutGroup>();
-            float cell = (width - 2f * 8f) / 3f;
-            g.cellSize = new Vector2(cell, TileH);
-            g.spacing = new Vector2(8f, 6f);
+            g.cellSize = new Vector2((width - 8f) / 2f, TileH);
+            g.spacing = new Vector2(8f, TileGap);
             g.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            g.constraintCount = 3;
+            g.constraintCount = 2;
             g.childAlignment = TextAnchor.UpperCenter;
-            Fixed(grid, TileH * 2f + 6f);
+            Fixed(grid, TileH * 3f + TileGap * 2f);
             Tile(grid, s.Rounds.ToString(Pl), "rundy");
             Tile(grid, Clock(s.SecondsPerRound), "śr. czas rundy");
             Tile(grid, s.Attacks.ToString(Pl), "ataki");
@@ -276,19 +243,18 @@ namespace LektorPL.Core
             var rt = NewRect("Tile", grid);
             var bg = rt.gameObject.AddComponent<Image>();
             Paint(bg, _tileSprite, _tileType, _tileColor);
-            // Tabliczka gry ma zwężone końce (ok. 20 jednostek z każdej strony), więc tekst trzymamy w środku.
-            var v = AddText(rt, value, 26f, Light, TextAlignmentOptions.Center, true);
-            Fit(v, 13f);
+            bg.pixelsPerUnitMultiplier = TileEnds;                       // węższe końce tabliczki w wąskim panelu
+            var v = AddText(rt, value, 22f, Light, TextAlignmentOptions.Center, true);
+            Fit(v, 12f);
             Anchor(v.rectTransform, 0f, 0.40f, 1f, 1f, TileInset, 0f, -TileInset, -3f);
-            var l = AddText(rt, label, 14f, Dim, TextAlignmentOptions.Center, false);
+            var l = AddText(rt, label, 13f, Dim, TextAlignmentOptions.Center, false);
             Fit(l, 10f);
             Anchor(l.rectTransform, 0f, 0f, 1f, 0.42f, TileInset - 4f, 4f, -(TileInset - 4f), 0f);
         }
 
-        private void Ratio(RectTransform parent, QuestStats s, bool header)
+        private void Ratio(RectTransform parent, QuestStats s)
         {
             int total = s.CombatActions + s.Interactions;
-            if (header) Header(parent, "Charakter misji");
             var bar = NewRect("Ratio", parent);
             Fixed(bar, 16f);
             var track = bar.gameObject.AddComponent<Image>();
@@ -309,16 +275,18 @@ namespace LektorPL.Core
                 return;
             }
             int pc = Mathf.RoundToInt(p * 100f);
-            bool icons = Icon(legend, "icon_action_combat", Color.white, 0f, 24f) != null;
-            Icon(legend, "icon_action_interact", Color.white, 1f, 24f);
+            bool icons = Icon(legend, "icon_action_combat", Color.white, 0f, 24f, true) != null;
+            Icon(legend, "icon_action_interact", Color.white, 1f, 24f, true);
             float inset = icons ? 30f : 0f;
-            var a = AddText(legend, "walka " + pc + "%", 18f, Light, TextAlignmentOptions.Left, false);
+            var a = AddText(legend, "walka " + pc + "%", 17f, Light, TextAlignmentOptions.Left, false);
+            Fit(a, 12f);
             Anchor(a.rectTransform, 0f, 0f, 0.5f, 1f, inset, 0f, 0f, 0f);
-            var b = AddText(legend, "interakcje " + (100 - pc) + "%", 18f, Light, TextAlignmentOptions.Right, false);
+            var b = AddText(legend, "interakcje " + (100 - pc) + "%", 17f, Light, TextAlignmentOptions.Right, false);
+            Fit(b, 12f);
             Anchor(b.rectTransform, 0.5f, 0f, 1f, 1f, 0f, 0f, -inset, 0f);
         }
 
-        private void Weapons(RectTransform panel, QuestStats s, float width)
+        private void Weapons(RectTransform panel, QuestStats s, float width, int maxBars)
         {
             Header(panel, "Ataki według broni");
             var rows = new List<KeyValuePair<string, KeyValuePair<int, List<Color>>>>();
@@ -332,11 +300,11 @@ namespace LektorPL.Core
                 if (hero.RuneAttacks > 0)
                     rows.Add(Row("Runa: " + HeroName(hero), hero.RuneAttacks, new List<Color> { hero.ColorLight }));
             rows.Sort((x, y) => y.Value.Key.CompareTo(x.Value.Key));
-            if (rows.Count > MaxBars)
+            if (rows.Count > maxBars)
             {
                 int rest = 0;
-                for (int i = MaxBars - 1; i < rows.Count; i++) rest += rows[i].Value.Key;
-                rows.RemoveRange(MaxBars - 1, rows.Count - MaxBars + 1);
+                for (int i = maxBars - 1; i < rows.Count; i++) rest += rows[i].Value.Key;
+                rows.RemoveRange(maxBars - 1, rows.Count - maxBars + 1);
                 rows.Add(Row("inne", rest, new List<Color> { Dim }));
             }
             if (rows.Count == 0)
@@ -377,7 +345,7 @@ namespace LektorPL.Core
         private void Bar(RectTransform panel, string name, int value, int max, List<Color> colors)
         {
             var row = NewRect("Bar", panel);
-            Fixed(row, 38f);
+            Fixed(row, BarH - 4f);
             var label = AddText(row, name, 17f, Light, TextAlignmentOptions.Left, false);
             Fit(label, 13f);
             Anchor(label.rectTransform, 0f, 1f, 1f, 1f, 0f, -22f, -40f, 0f);
@@ -399,9 +367,8 @@ namespace LektorPL.Core
             Header(panel, "Drużyna");
             foreach (var hero in s.Heroes)
             {
-                bool shared = hero.SharedWith.Count > 0;
                 var row = NewRect("Hero", panel);
-                Fixed(row, shared ? 100f : 84f);
+                Fixed(row, 84f);
                 var frame = NewRect("Portrait", row);
                 Anchor(frame, 0f, 0.5f, 0f, 0.5f, 0f, -Portrait / 2f, Portrait, Portrait / 2f);
                 var sprite = PortraitSprite(hero.PortraitPath);
@@ -418,16 +385,10 @@ namespace LektorPL.Core
                 name.fontSizeMin = 14f;
                 Line(text, HealthText(hero.Health), 14f, HealthColor(hero.Health));
                 string fav = hero.Favorite.HasValue ? " · " + ClassName(hero.Favorite.Value) : "";
-                IconLine(text, "icon_action_combat", hero.Attacks.ToString(Pl) + fav, 15f, Light);
+                IconLine(text, "icon_action_combat", hero.Attacks.ToString(Pl) + fav, 15f, Light, true);
                 string feats = "wyzwania: " + hero.FeatsCompleted.ToString(Pl);
                 if (hero.FeatGained > 0.001f) feats += " · postęp +" + hero.FeatGained.ToString("0.##", Pl);
                 Line(text, feats, 14f, Dim);
-                if (shared)
-                {
-                    var names = new List<string>();
-                    foreach (int i in hero.SharedWith) names.Add(HeroName(s.Heroes[i]));
-                    Line(text, "wspólna broń: " + string.Join(", ", names.ToArray()), 13f, Dim);
-                }
             }
         }
 
@@ -544,20 +505,23 @@ namespace LektorPL.Core
         }
 
         /// <summary>Wiersz z ikoną gry na początku (np. skrzyżowane miecze przy atakach).</summary>
-        private void IconLine(RectTransform parent, string icon, string text, float size, Color color)
+        private void IconLine(RectTransform parent, string icon, string text, float size, Color color, bool white = false)
         {
             var row = NewRect("IconLine", parent);
             Fixed(row, size + 4f);
-            bool has = Icon(row, icon, Color.white, 0f, size + 4f) != null;
+            bool has = Icon(row, icon, Color.white, 0f, size + 4f, white) != null;
             var t = AddText(row, text, size, color, TextAlignmentOptions.Left, false);
             Fit(t, Mathf.Max(10f, size - 4f));
             Anchor(t.rectTransform, 0f, 0f, 1f, 1f, has ? size + 8f : 0f, 0f, 0f, 0f);
         }
 
-        /// <summary>Ikona z grafik gry przy lewej (side 0) albo prawej (side 1) krawędzi wiersza; null, gdy jej brak.</summary>
-        private Image Icon(RectTransform row, string sprite, Color tint, float side, float size)
+        /// <summary>
+        /// Ikona z grafik gry przy lewej (side 0) albo prawej (side 1) krawędzi wiersza; null, gdy jej brak.
+        /// <paramref name="white"/>: kolory odwrócone (czarne ikony akcji z HUD stają się białe z ciemną poświatą).
+        /// </summary>
+        private Image Icon(RectTransform row, string sprite, Color tint, float side, float size, bool white = false)
         {
-            var sp = Ui(sprite);
+            var sp = white ? Inverted(sprite) : Ui(sprite);
             if (sp == null) return null;
             var rt = NewRect("Icon", row);
             rt.anchorMin = rt.anchorMax = new Vector2(side, 0.5f);
@@ -638,6 +602,52 @@ namespace LektorPL.Core
             rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
             rt.anchoredPosition = new Vector2(x, y);
             rt.sizeDelta = new Vector2(w, h);
+        }
+
+        /// <summary>
+        /// Kopia grafiki gry z odwróconymi kolorami (przezroczystość bez zmian). Tekstury gry nie są do odczytu,
+        /// więc kopiujemy przez RenderTexture; przy błędzie zostaje oryginał.
+        /// </summary>
+        private Sprite Inverted(string name)
+        {
+            string key = name + "#white";
+            if (_sprites.TryGetValue(key, out Sprite cached)) return cached;
+            var src = Ui(name);
+            Sprite result = null;
+            if (src != null)
+            {
+                RenderTexture rt = null;
+                var active = RenderTexture.active;
+                try
+                {
+                    var tex = src.texture;
+                    var r = src.textureRect;
+                    int w = Mathf.RoundToInt(r.width), h = Mathf.RoundToInt(r.height);
+                    rt = RenderTexture.GetTemporary(tex.width, tex.height, 0, RenderTextureFormat.ARGB32);
+                    Graphics.Blit(tex, rt);
+                    RenderTexture.active = rt;
+                    var copy = new Texture2D(w, h, TextureFormat.RGBA32, false);
+                    copy.ReadPixels(new Rect(r.x, r.y, w, h), 0, 0);
+                    var px = copy.GetPixels32();
+                    for (int i = 0; i < px.Length; i++)
+                    {
+                        px[i].r = (byte)(255 - px[i].r);
+                        px[i].g = (byte)(255 - px[i].g);
+                        px[i].b = (byte)(255 - px[i].b);
+                    }
+                    copy.SetPixels32(px);
+                    copy.Apply(false, true);
+                    result = Sprite.Create(copy, new Rect(0f, 0f, w, h), new Vector2(0.5f, 0.5f), src.pixelsPerUnit);
+                }
+                catch (Exception e) { _log.Error("summary_icon", e); }
+                finally
+                {
+                    RenderTexture.active = active;
+                    if (rt != null) RenderTexture.ReleaseTemporary(rt);
+                }
+            }
+            _sprites[key] = result ?? src;
+            return _sprites[key];
         }
 
         /// <summary>Grafika z pakietu interfejsu gry (<c>d3/uitextures</c>, wczytany przy starcie gry); null, gdy jej nie ma.</summary>

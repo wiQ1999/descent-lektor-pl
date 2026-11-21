@@ -11,9 +11,10 @@ namespace LektorPL.Core
     /// <c>SerializedGame.QuestSummary</c>, <c>ActivePlayers</c>, <c>GameDifficulty</c> i <c>FeatProgresses</c>.
     ///
     /// Liczymy raz, gdy gra pokazuje okno podsumowania. Ataki według klasy broni gra sumuje dla całej drużyny
-    /// (<c>CoreWeaponClassUsage</c>, klasa z <c>PartA</c> broni, którą bohater atakował), więc klasę przypisujemy
-    /// bohaterom, którzy na koniec misji mają w ekwipunku broń tej klasy; wspólna klasa ma wspólną liczbę.
-    /// Ataki runą gra liczy osobno dla bohatera (<c>UniqueWeaponClassUsage</c>).
+    /// (<c>CoreWeaponClassUsage</c>, klasa z <c>PartA</c> broni, którą bohater atakował). Każda z 12 zwykłych klas należy
+    /// na stałe do jednego bohatera (<c>WeaponPartsModel.GetHero</c>), a bohater występuje w drużynie raz, więc klasa
+    /// wskazuje bohatera bez względu na ekwipunek. Runę może nosić każdy, dlatego gra liczy ją osobno dla bohatera
+    /// (<c>UniqueWeaponClassUsage[indeks gracza]</c>).
     /// Postęp wyzwań liczymy wzorem z <c>UIQuestSummary.SyncTo</c>.
     /// </summary>
     internal sealed class QuestStats
@@ -25,7 +26,7 @@ namespace LektorPL.Core
             public WeaponClasses Class;
             public string NameKey;                 // WEAPON_<KLASA>, jak w UIInventoryDialog
             public int Attacks;
-            public readonly List<int> Heroes = new List<int>();   // indeksy w Heroes; pusta = nikt jej nie nosi na końcu
+            public readonly List<int> Heroes = new List<int>();   // indeks właściciela klasy w Heroes; pusta = bohater spoza drużyny
         }
 
         internal sealed class HeroRow
@@ -38,7 +39,6 @@ namespace LektorPL.Core
             public int Attacks;                    // suma klas bohatera (wspólne liczone w całości) + runa
             public int RuneAttacks;
             public WeaponClasses? Favorite;        // klasa z największą liczbą ataków
-            public readonly List<int> SharedWith = new List<int>();   // bohaterowie ze wspólną klasą
             public int FeatsCompleted;
             public float FeatStart, FeatGained;    // pasek gry: część ułamkowa na starcie i przyrost w misji
         }
@@ -97,15 +97,10 @@ namespace LektorPL.Core
                     ColorDark = m.ColorDark,
                     Health = p.HealthState,
                 };
-                if (p.EquippedWeapons != null)
-                    foreach (var w in p.EquippedWeapons)
-                    {
-                        var part = w != null ? w.PartA : null;
-                        if (part == null || part.Class == WeaponClasses.Rune || h.Classes.Contains(part.Class)) continue;
-                        h.Classes.Add(part.Class);
-                    }
-                if (q.UniqueWeaponClassUsage != null && i < q.UniqueWeaponClassUsage.Length)
-                    h.RuneAttacks = q.UniqueWeaponClassUsage[i];
+                for (int c = 0; c < (int)WeaponClasses.Rune; c++)
+                    if (ClassHero((WeaponClasses)c) == m.Id) h.Classes.Add((WeaponClasses)c);
+                if (q.UniqueWeaponClassUsage != null && p.Index >= 0 && p.Index < q.UniqueWeaponClassUsage.Length)
+                    h.RuneAttacks = q.UniqueWeaponClassUsage[p.Index];          // gra liczy runę po indeksie gracza
                 Heroes.Add(h);
             }
         }
@@ -136,8 +131,6 @@ namespace LektorPL.Core
                     if (!row.Heroes.Contains(Heroes.IndexOf(h))) continue;
                     h.Attacks += row.Attacks;
                     if (row.Attacks > best) { best = row.Attacks; h.Favorite = row.Class; }
-                    foreach (int other in row.Heroes)
-                        if (other != Heroes.IndexOf(h) && !h.SharedWith.Contains(other)) h.SharedWith.Add(other);
                 }
             }
         }
@@ -183,6 +176,21 @@ namespace LektorPL.Core
             }
         }
 
+        /// <summary>Właściciel zwykłej klasy broni, jak <c>WeaponPartsModel.GetHero</c> (identyfikator <c>HeroModel</c>).</summary>
+        internal static string ClassHero(WeaponClasses c)
+        {
+            switch (c)
+            {
+                case WeaponClasses.Sword: case WeaponClasses.Warhammer: return "HERO_BRYNN";
+                case WeaponClasses.Wand: case WeaponClasses.Staff: return "HERO_SYRUS";
+                case WeaponClasses.DualBlades: case WeaponClasses.Bow: return "HERO_GALADEN";
+                case WeaponClasses.Warbell: case WeaponClasses.Spear: return "HERO_VAERIX";
+                case WeaponClasses.Hammer: case WeaponClasses.Crossbow: return "HERO_KEHLI";
+                case WeaponClasses.Gauntlet: case WeaponClasses.ThrowingKnives: return "HERO_CHANCE";
+                default: return null;
+            }
+        }
+
         internal static string ClassKey(WeaponClasses c)
         {
             return "WEAPON_" + c.GetStringValue();
@@ -207,11 +215,9 @@ namespace LektorPL.Core
             var heroesArr = new JsonArray();
             foreach (var h in Heroes)
             {
-                var shared = new JsonArray();
-                foreach (int i in h.SharedWith) shared.Add(Heroes[i].HeroId);
                 heroesArr.Add(new JsonLine().Str("hero", h.HeroId).Str("health", h.Health.ToString()).Int("attacks", h.Attacks)
                     .Int("rune", h.RuneAttacks).Str("favorite", h.Favorite.HasValue ? h.Favorite.Value.ToString() : null)
-                    .Raw("shared", shared.ToString()).Int("feats", h.FeatsCompleted)
+                    .Int("feats", h.FeatsCompleted)
                     .Num("feat_start", h.FeatStart).Num("feat_gained", h.FeatGained));
             }
             return line.Raw("heroes", heroesArr.ToString());

@@ -1182,13 +1182,13 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
   - kafelki: rundy, średni czas rundy, ataki, interakcje, złoto na rundę, poziom trudności;
   - ataki według broni: poziome słupki klas z atakami, malejąco, w kolorze bohatera, który tę broń nosi (runa osobno dla bohatera);
   - charakter misji: pasek proporcji walka / interakcje (akcji „ogólnych” gra nie liczy);
-  - drużyna: tabela bohaterów (stan zdrowia, ataki z jego broni, ulubiona broń, ukończone wyzwania, przyrost postępu wyzwań). Gdy dwóch bohaterów nosi broń tej samej klasy, oba wiersze mają wspólną liczbę z dopiskiem „wspólnie z X”;
+  - drużyna: tabela bohaterów (stan zdrowia, ataki z jego broni, ulubiona broń, ukończone wyzwania, przyrost postępu wyzwań). Każda z 12 zwykłych klas broni należy na stałe do jednego bohatera (`WeaponPartsModel.GetHero`), a bohater jest w drużynie raz, więc klasa wskazuje bohatera bez względu na ekwipunek. Runę może nosić każdy, ale gra liczy ją osobno dla bohatera (`UniqueWeaponClassUsage[indeks gracza]`). Wspólnej klasy więc nie ma (sprawdzone w kodzie gry 2026-11-21);
   - łup według rodzaju: przedmioty, materiały, przepisy, mikstury (mikstur okno gry nie pokazuje).
 - Styl gry: tło, ramki i czcionki skopiowane z okien gry, jak przy menu „PL”.
-  - Po podglądzie z 2026-11-21: panele boczne mają półprzezroczyste przyciemnione tło (plansza prześwituje) i ramkę panelu wroga, nagłówki ze złotym ornamentem, ikony walki i interakcji z HUD, ikony łupu i okrągłe portrety jak w oknie podsumowania. Nazwa broni stoi nad paskiem, łup jest listą z ikonami (z sumą złota), a teksty najpierw zmniejszają czcionkę, zamiast się urywać.
+  - Po podglądzie z 2026-11-21: panele boczne mają półprzezroczyste przyciemnione tło (plansza prześwituje) i ramkę panelu wroga, nagłówki ze złotym ornamentem, ikony walki i interakcji z HUD (z odwróconymi kolorami: białe z ciemną poświatą), ikony łupu i okrągłe portrety jak w oknie podsumowania. Nazwa broni stoi nad paskiem, łup jest listą z ikonami (z sumą złota), a teksty najpierw zmniejszają czcionkę, zamiast się urywać.
 - Panel jest zawsze widoczny. Układ wynika z prefabu okna (`Panel_QuestSummary`): okno ma stały rozmiar 1250×920 jednostek, a łup przewija się w nim, więc wysokość nie zależy od łupu. Pod oknem zostaje ok. 50 jednostek, w prawym dolnym rogu ekranu jest „Dalej”. Dlatego:
-  - kafelki i pasek charakteru misji idą do wolnego pola okna pod „Czasem” (ok. 440×260);
-  - ataki według broni idą do panelu po lewej stronie okna, drużyna i łup do panelu po prawej, nad „Dalej”;
+  - po lewej stronie okna: przebieg misji (kafelki 2×3, pasek walka/interakcje) i ataki według broni (po teście z 2026-11-21; wcześniej kafelki stały w oknie pod „Czasem”). Liczba słupków broni zależy od wysokości panelu (3–8, reszta jako „inne”);
+  - po prawej: drużyna i łup, nad „Dalej”;
   - płótno gry ma wysokość 1080 i szerokość zależną od proporcji ekranu (16:9: 1920, 16:10: 1728, MacBook Air: ok. 1660). Gdy na panele boczne zostaje mniej niż ok. 300 jednostek, plugin zmniejsza okno gry skalą (na MacBooku ok. 0,82).
 
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
