@@ -499,12 +499,12 @@ Starter `instaluj-win.ps1` i instalator `instalator-win.ps1` (`src/bundle/online
 ## E20 · Poprawki obsady po drugim odsłuchu (D114)
 
 Cel: zmiany i poprawki 60 głosów z odsłuchu zestawienia całej gry `m4_cast` (2026-11-20) w akcie 1, akcie 2 i częściach wspólnych. Pełna lista uwag leży w `analysis/work/compare/m4_cast/uwagi_2026-11-20.txt` w worktree `.claude/worktrees/game-character-voice-analysis-0ff4e5` (poza Git, początki kwestii z gry).
-1. Tempo: próbki narracji scen narratora w tempie 1,4 i Vaerixa w 1,2 w dwóch wariantach (nowe generowanie OmniVoice z parametrem tempa i przyspieszenie gotowego audio WSOLA). Wariant wybierasz po odsłuchu.
-2. Efekty na audio: własny łańcuch per głos w `finalize` (numpy/scipy z `.venv`, efekt wypalony w pliku końcowym). Duch dla Kathryn (ElevenLabs bez zmian) i smoka-ducha z Q13, głos w głowie dla Baelziffara (inny niż duch). Po 2–3 warianty do odsłuchu.
+1. Tempo (zrobione, D114): narracja scen narratora z tempem 1,4 i Vaerix z tempem fragmentu × 1,2 przez nowe generowanie OmniVoice (próbki obu wariantów w `analysis/tools/e20_samples.py`).
+2. Efekty na audio (zrobione, D114): `lektor.effects` wypalany w `finalize` według `direction.FX`. Kathryn i smok-duch z Q13: widmo słabiej (`ghost_c2`), Baelziffar: z zaświatów słabiej (`ghost_b2`).
 3. Kandydaci OmniVoice jak w D109: dla każdego głosu trzy wyraźnie różne kandydatury i obecny głos na stronie odsłuchu.
    - Nowy głos (31): Levirax (za podobny do narratora), smok-duch z Q13 (bez opisu ducha), Siostra krwi (klon Ne'Krul z obróbką) i mówcy bez imienia oznaczeni jako generyczni albo niepasujący do postaci (bossowie, smoki, ork, kobieta zamiast szeptu).
    - Ten sam profil, lepsza jakość (19): nowe ziarna i oczyszczona referencja dla szeptu, robotycznego brzmienia, echa, nosowego brzmienia, szelestu (Gilliam), słabej jakości oraz okrzyków za mało dynamicznych.
-4. Ponowne podejścia trzech fragmentów (Kapitan z FoF, Więzień, Bandyta-nekromanta): pauza na początku, błędy wymowy i ucięte końcówki.
+4. Ponowne podejścia sześciu fragmentów: Kapitan z FoF (pauza na początku, wymowa końcówki), Więzień (wymowa końcówki), Bandyta-nekromanta (ucięta końcówka) i trzy fragmenty Baelziffara z „ocalić” i „najgłośniej” (błąd wymowy, którego Whisper nie wychwycił). Gdy nowe podejście dalej myli słowo, zapis fonetyczny w `normalize.PHONETIC`.
 5. Wybór z odsłuchu (`adopt`), wpis w `docs/CASTING.md`.
 6. Generowanie zmienionych głosów w całej grze, ocena, ponowne podejścia, `finalize` z efektami i tempem z kroku 1, zestawienie `m4_cast` do kontroli.
 7. Paczka z aktem 1 i częściami wspólnymi jako aktualizacja (instalator pobiera tylko zmienione części), wydanie po Twojej akceptacji.

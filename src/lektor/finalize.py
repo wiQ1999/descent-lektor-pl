@@ -10,7 +10,7 @@ import json
 import os
 import random
 
-from . import db, paths
+from . import db, effects, paths
 from . import direction as D
 from .synth import take_path
 
@@ -51,18 +51,21 @@ def finalize():
     for fid, c in sorted(choice.items()):
         prev = old.get(fid)
         prev_file = prev and os.path.join(paths.AUDIO, prev['file'])
-        if prev and prev['take'] == c['take'] and os.path.exists(prev_file) and \
+        fx = D.FX.get(c['voice'])
+        if prev and prev['take'] == c['take'] and prev.get('fx') == fx and os.path.exists(prev_file) and \
                 os.path.getmtime(prev_file) >= os.path.getmtime(take_path(fid, c['take'])):
             frags[fid] = {**prev, 'problems': c['problems']}     # to samo podejście: plik końcowy bez zmian (D96)
             rates.add(sf.info(prev_file).samplerate)
             continue
         y, sr = sf.read(take_path(fid, c['take']), dtype='float32')
         rates.add(sr)
-        y, loud = level(trim(y, sr), sr)
+        y, loud = level(effects.apply(trim(y, sr), sr, fx), sr)     # efekt głosu przed wyrównaniem (E20, D114)
         sf.write(os.path.join(out_dir, fid + '.wav'), y, sr, subtype='PCM_16')
         frags[fid] = {'file': 'final/%s.wav' % fid, 'seconds': round(len(y) / sr, 3), 'take': c['take'],
                       'voice': c['voice'], 'speed': c['speed'], 'source_lufs': loud, 'problems': c['problems'],
                       'model': D.ELEVEN_MODEL if D.take_engine(c['take']) == 'elevenlabs' else D.MODEL_ID}
+        if fx:
+            frags[fid]['fx'] = fx
     if len(rates) > 1:
         raise ValueError('Podejścia mają różne próbkowanie: %s' % sorted(rates))
     sr = next(iter(rates))

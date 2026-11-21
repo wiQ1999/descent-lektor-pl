@@ -29,6 +29,9 @@ ELEVEN_RECAST = {'laurel': ('mNYK3E8hLlawETLY1i23', 'D109'), 'ltrand': ('mlfNLSk
 ELEVEN_VOICES.update({v: vid for v, (vid, _) in ELEVEN_RECAST.items()})
 ELEVEN_TAKE0 = 100      # podejścia ElevenLabs mają numery od 101; podejścia OmniVoice tych głosów zostają jako zapas
 
+# E20 (D114): efekt na audio głosu (lektor.effects), wypalany przez finalize w pliku końcowym; wybór z odsłuchu.
+FX = {'kathryn': 'ghost_c2', 'nv_q13_smok': 'ghost_c2', 'nv_baelziffar': 'ghost_b2'}
+
 
 def engine(voice):
     if paths.RELEASE in paths.LOCAL_ONLY:
