@@ -15,7 +15,7 @@ namespace LektorPL.Core
     /// Panel statystyk w oknie podsumowania misji gry (E20, D114). Okno gry (<c>Panel_QuestSummary</c>) ma stały rozmiar
     /// 1250×920 (<c>Image_ScrollBG</c>), a łup przewija się w środku, więc panele stoją po bokach okna:
     /// po lewej wykresy bohaterów (ataki bohaterów i wyzwania malejąco, postawy jako proporcja; portret i nazwa),
-    /// po prawej łup i przebieg misji (ikona, nazwa, wartość) oraz balans gry (walka/interakcje), nad przyciskiem „Dalej”.
+    /// po prawej balans gry (walka/interakcje), przebieg misji i łup (ikona, nazwa, wartość), nad przyciskiem „Dalej”.
     /// Płótno gry ma wysokość 1080 i szerokość zależną od proporcji ekranu; gdy na panel boczny zostaje mniej niż
     /// <see cref="SideMin"/>, zmniejszamy okno gry skalą i przywracamy ją po zamknięciu.
     ///
@@ -186,11 +186,12 @@ namespace LektorPL.Core
             Feats(left, s);
             Spacer(left, 10f);
             Virtues(left, s);
-            // Prawy panel: łup, przebieg misji i balans gry (walka/interakcje).
-            Loot(right, s);
+            // Prawy panel: balans gry (walka/interakcje), przebieg misji i łup.
+            Balance(right, s);
             Spacer(right, 10f);
             Mission(right, s);
-            Balance(right, s);
+            Spacer(right, 10f);
+            Loot(right, s);
 
             _shown = s;
             _preview = preview;
@@ -322,7 +323,7 @@ namespace LektorPL.Core
             else { img.sprite = Ui("generic_circle_sprite"); img.color = hero.ColorLight; }
         }
 
-        // ---------- sekcje: prawy panel (łup, przebieg misji, balans gry) ----------
+        // ---------- sekcje: prawy panel (balans gry, przebieg misji, łup) ----------
 
         /// <summary>Przebieg misji: wartości jedna pod drugą, każda z ikoną gry.</summary>
         private void Mission(RectTransform panel, QuestStats s)
@@ -349,40 +350,41 @@ namespace LektorPL.Core
             EndRows(panel);
         }
 
-        /// <summary>Balans gry: osobna sekcja pod łupem, pasek walka/interakcje z ikonami i procentami pod spodem.</summary>
+        /// <summary>Balans gry: pierwsza sekcja prawego panelu, legenda z ikonami i procentami nad paskiem walka/interakcje.</summary>
         private void Balance(RectTransform panel, QuestStats s)
         {
-            Spacer(panel, 10f);
             Header(panel, "Balans gry");
             int total = s.CombatActions + s.Interactions;
-            var bar = NewRect("Ratio", panel);
-            Fixed(bar, 14f);
-            var track = bar.gameObject.AddComponent<Image>();
-            track.color = Track;
-            track.raycastTarget = false;
             float p = total > 0 ? (float)s.CombatActions / total : 0f;
-            if (total > 0)
-            {
-                Fill(bar, 0f, p, CombatColor);
-                Fill(bar, p, 1f, InteractColor);
-            }
-            var legend = NewRect("Legend", panel);
+            var legend = NewRect("Legend", panel);                  // legenda z ikonami nad paskiem
             Fixed(legend, 26f);
             if (total == 0)
             {
                 var none = AddText(legend, "brak akcji", RowSize, Light, TextAlignmentOptions.Left, false);
                 Stretch(none.rectTransform);
-                return;
             }
-            int pc = Mathf.RoundToInt(p * 100f);
-            Icon(legend, "icon_action_combat", Color.white, 0f, 22f, true);
-            Icon(legend, "icon_action_interact", Color.white, 1f, 22f, true);
-            BeginRows();
-            var a = RowText(legend, "walka " + pc + "%", TextAlignmentOptions.Left, false);
-            Anchor(a.rectTransform, 0f, 0f, 0.5f, 1f, 28f, 0f, 0f, 0f);
-            var b = RowText(legend, "interakcje " + (100 - pc) + "%", TextAlignmentOptions.Right, false);
-            Anchor(b.rectTransform, 0.5f, 0f, 1f, 1f, 0f, 0f, -28f, 0f);
-            EndRows(panel);
+            else
+            {
+                int pc = Mathf.RoundToInt(p * 100f);
+                Icon(legend, "icon_action_combat", Color.white, 0f, 22f, true);
+                Icon(legend, "icon_action_interact", Color.white, 1f, 22f, true);
+                BeginRows();
+                var a = RowText(legend, "walka " + pc + "%", TextAlignmentOptions.Left, false);
+                Anchor(a.rectTransform, 0f, 0f, 0.5f, 1f, 28f, 0f, 0f, 0f);
+                var b = RowText(legend, "interakcje " + (100 - pc) + "%", TextAlignmentOptions.Right, false);
+                Anchor(b.rectTransform, 0.5f, 0f, 1f, 1f, 0f, 0f, -28f, 0f);
+                EndRows(panel);
+            }
+            var bar = NewRect("Ratio", panel);
+            Fixed(bar, 14f);
+            var track = bar.gameObject.AddComponent<Image>();
+            track.color = Track;
+            track.raycastTarget = false;
+            if (total > 0)
+            {
+                Fill(bar, 0f, p, CombatColor);
+                Fill(bar, p, 1f, InteractColor);
+            }
         }
 
         /// <summary>Wiersz „ikona, nazwa … wartość”; wszystkie wiersze w jednym kolorze, także przy zerze.</summary>
