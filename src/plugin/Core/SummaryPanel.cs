@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using FFG.Core;
 using FFG.D3;
 using FFG.D3.UI;
@@ -13,8 +14,8 @@ namespace LektorPL.Core
     /// <summary>
     /// Panel statystyk w oknie podsumowania misji gry (E20, D114). Okno gry (<c>Panel_QuestSummary</c>) ma stały rozmiar
     /// 1250×920 (<c>Image_ScrollBG</c>), a łup przewija się w środku, więc panele stoją po bokach okna:
-    /// po lewej wykresy bohaterów (ataki bohaterów, ataki według broni, wyzwania) z okrągłymi portretami zamiast imion,
-    /// po prawej przebieg misji (wartości jedna pod drugą, pasek walka/interakcje) i łup, nad przyciskiem „Dalej”.
+    /// po lewej wykresy bohaterów (ataki bohaterów, ataki broni, wyzwania; portret i nazwa, słupki malejąco),
+    /// po prawej przebieg misji i łup (ikona, nazwa, wartość) oraz na dole walka i interakcje, nad przyciskiem „Dalej”.
     /// Płótno gry ma wysokość 1080 i szerokość zależną od proporcji ekranu; gdy na panel boczny zostaje mniej niż
     /// <see cref="SideMin"/>, zmniejszamy okno gry skalą i przywracamy ją po zamknięciu.
     ///
@@ -32,7 +33,7 @@ namespace LektorPL.Core
         private const int MaxBars = 8, MinBars = 3;
         private const float PadX = 22f, PadTop = 36f, PadBottom = 26f, FrameScale = 1.3f;
         // Wykresy: słupek broni (nazwa nad paskiem), słupek bohatera, okrągły portret i kolumna wartości.
-        private const float BarH = 42f, HeroBarH = 34f, IconW = 30f, ValueW = 44f;
+        private const float BarH = 42f, IconW = 30f, ValueW = 44f;
         // Lewy panel bez słupków broni: marginesy, trzy nagłówki (tekst, ornament, odstępy) i dwa odstępy między sekcjami.
         private const float LeftFixed = 36f + 26f + 3f * 56f + 2f * 10f + 8f;
         private const string UiBundle = "d3/uitextures", UiPath = "assets/d3/textures/ui/";
@@ -180,16 +181,17 @@ namespace LektorPL.Core
             var right = Box("LektorPL.SummaryRight", root, new Vector2(0f, 1f), new Vector2(halfW + Gap, top), new Vector2(side, top - rightBottom));
 
             // Lewy panel: wykresy bohaterów; słupków broni tyle, ile zmieści wysokość panelu (reszta jako „inne”).
-            float heroBars = 2f * s.Heroes.Count * (HeroBarH + 4f);
+            float heroBars = 2f * s.Heroes.Count * BarH;
             int bars = Mathf.Clamp(Mathf.FloorToInt((top - bottom - LeftFixed - heroBars) / BarH), MinBars, MaxBars);
             HeroAttacks(left, s);
             Spacer(left, 10f);
             Weapons(left, s, bars);
             Spacer(left, 10f);
             Feats(left, s);
-            // Prawy panel: przebieg misji i łup.
+            // Prawy panel: przebieg misji, łup i na dole walka i interakcje.
             Mission(right, s);
             Loot(right, s);
+            Balance(right, s);
 
             _shown = s;
             _preview = preview;
@@ -215,19 +217,19 @@ namespace LektorPL.Core
 
         // ---------- sekcje: lewy panel (wykresy bohaterów) ----------
 
-        /// <summary>Ataki bohaterów: suma klas bohatera i runy, jeden słupek na bohatera.</summary>
+        /// <summary>Ataki bohaterów: suma klas bohatera i runy, malejąco.</summary>
         private void HeroAttacks(RectTransform panel, QuestStats s)
         {
             Header(panel, "Ataki bohaterów");
             int max = 1;
             foreach (var h in s.Heroes) max = Mathf.Max(max, h.Attacks);
-            foreach (var h in s.Heroes)
-                HeroBar(panel, h, (float)h.Attacks / max, h.Attacks.ToString(Pl), null);
+            foreach (var h in s.Heroes.OrderByDescending(x => x.Attacks))   // OrderBy jest stabilne: remis w kolejności graczy
+                ChartRow(panel, h, HeroName(h), h.Attacks.ToString(Pl), (float)h.Attacks / max);
         }
 
         private void Weapons(RectTransform panel, QuestStats s, int maxBars)
         {
-            Header(panel, "Ataki według broni");
+            Header(panel, "Ataki broni");
             var rows = new List<WeaponBar>();
             foreach (var w in s.Weapons)
                 rows.Add(new WeaponBar { Name = Loc(w.NameKey) ?? w.Class.ToString(), Attacks = w.Attacks,
@@ -235,7 +237,7 @@ namespace LektorPL.Core
             foreach (var hero in s.Heroes)
                 if (hero.RuneAttacks > 0)
                     rows.Add(new WeaponBar { Name = "Runa", Attacks = hero.RuneAttacks, Hero = hero });
-            rows.Sort((x, y) => y.Attacks.CompareTo(x.Attacks));
+            rows = rows.OrderByDescending(r => r.Attacks).ToList();
             if (rows.Count > maxBars)
             {
                 int rest = 0;
@@ -247,7 +249,7 @@ namespace LektorPL.Core
                 Line(panel, "W tej misji nikt nie atakował.", 17f, Dim);
             int max = 1;
             foreach (var r in rows) max = Mathf.Max(max, r.Attacks);
-            foreach (var r in rows) Bar(panel, r, max);
+            foreach (var r in rows) ChartRow(panel, r.Hero, r.Name, r.Attacks.ToString(Pl), (float)r.Attacks / max);
         }
 
         private sealed class WeaponBar
@@ -257,62 +259,44 @@ namespace LektorPL.Core
             public QuestStats.HeroRow Hero;   // null: „inne”
         }
 
-        /// <summary>Wyzwania: przyrost postępu w misji (jak pasek w oknie gry), nad słupkiem liczba ukończonych.</summary>
+        /// <summary>Wyzwania: przyrost postępu w misji (jak pasek w oknie gry), malejąco; przy imieniu liczba ukończonych.</summary>
         private void Feats(RectTransform panel, QuestStats s)
         {
             Header(panel, "Wyzwania");
             float max = 1f;
             foreach (var h in s.Heroes) max = Mathf.Max(max, h.FeatGained);
-            foreach (var h in s.Heroes)
+            foreach (var h in s.Heroes.OrderByDescending(x => x.FeatGained))
             {
                 float gained = Mathf.Max(0f, h.FeatGained);
-                string done = h.FeatsCompleted > 0 ? "ukończone: " + h.FeatsCompleted.ToString(Pl) : null;
-                HeroBar(panel, h, gained / max, "+" + gained.ToString("0.#", Pl), done);
+                string name = HeroName(h);
+                if (h.FeatsCompleted > 0)
+                    name += "  <size=13><color=#" + ColorUtility.ToHtmlStringRGB(Gold) + ">ukończone: " + h.FeatsCompleted.ToString(Pl) + "</color></size>";
+                ChartRow(panel, h, name, "+" + gained.ToString("0.#", Pl), gained / max);
             }
         }
 
-        /// <summary>Słupek bohatera: okrągły portret zamiast imienia, pasek w kolorze bohatera, wartość z prawej.</summary>
-        private void HeroBar(RectTransform panel, QuestStats.HeroRow hero, float frac, string value, string note)
+        /// <summary>
+        /// Wiersz wykresu: okrągły portret bohatera, nad paskiem nazwa (imię albo broń) i wartość, pasek w kolorze bohatera.
+        /// Bez bohatera („inne”) bez portretu i w szarym kolorze.
+        /// </summary>
+        private void ChartRow(RectTransform panel, QuestStats.HeroRow hero, string name, string value, float frac)
         {
-            var row = NewRect("HeroBar", panel);
-            Fixed(row, HeroBarH);
-            HeroIcon(row, hero, 0f);
-            var v = AddText(row, value, 17f, Light, TextAlignmentOptions.Right, true);
-            Fit(v, 12f);
-            Anchor(v.rectTransform, 1f, 0f, 1f, 1f, -ValueW, 0f, 0f, 0f);
-            if (note != null)
-            {
-                var n = AddText(row, note, 12f, Gold, TextAlignmentOptions.Left, false);
-                Fit(n, 10f);
-                Anchor(n.rectTransform, 0f, 0.5f, 1f, 1f, IconW + 8f, 0f, -ValueW - 6f, 0f);
-            }
-            var track = NewRect("Track", row);
-            float y = note != null ? -HeroBarH * 0.25f : 0f;            // z dopiskiem pasek schodzi niżej
-            Anchor(track, 0f, 0.5f, 1f, 0.5f, IconW + 8f, y - 6f, -ValueW - 6f, y + 6f);
-            var ti = track.gameObject.AddComponent<Image>();
-            ti.color = Track;
-            ti.raycastTarget = false;
-            Fill(track, 0f, Mathf.Clamp01(frac), hero.ColorLight);
-        }
-
-        /// <summary>Wiersz broni: ikona właściciela, nazwa i liczba nad paskiem w kolorze bohatera.</summary>
-        private void Bar(RectTransform panel, WeaponBar r, int max)
-        {
-            var row = NewRect("Bar", panel);
+            var row = NewRect("ChartRow", panel);
             Fixed(row, BarH - 4f);
             float x = 0f;
-            if (r.Hero != null) { HeroIcon(row, r.Hero, 0f); x = IconW + 8f; }
-            var label = AddText(row, r.Name, 17f, Light, TextAlignmentOptions.Left, false);
-            Fit(label, 13f);
+            if (hero != null) { HeroIcon(row, hero, 0f); x = IconW + 8f; }
+            var label = AddText(row, name, 17f, Light, TextAlignmentOptions.Left, false);
+            Fit(label, 12f);
             Anchor(label.rectTransform, 0f, 1f, 1f, 1f, x, -22f, -ValueW, 0f);
-            var v = AddText(row, r.Attacks.ToString(Pl), 17f, Light, TextAlignmentOptions.Right, true);
+            var v = AddText(row, value, 17f, Light, TextAlignmentOptions.Right, true);
+            Fit(v, 12f);
             Anchor(v.rectTransform, 1f, 1f, 1f, 1f, -ValueW, -22f, 0f, 0f);
             var track = NewRect("Track", row);
             Anchor(track, 0f, 0f, 1f, 0f, x, 3f, 0f, 14f);
             var ti = track.gameObject.AddComponent<Image>();
             ti.color = Track;
             ti.raycastTarget = false;
-            Fill(track, 0f, Mathf.Clamp01((float)r.Attacks / max), r.Hero != null ? r.Hero.ColorLight : Dim);
+            Fill(track, 0f, Mathf.Clamp01(frac), hero != null ? hero.ColorLight : Dim);
         }
 
         /// <summary>Mały okrągły portret bohatera przy lewej krawędzi wiersza (bez portretu: kółko w kolorze bohatera).</summary>
@@ -330,26 +314,41 @@ namespace LektorPL.Core
             else { img.sprite = Ui("generic_circle_sprite"); img.color = hero.ColorLight; }
         }
 
-        // ---------- sekcje: prawy panel (przebieg misji i łup) ----------
+        // ---------- sekcje: prawy panel (przebieg misji, łup, walka i interakcje) ----------
 
-        /// <summary>Przebieg misji: wartości jedna pod drugą (nazwa z lewej, liczba z prawej), pod nimi pasek walka/interakcje.</summary>
+        /// <summary>Przebieg misji: wartości jedna pod drugą, każda z ikoną gry.</summary>
         private void Mission(RectTransform panel, QuestStats s)
         {
             Header(panel, "Przebieg misji");
-            StatRow(panel, null, false, "rundy", s.Rounds.ToString(Pl));
-            StatRow(panel, null, false, "śr. czas rundy", Clock(s.SecondsPerRound));
+            StatRow(panel, "icon_movement", false, "rundy", s.Rounds.ToString(Pl));
+            StatRow(panel, "generic_loadingindicator", false, "śr. czas rundy", Clock(s.SecondsPerRound));
             StatRow(panel, "icon_action_combat", true, "ataki", s.Attacks.ToString(Pl));
             StatRow(panel, "icon_action_interact", true, "interakcje", s.Interactions.ToString(Pl));
             StatRow(panel, "icon_coins", false, "złoto na rundę", s.GoldPerRound.ToString(s.GoldPerRound < 10f ? "0.#" : "0", Pl));
-            StatRow(panel, null, false, "trudność", Loc("UI_DIFFICULTY_" + s.Difficulty.ToString().ToUpperInvariant()) ?? s.Difficulty.ToString());
-            Spacer(panel, 4f);
-            Ratio(panel, s);
+            StatRow(panel, "icon_damage", false, "trudność", Loc("UI_DIFFICULTY_" + s.Difficulty.ToString().ToUpperInvariant()) ?? s.Difficulty.ToString());
         }
 
-        private void Ratio(RectTransform parent, QuestStats s)
+        private void Loot(RectTransform panel, QuestStats s)
         {
+            Spacer(panel, 10f);
+            Header(panel, "Łup");
+            StatRow(panel, "icon_coins", false, "złoto", s.Gold.ToString(Pl));
+            StatRow(panel, "icon_trinket", false, "przedmioty", s.LootItems.ToString(Pl));
+            StatRow(panel, "icon_materials", false, "materiały", s.LootMaterials.ToString(Pl));
+            StatRow(panel, "miniviewrecipe_bg", false, "przepisy", s.LootRecipes.ToString(Pl));
+            StatRow(panel, "icon_consumables", false, "mikstury", s.LootConsumables.ToString(Pl));
+        }
+
+        /// <summary>Walka i interakcje: osobna sekcja na dole panelu, pasek proporcji z ikonami i procentami pod spodem.</summary>
+        private void Balance(RectTransform panel, QuestStats s)
+        {
+            var push = NewRect("Push", panel);                      // dosuwa sekcję do dołu panelu
+            var le = push.gameObject.AddComponent<LayoutElement>();
+            le.minHeight = 10f;
+            le.flexibleHeight = 1f;
+            Header(panel, "Walka i interakcje");
             int total = s.CombatActions + s.Interactions;
-            var bar = NewRect("Ratio", parent);
+            var bar = NewRect("Ratio", panel);
             Fixed(bar, 14f);
             var track = bar.gameObject.AddComponent<Image>();
             track.color = Track;
@@ -360,48 +359,44 @@ namespace LektorPL.Core
                 Fill(bar, 0f, p, CombatColor);
                 Fill(bar, p, 1f, InteractColor);
             }
-            var legend = NewRect("Legend", parent);
-            Fixed(legend, 22f);
+            var legend = NewRect("Legend", panel);
+            Fixed(legend, 26f);
             if (total == 0)
             {
-                var none = AddText(legend, "brak akcji", 16f, Dim, TextAlignmentOptions.Left, false);
+                var none = AddText(legend, "brak akcji", 16f, Light, TextAlignmentOptions.Left, false);
                 Stretch(none.rectTransform);
                 return;
             }
             int pc = Mathf.RoundToInt(p * 100f);
-            var a = AddText(legend, "walka " + pc + "%", 15f, Light, TextAlignmentOptions.Left, false);
+            Icon(legend, "icon_action_combat", Color.white, 0f, 22f, true);
+            Icon(legend, "icon_action_interact", Color.white, 1f, 22f, true);
+            var a = AddText(legend, "walka " + pc + "%", 16f, Light, TextAlignmentOptions.Left, false);
             Fit(a, 11f);
-            Anchor(a.rectTransform, 0f, 0f, 0.5f, 1f, 0f, 0f, 0f, 0f);
-            var b = AddText(legend, "interakcje " + (100 - pc) + "%", 15f, Light, TextAlignmentOptions.Right, false);
+            Anchor(a.rectTransform, 0f, 0f, 0.5f, 1f, 28f, 0f, 0f, 0f);
+            var b = AddText(legend, "interakcje " + (100 - pc) + "%", 16f, Light, TextAlignmentOptions.Right, false);
             Fit(b, 11f);
-            Anchor(b.rectTransform, 0.5f, 0f, 1f, 1f, 0f, 0f, 0f, 0f);
+            Anchor(b.rectTransform, 0.5f, 0f, 1f, 1f, 0f, 0f, -28f, 0f);
         }
 
-        private void Loot(RectTransform panel, QuestStats s)
-        {
-            Spacer(panel, 10f);
-            Header(panel, "Łup");
-            StatRow(panel, "icon_coins", false, "złoto", s.Gold.ToString(Pl), s.Gold > 0);
-            StatRow(panel, "icon_trinket", false, "przedmioty", s.LootItems.ToString(Pl), s.LootItems > 0);
-            StatRow(panel, "icon_materials", false, "materiały", s.LootMaterials.ToString(Pl), s.LootMaterials > 0);
-            StatRow(panel, "miniviewrecipe_bg", false, "przepisy", s.LootRecipes.ToString(Pl), s.LootRecipes > 0);
-            StatRow(panel, "icon_consumables", false, "mikstury", s.LootConsumables.ToString(Pl), s.LootConsumables > 0);
-        }
-
-        /// <summary>Wiersz „nazwa … wartość” z opcjonalną ikoną gry; pusta wartość (<paramref name="any"/> false) jest przygaszona.</summary>
-        private void StatRow(RectTransform panel, string icon, bool white, string label, string value, bool any = true)
+        /// <summary>Wiersz „ikona, nazwa … wartość”; wszystkie wiersze w jednym kolorze, także przy zerze.</summary>
+        private void StatRow(RectTransform panel, string icon, bool white, string label, string value)
         {
             var row = NewRect("StatRow", panel);
             Fixed(row, 28f);
-            var tint = icon == "icon_coins" || icon == "miniviewrecipe_bg" || white ? Color.white : Light;
-            if (!any) tint *= new Color(1f, 1f, 1f, 0.45f);
+            var tint = icon == "icon_trinket" || icon == "icon_materials" || icon == "icon_consumables" ? Light : Color.white;
             if (icon != null) Icon(row, icon, tint, 0f, 24f, white);
-            var l = AddText(row, label, 17f, any ? Light : Dim, TextAlignmentOptions.Left, false);
+            var l = AddText(row, label, 17f, Light, TextAlignmentOptions.Left, false);
             Fit(l, 13f);
-            Anchor(l.rectTransform, 0f, 0f, 1f, 1f, 32f, 0f, -110f, 0f);   // wszystkie nazwy w jednej linii, z ikoną i bez
-            var v = AddText(row, value, 18f, any ? Light : Dim, TextAlignmentOptions.Right, true);
+            Anchor(l.rectTransform, 0f, 0f, 1f, 1f, 32f, 0f, -110f, 0f);
+            var v = AddText(row, value, 18f, Light, TextAlignmentOptions.Right, true);
             Fit(v, 12f);
             Anchor(v.rectTransform, 1f, 0f, 1f, 1f, -110f, 0f, 0f, 0f);
+        }
+
+        private static string HeroName(QuestStats.HeroRow h)
+        {
+            string s = Loc(h.NameKey);
+            return string.IsNullOrEmpty(s) ? h.HeroId : s;
         }
 
         // ---------- klocki ----------
