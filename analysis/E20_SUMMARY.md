@@ -38,5 +38,5 @@ Do zrobienia przy najbliższej sesji na Macu: okno 16:10 (płótno ok. 1728), sk
 
 ## Ustawienia
 
-- `ustawienia.toml`, sekcja `[podsumowanie]`: `statystyki = true` (na start gry). W grze przełącza je checkbox „Statystyki na koniec misji” w menu lektora (Ustawienia). Companion zapisuje zmianę w pliku.
+- `ustawienia.toml`, sekcja `[podsumowanie]`: `statystyki = true` (na start gry). W grze przełącza je checkbox „Statystyki na koniec misji” w menu lektora (na końcu listy „Co czyta lektor”). Companion zapisuje zmianę w pliku.
 - `[podsumowanie] podglad = true`: skrót Ctrl+P w misji (tylko do testów, poza szablonem).

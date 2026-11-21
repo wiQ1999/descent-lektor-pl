@@ -134,8 +134,7 @@ Aktualizacja w Steam przywraca oryginalny podpis gry. Gra wtedy uruchomi się be
 Na dolnym pasku, obok zębatki i drużyny, jest przycisk **PL**. Otwiera menu lektora:
 - bieżąca kwestia oraz przyciski Powtórz, Utnij i Wycisz;
 - tempo (0,8–1,6×) i głośność lektora;
-- „Statystyki na koniec misji”: panele po bokach okna podsumowania misji (ataki, wyzwania i postawy bohaterów, balans gry, przebieg misji i łup);
-- „Co czyta lektor”: kategorie do włączenia i wyłączenia;
+- „Co czyta lektor”: kategorie do włączenia i wyłączenia, a na końcu listy „Statystyki na koniec misji”: panele po bokach okna podsumowania misji (ataki, wyzwania i postawy bohaterów, balans gry, przebieg misji i łup);
 - 3 ostatnie kwestie: „Graj” odtwarza kwestię jeszcze raz, „Zgłoś” zgłasza błąd w tej kwestii;
 - „Zgłoś błąd” i lista skrótów.
 

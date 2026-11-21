@@ -489,7 +489,7 @@ namespace LektorPL.Core
                 return;
             }
             BuildNow(state);
-            BuildSettings(state);
+            BuildSettings();
             BuildToggles(state);
             BuildHistory(state);
             BuildReports();
@@ -524,7 +524,7 @@ namespace LektorPL.Core
             Btn(row, Json.Bool(state, "muted") ? "Włącz" : "Wycisz", 0f, () => _host.Control("wycisz"));
         }
 
-        private void BuildSettings(object state)
+        private void BuildSettings()
         {
             Section("Ustawienia");
             var tempo = Row(_content);
@@ -540,10 +540,6 @@ namespace LektorPL.Core
             var vv = Value(vol);
             Btn(vol, "+", 64f, () => Volume(0.1));
             _refresh.Add(() => vv.text = Mathf.RoundToInt((float)Json.Num(_host.State, "volume", 1.0) * 100f) + "%");
-
-            if (Json.Get(state, "stats") is bool stats)         // panele statystyk przy oknie podsumowania misji (E20)
-                Check("Statystyki na koniec misji", stats, on =>
-                    _host.Send(_host.Log.New("control").Str("cmd", "statystyki").Bool("value", on)));
         }
 
         private void Volume(double step)
@@ -569,6 +565,9 @@ namespace LektorPL.Core
                     _host.Send(_host.Log.New("control").Str("cmd", "przelacznik")
                         .Raw("value", new JsonLine().Str("name", key).Bool("on", on).ToString())));
             }
+            if (Json.Get(state, "stats") is bool stats)         // na końcu listy: panele przy oknie podsumowania misji (E20)
+                Check("Statystyki na koniec misji", stats, on =>
+                    _host.Send(_host.Log.New("control").Str("cmd", "statystyki").Bool("value", on)));
         }
 
         /// <summary>Checkbox gry w osobnym wierszu.</summary>
