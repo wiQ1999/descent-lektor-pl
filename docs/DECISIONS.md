@@ -1185,7 +1185,7 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
   - drużyna: tabela bohaterów (stan zdrowia, ataki z jego broni, ulubiona broń, ukończone wyzwania, przyrost postępu wyzwań). Gdy dwóch bohaterów nosi broń tej samej klasy, oba wiersze mają wspólną liczbę z dopiskiem „wspólnie z X”;
   - łup według rodzaju: przedmioty, materiały, przepisy, mikstury (mikstur okno gry nie pokazuje).
 - Styl gry: tło, ramki i czcionki skopiowane z okien gry, jak przy menu „PL”.
-  - Po podglądzie z 2026-11-21: panele boczne mają kamienne tło i ramkę panelu wroga, nagłówki ze złotym ornamentem, ikony walki i interakcji z HUD, ikony łupu i okrągłe portrety jak w oknie podsumowania. Nazwa broni stoi nad paskiem, łup jest listą z ikonami (z sumą złota), a teksty najpierw zmniejszają czcionkę, zamiast się urywać.
+  - Po podglądzie z 2026-11-21: panele boczne mają półprzezroczyste przyciemnione tło (plansza prześwituje) i ramkę panelu wroga, nagłówki ze złotym ornamentem, ikony walki i interakcji z HUD, ikony łupu i okrągłe portrety jak w oknie podsumowania. Nazwa broni stoi nad paskiem, łup jest listą z ikonami (z sumą złota), a teksty najpierw zmniejszają czcionkę, zamiast się urywać.
 - Panel jest zawsze widoczny. Układ wynika z prefabu okna (`Panel_QuestSummary`): okno ma stały rozmiar 1250×920 jednostek, a łup przewija się w nim, więc wysokość nie zależy od łupu. Pod oknem zostaje ok. 50 jednostek, w prawym dolnym rogu ekranu jest „Dalej”. Dlatego:
   - kafelki i pasek charakteru misji idą do wolnego pola okna pod „Czasem” (ok. 440×260);
   - ataki według broni idą do panelu po lewej stronie okna, drużyna i łup do panelu po prawej, nad „Dalej”;

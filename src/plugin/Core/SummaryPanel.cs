@@ -19,7 +19,7 @@ namespace LektorPL.Core
     /// <see cref="SideMin"/>, zmniejszamy okno gry skalą i przywracamy ją po zamknięciu.
     ///
     /// Panel jest dzieckiem okna gry, więc znika i zanika razem z nim; przycisku „Dalej” nie dotykamy. Grafiki i czcionkę
-    /// bierzemy z gry: tabliczka pola „Czas” i czcionka nazwy misji z okna, kamienne tło i ramka panelu wroga, ornament nagłówka,
+    /// bierzemy z gry: tabliczka pola „Czas” i czcionka nazwy misji z okna, ramka panelu wroga na półprzezroczystym przyciemnieniu, ornament nagłówka,
     /// ikony akcji i łupu z pakietu d3/uitextures oraz okrągłe portrety bohaterów jak w UIHeroProgress.
     ///
     /// Podgląd (ustawienie <c>podsumowanie_podglad</c>, skrót Ctrl+P w misji): ten sam panel nad planszą, z ramką
@@ -41,9 +41,8 @@ namespace LektorPL.Core
         private static readonly Color CombatColor = new Color(0.72f, 0.30f, 0.24f);
         private static readonly Color InteractColor = new Color(0.30f, 0.52f, 0.76f);
         private static readonly Color Track = new Color(0f, 0f, 0f, 0.45f);
-        private static readonly Color StoneTint = new Color(0.50f, 0.47f, 0.45f, 0.97f);
         private static readonly Color FrameTint = new Color(0.82f, 0.70f, 0.48f, 1f);
-        private static readonly Color PanelFallback = new Color(0.12f, 0.10f, 0.09f, 0.94f);
+        private static readonly Color PanelShade = new Color(0.04f, 0.03f, 0.03f, 0.72f);   // przyciemnienie: plansza prześwituje
         private static readonly CultureInfo Pl = CultureInfo.GetCultureInfo("pl-PL");
 
         private readonly EventLog _log;
@@ -402,7 +401,7 @@ namespace LektorPL.Core
             {
                 bool shared = hero.SharedWith.Count > 0;
                 var row = NewRect("Hero", panel);
-                Fixed(row, shared ? 92f : 76f);
+                Fixed(row, shared ? 100f : 84f);
                 var frame = NewRect("Portrait", row);
                 Anchor(frame, 0f, 0.5f, 0f, 0.5f, 0f, -Portrait / 2f, Portrait, Portrait / 2f);
                 var sprite = PortraitSprite(hero.PortraitPath);
@@ -434,6 +433,7 @@ namespace LektorPL.Core
 
         private void Loot(RectTransform panel, QuestStats s)
         {
+            Spacer(panel, 10f);
             Header(panel, "Łup");
             LootRow(panel, "icon_coins", Color.white, "złoto", s.Gold);
             LootRow(panel, "icon_trinket", Light, "przedmioty", s.LootItems);
@@ -456,7 +456,7 @@ namespace LektorPL.Core
 
         // ---------- klocki ----------
 
-        /// <summary>Panel boczny: kamienne tło i ozdobna ramka z panelu wroga gry; bez grafik zwykły ciemny prostokąt.</summary>
+        /// <summary>Panel boczny: półprzezroczyste przyciemnienie i ozdobna ramka z panelu wroga gry.</summary>
         private RectTransform Box(string name, RectTransform root, Vector2 pivot, Vector2 pos, Vector2 size)
         {
             var rt = NewRect(name, root);
@@ -467,9 +467,7 @@ namespace LektorPL.Core
             rt.sizeDelta = size;
             var bg = rt.gameObject.AddComponent<Image>();
             bg.raycastTarget = false;
-            var stone = Ui("enemytab_bg");
-            if (stone != null) { bg.sprite = stone; bg.type = Image.Type.Tiled; bg.color = StoneTint; }   // rozciągnięty kamień robi smugi
-            else bg.color = PanelFallback;
+            bg.color = PanelShade;
             var frameSprite = Ui("enemytab_frame");
             if (frameSprite != null)
             {
