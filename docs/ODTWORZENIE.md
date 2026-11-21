@@ -291,6 +291,28 @@ Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej 
 .venv/Scripts/python -I analysis/tools/e20_samples.py page
 ```
 
+- Kandydaci głosów E20 (D114): profile w `analysis/tools/voice_designs_e20.json` (nowe głosy, poprawki jakości, klony Ne'Krul i Levirax, odszumiona referencja Gilliama). Każdy kandydat czyta też kwestię z gry. Strona `analysis/work/compare/e20_recast/index.html`, wybór przejmuje `adopt` (litera A–C, `-` bez zmian):
+
+```bash
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/recast_e20.py design
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/recast_e20.py choose
+```
+
+```bash
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/recast_e20.py lines
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/recast_e20.py page
+```
+
+```bash
+.venv/Scripts/python -I analysis/tools/recast_e20.py adopt nv_x=B gilliam=A nv_y=-
+```
+
 - Zmiany obsady po odsłuchu (D109): kandydaci OmniVoice (dwa opisy, dwa ziarna, wariant z obróbką) i podglądy ElevenLabs na jednej stronie `analysis/work/compare/m4_recast/index.html`. Wybór z odsłuchu przejmuje `adopt` (litera A–C, `-` bez zmian), nowe profile ElevenLabs wpisujemy do `direction.ELEVEN_RECAST`, potem `build --release m4`:
 
 ```bash
