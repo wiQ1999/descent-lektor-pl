@@ -310,7 +310,7 @@ powershell -ExecutionPolicy Bypass -File src/plugin/install/monomod-fix.ps1
 - Instalację w grze opisuje `docs/INSTRUKCJA.md`. Bloki `<!-- win -->` i `<!-- mac -->` dotyczą jednego systemu: paczka dostaje instrukcję tylko swojego systemu (`bundle.guide_text`).
 - Nowy plugin i companion bez budowania paczki: `src/plugin/install/nakladka-test.ps1 -Paczka "<paczka>"` podmienia je w rozpakowanej paczce (oryginały w `stan\nakladka-kopia`, powrót: `-Przywroc`). Opis i lista kontrolna: `docs/NAKLADKA_TEST.md`.
 - Każda paczka ma `LICENSE.md`, `UZNANIE_AUTORSTWA.md` (szablon w `src/bundle/`) i licencję Doorstop w `licencje/`.
-- Podsumowanie misji (E20, D113): plugin zapisuje statystyki w dzienniku jako wiersz `quest_summary`. Wzorzec liczb z pliku zapisu (`lektor.quest_summary`) liczy `analysis/tools/quest_summary_preview.py`. Katalog identyfikatorów z bundli trafia do `analysis/work/out/quest_summary_catalog.json`. Zapis porównujemy z ostatnim zapisem w misji (autozapis na końcu rundy):
+- Podsumowanie misji (E20, D114): plugin zapisuje statystyki w dzienniku jako wiersz `quest_summary`. Wzorzec liczb z pliku zapisu (`lektor.quest_summary`) liczy `analysis/tools/quest_summary_preview.py`. Katalog identyfikatorów z bundli trafia do `analysis/work/out/quest_summary_catalog.json`. Zapis porównujemy z ostatnim zapisem w misji (autozapis na końcu rundy):
 
 ```bash
 .venv/Scripts/python -I analysis/tools/quest_summary_preview.py catalog

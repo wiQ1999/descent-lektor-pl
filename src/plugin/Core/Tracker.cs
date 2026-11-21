@@ -85,7 +85,7 @@ namespace LektorPL.Core
         private object _featList;                   // _completedFeatIds: nowa lista = wczytany zapis, nowa baza (l16)
         private readonly HashSet<string> _featsDone = new HashSet<string>();
 
-        // Podsumowanie misji (E20, D113). Gra zeruje QuestId zaraz po pokazaniu okna (RecordQuestCompletion),
+        // Podsumowanie misji (E20, D114). Gra zeruje QuestId zaraz po pokazaniu okna (RecordQuestCompletion),
         // więc pamiętamy ostatni niepusty.
         private bool _summaryVisible;
         private string _lastQuestId;

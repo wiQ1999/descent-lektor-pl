@@ -1,18 +1,20 @@
 # E20: podgląd panelu podsumowania misji (Windows)
 
-Szybki test wyglądu panelu statystyk (D113) w trakcie misji, bez jej kończenia. Plugin 0.6.0 z gałęzi `feature/quest-summary`.
+Szybki test wyglądu panelu statystyk (D114) w trakcie misji, bez jej kończenia. Plugin 1.1.0 z gałęzi `feature/quest-summary`.
 
 Podgląd pokazuje panel nad planszą, z ramką w miejscu okna podsumowania gry. Okna gry nie otwiera i niczego w grze nie zmienia.
 
 ## 1. Podmiana pluginu w paczce
 
-Zamknij grę. W PowerShellu, w folderze worktree `D:\Projects\Descent Legendy Mroku - lektor\.claude\feature\quest-summary`:
+Zamknij grę. W PowerShellu (z dowolnego folderu, pełna ścieżka do skryptu z worktree):
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File src/plugin/install/nakladka-test.ps1 -Paczka "$env:USERPROFILE\Descent-Lektor-PL"
+powershell -ExecutionPolicy Bypass -File "D:\Projects\Descent Legendy Mroku - lektor\.claude\feature\quest-summary\src\plugin\install\nakladka-test.ps1" -Paczka "$env:USERPROFILE\Descent-Lektor-PL"
 ```
 
-Skrypt kopiuje oryginały do `stan\nakladka-kopia` w paczce.
+Skrypt kopiuje oryginały do `stan\nakladka-kopia` w paczce i na końcu wypisuje `rdzeń 1.1.0.0`. Skrypt z głównego folderu repozytorium wgrywa stary rdzeń bez panelu.
+
+Po starcie gry pierwszy wiersz najnowszego `logs\hook-*.jsonl` ma `"plugin":"1.1.0"`.
 
 ## 2. Włączenie podglądu
 
@@ -39,7 +41,7 @@ podsumowanie_podglad = true
 ## 5. Powrót
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File src/plugin/install/nakladka-test.ps1 -Paczka "$env:USERPROFILE\Descent-Lektor-PL" -Przywroc
+powershell -ExecutionPolicy Bypass -File "D:\Projects\Descent Legendy Mroku - lektor\.claude\feature\quest-summary\src\plugin\install\nakladka-test.ps1" -Paczka "$env:USERPROFILE\Descent-Lektor-PL" -Przywroc
 ```
 
 Wiersz `podsumowanie_podglad` usuń z `ustawienia.toml` albo ustaw na `false`.

@@ -38,15 +38,15 @@ foreach ($p in $pliki) {
     $src = Join-Path $repo $p.Z
     if (-not (Test-Path $src)) { throw "Brak pliku $src (zbuduj plugin: dotnet build src/plugin/Loader -c Release)" }
 }
-if (-not (Test-Path $kopia)) {
-    foreach ($p in $pliki) {
-        $cel = Join-Path $paczka $p.Do
-        if (Test-Path $cel) {
-            $dst = Join-Path $kopia $p.Do
-            New-Item -ItemType Directory -Force -Path (Split-Path $dst) | Out-Null
-            Copy-Item -LiteralPath $cel -Destination $dst
-        }
+# Kopia każdego pliku osobno: plik dopisany do listy po wcześniejszej próbie też dostaje oryginał (inaczej -Przywroc by go usunął).
+foreach ($p in $pliki) {
+    $cel = Join-Path $paczka $p.Do
+    $dst = Join-Path $kopia $p.Do
+    if ((Test-Path $cel) -and -not (Test-Path $dst)) {
+        New-Item -ItemType Directory -Force -Path (Split-Path $dst) | Out-Null
+        Copy-Item -LiteralPath $cel -Destination $dst
     }
 }
 foreach ($p in $pliki) { Copy-Item -LiteralPath (Join-Path $repo $p.Z) -Destination (Join-Path $paczka $p.Do) -Force }
-Write-Host "Nakładka wgrana do $paczka. Oryginały: $kopia (powrót: -Przywroc)."
+$core = [System.Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $paczka 'plugin\LektorPL.Core.dll')).FileVersion
+Write-Host "Nakładka wgrana do $paczka z $repo (rdzeń $core). Oryginały: $kopia (powrót: -Przywroc)."

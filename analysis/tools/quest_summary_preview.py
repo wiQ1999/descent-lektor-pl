@@ -1,4 +1,4 @@
-"""Wzorzec liczb panelu podsumowania misji (E20, D113) z plików zapisu gry.
+"""Wzorzec liczb panelu podsumowania misji (E20, D114) z plików zapisu gry.
 
   quest_summary_preview.py catalog                      # katalog id z bundli -> analysis/work/out/quest_summary_catalog.json
   quest_summary_preview.py show ZAPIS.sav [...]         # statystyki misji z zapisu (JSON na konsolę: same liczby i id)

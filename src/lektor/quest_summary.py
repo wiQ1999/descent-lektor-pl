@@ -1,4 +1,4 @@
-"""Statystyki misji z pliku zapisu gry (E20, D113): wzorzec liczb dla panelu podsumowania w pluginie.
+"""Statystyki misji z pliku zapisu gry (E20, D114): wzorzec liczb dla panelu podsumowania w pluginie.
 
 Liczy to samo co `src/plugin/Core/QuestStats.cs`, ale z `.sav` (JSON) i katalogu identyfikatorów z bundli gry.
 Katalog zawiera tylko identyfikatory, klasy modeli i liczby (bez tekstów gry):

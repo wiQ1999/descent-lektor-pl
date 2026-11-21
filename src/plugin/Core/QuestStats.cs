@@ -7,7 +7,7 @@ using UnityEngine;
 namespace LektorPL.Core
 {
     /// <summary>
-    /// Statystyki misji do panelu podsumowania (E20, D113), wyłącznie z danych, które gra zapisuje sama:
+    /// Statystyki misji do panelu podsumowania (E20, D114), wyłącznie z danych, które gra zapisuje sama:
     /// <c>SerializedGame.QuestSummary</c>, <c>ActivePlayers</c>, <c>GameDifficulty</c> i <c>FeatProgresses</c>.
     ///
     /// Liczymy raz, gdy gra pokazuje okno podsumowania. Ataki według klasy broni gra sumuje dla całej drużyny

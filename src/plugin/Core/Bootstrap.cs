@@ -37,7 +37,7 @@ namespace LektorPL.Core
         /// <summary>Nakładka w grze (próba): skróty, komunikaty, menu lektora, przycisk na dolnym pasku, zgłoszenia.</summary>
         public bool Overlay = true;
 
-        /// <summary>Statystyki przy oknie podsumowania misji (E20, D113).</summary>
+        /// <summary>Statystyki przy oknie podsumowania misji (E20, D114).</summary>
         public bool QuestSummary = true;
 
         /// <summary>Podgląd panelu statystyk w trakcie misji skrótem Ctrl+P (tylko do testów).</summary>

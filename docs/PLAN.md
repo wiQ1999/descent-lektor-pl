@@ -496,9 +496,9 @@ Skróty klawiszowe, przycisk „PL” z menu lektora na dolnym pasku, tempo 0,8�
 
 Starter `instaluj-win.ps1` i instalator `instalator-win.ps1` (`src/bundle/online/`), części paczki z manifestem (`lektor bundle --parts`). Próba lokalna na Windows zrobiona 2026-11-19. 2026-11-20: sprawdzenie innej instalacji przed pobraniem, instrukcja, zasady wydania (zwykłe, z kompletem części), test użytkownika z lokalnego serwera (`docs/E19_WIN_TEST.md`) przeszedł. Instalator Maca (`curl … | bash`) zrobiony i sprawdzony z atrapami; części obu systemów we wspólnym `dist/online/`. Po przeglądzie paczki Windows (D112): bez skryptów `Ustawienia` i `Wyłącz/Włącz lektora`, instrukcja przycięta do systemu, części wspólne paczek w `dist/wspolne/`. Dalej: test na Macu, pierwsze wydanie z instalatorem (lista kontrolna w `docs/ODTWORZENIE.md`).
 
-## E20 · Podsumowanie misji w oknie gry (D113, czeka na akceptację)
+## E20 · Podsumowanie misji w oknie gry (D114, czeka na akceptację)
 
-Plugin dokłada do okna podsumowania misji gry (`UIQuestSummary`) kafelki, wykres ataków według broni, pasek walka / interakcje, tabelę drużyny i łup według rodzaju, tylko z danych zapisu gry (`SerializedQuestSummary`). Układ: pole pod „Czasem” w oknie i dwa panele boczne, z mniejszą skalą okna na ekranach węższych niż 16:9 (D113). Bez przechwytywania „Dalej”, bez nowych nagrań. Gałąź `feature/quest-summary`.
+Plugin dokłada do okna podsumowania misji gry (`UIQuestSummary`) kafelki, wykres ataków według broni, pasek walka / interakcje, tabelę drużyny i łup według rodzaju, tylko z danych zapisu gry (`SerializedQuestSummary`). Układ: pole pod „Czasem” w oknie i dwa panele boczne, z mniejszą skalą okna na ekranach węższych niż 16:9 (D114). Bez przechwytywania „Dalej”, bez nowych nagrań. Gałąź `feature/quest-summary`.
 
 **Kroki** (commit po każdym):
 
@@ -517,7 +517,7 @@ Plugin dokłada do okna podsumowania misji gry (`UIQuestSummary`) kafelki, wykre
 2. **Wzorzec liczb** (`analysis/tools/quest_summary_preview.py`). Liczy to samo z pliku `.sav`, np. dla kopii z `analysis/work/saves/`. Testy pytest działają na własnym, sztucznym JSON-ie. Służy do porównania z wierszem `quest_summary` z gry.
 3. **Wykrycie okna**: odpytywanie `UIGame.QuestSummaryDialog`, tak jak inne okna w `Tracker`. Panel powstaje przy pokazaniu okna, a znika przy jego ukryciu albo zmianie sceny. Dotyczy też ostatniej misji aktu (`OnEndGame`).
 4. **Wygląd** (`src/plugin/Core/SummaryPanel.cs`). Klocki z grafik i czcionek okna gry (tło `Image_ScrollBG`, nagłówki jak `Group_Time/Text_Title`): kafelek, poziomy wykres słupkowy, pasek proporcji, tabela z portretami. Wykresy powstają ze zwykłych `Image` uGUI, bez bibliotek. Pojawienie płynne, razem z animacją okna gry. Kolejne przyciski gry pozostają klikalne.
-5. **Układ** (D113):
+5. **Układ** (D114):
    - kafelki i pasek proporcji w polu pod „Czasem”;
    - broń w panelu lewym, drużyna i łup w panelu prawym nad „Dalej”;
    - szerokość płótna = 1080 × proporcje ekranu. Gdy na panel boczny zostaje mniej niż ok. 300 jednostek, plugin zmniejsza `Image_ScrollBG` skalą i przywraca ją po zamknięciu okna;

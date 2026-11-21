@@ -11,7 +11,7 @@ using UnityEngine.UI;
 namespace LektorPL.Core
 {
     /// <summary>
-    /// Panel statystyk w oknie podsumowania misji gry (E20, D113). Okno gry (<c>Panel_QuestSummary</c>) ma stały rozmiar
+    /// Panel statystyk w oknie podsumowania misji gry (E20, D114). Okno gry (<c>Panel_QuestSummary</c>) ma stały rozmiar
     /// 1250×920 (<c>Image_ScrollBG</c>), a łup przewija się w środku, więc panel dzielimy:
     /// kafelki i pasek walka/interakcje w wolnym polu okna pod „Czasem” (<c>Group_Time</c>), ataki według broni
     /// w panelu po lewej, drużyna i łup w panelu po prawej, nad przyciskiem „Dalej” (prawy dolny róg ekranu).
