@@ -33,9 +33,10 @@ namespace LektorPL.Core
         private const float PadX = 22f, PadTop = 36f, PadBottom = 26f, FrameScale = 1.3f;
         // Wykresy: wiersz (nazwa nad paskiem), okrągły portret i kolumna wartości.
         private const float BarH = 42f, IconW = 30f, ValueW = 44f;
+        // Teksty wierszy: wielkość bazowa i najmniejsza po dopasowaniu (jedna w całej sekcji, EndRows).
+        private const float RowSize = 17f, RowMin = 11f;
         private const string UiBundle = "d3/uitextures", UiPath = "assets/d3/textures/ui/";
         private static readonly Color Light = new Color(0.93f, 0.91f, 0.86f);
-        private static readonly Color VirtueOther = new Color(0.93f, 0.91f, 0.86f, 0.45f);   // postawa 2 na pasku postaw
         private static readonly Color Dim = new Color(0.70f, 0.67f, 0.62f);
         private static readonly Color Gold = new Color(0.86f, 0.70f, 0.38f);
         private static readonly Color CombatColor = new Color(0.72f, 0.30f, 0.24f);
@@ -52,6 +53,7 @@ namespace LektorPL.Core
         private QuestStats _shown;
         private bool _preview;
         private readonly List<GameObject> _built = new List<GameObject>();
+        private List<TMP_Text> _rows;                 // teksty wierszy bieżącej sekcji (BeginRows/EndRows)
         private RectTransform _scaledWindow;
         private Vector3 _windowScale;
 
@@ -213,14 +215,16 @@ namespace LektorPL.Core
 
         // ---------- sekcje: lewy panel (wykresy bohaterów) ----------
 
-        /// <summary>Ataki bohaterów: suma klas bohatera i runy, malejąco.</summary>
+        /// <summary>Ataki: suma klas bohatera i runy, malejąco.</summary>
         private void HeroAttacks(RectTransform panel, QuestStats s)
         {
-            Header(panel, "Ataki bohaterów");
+            Header(panel, "Ataki");
             int max = 1;
             foreach (var h in s.Heroes) max = Mathf.Max(max, h.Attacks);
+            BeginRows();
             foreach (var h in s.Heroes.OrderByDescending(x => x.Attacks))   // OrderBy jest stabilne: remis w kolejności graczy
                 ChartRow(panel, h, HeroName(h), h.Attacks.ToString(Pl), (float)h.Attacks / max);
+            EndRows(panel);
         }
 
         /// <summary>Wyzwania: przyrost postępu w misji (jak pasek w oknie gry), malejąco; przy imieniu liczba ukończonych.</summary>
@@ -229,6 +233,7 @@ namespace LektorPL.Core
             Header(panel, "Wyzwania");
             float max = 1f;
             foreach (var h in s.Heroes) max = Mathf.Max(max, h.FeatGained);
+            BeginRows();
             foreach (var h in s.Heroes.OrderByDescending(x => x.FeatGained))
             {
                 float gained = Mathf.Max(0f, h.FeatGained);
@@ -237,18 +242,21 @@ namespace LektorPL.Core
                     name += "  <size=13><color=#" + ColorUtility.ToHtmlStringRGB(Gold) + ">ukończone: " + h.FeatsCompleted.ToString(Pl) + "</color></size>";
                 ChartRow(panel, h, name, "+" + gained.ToString("0.#", Pl), gained / max);
             }
+            EndRows(panel);
         }
 
         /// <summary>Postawy: bieżące wartości obu postaw bohatera z zapisu gry jako proporcja na jednym pasku.</summary>
         private void Virtues(RectTransform panel, QuestStats s)
         {
             Header(panel, Loc("UI_VIRTUES") ?? "Postawy");
+            BeginRows();
             foreach (var h in s.Heroes) VirtueRow(panel, h);
+            EndRows(panel);
         }
 
         /// <summary>
-        /// Wiersz postawy: portret, nad paskiem postawa 1 z wartością po lewej i postawa 2 po prawej;
-        /// pasek dzieli się w proporcji wartości (postawa 1 w kolorze bohatera), znacznik na środku pokazuje równowagę.
+        /// Wiersz postawy: portret, nad paskiem postawa 1 po lewej i postawa 2 po prawej. Pasek rośnie od środka (50/50)
+        /// w stronę przeważającej postawy, o tyle, o ile jej udział przekracza połowę; znacznik na środku pokazuje równowagę.
         /// </summary>
         private void VirtueRow(RectTransform panel, QuestStats.HeroRow hero)
         {
@@ -256,12 +264,9 @@ namespace LektorPL.Core
             Fixed(row, BarH - 4f);
             HeroIcon(row, hero, 0f);
             float x = IconW + 8f;
-            string one = Loc(hero.VirtueOneKey) ?? hero.VirtueOneKey, two = Loc(hero.VirtueTwoKey) ?? hero.VirtueTwoKey;
-            var a = AddText(row, one + "  " + hero.VirtueOne.ToString(Pl), 16f, Light, TextAlignmentOptions.Left, false);
-            Fit(a, 11f);
+            var a = RowText(row, Loc(hero.VirtueOneKey) ?? hero.VirtueOneKey, TextAlignmentOptions.Left, false);
             Anchor(a.rectTransform, 0f, 1f, 0.5f, 1f, x, -22f, x / 2f - 2f, 0f);   // lewa połowa paska (pasek zaczyna się przy x)
-            var b = AddText(row, hero.VirtueTwo.ToString(Pl) + "  " + two, 16f, Light, TextAlignmentOptions.Right, false);
-            Fit(b, 11f);
+            var b = RowText(row, Loc(hero.VirtueTwoKey) ?? hero.VirtueTwoKey, TextAlignmentOptions.Right, false);
             Anchor(b.rectTransform, 0.5f, 1f, 1f, 1f, x / 2f + 2f, -22f, 0f, 0f);
             var track = NewRect("Track", row);
             Anchor(track, 0f, 0f, 1f, 0f, x, 3f, 0f, 14f);
@@ -269,9 +274,9 @@ namespace LektorPL.Core
             ti.color = Track;
             ti.raycastTarget = false;
             int total = hero.VirtueOne + hero.VirtueTwo;
-            float p = total > 0 ? Mathf.Clamp01((float)hero.VirtueOne / total) : 0.5f;
-            Fill(track, 0f, p, hero.ColorLight);
-            Fill(track, p, 1f, VirtueOther);
+            float lean = total > 0 ? Mathf.Clamp((float)hero.VirtueOne / total, 0f, 1f) - 0.5f : 0f;   // > 0: postawa 1
+            if (lean > 0f) Fill(track, 0.5f - lean, 0.5f, hero.ColorLight);
+            else Fill(track, 0.5f, 0.5f - lean, hero.ColorLight);
             var mid = NewRect("Mid", track);                                // znacznik równowagi 50/50
             mid.anchorMin = new Vector2(0.5f, -0.25f);
             mid.anchorMax = new Vector2(0.5f, 1.25f);
@@ -290,11 +295,9 @@ namespace LektorPL.Core
             Fixed(row, BarH - 4f);
             HeroIcon(row, hero, 0f);
             float x = IconW + 8f;
-            var label = AddText(row, name, 17f, Light, TextAlignmentOptions.Left, false);
-            Fit(label, 12f);
+            var label = RowText(row, name, TextAlignmentOptions.Left, false);
             Anchor(label.rectTransform, 0f, 1f, 1f, 1f, x, -22f, -ValueW, 0f);
-            var v = AddText(row, value, 17f, Light, TextAlignmentOptions.Right, true);
-            Fit(v, 12f);
+            var v = RowText(row, value, TextAlignmentOptions.Right, true);
             Anchor(v.rectTransform, 1f, 1f, 1f, 1f, -ValueW, -22f, 0f, 0f);
             var track = NewRect("Track", row);
             Anchor(track, 0f, 0f, 1f, 0f, x, 3f, 0f, 14f);
@@ -325,21 +328,25 @@ namespace LektorPL.Core
         private void Mission(RectTransform panel, QuestStats s)
         {
             Header(panel, "Przebieg misji");
+            BeginRows();
             StatRow(panel, "icon_movement", false, "rundy", s.Rounds.ToString(Pl));
             StatRow(panel, "generic/generic_loadingindicator", false, "śr. czas rundy", Clock(s.SecondsPerRound));
             StatRow(panel, "icon_action_combat", true, "ataki", s.Attacks.ToString(Pl));
             StatRow(panel, "icon_action_interact", true, "interakcje", s.Interactions.ToString(Pl));
             StatRow(panel, "icon_coins", false, "złoto na rundę", s.GoldPerRound.ToString(s.GoldPerRound < 10f ? "0.#" : "0", Pl));
+            EndRows(panel);
         }
 
         private void Loot(RectTransform panel, QuestStats s)
         {
             Header(panel, "Łup");
+            BeginRows();
             StatRow(panel, "icon_coins", false, "złoto", s.Gold.ToString(Pl));
             StatRow(panel, "icon_trinket", false, "przedmioty", s.LootItems.ToString(Pl));
             StatRow(panel, "icon_materials", false, "materiały", s.LootMaterials.ToString(Pl));
             StatRow(panel, "miniviewrecipe_bg", false, "przepisy", s.LootRecipes.ToString(Pl));
             StatRow(panel, "icon_consumables", false, "mikstury", s.LootConsumables.ToString(Pl));
+            EndRows(panel);
         }
 
         /// <summary>Balans gry: osobna sekcja pod łupem, pasek walka/interakcje z ikonami i procentami pod spodem.</summary>
@@ -363,19 +370,19 @@ namespace LektorPL.Core
             Fixed(legend, 26f);
             if (total == 0)
             {
-                var none = AddText(legend, "brak akcji", 16f, Light, TextAlignmentOptions.Left, false);
+                var none = AddText(legend, "brak akcji", RowSize, Light, TextAlignmentOptions.Left, false);
                 Stretch(none.rectTransform);
                 return;
             }
             int pc = Mathf.RoundToInt(p * 100f);
             Icon(legend, "icon_action_combat", Color.white, 0f, 22f, true);
             Icon(legend, "icon_action_interact", Color.white, 1f, 22f, true);
-            var a = AddText(legend, "walka " + pc + "%", 16f, Light, TextAlignmentOptions.Left, false);
-            Fit(a, 11f);
+            BeginRows();
+            var a = RowText(legend, "walka " + pc + "%", TextAlignmentOptions.Left, false);
             Anchor(a.rectTransform, 0f, 0f, 0.5f, 1f, 28f, 0f, 0f, 0f);
-            var b = AddText(legend, "interakcje " + (100 - pc) + "%", 16f, Light, TextAlignmentOptions.Right, false);
-            Fit(b, 11f);
+            var b = RowText(legend, "interakcje " + (100 - pc) + "%", TextAlignmentOptions.Right, false);
             Anchor(b.rectTransform, 0.5f, 0f, 1f, 1f, 0f, 0f, -28f, 0f);
+            EndRows(panel);
         }
 
         /// <summary>Wiersz „ikona, nazwa … wartość”; wszystkie wiersze w jednym kolorze, także przy zerze.</summary>
@@ -385,11 +392,9 @@ namespace LektorPL.Core
             Fixed(row, 28f);
             var tint = icon == "icon_trinket" || icon == "icon_materials" || icon == "icon_consumables" ? Light : Color.white;
             if (icon != null) Icon(row, icon, tint, 0f, 24f, white);
-            var l = AddText(row, label, 17f, Light, TextAlignmentOptions.Left, false);
-            Fit(l, 13f);
+            var l = RowText(row, label, TextAlignmentOptions.Left, false);
             Anchor(l.rectTransform, 0f, 0f, 1f, 1f, 32f, 0f, -110f, 0f);
-            var v = AddText(row, value, 18f, Light, TextAlignmentOptions.Right, true);
-            Fit(v, 12f);
+            var v = RowText(row, value, TextAlignmentOptions.Right, true);
             Anchor(v.rectTransform, 1f, 0f, 1f, 1f, -110f, 0f, 0f, 0f);
         }
 
@@ -502,6 +507,47 @@ namespace LektorPL.Core
         }
 
         /// <summary>Tekst w jednym wierszu: najpierw zmniejsza czcionkę do <paramref name="min"/>, dopiero potem skraca.</summary>
+        /// <summary>Tekst wiersza sekcji: jedna wielkość bazowa, zapamiętany do wyrównania w <see cref="EndRows"/>.</summary>
+        private TMP_Text RowText(Transform row, string text, TextAlignmentOptions align, bool bold)
+        {
+            var t = AddText(row, text, RowSize, Light, align, bold);
+            Fit(t, RowMin);
+            if (_rows != null) _rows.Add(t);
+            return t;
+        }
+
+        private void BeginRows()
+        {
+            _rows = new List<TMP_Text>();
+        }
+
+        /// <summary>
+        /// Wszystkie teksty wierszy sekcji dostają jedną wielkość: najmniejszą, jaką wybrało dopasowanie
+        /// któregokolwiek z nich (długie nazwy nie wyglądają wtedy na mniejsze od krótkich).
+        /// </summary>
+        private void EndRows(RectTransform panel)
+        {
+            var rows = _rows;
+            _rows = null;
+            if (rows == null || rows.Count == 0 || !panel.gameObject.activeInHierarchy) return;   // nieaktywny: zostaje auto-size
+            try
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(panel);         // szerokości wierszy przed pomiarem tekstu
+                float size = RowSize;
+                foreach (var t in rows)
+                {
+                    t.ForceMeshUpdate();
+                    size = Mathf.Min(size, t.fontSize);                     // przy auto-size fontSize to wielkość dobrana
+                }
+                foreach (var t in rows)
+                {
+                    t.enableAutoSizing = false;
+                    t.fontSize = size;
+                }
+            }
+            catch (Exception e) { _log.Error("summary_rows", e); }
+        }
+
         private static void Fit(TMP_Text t, float min)
         {
             t.enableWordWrapping = false;
