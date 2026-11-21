@@ -15,7 +15,7 @@ namespace LektorPL.Core
     /// Panel statystyk w oknie podsumowania misji gry (E20, D114). Okno gry (<c>Panel_QuestSummary</c>) ma stały rozmiar
     /// 1250×920 (<c>Image_ScrollBG</c>), a łup przewija się w środku, więc panele stoją po bokach okna:
     /// po lewej wykresy bohaterów (ataki bohaterów, ataki broni, wyzwania; portret i nazwa, słupki malejąco),
-    /// po prawej przebieg misji i łup (ikona, nazwa, wartość) oraz balans gry (walka/interakcje), nad przyciskiem „Dalej”.
+    /// po prawej łup i przebieg misji (ikona, nazwa, wartość) oraz balans gry (walka/interakcje), nad przyciskiem „Dalej”.
     /// Płótno gry ma wysokość 1080 i szerokość zależną od proporcji ekranu; gdy na panel boczny zostaje mniej niż
     /// <see cref="SideMin"/>, zmniejszamy okno gry skalą i przywracamy ją po zamknięciu.
     ///
@@ -188,9 +188,10 @@ namespace LektorPL.Core
             Weapons(left, s, bars);
             Spacer(left, 10f);
             Feats(left, s);
-            // Prawy panel: przebieg misji, łup i balans gry (walka/interakcje).
-            Mission(right, s);
+            // Prawy panel: łup, przebieg misji i balans gry (walka/interakcje).
             Loot(right, s);
+            Spacer(right, 10f);
+            Mission(right, s);
             Balance(right, s);
 
             _shown = s;
@@ -314,7 +315,7 @@ namespace LektorPL.Core
             else { img.sprite = Ui("generic_circle_sprite"); img.color = hero.ColorLight; }
         }
 
-        // ---------- sekcje: prawy panel (przebieg misji, łup, balans gry) ----------
+        // ---------- sekcje: prawy panel (łup, przebieg misji, balans gry) ----------
 
         /// <summary>Przebieg misji: wartości jedna pod drugą, każda z ikoną gry.</summary>
         private void Mission(RectTransform panel, QuestStats s)
@@ -325,12 +326,10 @@ namespace LektorPL.Core
             StatRow(panel, "icon_action_combat", true, "ataki", s.Attacks.ToString(Pl));
             StatRow(panel, "icon_action_interact", true, "interakcje", s.Interactions.ToString(Pl));
             StatRow(panel, "icon_coins", false, "złoto na rundę", s.GoldPerRound.ToString(s.GoldPerRound < 10f ? "0.#" : "0", Pl));
-            StatRow(panel, "icon_damage", false, "trudność", Loc("UI_DIFFICULTY_" + s.Difficulty.ToString().ToUpperInvariant()) ?? s.Difficulty.ToString());
         }
 
         private void Loot(RectTransform panel, QuestStats s)
         {
-            Spacer(panel, 10f);
             Header(panel, "Łup");
             StatRow(panel, "icon_coins", false, "złoto", s.Gold.ToString(Pl));
             StatRow(panel, "icon_trinket", false, "przedmioty", s.LootItems.ToString(Pl));
