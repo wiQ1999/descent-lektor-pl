@@ -167,6 +167,7 @@ Companion (E4). Konfiguracja w `%LOCALAPPDATA%\LektorPL\companion.toml` (tworzon
 ```
 
 - Nakładka w grze (E18, D110): skróty, przycisk „PL” z menu (kopia podmenu drużyny, `src/plugin/Core/PlMenu.cs`, `Overlay.cs`) i zgłoszenia w `zgloszenia/`. Plugin wysyła `control` i `report`, companion odsyła `state` (`companion/control.py`: tempo WSOLA, zapis `ustawienia.toml`, zgłoszenie). Lista kontrolna w grze: `docs/NAKLADKA_TEST.md`.
+- Statystyki misji (E20, D114): panele po bokach okna podsumowania misji (`src/plugin/Core/SummaryPanel.cs`, dane `QuestStats.cs`, tylko standardowy zapis gry). Włącznik `[podsumowanie] statystyki` i checkbox w menu lektora (`control` `statystyki`, w stanie `stats`); podgląd w misji Ctrl+P przy `[podsumowanie] podglad = true` (`docs/E20_PODGLAD.md`). Wzorzec liczb z `.sav`: `analysis/tools/quest_summary_preview.py`.
 - Replay z `--speed 0 --no-audio` sprawdza samo pokrycie. Opóźnienia mierzymy w czasie rzeczywistym (`--tcp`, wyjście audio wyciszone w configu `volume = 0.0`).
 
 ElevenLabs (E9, D73). Serwer MCP tylko w zakresie projektu (`.mcp.json`), klucz w nieśledzonym `.env.elevenlabs.local`, audio i logi w `analysis/work/elevenlabs/`. Instrukcja: `analysis/tools/elevenlabs/README.md`.
@@ -223,3 +224,4 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 | [analysis/E16_PLAYTEST.md](analysis/E16_PLAYTEST.md) | testy t1 w grze (Q1–Q2, 2026-11-13/14): zrzuty, przyczyny, przegląd mowy w oknach narratora, poprawki D102, D103, D105 i D106 (okno i zapowiedź wyzwania, przeczenie, wtrącenia) |
 | [analysis/E17_PREP.md](analysis/E17_PREP.md) | przygotowanie wersji produkcyjnej m4: przegląd mówców w oknach, nowe głosy mówców bez imienia, szacunek GPU i kredytów, kontrola tekstów |
 | [analysis/E17_DATA.md](analysis/E17_DATA.md) | baza kwestii m4: liczności według grupy, kategorii i głosu, szacunek generowania |
+| [analysis/E20_SUMMARY.md](analysis/E20_SUMMARY.md) | statystyki misji w oknie podsumowania (E20): sekcje i dane gry, czego gra nie zapisuje, testy w grze, ustawienia |

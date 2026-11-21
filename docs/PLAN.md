@@ -496,9 +496,11 @@ Skróty klawiszowe, przycisk „PL” z menu lektora na dolnym pasku, tempo 0,8�
 
 Starter `instaluj-win.ps1` i instalator `instalator-win.ps1` (`src/bundle/online/`), części paczki z manifestem (`lektor bundle --parts`). Próba lokalna na Windows zrobiona 2026-11-19. 2026-11-20: sprawdzenie innej instalacji przed pobraniem, instrukcja, zasady wydania (zwykłe, z kompletem części), test użytkownika z lokalnego serwera (`docs/E19_WIN_TEST.md`) przeszedł. Instalator Maca (`curl … | bash`) zrobiony i sprawdzony z atrapami; części obu systemów we wspólnym `dist/online/`. Po przeglądzie paczki Windows (D112): bez skryptów `Ustawienia` i `Wyłącz/Włącz lektora`, instrukcja przycięta do systemu, części wspólne paczek w `dist/wspolne/`. Dalej: test na Macu, pierwsze wydanie z instalatorem (lista kontrolna w `docs/ODTWORZENIE.md`).
 
-## E20 · Podsumowanie misji w oknie gry (D114, czeka na akceptację)
+## E20 · Podsumowanie misji w oknie gry (D114)
 
 Plugin dokłada do okna podsumowania misji gry (`UIQuestSummary`) wykresy ataków bohaterów, wyzwań i postaw, przebieg misji, łup według rodzaju i pasek walka / interakcje, tylko z danych zapisu gry (`SerializedQuestSummary`). Układ: dwa panele boczne obok okna, z mniejszą skalą okna na ekranach węższych niż 16:9 (D114). Bez przechwytywania „Dalej”, bez nowych nagrań. Gałąź `feature/quest-summary`.
+
+Stan 2026-11-21: testy w grze na Windows przeszły, układ po rundach poprawek opisuje D114, a wyniki `analysis/E20_SUMMARY.md`. Przełącznik: `[podsumowanie] statystyki` i checkbox w menu lektora. Gałąź czeka na scalenie; zostaje test na Macu. Kroki niżej to plan z początku etapu (układ i nazwy ustawień zmieniły testy).
 
 **Kroki** (commit po każdym):
 

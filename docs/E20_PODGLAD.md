@@ -18,10 +18,10 @@ Po starcie gry pierwszy wiersz najnowszego `logs\hook-*.jsonl` ma `"plugin":"1.1
 
 ## 2. Włączenie podglądu
 
-W `ustawienia.toml` paczki, w sekcji `[plugin]`, dopisz wiersz:
+W `ustawienia.toml` paczki, w sekcji `[podsumowanie]`, dopisz wiersz:
 
 ```toml
-podsumowanie_podglad = true
+podglad = true
 ```
 
 ## 3. W grze
@@ -44,4 +44,4 @@ podsumowanie_podglad = true
 powershell -ExecutionPolicy Bypass -File "D:\Projects\Descent Legendy Mroku - lektor\.claude\feature\quest-summary\src\plugin\install\nakladka-test.ps1" -Paczka "$env:USERPROFILE\Descent-Lektor-PL" -Przywroc
 ```
 
-Wiersz `podsumowanie_podglad` usuń z `ustawienia.toml` albo ustaw na `false`.
+Wiersz `podglad` usuń z sekcji `[podsumowanie]` w `ustawienia.toml` albo ustaw na `false`.

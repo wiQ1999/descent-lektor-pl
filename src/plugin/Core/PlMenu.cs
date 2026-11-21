@@ -465,7 +465,7 @@ namespace LektorPL.Core
         {
             if (!connected || state == null) return "x";
             var sb = new StringBuilder();
-            sb.Append(Json.Bool(state, "muted")).Append('|').Append(Json.Obj(state, "now") != null);
+            sb.Append(Json.Bool(state, "muted")).Append('|').Append(Json.Obj(state, "now") != null).Append('|').Append(Json.Bool(state, "stats"));
             var toggles = Json.Obj(state, "toggles");
             if (toggles != null) foreach (var kv in toggles) sb.Append('|').Append(kv.Key).Append(kv.Value is bool b && b);
             var history = Json.List(state, "history");
@@ -489,7 +489,7 @@ namespace LektorPL.Core
                 return;
             }
             BuildNow(state);
-            BuildSettings();
+            BuildSettings(state);
             BuildToggles(state);
             BuildHistory(state);
             BuildReports();
@@ -524,7 +524,7 @@ namespace LektorPL.Core
             Btn(row, Json.Bool(state, "muted") ? "Włącz" : "Wycisz", 0f, () => _host.Control("wycisz"));
         }
 
-        private void BuildSettings()
+        private void BuildSettings(object state)
         {
             Section("Ustawienia");
             var tempo = Row(_content);
@@ -540,6 +540,10 @@ namespace LektorPL.Core
             var vv = Value(vol);
             Btn(vol, "+", 64f, () => Volume(0.1));
             _refresh.Add(() => vv.text = Mathf.RoundToInt((float)Json.Num(_host.State, "volume", 1.0) * 100f) + "%");
+
+            if (Json.Get(state, "stats") is bool stats)         // panele statystyk przy oknie podsumowania misji (E20)
+                Check("Statystyki na koniec misji", stats, on =>
+                    _host.Send(_host.Log.New("control").Str("cmd", "statystyki").Bool("value", on)));
         }
 
         private void Volume(double step)

@@ -14,7 +14,7 @@ Zamknij grę i wgraj świeży build (kopia oryginałów z poprzedniej próby zos
 powershell -ExecutionPolicy Bypass -File "D:\Projects\Descent Legendy Mroku - lektor\.claude\feature\quest-summary\src\plugin\install\nakladka-test.ps1" -Paczka "$env:USERPROFILE\Descent-Lektor-PL"
 ```
 
-Wiersz `podsumowanie_podglad` w `ustawienia.toml` może zostać. Panel w oknie podsumowania pokazuje się bez niego.
+Wiersz `podglad` w sekcji `[podsumowanie]` w `ustawienia.toml` może zostać. Panel w oknie podsumowania pokazuje się bez niego.
 
 ## 2. W grze
 

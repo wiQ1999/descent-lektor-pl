@@ -21,12 +21,13 @@ Plugin 0.5.0 (E18, D110). Próbę zrobiliśmy na branchu `feature/in-game-overla
   - bieżącą kwestię z paskiem postępu;
   - przyciski Powtórz, Utnij i Wycisz;
   - tempo i głośność;
+  - checkbox „Statystyki na koniec misji” (panele przy oknie podsumowania misji, E20);
   - 13 kategorii „Co czyta lektor”, każda w osobnym wierszu z checkboxem jak w opcjach gry;
   - 3 ostatnie kwestie: „Graj” odtwarza kwestię jeszcze raz, „Zgłoś” zgłasza błąd w tej kwestii;
   - przycisk „Zgłoś błąd”;
   - na dole listę skrótów klawiszowych i informację, że pozostałe ustawienia są w `ustawienia.toml`.
 
-  Zmiany tempa, głośności i kategorii zapisują się od razu w `ustawienia.toml`.
+  Zmiany tempa, głośności, statystyk i kategorii zapisują się od razu w `ustawienia.toml`.
 - **Zgłoszenia** trafiają do folderu `zgloszenia\<data-godzina>\` w paczce. Każde ma:
   - `ekran.png`;
   - `zgloszenie.json`: kategorię, kwestię z kluczami, głosem i fragmentami nagrań oraz ostatnie 60 s zdarzeń pluginu i companiona.

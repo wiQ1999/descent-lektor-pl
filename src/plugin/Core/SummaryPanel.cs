@@ -20,10 +20,12 @@ namespace LektorPL.Core
     /// <see cref="SideMin"/>, zmniejszamy okno gry skalą i przywracamy ją po zamknięciu.
     ///
     /// Panel jest dzieckiem okna gry, więc znika i zanika razem z nim; przycisku „Dalej” nie dotykamy. Grafiki i czcionkę
-    /// bierzemy z gry: tabliczka pola „Czas” i czcionka nazwy misji z okna, ramka panelu wroga na półprzezroczystym przyciemnieniu, ornament nagłówka,
+    /// bierzemy z gry: czcionka nazwy misji z okna, ramka panelu wroga na półprzezroczystym przyciemnieniu, ornament nagłówka,
     /// ikony akcji i łupu z pakietu d3/uitextures oraz okrągłe portrety bohaterów jak w UIHeroProgress.
+    /// Każda sekcja to nagłówek i wiersze z jedną wielkością tekstu (<see cref="Section"/>).
     ///
-    /// Podgląd (ustawienie <c>podsumowanie_podglad</c>, skrót Ctrl+P w misji): ten sam panel nad planszą, z ramką
+    /// Włączanie: <c>[podsumowanie] statystyki</c> w ustawieniach na start, potem przełącznik w menu lektora (<see cref="Enabled"/>).
+    /// Podgląd (<c>[podsumowanie] podglad</c>, skrót Ctrl+P w misji): ten sam panel nad planszą, z ramką
     /// w miejscu okna gry, bez otwierania okna gry. Drugie naciśnięcie zamyka podgląd.
     /// </summary>
     internal sealed class SummaryPanel
@@ -31,9 +33,9 @@ namespace LektorPL.Core
         private const float WindowW = 1250f, WindowH = 920f, WindowY = 30f;
         private const float SideMin = 280f, SideMax = 380f, Gap = 16f, Edge = 16f, ContinueClear = 140f, MinScale = 0.72f;
         private const float PadX = 22f, PadTop = 36f, PadBottom = 26f, FrameScale = 1.3f;
-        // Wykresy: wiersz (nazwa nad paskiem), okrągły portret i kolumna wartości.
-        private const float BarH = 42f, IconW = 30f, ValueW = 44f;
-        // Teksty wierszy: wielkość bazowa i najmniejsza po dopasowaniu (jedna w całej sekcji, EndRows).
+        // Wykresy: wiersz (nazwa nad paskiem), okrągły portret, początek tekstu i paska, kolumna wartości, odstęp sekcji.
+        private const float BarH = 42f, IconW = 30f, LabelX = IconW + 8f, ValueW = 44f, SectionGap = 10f;
+        // Teksty wierszy: wielkość bazowa i najmniejsza po dopasowaniu (jedna w całej sekcji, Section).
         private const float RowSize = 17f, RowMin = 11f;
         private const string UiBundle = "d3/uitextures", UiPath = "assets/d3/textures/ui/";
         private static readonly Color Light = new Color(0.93f, 0.91f, 0.86f);
@@ -47,13 +49,13 @@ namespace LektorPL.Core
         private static readonly CultureInfo Pl = CultureInfo.GetCultureInfo("pl-PL");
 
         private readonly EventLog _log;
-        private readonly bool _enabled, _previewEnabled;
+        private readonly bool _previewEnabled;
         private readonly List<Hotkey> _previewKeys = Hotkey.ParseList("Ctrl+P");
 
         private QuestStats _shown;
         private bool _preview;
         private readonly List<GameObject> _built = new List<GameObject>();
-        private List<TMP_Text> _rows;                 // teksty wierszy bieżącej sekcji (BeginRows/EndRows)
+        private List<TMP_Text> _rows;                 // teksty wierszy bieżącej sekcji (Section)
         private RectTransform _scaledWindow;
         private Vector3 _windowScale;
 
@@ -64,15 +66,23 @@ namespace LektorPL.Core
         public SummaryPanel(EventLog log, bool enabled, bool previewEnabled)
         {
             _log = log;
-            _enabled = enabled;
+            Enabled = enabled;
             _previewEnabled = previewEnabled;
         }
 
+        /// <summary>Panele włączone; wyłączenie zdejmuje widoczny panel w następnej klatce.</summary>
+        public bool Enabled { get; set; }
+
         public void Update(Tracker tracker)
         {
-            if (!_enabled || tracker == null) return;
+            if (tracker == null) return;
             try
             {
+                if (!Enabled)
+                {
+                    if (_built.Count > 0) Teardown();
+                    return;
+                }
                 var dialog = Dialog();
                 var stats = tracker.Summary;
                 bool real = stats != null && dialog != null && dialog.IsVisible;
@@ -124,28 +134,10 @@ namespace LektorPL.Core
 
         private void Build(UIQuestSummary dialog, QuestStats s, bool preview)
         {
-            CaptureStyle(dialog);
+            if (dialog.TextQuestName != null) _font = dialog.TextQuestName.font;
             var dialogRt = (RectTransform)dialog.transform;
             RectTransform root, window;
-            if (preview)
-            {
-                root = NewRect("LektorPL.SummaryPreview", dialogRt.parent);
-                Stretch(root);
-                root.SetAsLastSibling();
-                _built.Add(root.gameObject);
-                var dim = root.gameObject.AddComponent<Image>();
-                dim.color = new Color(0f, 0f, 0f, 0.6f);
-                dim.raycastTarget = true;           // kliknięcia nie trafiają w planszę
-                window = NewRect("WindowFrame", root);
-                window.anchoredPosition = new Vector2(0f, WindowY);
-                window.sizeDelta = new Vector2(WindowW, WindowH);
-                var frame = window.gameObject.AddComponent<Image>();
-                frame.color = new Color(1f, 1f, 1f, 0.06f);
-                frame.raycastTarget = false;
-                var note = AddText(window, "Podgląd panelu lektora (E20)\nTu stoi okno podsumowania gry.\nCtrl+P zamyka podgląd.",
-                    26f, Dim, TextAlignmentOptions.Center, false);
-                Place(note.rectTransform, 0f, 120f, 900f, 160f);
-            }
+            if (preview) root = PreviewRoot(dialogRt, out window);
             else
             {
                 root = dialogRt;
@@ -182,15 +174,15 @@ namespace LektorPL.Core
 
             // Lewy panel: wykresy bohaterów (ataki, wyzwania, postawy).
             HeroAttacks(left, s);
-            Spacer(left, 10f);
+            Spacer(left, SectionGap);
             Feats(left, s);
-            Spacer(left, 10f);
+            Spacer(left, SectionGap);
             Virtues(left, s);
             // Prawy panel: balans gry (walka/interakcje), przebieg misji i łup.
             Balance(right, s);
-            Spacer(right, 10f);
+            Spacer(right, SectionGap);
             Mission(right, s);
-            Spacer(right, 10f);
+            Spacer(right, SectionGap);
             Loot(right, s);
 
             _shown = s;
@@ -209,191 +201,184 @@ namespace LektorPL.Core
             _preview = false;
         }
 
-        private void CaptureStyle(UIQuestSummary dialog)
+        /// <summary>Podgląd: przyciemnienie nad planszą (łapie kliknięcia) i ramka w miejscu okna podsumowania gry.</summary>
+        private RectTransform PreviewRoot(RectTransform dialogRt, out RectTransform window)
         {
-            if (dialog.TextQuestName != null) _font = dialog.TextQuestName.font;
+            var root = NewRect("LektorPL.SummaryPreview", dialogRt.parent);
+            Stretch(root);
+            root.SetAsLastSibling();
+            _built.Add(root.gameObject);
+            AddImage(root, new Color(0f, 0f, 0f, 0.6f)).raycastTarget = true;   // kliknięcia nie trafiają w planszę
+            window = NewRect("WindowFrame", root);
+            window.anchoredPosition = new Vector2(0f, WindowY);
+            window.sizeDelta = new Vector2(WindowW, WindowH);
+            AddImage(window, new Color(1f, 1f, 1f, 0.06f));
+            var note = AddText(window, "Podgląd panelu lektora (E20)\nTu stoi okno podsumowania gry.\nCtrl+P zamyka podgląd.",
+                26f, Dim, TextAlignmentOptions.Center, false);
+            Place(note.rectTransform, 0f, 120f, 900f, 160f);
+            return root;
         }
 
         // ---------- sekcje: lewy panel (wykresy bohaterów) ----------
 
-        /// <summary>Ataki: suma klas bohatera i runy, malejąco.</summary>
+        /// <summary>Ataki: suma klas bohatera i runy, malejąco (OrderBy jest stabilne: remis w kolejności graczy).</summary>
         private void HeroAttacks(RectTransform panel, QuestStats s)
         {
-            Header(panel, "Ataki");
-            int max = 1;
-            foreach (var h in s.Heroes) max = Mathf.Max(max, h.Attacks);
-            BeginRows();
-            foreach (var h in s.Heroes.OrderByDescending(x => x.Attacks))   // OrderBy jest stabilne: remis w kolejności graczy
-                ChartRow(panel, h, HeroName(h), h.Attacks.ToString(Pl), (float)h.Attacks / max);
-            EndRows(panel);
+            int max = Mathf.Max(1, s.Heroes.Count > 0 ? s.Heroes.Max(h => h.Attacks) : 0);
+            Section(panel, "Ataki", () =>
+            {
+                foreach (var h in s.Heroes.OrderByDescending(x => x.Attacks))
+                    ChartRow(panel, h, HeroName(h), h.Attacks.ToString(Pl), (float)h.Attacks / max);
+            });
         }
 
         /// <summary>Wyzwania: przyrost postępu w misji (jak pasek w oknie gry), malejąco; przy imieniu liczba ukończonych.</summary>
         private void Feats(RectTransform panel, QuestStats s)
         {
-            Header(panel, "Wyzwania");
-            float max = 1f;
-            foreach (var h in s.Heroes) max = Mathf.Max(max, h.FeatGained);
-            BeginRows();
-            foreach (var h in s.Heroes.OrderByDescending(x => x.FeatGained))
+            float max = Mathf.Max(1f, s.Heroes.Count > 0 ? s.Heroes.Max(h => h.FeatGained) : 0f);
+            Section(panel, "Wyzwania", () =>
             {
-                float gained = Mathf.Max(0f, h.FeatGained);
-                string name = HeroName(h);
-                if (h.FeatsCompleted > 0)
-                    name += "  <size=13><color=#" + ColorUtility.ToHtmlStringRGB(Gold) + ">ukończone: " + h.FeatsCompleted.ToString(Pl) + "</color></size>";
-                ChartRow(panel, h, name, "+" + gained.ToString("0.#", Pl), gained / max);
-            }
-            EndRows(panel);
+                foreach (var h in s.Heroes.OrderByDescending(x => x.FeatGained))
+                {
+                    float gained = Mathf.Max(0f, h.FeatGained);
+                    string name = HeroName(h);
+                    if (h.FeatsCompleted > 0)
+                        name += "  <size=13><color=#" + ColorUtility.ToHtmlStringRGB(Gold) + ">ukończone: " + h.FeatsCompleted.ToString(Pl) + "</color></size>";
+                    ChartRow(panel, h, name, "+" + gained.ToString("0.#", Pl), gained / max);
+                }
+            });
         }
 
-        /// <summary>Postawy: bieżące wartości obu postaw bohatera z zapisu gry jako proporcja na jednym pasku.</summary>
+        /// <summary>Postawy: bieżące wartości obu postaw bohatera z zapisu gry (bez śledzenia wyborów w misji).</summary>
         private void Virtues(RectTransform panel, QuestStats s)
         {
-            Header(panel, Loc("UI_VIRTUES") ?? "Postawy");
-            BeginRows();
-            foreach (var h in s.Heroes) VirtueRow(panel, h);
-            EndRows(panel);
+            Section(panel, Loc("UI_VIRTUES") ?? "Postawy", () =>
+            {
+                foreach (var h in s.Heroes) VirtueRow(panel, h);
+            });
         }
 
-        /// <summary>
-        /// Wiersz postawy: portret, nad paskiem postawa 1 po lewej i postawa 2 po prawej. Pasek rośnie od środka (50/50)
-        /// w stronę przeważającej postawy, o tyle, o ile jej udział przekracza połowę; znacznik na środku pokazuje równowagę.
-        /// </summary>
-        private void VirtueRow(RectTransform panel, QuestStats.HeroRow hero)
-        {
-            var row = NewRect("VirtueRow", panel);
-            Fixed(row, BarH - 4f);
-            HeroIcon(row, hero, 0f);
-            float x = IconW + 8f;
-            var a = RowText(row, Loc(hero.VirtueOneKey) ?? hero.VirtueOneKey, TextAlignmentOptions.Left, false);
-            Anchor(a.rectTransform, 0f, 1f, 0.5f, 1f, x, -22f, x / 2f - 2f, 0f);   // lewa połowa paska (pasek zaczyna się przy x)
-            var b = RowText(row, Loc(hero.VirtueTwoKey) ?? hero.VirtueTwoKey, TextAlignmentOptions.Right, false);
-            Anchor(b.rectTransform, 0.5f, 1f, 1f, 1f, x / 2f + 2f, -22f, 0f, 0f);
-            var track = NewRect("Track", row);
-            Anchor(track, 0f, 0f, 1f, 0f, x, 3f, 0f, 14f);
-            var ti = track.gameObject.AddComponent<Image>();
-            ti.color = Track;
-            ti.raycastTarget = false;
-            int total = hero.VirtueOne + hero.VirtueTwo;
-            float lean = total > 0 ? Mathf.Clamp((float)hero.VirtueOne / total, 0f, 1f) - 0.5f : 0f;   // > 0: postawa 1
-            if (lean > 0f) Fill(track, 0.5f - lean, 0.5f, hero.ColorLight);
-            else Fill(track, 0.5f, 0.5f - lean, hero.ColorLight);
-            var mid = NewRect("Mid", track);                                // znacznik równowagi 50/50
-            mid.anchorMin = new Vector2(0.5f, -0.25f);
-            mid.anchorMax = new Vector2(0.5f, 1.25f);
-            mid.sizeDelta = new Vector2(2f, 0f);
-            var mi = mid.gameObject.AddComponent<Image>();
-            mi.color = new Color(0f, 0f, 0f, 0.8f);
-            mi.raycastTarget = false;
-        }
-
-        /// <summary>
-        /// Wiersz wykresu: okrągły portret bohatera, nad paskiem imię i wartość, pasek w kolorze bohatera.
-        /// </summary>
+        /// <summary>Wiersz wykresu: portret, nad paskiem imię i wartość, pasek od lewej w kolorze bohatera.</summary>
         private void ChartRow(RectTransform panel, QuestStats.HeroRow hero, string name, string value, float frac)
         {
-            var row = NewRect("ChartRow", panel);
-            Fixed(row, BarH - 4f);
-            HeroIcon(row, hero, 0f);
-            float x = IconW + 8f;
+            var row = HeroRow(panel, hero, out RectTransform track);
             var label = RowText(row, name, TextAlignmentOptions.Left, false);
-            Anchor(label.rectTransform, 0f, 1f, 1f, 1f, x, -22f, -ValueW, 0f);
+            Anchor(label.rectTransform, 0f, 1f, 1f, 1f, LabelX, -22f, -ValueW, 0f);
             var v = RowText(row, value, TextAlignmentOptions.Right, true);
             Anchor(v.rectTransform, 1f, 1f, 1f, 1f, -ValueW, -22f, 0f, 0f);
-            var track = NewRect("Track", row);
-            Anchor(track, 0f, 0f, 1f, 0f, x, 3f, 0f, 14f);
-            var ti = track.gameObject.AddComponent<Image>();
-            ti.color = Track;
-            ti.raycastTarget = false;
             Fill(track, 0f, Mathf.Clamp01(frac), hero.ColorLight);
         }
 
-        /// <summary>Mały okrągły portret bohatera przy lewej krawędzi wiersza (bez portretu: kółko w kolorze bohatera).</summary>
-        private void HeroIcon(RectTransform row, QuestStats.HeroRow hero, float side)
+        /// <summary>
+        /// Wiersz postawy: portret, nad paskiem postawa 1 po lewej i postawa 2 po prawej. Nazwy dzielą szerokość według
+        /// swojej długości (krótka nie zabiera miejsca długiej). Pasek rośnie od środka (50/50) w stronę przeważającej
+        /// postawy o nadwyżkę jej udziału ponad połowę; znacznik na środku pokazuje równowagę.
+        /// </summary>
+        private void VirtueRow(RectTransform panel, QuestStats.HeroRow hero)
         {
-            var rt = NewRect("HeroIcon", row);
-            rt.anchorMin = rt.anchorMax = new Vector2(side, 0.5f);
-            rt.pivot = new Vector2(side, 0.5f);
-            rt.anchoredPosition = Vector2.zero;
-            rt.sizeDelta = new Vector2(IconW, IconW);
-            var img = rt.gameObject.AddComponent<Image>();
-            img.raycastTarget = false;
+            var row = HeroRow(panel, hero, out RectTransform track);
+            var a = RowText(row, Loc(hero.VirtueOneKey) ?? hero.VirtueOneKey, TextAlignmentOptions.Left, false);
+            var b = RowText(row, Loc(hero.VirtueTwoKey) ?? hero.VirtueTwoKey, TextAlignmentOptions.Right, false);
+            float wa = a.GetPreferredValues(a.text).x, wb = b.GetPreferredValues(b.text).x;
+            float f = wa + wb > 0f ? Mathf.Clamp(wa / (wa + wb), 0.2f, 0.8f) : 0.5f;
+            // Granica nazw w ułamku f szerokości paska (pasek zaczyna się przy LabelX): f·W + LabelX·(1 − f).
+            Anchor(a.rectTransform, 0f, 1f, f, 1f, LabelX, -22f, LabelX * (1f - f) - 3f, 0f);
+            Anchor(b.rectTransform, f, 1f, 1f, 1f, LabelX * (1f - f) + 3f, -22f, 0f, 0f);
+            int total = hero.VirtueOne + hero.VirtueTwo;
+            float lean = total > 0 ? (float)hero.VirtueOne / total - 0.5f : 0f;      // > 0: przeważa postawa 1
+            if (lean > 0f) Fill(track, 0.5f - lean, 0.5f, hero.ColorLight);
+            else Fill(track, 0.5f, 0.5f - lean, hero.ColorLight);
+            var mid = NewRect("Mid", track);                                      // znacznik równowagi 50/50
+            mid.anchorMin = new Vector2(0.5f, -0.25f);
+            mid.anchorMax = new Vector2(0.5f, 1.25f);
+            mid.sizeDelta = new Vector2(2f, 0f);
+            AddImage(mid, new Color(0f, 0f, 0f, 0.8f));
+        }
+
+        /// <summary>Szkielet wiersza bohatera: okrągły portret przy lewej krawędzi i pusty pasek pod miejscem na tekst.</summary>
+        private RectTransform HeroRow(RectTransform panel, QuestStats.HeroRow hero, out RectTransform track)
+        {
+            var row = NewRect("HeroRow", panel);
+            Fixed(row, BarH - 4f);
+            var icon = NewRect("HeroIcon", row);
+            icon.anchorMin = icon.anchorMax = icon.pivot = new Vector2(0f, 0.5f);
+            icon.anchoredPosition = Vector2.zero;
+            icon.sizeDelta = new Vector2(IconW, IconW);
             var sprite = PortraitSprite(hero.PortraitPath);
-            if (sprite != null) { img.sprite = sprite; img.preserveAspect = true; }
-            else { img.sprite = Ui("generic_circle_sprite"); img.color = hero.ColorLight; }
+            var img = AddImage(icon, sprite != null ? Color.white : hero.ColorLight);   // bez portretu: kółko w kolorze bohatera
+            img.sprite = sprite ?? Ui("generic_circle_sprite");
+            img.preserveAspect = true;
+            track = NewRect("Track", row);
+            Anchor(track, 0f, 0f, 1f, 0f, LabelX, 3f, 0f, 14f);
+            AddImage(track, Track);
+            return row;
         }
 
         // ---------- sekcje: prawy panel (balans gry, przebieg misji, łup) ----------
 
-        /// <summary>Przebieg misji: wartości jedna pod drugą, każda z ikoną gry.</summary>
-        private void Mission(RectTransform panel, QuestStats s)
-        {
-            Header(panel, "Przebieg misji");
-            BeginRows();
-            StatRow(panel, "icon_movement", false, "rundy", s.Rounds.ToString(Pl));
-            StatRow(panel, "generic/generic_loadingindicator", false, "śr. czas rundy", Clock(s.SecondsPerRound));
-            StatRow(panel, "icon_action_combat", true, "ataki", s.Attacks.ToString(Pl));
-            StatRow(panel, "icon_action_interact", true, "interakcje", s.Interactions.ToString(Pl));
-            StatRow(panel, "icon_coins", false, "złoto na rundę", s.GoldPerRound.ToString(s.GoldPerRound < 10f ? "0.#" : "0", Pl));
-            EndRows(panel);
-        }
-
-        private void Loot(RectTransform panel, QuestStats s)
-        {
-            Header(panel, "Łup");
-            BeginRows();
-            StatRow(panel, "icon_coins", false, "złoto", s.Gold.ToString(Pl));
-            StatRow(panel, "icon_trinket", false, "przedmioty", s.LootItems.ToString(Pl));
-            StatRow(panel, "icon_materials", false, "materiały", s.LootMaterials.ToString(Pl));
-            StatRow(panel, "miniviewrecipe_bg", false, "przepisy", s.LootRecipes.ToString(Pl));
-            StatRow(panel, "icon_consumables", false, "mikstury", s.LootConsumables.ToString(Pl));
-            EndRows(panel);
-        }
-
-        /// <summary>Balans gry: pierwsza sekcja prawego panelu, legenda z ikonami i procentami nad paskiem walka/interakcje.</summary>
+        /// <summary>Balans gry: legenda z ikonami i procentami nad paskiem walka/interakcje całej drużyny.</summary>
         private void Balance(RectTransform panel, QuestStats s)
         {
-            Header(panel, "Balans gry");
             int total = s.CombatActions + s.Interactions;
             float p = total > 0 ? (float)s.CombatActions / total : 0f;
-            var legend = NewRect("Legend", panel);                  // legenda z ikonami nad paskiem
-            Fixed(legend, 26f);
-            if (total == 0)
+            Section(panel, "Balans gry", () =>
             {
-                var none = AddText(legend, "brak akcji", RowSize, Light, TextAlignmentOptions.Left, false);
-                Stretch(none.rectTransform);
-            }
-            else
-            {
+                var legend = NewRect("Legend", panel);
+                Fixed(legend, 26f);
+                if (total == 0)
+                {
+                    Stretch(RowText(legend, "brak akcji", TextAlignmentOptions.Left, false).rectTransform);
+                    return;
+                }
                 int pc = Mathf.RoundToInt(p * 100f);
                 Icon(legend, "icon_action_combat", Color.white, 0f, 22f, true);
                 Icon(legend, "icon_action_interact", Color.white, 1f, 22f, true);
-                BeginRows();
                 var a = RowText(legend, "walka " + pc + "%", TextAlignmentOptions.Left, false);
                 Anchor(a.rectTransform, 0f, 0f, 0.5f, 1f, 28f, 0f, 0f, 0f);
                 var b = RowText(legend, "interakcje " + (100 - pc) + "%", TextAlignmentOptions.Right, false);
                 Anchor(b.rectTransform, 0.5f, 0f, 1f, 1f, 0f, 0f, -28f, 0f);
-                EndRows(panel);
-            }
+            });
             var bar = NewRect("Ratio", panel);
             Fixed(bar, 14f);
-            var track = bar.gameObject.AddComponent<Image>();
-            track.color = Track;
-            track.raycastTarget = false;
-            if (total > 0)
-            {
-                Fill(bar, 0f, p, CombatColor);
-                Fill(bar, p, 1f, InteractColor);
-            }
+            AddImage(bar, Track);
+            Fill(bar, 0f, p, CombatColor);
+            if (total > 0) Fill(bar, p, 1f, InteractColor);
         }
 
-        /// <summary>Wiersz „ikona, nazwa … wartość”; wszystkie wiersze w jednym kolorze, także przy zerze.</summary>
-        private void StatRow(RectTransform panel, string icon, bool white, string label, string value)
+        /// <summary>Przebieg misji: wartości jedna pod drugą, każda z ikoną gry.</summary>
+        private void Mission(RectTransform panel, QuestStats s)
+        {
+            Section(panel, "Przebieg misji", () =>
+            {
+                StatRow(panel, "icon_movement", "rundy", s.Rounds.ToString(Pl));
+                StatRow(panel, "generic/generic_loadingindicator", "śr. czas rundy", Clock(s.SecondsPerRound));
+                StatRow(panel, "icon_action_combat", "ataki", s.Attacks.ToString(Pl), white: true);
+                StatRow(panel, "icon_action_interact", "interakcje", s.Interactions.ToString(Pl), white: true);
+                StatRow(panel, "icon_coins", "złoto na rundę", s.GoldPerRound.ToString(s.GoldPerRound < 10f ? "0.#" : "0", Pl));
+            });
+        }
+
+        private void Loot(RectTransform panel, QuestStats s)
+        {
+            Section(panel, "Łup", () =>
+            {
+                StatRow(panel, "icon_coins", "złoto", s.Gold.ToString(Pl));
+                StatRow(panel, "icon_trinket", "przedmioty", s.LootItems.ToString(Pl), tint: Light);
+                StatRow(panel, "icon_materials", "materiały", s.LootMaterials.ToString(Pl), tint: Light);
+                StatRow(panel, "miniviewrecipe_bg", "przepisy", s.LootRecipes.ToString(Pl));
+                StatRow(panel, "icon_consumables", "mikstury", s.LootConsumables.ToString(Pl), tint: Light);
+            });
+        }
+
+        /// <summary>
+        /// Wiersz „ikona, nazwa … wartość”, wszystkie w jednym kolorze, także przy zerze.
+        /// <paramref name="white"/>: czarna ikona akcji z HUD w odwróconych kolorach; <paramref name="tint"/>: kolor ikony.
+        /// </summary>
+        private void StatRow(RectTransform panel, string icon, string label, string value, bool white = false, Color? tint = null)
         {
             var row = NewRect("StatRow", panel);
             Fixed(row, 28f);
-            var tint = icon == "icon_trinket" || icon == "icon_materials" || icon == "icon_consumables" ? Light : Color.white;
-            if (icon != null) Icon(row, icon, tint, 0f, 24f, white);
+            Icon(row, icon, tint ?? Color.white, 0f, 24f, white);
             var l = RowText(row, label, TextAlignmentOptions.Left, false);
             Anchor(l.rectTransform, 0f, 0f, 1f, 1f, 32f, 0f, -110f, 0f);
             var v = RowText(row, value, TextAlignmentOptions.Right, true);
@@ -402,8 +387,7 @@ namespace LektorPL.Core
 
         private static string HeroName(QuestStats.HeroRow h)
         {
-            string s = Loc(h.NameKey);
-            return string.IsNullOrEmpty(s) ? h.HeroId : s;
+            return Loc(h.NameKey) ?? h.HeroId;
         }
 
         // ---------- klocki ----------
@@ -417,37 +401,26 @@ namespace LektorPL.Core
             rt.pivot = pivot;
             rt.anchoredPosition = pos;
             rt.sizeDelta = size;
-            var bg = rt.gameObject.AddComponent<Image>();
-            bg.raycastTarget = false;
-            bg.color = PanelShade;
+            AddImage(rt, PanelShade);
             var frameSprite = Ui("enemytab_frame");
             if (frameSprite != null)
             {
                 var fr = NewRect("Frame", rt);
                 Stretch(fr);
                 fr.gameObject.AddComponent<LayoutElement>().ignoreLayout = true;
-                var fi = fr.gameObject.AddComponent<Image>();
+                var fi = AddImage(fr, FrameTint);
                 fi.sprite = frameSprite;
                 fi.type = Image.Type.Sliced;
                 fi.pixelsPerUnitMultiplier = FrameScale;              // mniejsze narożniki ramki niż w panelu wroga
-                fi.color = FrameTint;
-                fi.raycastTarget = false;
             }
-            var col = Column(rt, 4f, 0);
+            var col = rt.gameObject.AddComponent<VerticalLayoutGroup>();
             col.padding = new RectOffset((int)PadX, (int)PadX, (int)PadTop, (int)PadBottom);   // narożniki ramki nad nagłówkiem
+            col.spacing = 4f;
+            col.childAlignment = TextAnchor.UpperLeft;
+            col.childControlWidth = col.childControlHeight = true;
+            col.childForceExpandWidth = true;
+            col.childForceExpandHeight = false;
             return rt;
-        }
-
-        private static VerticalLayoutGroup Column(RectTransform rt, float spacing, int padding)
-        {
-            var v = rt.gameObject.AddComponent<VerticalLayoutGroup>();
-            v.padding = new RectOffset(padding, padding, padding, padding);
-            v.spacing = spacing;
-            v.childAlignment = TextAnchor.UpperLeft;
-            v.childControlWidth = v.childControlHeight = true;
-            v.childForceExpandWidth = true;
-            v.childForceExpandHeight = false;
-            return v;
         }
 
         private static void Fixed(RectTransform rt, float height)
@@ -472,19 +445,24 @@ namespace LektorPL.Core
             if (line == null) { Spacer(parent, 4f); return; }
             var rt = NewRect("Underline", parent);
             Fixed(rt, 18f);
-            var img = rt.gameObject.AddComponent<Image>();
+            var img = AddImage(rt, Gold);
             img.sprite = line;
             img.preserveAspect = true;
-            img.color = Gold;
-            img.raycastTarget = false;
         }
 
-        private TMP_Text Line(RectTransform parent, string text, float size, Color color, bool bold = false)
+        /// <summary>Sekcja: nagłówek, potem wiersze z <paramref name="rows"/>; teksty wierszy dostają jedną wielkość.</summary>
+        private void Section(RectTransform panel, string title, Action rows)
         {
-            var t = AddText(parent, text, size, color, TextAlignmentOptions.Left, bold);
-            Fit(t, Mathf.Max(10f, size - 4f));
-            Fixed(t.rectTransform, size + 4f);
-            return t;
+            Header(panel, title);
+            var previous = _rows;
+            _rows = new List<TMP_Text>();
+            try { rows(); }
+            finally
+            {
+                var texts = _rows;
+                _rows = previous;
+                UniformSize(panel, texts);
+            }
         }
 
         /// <summary>
@@ -500,16 +478,13 @@ namespace LektorPL.Core
             rt.pivot = new Vector2(side, 0.5f);
             rt.anchoredPosition = Vector2.zero;
             rt.sizeDelta = new Vector2(size, size);
-            var img = rt.gameObject.AddComponent<Image>();
+            var img = AddImage(rt, tint);
             img.sprite = sp;
             img.preserveAspect = true;
-            img.color = tint;
-            img.raycastTarget = false;
             return img;
         }
 
-        /// <summary>Tekst w jednym wierszu: najpierw zmniejsza czcionkę do <paramref name="min"/>, dopiero potem skraca.</summary>
-        /// <summary>Tekst wiersza sekcji: jedna wielkość bazowa, zapamiętany do wyrównania w <see cref="EndRows"/>.</summary>
+        /// <summary>Tekst wiersza sekcji: jedna wielkość bazowa, zapamiętany do wyrównania w <see cref="UniformSize"/>.</summary>
         private TMP_Text RowText(Transform row, string text, TextAlignmentOptions align, bool bold)
         {
             var t = AddText(row, text, RowSize, Light, align, bold);
@@ -518,19 +493,12 @@ namespace LektorPL.Core
             return t;
         }
 
-        private void BeginRows()
-        {
-            _rows = new List<TMP_Text>();
-        }
-
         /// <summary>
         /// Wszystkie teksty wierszy sekcji dostają jedną wielkość: najmniejszą, jaką wybrało dopasowanie
         /// któregokolwiek z nich (długie nazwy nie wyglądają wtedy na mniejsze od krótkich).
         /// </summary>
-        private void EndRows(RectTransform panel)
+        private void UniformSize(RectTransform panel, List<TMP_Text> rows)
         {
-            var rows = _rows;
-            _rows = null;
             if (rows == null || rows.Count == 0 || !panel.gameObject.activeInHierarchy) return;   // nieaktywny: zostaje auto-size
             try
             {
@@ -550,6 +518,7 @@ namespace LektorPL.Core
             catch (Exception e) { _log.Error("summary_rows", e); }
         }
 
+        /// <summary>Tekst w jednym wierszu: najpierw zmniejsza czcionkę do <paramref name="min"/>, dopiero potem skraca.</summary>
         private static void Fit(TMP_Text t, float min)
         {
             t.enableWordWrapping = false;
@@ -566,9 +535,15 @@ namespace LektorPL.Core
             f.anchorMin = new Vector2(from, 0f);
             f.anchorMax = new Vector2(to, 1f);
             f.offsetMin = f.offsetMax = Vector2.zero;
-            var img = f.gameObject.AddComponent<Image>();
+            AddImage(f, color);
+        }
+
+        private static Image AddImage(RectTransform rt, Color color)
+        {
+            var img = rt.gameObject.AddComponent<Image>();
             img.color = color;
             img.raycastTarget = false;
+            return img;
         }
 
         private TMP_Text AddText(Transform parent, string text, float size, Color color, TextAlignmentOptions align, bool bold)

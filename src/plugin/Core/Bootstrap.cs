@@ -37,7 +37,7 @@ namespace LektorPL.Core
         /// <summary>Nakładka w grze (próba): skróty, komunikaty, menu lektora, przycisk na dolnym pasku, zgłoszenia.</summary>
         public bool Overlay = true;
 
-        /// <summary>Statystyki przy oknie podsumowania misji (E20, D114).</summary>
+        /// <summary>Statystyki przy oknie podsumowania misji (E20, D114): wartość na start; w grze zmienia ją menu lektora.</summary>
         public bool QuestSummary = true;
 
         /// <summary>Podgląd panelu statystyk w trakcie misji skrótem Ctrl+P (tylko do testów).</summary>
@@ -98,8 +98,8 @@ namespace LektorPL.Core
                 catch (Exception e) { log.Error("overlay_init", e); }
             }
             SummaryPanel summary = null;
-            if (tracker != null && options.QuestSummary)
-                summary = new SummaryPanel(log, true, options.QuestSummaryPreview);
+            if (tracker != null)                    // także wyłączony: menu lektora może go włączyć w trakcie gry
+                summary = new SummaryPanel(log, options.QuestSummary, options.QuestSummaryPreview);
             runner.Init(tracker, log, sender, overlay, summary);
             options.Info?.Invoke(prefix + ": dziennik " + log.FilePath);
             return log.FilePath;
@@ -139,7 +139,12 @@ namespace LektorPL.Core
         private void LateUpdate()
         {
             _tracker?.LateUpdate();
-            if (!_stopped) _summary?.Update(_tracker);
+            if (!_stopped && _summary != null)
+            {
+                if (_overlay != null && _overlay.Connected && Json.Get(_overlay.State, "stats") is bool stats)
+                    _summary.Enabled = stats;           // przełącznik z menu lektora (companion zapisuje go w ustawieniach)
+                _summary.Update(_tracker);
+            }
             if (_sender == null || _tracker == null) return;
             try
             {

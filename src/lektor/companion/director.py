@@ -67,9 +67,11 @@ def speaking_hero(ev):
 
 
 class Director:
-    def __init__(self, library, player, toggles=None, volume=1.0, log=None, clock=time.perf_counter, tempo=1.0):
+    def __init__(self, library, player, toggles=None, volume=1.0, log=None, clock=time.perf_counter, tempo=1.0,
+                 stats=True):
         self.lib, self.player = library, player
         self.toggles = toggles or {}
+        self.stats = bool(stats)                # panele statystyk w oknie podsumowania misji (plugin, E20)
         self.volume = volume
         self.tempo = K.clamp_tempo(tempo)
         self.muted = False
@@ -438,6 +440,9 @@ class Director:
         elif cmd == 'przelacznik' and isinstance(value, dict) and value.get('name') in self.toggles:
             self.toggles[value['name']] = bool(value.get('on'))
             save = (value['name'], 'toggles')
+        elif cmd == 'statystyki' and value is not None:
+            self.stats = bool(value)
+            save = ('statystyki', 'podsumowanie')
         self.version += 1
         return save
 
@@ -461,7 +466,7 @@ class Director:
                       if src in WINDOWS and outcome in ('brak_klucza', 'brak_audio', 'częściowe'))
         return {
             'tempo': self.tempo, 'muted': self.muted, 'volume': self.volume, 'toggles': dict(self.toggles),
-            'now': cur, 'queue': len(self.queue) + (1 if self.pending is not None else 0),
+            'stats': self.stats, 'now': cur, 'queue': len(self.queue) + (1 if self.pending is not None else 0),
             'history': [entry(h['item'], h['t'], h['seconds'], h['muted']) for h in reversed(self.history)],
             'missing': missing,
             'notice': {'id': self.notice[0], 'text': self.notice[1]} if self.notice else None,
