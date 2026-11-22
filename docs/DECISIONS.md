@@ -1181,6 +1181,10 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
   - wrogowie o tej samej nazwie mówią jednym głosem: sześciu męskich bandytów (`nv_bandyta`, `nv_a2q3_bandyta`, `nv_q3_bandyta_skrzynia`, `nv_q11_zbir`, `nv_q3_herszt`, `nv_q11_bandyta_nekromanta`) dostaje jeden głos wybrany z istniejących, banitka osobno w kolejnej rundzie; pozostałe typy wrogów do sprawdzenia;
   - Gilliam: projekt OmniVoice z opisu postaci zamiast odszumionego klonu z dubbingu;
   - fae: skrzeczący, złośliwy chochlik, dorosły, wysoki, bez dziecięcej barwy (portret typu wroga: stado kłapiących stworów).
+- Runda 2 (2026-11-22): przyjęte 21 głosów i wspólne głosy grup (bandyci: obecny głos `nv_q11_bandyta_nekromanta`, smocze hybrydy: obecny głos `nv_q13_hybryda`). Runda 3 (QA 2026-11-22):
+  - kobieta w grupie wrogów brzmi jak kobieca wersja głosu grupy: banitka (bandyci) i łowczyni (hybrydy), do wyboru obecny głos, klon głosu grupy z opisem kobiecym albo nowy profil kobiecy o podobnej barwie; Zerai i kowalka to osobne postacie;
+  - Eurth Kel'yr z opisem z danych gry (mini-boss typu siostra krwi, chichocze, kpi);
+  - Levirax: starsza, potężna smoczyca, wolniej; żołnierz z karczmy: zmęczony, podpity weteran; wysłannik nekromanty i stronnik barona: nowe głosy od zera.
 - Głosy ElevenLabs zostają bez zmian do odnowienia limitu 2026-12-15 (licznik okresu 55 983 z 60 tys.). Potem nowe profile Laurel i L'trand oraz chropowatsza Veta (ok. 16,7 tys. znaków, ok. 7,5 tys. kredytów).
 
 **Uzasadnienie:** QA 2026-11-20 po odsłuchu zestawienia. Zmiany w ElevenLabs nie mieszczą się w limicie bieżącego okresu.

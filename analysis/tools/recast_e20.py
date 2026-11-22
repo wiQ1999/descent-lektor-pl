@@ -5,6 +5,8 @@ Profile w analysis/tools/voice_designs_e20.json (rodzaj, opisy OmniVoice, własn
 - fix: ten sam profil bez szeptu, trzy ziarna; kandydatury najbliżej obecnej barwy, z żywszą intonacją.
 - clone: klon referencji `src` (Ne'Krul, Levirax) z obróbką, przy Levirax także projekty.
 - clean: referencja `src` odszumiona w trzech siłach (Gilliam).
+- like (runda 3): kobiecy głos dla grupy wrogów o głosie `src`: klon `src` z opisem kobiecym (clone_instructs) i nowe
+  projekty kobiece; na stronę idą klon i projekt najbliżej barwy `src`.
 Każdy kandydat czyta też kwestię z gry (tę samą co próbka 1 w zestawieniu m4_cast), żeby było słychać głos w grze.
 Strona: portret z gry (postać albo typ wroga), opis, obecny głos i głosy zbyt podobne; wybór A–C, „bez zmian”, „żaden nie pasuje”,
 kandydat „niepoprawny” z uwagą i uwaga do postaci.
@@ -41,7 +43,7 @@ _DESIGNS = json.load(open(os.path.join(TOOLS, 'voice_designs_e20%s.json' % ('' i
 VOICES = {k: v for k, v in _DESIGNS.items() if not k.startswith('_')}
 GROUPS = _DESIGNS.get('_groups', {})       # wrogowie o tej samej nazwie: jeden głos wybrany z istniejących
 SEEDS = {'new': (7, 29), 'fix': (7, 29, 53), 'clone': (7, 29)} if ROUND == 1 else \
-    {'new': (11, 37), 'fix': (11, 37, 61), 'clone': (11, 37)}
+    {'new': (11, 37), 'fix': (11, 37, 61), 'clone': (11, 37), 'like': (11, 37, 61)}
 CPS = 12.5
 MAX_CER = 0.10
 F0_RANGE = {'male': (55, 240), 'female': (120, 430)}
@@ -89,6 +91,56 @@ def growl(y, sr, amount):
     return out.astype(np.float32)
 
 
+def psola(y, sr, ratio):
+    """Wysokość × ratio z zachowaniem formantów (TD-PSOLA, znaczniki okresów z pyin dosunięte do szczytów)."""
+    import librosa
+    import numpy as np
+    hop = 256
+    f0, voiced, _ = librosa.pyin(y, fmin=60, fmax=450, sr=sr, frame_length=2048, hop_length=hop)
+    idx = np.arange(len(y))
+    f0s = np.interp(idx, np.arange(len(f0)) * hop, np.nan_to_num(f0, nan=0.0))
+    vs = np.interp(idx, np.arange(len(f0)) * hop, voiced.astype(float)) > 0.5
+    marks, t = [], 0
+    while t < len(y):
+        v = bool(vs[t] and f0s[t] > 0)
+        P = int(sr / f0s[t]) if v else int(0.01 * sr)
+        if v:       # znacznik na szczycie okresu (epoka), żeby okna się zgadzały
+            a, b = max(0, t - P // 2), min(len(y), t + P // 2 + 1)
+            t = a + int(np.argmax(np.abs(y[a:b])))
+        marks.append((t, P, v))
+        t += P
+    pos = np.array([m[0] for m in marks])
+    out = np.zeros(len(y) + sr, dtype=np.float64)
+    norm = np.zeros_like(out)
+    ts = float(marks[0][0])
+    while ts < len(y):
+        k = int(np.argmin(np.abs(pos - ts)))
+        c, P, v = marks[k]
+        w = np.hanning(2 * P + 1)
+        a, b = c - P, c + P + 1
+        seg = y[max(0, a):min(len(y), b)] * w[max(0, -a):2 * P + 1 - max(0, b - len(y))]
+        o = int(ts) - P + max(0, -a)
+        if o >= 0:
+            out[o:o + len(seg)] += seg
+            norm[o:o + len(seg)] += w[max(0, -a):max(0, -a) + len(seg)]
+        ts += P / ratio if v else P
+    out = out[:len(y)] / np.maximum(norm[:len(y)], 0.5)
+    return out.astype(np.float32)
+
+
+def regender(y, sr, f0_target, formant_st):
+    """Głos męski na kobiecy: PSOLA do mediany f0_target / przesunięcie formantów, potem formanty i wysokość
+    o formant_st półtonów (przepróbkowanie librosa)."""
+    import librosa
+    import numpy as np
+    f0 = librosa.pyin(y, fmin=60, fmax=450, sr=sr)[0]
+    f0 = float(np.nanmedian(f0))
+    ratio = f0_target / f0 / 2 ** (formant_st / 12)
+    out = psola(y, sr, ratio)
+    out = librosa.effects.pitch_shift(out, sr=sr, n_steps=formant_st)
+    return (out * (0.9 / (np.abs(out).max() + 1e-9))).astype(np.float32), f0
+
+
 def process(y, sr, fx):
     import librosa
     import numpy as np
@@ -134,13 +186,30 @@ def design():
                 add(name, voice=voice, seed=0, instruct='referencja %s, odszumianie %.1f' % (p['src'], fx['denoise']),
                     wav=os.path.relpath(wav, paths.WORK), text=src['text'], key='dn%.1f' % fx['denoise'], fx={'base': True})
             continue
-        if p['kind'] == 'clone':
+        if p.get('regender'):         # klon referencji `src` po zmianie płci (wysokość i formanty)
+            src = r[p['src']]
+            y, sr = sf.read(os.path.join(ROOT, src['wav']), dtype='float32')
+            for i, g in enumerate(p['regender'], 1):
+                ref = os.path.join(OUT, 'scan', '%s_ref_g%d.wav' % (voice, i))
+                out, f0 = regender(y, sr, g['f0'], g['formant'])
+                sf.write(ref, out, sr, subtype='PCM_16')
+                prompt = model.create_voice_clone_prompt(ref, src['text'])
+                for seed in p.get('seeds') or SEEDS[p['kind']]:
+                    name = '%s_g%d_s%d' % (voice, i, seed)
+                    key = '%s|%s|%s' % (src['sha'], text, json.dumps(g, sort_keys=True))
+                    if fresh(name, key):
+                        wav = os.path.join(OUT, 'scan', name + '.wav')
+                        N.synth(model, wav, text, seed, voice_clone_prompt=prompt)
+                        add(name, voice=voice, seed=seed, instruct='klon %s po zmianie płci: F0 %.0f→%d Hz, formanty +%.1f st' % (
+                            p['src'], f0, g['f0'], g['formant']), wav=os.path.relpath(wav, paths.WORK), text=text, key=key,
+                            clone=True, regender=g)
+        if p['kind'] in ('clone', 'like') and p.get('clone_instructs', True):
             src = r[p['src']]
             prompt = model.create_voice_clone_prompt(os.path.join(ROOT, src['wav']), src['text'])
             speed = (src.get('style') or {}).get('speed')
             # z clone_instructs klon dostaje opis OmniVoice (np. młodszy kuzyn), bez niego czysty klon
             for d, instruct in enumerate(p.get('clone_instructs') or [None], 1):
-                for seed in p.get('seeds') or SEEDS['clone']:
+                for seed in p.get('seeds') or SEEDS[p['kind']]:
                     name = '%s_klon%s_s%d' % (voice, '' if instruct is None else str(d), seed)
                     key = '%s|%s|%s|%s' % (src['sha'], text, speed, instruct)
                     if fresh(name, key):
@@ -149,14 +218,14 @@ def design():
                                 **({'instruct': instruct} if instruct else {}))
                         add(name, voice=voice, seed=seed, instruct='klon %s%s' % (p['src'], ', ' + instruct if instruct else ''),
                             wav=os.path.relpath(wav, paths.WORK), text=text, key=key, clone=True)
-        seeds = p.get('seeds') or SEEDS['fix' if p['kind'] == 'fix' else 'new']
+        seeds = p.get('seeds') or SEEDS[p['kind'] if p['kind'] in ('fix', 'like') else 'new']
         for d, instruct in enumerate(p['instructs'], 1):
             for seed in seeds:
                 name = '%s_d%d_s%d' % (voice, d, seed)
                 key = '%s|%s' % (instruct, text)
                 if fresh(name, key):
                     wav = os.path.join(OUT, 'scan', name + '.wav')
-                    N.synth(model, wav, text, seed, instruct=instruct, duration=round(len(text) / CPS, 2))
+                    N.synth(model, wav, text, seed, instruct=instruct, duration=round(len(text) / p.get('cps', CPS), 2))   # cps < 12,5: wolniej
                     add(name, voice=voice, seed=seed, instruct=instruct, wav=os.path.relpath(wav, paths.WORK), text=text,
                         key=key)
 
@@ -227,13 +296,17 @@ def choose():
     r = refs()
     taken = {v: emb(librosa.load(os.path.join(ROOT, x['wav']), sr=16000)[0])
              for v, x in r.items() if x.get('wav') and os.path.exists(os.path.join(ROOT, x['wav']))}
-    r1_choice = json.load(open(os.path.join(R1, 'choice.json'), encoding='utf-8')) if ROUND > 1 else {}
+    earlier = []        # (scan, choice) poprzednich rund: ich kandydaci na stronie zostali odrzuceni
+    for k in range(1, ROUND):
+        d = R1 if k == 1 else os.path.join(R1, 'r%d' % k)
+        earlier.append((json.load(open(os.path.join(d, 'scan.json'), encoding='utf-8')),
+                        json.load(open(os.path.join(d, 'choice.json'), encoding='utf-8'))))
     chosen = {}
     for voice, p in VOICES.items():
         mine = [n for n, c in scan.items() if c['voice'] == voice and not c.get('kept')]
         kept = [n for n, c in scan.items() if c['voice'] == voice and c.get('kept')]
-        rejected = [np.array(r1_scan[c['name']]['emb']) for c in r1_choice.get(voice, [])
-                    if c['name'] in r1_scan and 'r1_' + c['name'] not in scan]
+        rejected = [np.array(sc[c['name']]['emb']) for sc, ch in earlier for c in ch.get(voice, [])
+                    if c['name'] in sc and 'emb' in sc[c['name']] and 'r1_' + c['name'] not in scan]
         if p['kind'] == 'clean':
             chosen[voice] = [{'name': n, 'score': None} for n in sorted(mine)][:3]
             continue
@@ -241,13 +314,26 @@ def choose():
         ok = [n for n in mine if scan[n]['cer'] <= MAX_CER and lo <= scan[n]['f0'] <= hi] or \
             sorted(mine, key=lambda n: scan[n]['cer'])[:6]
         ok = [n for n in ok if not any(float(np.dot(scan[n]['emb'], e)) > 0.97 for e in rejected)] or ok     # bez powtórek odrzuconych
+        if p['kind'] == 'like':     # kobiecy głos grupy: najlepszy klon i najlepszy projekt najbliżej barwy głosu grupy
+            target = taken[p['src']]
+
+            def sim(n):
+                return float(np.dot(scan[n]['emb'], target))
+            # klon po zmianie płci, gdy jest (sam opis kobiecy przy klonie nie zmienia płci), i najbliższy projekt
+            clones = [n for n in ok if scan[n].get('regender')] or [n for n in ok if scan[n].get('clone')]
+            picks = [max(clones, key=sim, default=None), max((n for n in ok if not scan[n].get('clone')), key=sim, default=None)]
+            chosen[voice] = [{'name': n, 'score': round(sim(n), 3)} for n in picks if n]
+            print('%-24s %s' % (voice, '  '.join('%s CER %.2f F0 %3.0f podob. %.2f' % (
+                c['name'].replace(voice + '_', ''), scan[c['name']]['cer'], scan[c['name']]['f0'], c['score'])
+                for c in chosen[voice])))
+            continue
         current = taken.get(voice)
         if p['kind'] == 'fix' and current is not None:
             def score(n):      # bliżej obecnej barwy i żywsza intonacja (robotyczny głos ma płaską melodię)
                 return -(float(np.dot(scan[n]['emb'], current)) + 0.02 * scan[n]['f0_sd'])
             limit = 0.97
         else:
-            # od rundy 2 także daleko od kandydatów odrzuconych w poprzedniej rundzie
+            # od rundy 2 także daleko od kandydatów odrzuconych we wcześniejszych rundach
             others = [e for v, e in taken.items() if v != voice or p['kind'] == 'new'] + rejected
 
             def score(n):
@@ -336,7 +422,9 @@ textarea{width:100%;font:inherit;font-size:13px;margin-top:6px;padding:4px 6px;b
 """
 ENEMY_TABS = {     # mówcy, którzy są typem wroga: portret z karty wroga (d3/enemies/_portraits)
     'nv_fae': 'Fae_Tab', 'nv_bandyta': 'Bandit_Tab', 'nv_a2q3_bandyta': 'Bandit_Tab', 'nv_q3_herszt': 'Bandit_Boss_Tab',
-    'nv_fanatyk': 'Zealot_Tab', 'nv_widmo': 'Specter_Tab', 'nv_siostra_krwi': 'Blood Sister_Tab'}
+    'nv_fanatyk': 'Zealot_Tab', 'nv_widmo': 'Specter_Tab', 'nv_siostra_krwi': 'Blood Sister_Tab',
+    'nv_q12_banitka': 'Bandit_Tab',
+    'nv_eurth': 'Blood Sister_Tab'}     # Eurth Kel'yr: mini-boss typu siostra krwi (TextureTabAssetPath w danych wroga)
 
 
 def enemy_portraits(out_dir):
@@ -355,8 +443,14 @@ def enemy_portraits(out_dir):
     return {v: t.replace(' ', '_') + '.png' for v, t in ENEMY_TABS.items() if t in saved}
 
 
-SECTIONS = (('new', 'Nowe głosy'), ('clone', 'Klony z obróbką'), ('clean', 'Oczyszczona referencja'),
+SECTIONS = (('like', 'Kobiecy głos dla grupy wrogów'), ('new', 'Nowe głosy'), ('clone', 'Klony z obróbką'), ('clean', 'Oczyszczona referencja'),
             ('fix', 'Ten sam profil, lepsza jakość'))
+
+
+def tag(p, s, first):
+    if p['kind'] == 'like':
+        return ' (klon głosu grupy po zmianie płci referencji)' if s.get('clone') else ' (nowy profil kobiecy podobny do głosu grupy)'
+    return ' (z rundy 1, bez obróbki)' if s.get('kept') else ' (propozycja automatu)' if first else ''
 
 
 def page():
@@ -435,11 +529,11 @@ def page():
                              '<div class="gray">zdanie z projektu głosu (referencja modelu)</div>%s'
                              '<label class="gray"><input type="checkbox" class="bad"> niepoprawny</label>'
                              '<textarea placeholder="Co jest nie tak z kandydatem %s?"></textarea></div>' % (
-                                 ' auto' if i == first else '', L, L, ' (z rundy 1, bez obróbki)' if s.get('kept') else
-                                 ' (propozycja automatu)' if i == first else '',
+                                 ' auto' if i == first else '', L, L, tag(p, s, i == first),
                                  e(s['instruct']), s.get('cer', '–'), s.get('f0', '–'), s.get('f0_sd', '–'),
                                  line, audio('kandydaci/%s_%s.wav' % (voice, L)), L))
-            near = ''.join('<div class="row"><code>%s</code> %s</div>' % (e(n), current(n)) for n in p.get('near', []))
+            near = ''.join('<div class="row"><code>%s</code> %s</div>' % (e(n), current(n))
+                           for n in ([p['src']] if p['kind'] == 'like' else p.get('near', [])))
             quote = '<q>%s</q>' % e(g['text']) if g else ''
             picks = ''.join('<label><input type="radio" name="%s" value="%s"> %s</label>' % (voice, L, L)
                             for L in LETTERS[:len(cands)])
@@ -452,7 +546,9 @@ def page():
                          '<div class="row">%s</div><div class="pick"><b>Wybór:</b>%s</div>'
                          '<textarea class="note" placeholder="Uwaga do postaci (opcjonalnie)"></textarea></div>' % (
                              e(voice), portrait(voice), e(voice), e(desc.get(voice, '–')), e(p['note']), current(voice),
-                             quote, ('<div class="muted">głosy zbyt podobne:</div>' + near) if near else '',
+                             quote, ('<div class="muted">%s</div>' % ('wybrany głos grupy (mężczyźni), kwestia z gry:'
+                                                                      if p['kind'] == 'like' else 'głosy zbyt podobne:') + near)
+                             if near else '',
                              ''.join(cands), picks))
         if cards:
             body += '<h3>%s (%d)</h3>%s' % (e(title), len(cards), ''.join(cards))

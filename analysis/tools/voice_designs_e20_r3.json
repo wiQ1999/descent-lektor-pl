@@ -1,0 +1,119 @@
+{
+ "nv_q12_banitka": {
+  "g": "female",
+  "kind": "like",
+  "src": "nv_q11_bandyta_nekromanta",
+  "clone_instructs": false,
+  "instructs": [
+   "female, elderly, moderate pitch",
+   "female, middle-aged, low pitch",
+   "female, middle-aged, moderate pitch",
+   "female, elderly, low pitch"
+  ],
+  "text": "No proszę, kogo tu przywiało? Dawno się nie widzieliśmy, co? Sakiewka na ziemię, po dobroci, bo dla starych znajomych nie liczę do trzech.",
+  "note": "runda 2: męscy bandyci mają wspólny głos (opcja 6, obecny głos bandyty z kosturem); A to ten głos sklonowany po zmianie płci referencji (wysokość PSOLA, formanty w górę), B nowy profil kobiecy najbliżej jego barwy",
+  "regender": [
+   {
+    "f0": 215,
+    "formant": 2.5
+   },
+   {
+    "f0": 235,
+    "formant": 3.5
+   }
+  ]
+ },
+ "nv_a2q5_lowczyni": {
+  "g": "female",
+  "kind": "like",
+  "src": "nv_q13_hybryda",
+  "clone_instructs": false,
+  "instructs": [
+   "female, middle-aged, low pitch",
+   "female, middle-aged, very low pitch",
+   "female, young adult, low pitch",
+   "female, elderly, low pitch"
+  ],
+  "text": "Czuję twój zapach, mała. Uciekaj, ile tylko chcesz, ale smocza krew zawsze znajdzie swoją zdobycz.",
+  "note": "sprawdzenie grup: łowczyni to kobieta wśród smoczych hybryd, które mają wspólny głos (opcja 3, posłaniec Xenitha); A to ten głos sklonowany po zmianie płci referencji (wysokość PSOLA, formanty w górę), B nowy profil kobiecy najbliżej jego barwy",
+  "regender": [
+   {
+    "f0": 180,
+    "formant": 2.5
+   },
+   {
+    "f0": 200,
+    "formant": 3.5
+   }
+  ]
+ },
+ "nv_eurth": {
+  "g": "female",
+  "kind": "new",
+  "instructs": [
+   "female, middle-aged, moderate pitch",
+   "female, middle-aged, low pitch",
+   "female, young adult, low pitch",
+   "female, young adult, moderate pitch",
+   "female, elderly, low pitch"
+  ],
+  "text": "Ach, jak uroczo, naprawdę się staracie! Ha, ha... Krew i kości zawsze do mnie wracają, kochani. Może dokończymy tę zabawę innym razem?",
+  "note": "runda 2: żaden nie pasował, opis był za krótki; opis poszerzony z danych gry: mini-boss typu siostra krwi, służy władcy z Ynfernaelu, po porażce chichocze i ogłasza remis",
+  "near": [
+   "nv_siostra_krwi"
+  ]
+ },
+ "levirax": {
+  "g": "female",
+  "kind": "new",
+  "cps": 10.5,
+  "instructs": [
+   "female, elderly, very low pitch",
+   "female, elderly, low pitch",
+   "female, middle-aged, very low pitch",
+   "female, elderly, moderate pitch"
+  ],
+  "text": "Tysiąc lat patrzyłam, jak wasze królestwa rosną i upadają. Wasze miecze to dla mnie igły, a wasze krzyki... muzyka. Klęknijcie, póki jeszcze macie kolana.",
+  "note": "rundy 1–2: żaden nie pasował; QA runda 3: starsza, potężna smoczyca, bardzo nisko, wolniej i władczo",
+  "near": [
+   "nv_crayleth"
+  ]
+ },
+ "nv_a2q3_zolnierz": {
+  "g": "male",
+  "kind": "new",
+  "cps": 11,
+  "instructs": [
+   "male, elderly, low pitch",
+   "male, elderly, very low pitch",
+   "male, middle-aged, very low pitch",
+   "male, elderly, moderate pitch"
+  ],
+  "text": "Eh... młyn, mówił. Do wiosny, mówił. A ja dalej tłukę ziarno w moździerzu jak mój dziad. Polej jeszcze jednego, karczmarko, na koszt barona... ha.",
+  "note": "rundy 1–2: żaden nie pasował; QA runda 3: zmęczony, podpity weteran, starszy i niski, wolniej, gorycz przy kuflu"
+ },
+ "nv_sq1_wyslannik": {
+  "g": "male",
+  "kind": "new",
+  "instructs": [
+   "male, young adult, moderate pitch",
+   "male, middle-aged, high pitch",
+   "male, elderly, moderate pitch",
+   "male, middle-aged, low pitch"
+  ],
+  "text": "Ach, więc to wy jesteście tymi bohaterami? Spodziewałem się czegoś więcej. Mój pan przesyła ukłony, a ja... przesyłam kondolencje.",
+  "note": "rundy 1–2: obecny szepcze, poprawki tego samego profilu odpadły; QA runda 3: nowy głos od zera, wyniosły i drwiący, bez szeptu"
+ },
+ "nv_q14_stronnik": {
+  "g": "male",
+  "kind": "new",
+  "instructs": [
+   "male, young adult, moderate pitch",
+   "male, young adult, low pitch",
+   "male, middle-aged, low pitch",
+   "male, teenager, high pitch"
+  ],
+  "text": "Słuchajcie! Słuchajcie wszyscy! Baron nadciąga ze swoim wojskiem! Na mury, ludzie, trzymajcie bramę do świtu!",
+  "note": "rundy 1–2: obecny słabej jakości, poprawki odpadły; QA runda 3: nowy głos od zera, donośny herold z okrzykami"
+ }
+}

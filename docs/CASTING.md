@@ -301,3 +301,46 @@ Pozostałe 33 głosy idą do rundy 2. W 30 żaden kandydat nie pasował, a przy 
 - `nv_q12_duch` dostaje efekt ducha, a `nv_denavel` klon Galadena ze zmianami.
 - `nv_bandyta` i `nv_q3_herszt`: najlepsze były czyste projekty C. Bandyta ma brzmieć przebiegle i mówić szybciej, herszt kpiąco i złowieszczo.
 - `nv_ta2_04_kobieta`: C, ale czystszy. `nv_q11_zbir` brzmiał robotycznie, a `nv_q11_tlum` za mało wykrzykuje.
+
+Runda 2 (2026-11-22, `voice_designs_e20_r2.json`): czyste projekty bez obróbki referencji, przy głosach chwalonych mimo trzasków także ich wersja z rundy 1 sprzed obróbki. 21 głosów przyjętych, `nv_widmo` bez zmian. `nv_q12_duch` dostaje w `finalize` efekt `ghost_c2`.
+
+| Głos | Wybór | Opis OmniVoice | Ziarno | Referencja |
+|---|---|---|---:|---|
+| `gilliam` | A | `male, elderly, moderate pitch` | 11 | 10,90 s, SHA `ea1b6dc3` |
+| `nv_a2q11_zolnierz` | C | `male, middle-aged, moderate pitch` | 37 | 7,72 s, SHA `2f727c8f` |
+| `nv_a2q7_wygnaniec` | A | `male, elderly, moderate pitch` | 37 | 7,16 s, SHA `f27160a3` |
+| `nv_a2q8_zamiatacz` | B | `male, middle-aged, moderate pitch` | 11 | 10,04 s, SHA `5134fd8e` |
+| `nv_denavel` | A | `klon galaden, male, young adult, high pitch` | 11 | 11,20 s, SHA `55b52e16` |
+| `nv_edgar` | B | `male, middle-aged, very low pitch` | 37 | 7,19 s, SHA `b5436a16` |
+| `nv_fae` | B | `female, elderly, very high pitch` | 37 | 9,80 s, SHA `f1bf05a4` |
+| `nv_fanatyk` | A | `male, elderly, moderate pitch (z rundy 1)` | 29 | 8,13 s, SHA `500aabf7` |
+| `nv_fulminar` | A | `male, middle-aged, very low pitch (z rundy 1)` | 7 | 8,92 s, SHA `1519944b` |
+| `nv_gont` | A | `female, elderly, low pitch` | 37 | 9,64 s, SHA `a111a045` |
+| `nv_kowalka` | C | `female, middle-aged, low pitch` | 11 | 9,80 s, SHA `82ee0738` |
+| `nv_lisb_wartownik_a` | B | `male, middle-aged, moderate pitch` | 61 | 7,96 s, SHA `a4b70a0c` |
+| `nv_q10_jezdziec` | B | `male, middle-aged, high pitch` | 37 | 10,28 s, SHA `226064c9` |
+| `nv_q11_tlum` | B | `male, elderly, high pitch` | 37 | 6,07 s, SHA `d971bcbd` |
+| `nv_q11_uchodzca` | A | `male, elderly, moderate pitch` | 11 | 8,23 s, SHA `cb230285` |
+| `nv_q12_duch` | A | `female, middle-aged, low pitch (z rundy 1)` | 7 | 7,15 s, SHA `87142b67` |
+| `nv_siostra_krwi` | B | `female, elderly, moderate pitch` | 37 | 8,69 s, SHA `38abe8b5` |
+| `nv_sq1_wiedzma` | B | `female, young adult, low pitch` | 11 | 9,22 s, SHA `40c41ad9` |
+| `nv_ta2_04_kobieta` | D | `female, young adult, high pitch` | 37 | 9,44 s, SHA `6d1a0337` |
+| `nv_ta2_pielgrzym` | A | `male, middle-aged, very low pitch` | 11 | 9,20 s, SHA `1426790b` |
+| `nv_xain` | C | `male, middle-aged, very low pitch` | 11 | 9,27 s, SHA `cb5d9b41` |
+
+- `gilliam`: próbka kwestii z gry urywa się 0,1 s przed końcem pliku. Referencja kończy się czysto, a ocena w generowaniu (`end_rms`, `end_gap`) daje takiej kwestii wolniejsze ponowne podejście.
+- `nv_fae`: dorosły, skrzeczący chochlik. `nv_denavel`: klon Galadena, młodszy i jaśniejszy.
+
+Grupy wrogów o tej samej nazwie (`recast_e20.py group-*`, strona `r2/grupy.html`): każda opcja czyta dwie najdłuższe kwestie członków grupy, a wybrany głos dostaje każdy członek.
+
+| Grupa | Członkowie | Wybór | Referencja |
+|---|---|---|---|
+| bandyci (mężczyźni) | `nv_bandyta`, `nv_a2q3_bandyta`, `nv_q3_bandyta_skrzynia`, `nv_q11_zbir`, `nv_q3_herszt`, `nv_q11_bandyta_nekromanta` | 6: obecny głos `nv_q11_bandyta_nekromanta` (`male, elderly, moderate pitch`, ziarno 41) | 8,05 s, SHA `c89e35a8` |
+| smocze hybrydy | `nv_a2q5_hybryda`, `nv_lisb_zwiadowca`, `nv_q13_hybryda` | 3: obecny głos `nv_q13_hybryda` (`male, middle-aged, very low pitch`, ziarno 41) | 7,92 s, SHA `b2c04264` |
+
+Wartownicy hybryd (`nv_lisb_wartownik_a`, `_b`) mają osobne głosy. Kobiety w grupach z dwiema płciami: `nv_q12_banitka` wśród bandytów i `nv_a2q5_lowczyni` wśród hybryd idą do rundy 3. Porucznik Zerai i kowalka to osobne postacie z własnym głosem.
+
+Runda 3 (`voice_designs_e20_r3.json`):
+- banitka i łowczyni (rodzaj `like`): klon głosu grupy po zmianie płci referencji (PSOLA i formanty, bo opis kobiecy przy klonie zostawia męskie F0) i nowy profil kobiecy najbliżej jego barwy;
+- `nv_eurth`: opis poszerzony z danych gry (Eurth Kel'yr, mini-boss typu siostra krwi);
+- po QA: `levirax` jako starsza, potężna smoczyca, `nv_a2q3_zolnierz` jako zmęczony, podpity weteran, a `nv_sq1_wyslannik` i `nv_q14_stronnik` dostają nowe głosy od zera.
