@@ -1,0 +1,70 @@
+{
+ "levirax": {
+  "g": "female",
+  "kind": "like",
+  "src": "narrator",
+  "src_label": "głosu narratora",
+  "src_title": "narrator (źródło klonu)",
+  "clone_instructs": false,
+  "instructs": [],
+  "seeds": [
+   11,
+   37,
+   61,
+   83,
+   97
+  ],
+  "regender": [
+   {
+    "f0": 220,
+    "formant": 3.0
+   },
+   {
+    "f0": 230,
+    "formant": 3.5
+   },
+   {
+    "f0": 230,
+    "formant": 3.5,
+    "instruct": "female, elderly, low pitch"
+   },
+   {
+    "f0": 245,
+    "formant": 4.0
+   }
+  ],
+  "text": "Tysiąc lat patrzyłam, jak wasze królestwa rosną i upadają. Wasze miecze to dla mnie igły, a wasze krzyki... muzyka. Klęknijcie, póki jeszcze macie kolana.",
+  "note": "rundy 1–4: żaden projekt nie pasował; po odsłuchu rundy 4: klon głosu narratora w wersji kobiecej, dostosowany do opisu (starsza, potężna smoczyca); klon wraca do męskiej wysokości przy wolnym tempie i słabszym przesunięciu formantów, więc warianty F0 220–245 Hz i formanty +3 do +4 półtonów, kandydaci od 165 Hz; wariant 3 z opisem „female, elderly, low pitch”; w grze tempo Levirax 0,85 zostaje",
+  "f0_min": 165,
+  "post_regender": [
+   {
+    "f0": 200,
+    "formant": 3.0
+   },
+   {
+    "f0": 220,
+    "formant": 3.5
+   }
+  ]
+ },
+ "nv_q14_stronnik": {
+  "g": "male",
+  "kind": "new",
+  "picks": 5,
+  "seeds": [
+   101,
+   233,
+   419,
+   677
+  ],
+  "instructs": [
+   "male, middle-aged, high pitch",
+   "male, middle-aged, moderate pitch",
+   "male, elderly, moderate pitch",
+   "male, young adult, very low pitch",
+   "male, teenager, moderate pitch"
+  ],
+  "text": "Z rozkazu jaśnie wielmożnego barona! Każdy, kto zdolny unieść miecz, ma się stawić na placu przed zachodem słońca! Kto się uchyli, ten zdrajca!",
+  "note": "rundy 1–4: żaden nie pasował, wszystkie podobne; po odsłuchu rundy 4: wyraźnie inne opisy, odległe ziarna i nowe zdanie (obwieszczenie zamiast alarmu), pięć kandydatur najdalej od obsady i od odrzuconych"
+ }
+}

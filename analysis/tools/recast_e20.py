@@ -9,6 +9,12 @@ Profile w analysis/tools/voice_designs_e20.json (rodzaj, opisy OmniVoice, własn
   projekty kobiece; na stronę idą klon i projekt najbliżej barwy `src`.
 Od rundy 4 profil może podać własne ziarna (`seeds`) i liczbę kandydatur na stronie (`picks`, domyślnie 3), gdy odsłuch
 prosi o więcej próbek.
+Runda 5: `like` bez opisów (`instructs: []`) to same klony `src` po zmianie płci, po jednej kandydaturze na wariant
+`regender` (wariant może mieć `instruct` OmniVoice, a `cps` profilu zwalnia klon); `src_label` (dopełniacz) i `src_title` opisują `src` na stronie.
+`post_regender`: zwykły klon `src`, a zmiana płci na gotowym nagraniu (stała wysokość w każdej kwestii; klon referencji
+po zmianie płci daje w kwestiach z gry od 60 do 360 Hz zależnie od ziarna). Kandydaci z mową dźwięczną poniżej `voiced_min`
+(domyślnie 0,35) odpadają jako szept.
+Pole `f0_min` podnosi dolny próg wysokości kandydata (klon męskiej referencji po zmianie płci wraca czasem do ok. 130 Hz).
 Każdy kandydat czyta też kwestię z gry (tę samą co próbka 1 w zestawieniu m4_cast), żeby było słychać głos w grze.
 Strona: portret z gry (postać albo typ wroga), opis, obecny głos i głosy zbyt podobne; wybór A–C, „bez zmian”, „żaden nie pasuje”,
 kandydat „niepoprawny” z uwagą i uwaga do postaci.
@@ -198,13 +204,29 @@ def design():
                 prompt = model.create_voice_clone_prompt(ref, src['text'])
                 for seed in p.get('seeds') or SEEDS[p['kind']]:
                     name = '%s_g%d_s%d' % (voice, i, seed)
-                    key = '%s|%s|%s' % (src['sha'], text, json.dumps(g, sort_keys=True))
+                    key = '%s|%s|%s|%s' % (src['sha'], text, json.dumps(g, sort_keys=True), p.get('cps'))
                     if fresh(name, key):
                         wav = os.path.join(OUT, 'scan', name + '.wav')
-                        N.synth(model, wav, text, seed, voice_clone_prompt=prompt)
-                        add(name, voice=voice, seed=seed, instruct='klon %s po zmianie płci: F0 %.0f→%d Hz, formanty +%.1f st' % (
-                            p['src'], f0, g['f0'], g['formant']), wav=os.path.relpath(wav, paths.WORK), text=text, key=key,
-                            clone=True, regender=g)
+                        N.synth(model, wav, text, seed, voice_clone_prompt=prompt,
+                                **({'instruct': g['instruct']} if g.get('instruct') else {}),
+                                **({'duration': round(len(text) / p['cps'], 2)} if p.get('cps') else {}))
+                        add(name, voice=voice, seed=seed, instruct='klon %s po zmianie płci: F0 %.0f→%d Hz, formanty +%.1f st%s' % (
+                            p['src'], f0, g['f0'], g['formant'], ', ' + g['instruct'] if g.get('instruct') else ''),
+                            wav=os.path.relpath(wav, paths.WORK), text=text, key=key, clone=True, regender=g)
+        for i, g in enumerate(p.get('post_regender', []), 1):     # zwykły klon `src`, zmiana płci na gotowym nagraniu
+            src = r[p['src']]
+            prompt = model.create_voice_clone_prompt(os.path.join(ROOT, src['wav']), src['text'])
+            seed = (p.get('seeds') or SEEDS[p['kind']])[0]
+            name = '%s_p%d_s%d' % (voice, i, seed)
+            key = '%s|%s|post|%s' % (src['sha'], text, json.dumps(g, sort_keys=True))
+            if fresh(name, key):
+                wav = os.path.join(OUT, 'scan', name + '.wav')
+                N.synth(model, wav, text, seed, voice_clone_prompt=prompt)
+                y, sr = sf.read(wav, dtype='float32')
+                out, f0 = regender(y, sr, g['f0'], g['formant'])
+                sf.write(wav, out, sr, subtype='PCM_16')
+                add(name, voice=voice, seed=seed, instruct='klon %s, zmiana płci gotowego nagrania: F0 %.0f→%d Hz, formanty +%.1f st' % (
+                    p['src'], f0, g['f0'], g['formant']), wav=os.path.relpath(wav, paths.WORK), text=text, key=key, clone=True, post=g)
         if p['kind'] in ('clone', 'like') and p.get('clone_instructs', True):
             src = r[p['src']]
             prompt = model.create_voice_clone_prompt(os.path.join(ROOT, src['wav']), src['text'])
@@ -294,6 +316,10 @@ def choose():
         c['f0'] = round(float(np.median(f0)), 0) if len(f0) else 0.0
         c['f0_sd'] = round(float(np.std(12 * np.log2(f0 / np.median(f0)))), 2) if len(f0) > 10 else 0.0
         c['emb'] = emb(y).tolist()
+    for c in scan.values():         # udział mowy dźwięcznej: szept ma go mało
+        if 'voiced' not in c:
+            y, _ = librosa.load(os.path.join(paths.WORK, c['wav']), sr=16000)
+            c['voiced'] = round(float(np.mean(librosa.pyin(y, fmin=50, fmax=520, sr=16000)[1])), 2)
     save('scan.json', scan)
     r = refs()
     taken = {v: emb(librosa.load(os.path.join(ROOT, x['wav']), sr=16000)[0])
@@ -313,7 +339,9 @@ def choose():
             chosen[voice] = [{'name': n, 'score': None} for n in sorted(mine)][:3]
             continue
         lo, hi = F0_RANGE[p['g']]
-        ok = [n for n in mine if scan[n]['cer'] <= MAX_CER and lo <= scan[n]['f0'] <= hi] or \
+        lo = p.get('f0_min', lo)       # klon po zmianie płci potrafi wrócić do męskiej wysokości
+        ok = [n for n in mine if scan[n]['cer'] <= MAX_CER and lo <= scan[n]['f0'] <= hi
+              and scan[n]['voiced'] >= p.get('voiced_min', 0.35)] or \
             sorted(mine, key=lambda n: scan[n]['cer'])[:6]
         ok = [n for n in ok if not any(float(np.dot(scan[n]['emb'], e)) > 0.97 for e in rejected)] or ok     # bez powtórek odrzuconych
         if p['kind'] == 'like':     # kobiecy głos grupy: najlepszy klon i najlepszy projekt najbliżej barwy głosu grupy
@@ -323,7 +351,13 @@ def choose():
                 return float(np.dot(scan[n]['emb'], target))
             # klon po zmianie płci, gdy jest (sam opis kobiecy przy klonie nie zmienia płci), i najbliższy projekt
             clones = [n for n in ok if scan[n].get('regender')] or [n for n in ok if scan[n].get('clone')]
-            picks = [max(clones, key=sim, default=None), max((n for n in ok if not scan[n].get('clone')), key=sim, default=None)]
+            if not p['instructs']:      # same klony: po jednym na wariant zmiany płci (najmniejszy CER, żywsza melodia)
+                picks = [min((n for n in clones if scan[n]['regender'] == g), key=lambda n: (scan[n]['cer'], -scan[n]['f0_sd']),
+                             default=None) for g in p['regender']]
+                picks += [next((n for n in ok if scan[n].get('post') == g), None) for g in p.get('post_regender', [])]
+            else:
+                picks = [max(clones, key=sim, default=None),
+                         max((n for n in ok if not scan[n].get('clone')), key=sim, default=None)]
             chosen[voice] = [{'name': n, 'score': round(sim(n), 3)} for n in picks if n]
             print('%-24s %s' % (voice, '  '.join('%s CER %.2f F0 %3.0f podob. %.2f' % (
                 c['name'].replace(voice + '_', ''), scan[c['name']]['cer'], scan[c['name']]['f0'], c['score'])
@@ -366,7 +400,9 @@ def lines():
     """Kwestia z gry czytana przez każdego kandydata (klon z jego referencji), tempo fragmentu."""
     import npc_voices as N
     from lektor import synth
+    import soundfile as sf
     scan, chosen, glines = load('scan.json'), load('choice.json'), load('lines.json')
+    r = refs()
     import torch
     model = N.load_omnivoice()
     os.makedirs(os.path.join(OUT, 'linie'), exist_ok=True)
@@ -382,15 +418,23 @@ def lines():
             key = '%s|%s|%s' % (c['name'], s.get('key'), g['fragment'])
             wav = os.path.join(OUT, 'linie', name + '.wav')
             if not (done.get(name) == key and os.path.exists(wav)):
-                todo.append((name, key, wav, g, model.create_voice_clone_prompt(os.path.join(paths.WORK, s['wav']), s['text'])))
+                if s.get('post'):       # zmiana płci na gotowym nagraniu: klon `src` bez zmian
+                    src = r[VOICES[voice]['src']]
+                    prompt = model.create_voice_clone_prompt(os.path.join(ROOT, src['wav']), src['text'])
+                else:
+                    prompt = model.create_voice_clone_prompt(os.path.join(paths.WORK, s['wav']), s['text'])
+                todo.append((name, key, wav, g, prompt, s.get('post')))
     # jak lektor.synth: referencje zakodowane, tokenizer na CPU i gałąź CFG bez dopełniania; bez tego model w fp32
     # wychodzi poza 4 GB i spada do pamięci systemowej (runda 1: ok. 210 s na kwestię zamiast kilku)
     model.audio_tokenizer.to('cpu')
     torch.cuda.empty_cache()
     model._generate_iterative = synth.generate_iterative_unpadded.__get__(model)
-    for name, key, wav, g, prompt in todo:
+    for name, key, wav, g, prompt, post in todo:
         N.synth(model, wav, g['text'], synth.seed_for(g['fragment'], 1), voice_clone_prompt=prompt,
                 **({'speed': g['speed']} if g['speed'] else {}))
+        if post:
+            y, sr = sf.read(wav, dtype='float32')
+            sf.write(wav, regender(y, sr, post['f0'], post['formant'])[0], sr, subtype='PCM_16')
         done[name] = key
         save('lines_done.json', done)
 
@@ -445,13 +489,16 @@ def enemy_portraits(out_dir):
     return {v: t.replace(' ', '_') + '.png' for v, t in ENEMY_TABS.items() if t in saved}
 
 
-SECTIONS = (('like', 'Kobiecy głos dla grupy wrogów'), ('new', 'Nowe głosy'), ('clone', 'Klony z obróbką'), ('clean', 'Oczyszczona referencja'),
+SECTIONS = (('like', 'Kobieca wersja innego głosu'), ('new', 'Nowe głosy'), ('clone', 'Klony z obróbką'), ('clean', 'Oczyszczona referencja'),
             ('fix', 'Ten sam profil, lepsza jakość'))
 
 
 def tag(p, s, first):
     if p['kind'] == 'like':
-        return ' (klon głosu grupy po zmianie płci referencji)' if s.get('clone') else ' (nowy profil kobiecy podobny do głosu grupy)'
+        src = p.get('src_label', 'głosu grupy')
+        if s.get('post'):
+            return ' (zwykły klon %s, zmiana płci na gotowym nagraniu: ta sama wysokość w każdej kwestii)' % src
+        return ' (klon %s po zmianie płci referencji)' % src if s.get('clone') else ' (nowy profil kobiecy podobny do %s)' % src
     return ' (z rundy 1, bez obróbki)' if s.get('kept') else ' (propozycja automatu)' if first else ''
 
 
@@ -548,7 +595,7 @@ def page():
                          '<div class="row">%s</div><div class="pick"><b>Wybór:</b>%s</div>'
                          '<textarea class="note" placeholder="Uwaga do postaci (opcjonalnie)"></textarea></div>' % (
                              e(voice), portrait(voice), e(voice), e(desc.get(voice, '–')), e(p['note']), current(voice),
-                             quote, ('<div class="muted">%s</div>' % ('wybrany głos grupy (mężczyźni), kwestia z gry:'
+                             quote, ('<div class="muted">%s</div>' % (p.get('src_title', 'wybrany głos grupy (mężczyźni)') + ', kwestia z gry:'
                                                                       if p['kind'] == 'like' else 'głosy zbyt podobne:') + near)
                              if near else '',
                              ''.join(cands), picks))
@@ -617,6 +664,8 @@ def adopt(args):
         if letter == '-':
             continue
         c = scan[chosen[voice][LETTERS.index(letter)]['name']]
+        if c.get('post'):
+            raise SystemExit('%s=%s: zmiana płci na gotowym nagraniu wymaga efektu w finalize (direction.FX), nie referencji' % (voice, letter))
         wav = os.path.join(paths.REFS, voice + '.wav')
         shutil.copyfile(os.path.join(paths.WORK, c['wav']), wav)
         old = r.get(voice) or {}

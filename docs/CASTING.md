@@ -360,3 +360,18 @@ Runda 4 (`voice_designs_e20_r4.json`, pola `seeds` i `picks`):
 - `levirax` i `nv_eurth`: nowe zdanie w stylu postaci, nowe ziarna, pięć kandydatur najdalej od obsady i od odrzuconych;
 - `nv_q14_stronnik`: obecny profil (`male, young adult, high pitch`) z sześcioma nowymi ziarnami, pięć kandydatur najbliżej obecnej barwy;
 - `nv_sq1_wyslannik`: profil B z wrogim, wyniosłym zdaniem i wolniej (bardziej wyniosły i wrogi).
+
+Wybór rundy 4 (2026-11-22), kopia sprzed zmian: `r4/refs_before_adopt4.json`:
+
+| Głos | Wybór | Opis OmniVoice | Ziarno | Referencja |
+|---|---|---|---|---|
+| `nv_eurth` | B | `female, elderly, moderate pitch` | 23 | 10,71 s, SHA `9e9eda0b` |
+| `nv_sq1_wyslannik` | C | `male, middle-aged, high pitch`, wrogie zdanie, wolniej (11 znaków/s) | 13 | 13,09 s, SHA `e826e452` |
+
+- `levirax`, `nv_q14_stronnik`: żaden nie pasował.
+
+Runda 5 (`voice_designs_e20_r5.json`):
+- `levirax` (rodzaj `like` bez opisów): kobieca wersja głosu narratora w dwóch odmianach:
+  - klon referencji narratora po zmianie płci (F0 220–245 Hz, formanty +3 do +4 półtonów). Przy słabszym przesunięciu, wolnym tempie albo zdaniu od „Hmm…” klon wracał do ok. 130 Hz. W kwestii z gry wysokość zależy od ziarna (od 60 do 360 Hz), więc część kwestii brzmiałaby po męsku;
+  - zwykły klon narratora, a zmiana płci na gotowym nagraniu (`post_regender`, F0 200 albo 220 Hz, formanty +3 albo +3,5): wysokość stała w każdej kwestii (198–251 Hz w trzech ziarnach), CER 0–0,026. Wybór tej odmiany wymaga efektu w `finalize` zamiast nowej referencji;
+- `nv_q14_stronnik`: pięć opisów spoza poprzednich rund, ziarna 101–677, nowe zdanie (obwieszczenie zamiast alarmu). Automat odrzuca teraz szept (mowa dźwięczna poniżej 35%).

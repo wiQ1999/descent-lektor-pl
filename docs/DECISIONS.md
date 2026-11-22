@@ -1189,6 +1189,10 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
   - Levirax i Eurth: kolejny profil (nowe zdanie w stylu postaci) i więcej próbek, pięć kandydatur najdalej od odrzuconych;
   - stronnik barona: obecny profil z nowymi ziarnami, pięć kandydatur najbliżej obecnej barwy;
   - wysłannik: profil B z wrogim, wyniosłym zdaniem, wolniej, nowe ziarna.
+- Runda 4 (2026-11-22): przyjęci Eurth (B) i wysłannik (C). Runda 5 według uwag z odsłuchu:
+  - Levirax: klon głosu narratora po zmianie płci, dostosowany do opisu (starsza, potężna smoczyca: niższe F0 i mniejsze przesunięcie formantów niż u banitki, wolniej), cztery warianty;
+  - stronnik barona: kandydaci z kolejnych rund brzmieli podobnie, więc są wyraźnie inne opisy, odległe ziarna i nowe zdanie referencji.
+  - Klon referencji narratora po zmianie płci ma w kwestiach z gry wysokość zależną od ziarna (od 60 do 360 Hz). Dlatego strona ma też zwykły klon narratora ze zmianą płci na gotowym nagraniu, który daje stałą wysokość. Jeśli ta odmiana zostanie wybrana, wejdzie jako efekt w `finalize` (`direction.FX`), a nie jako referencja.
 - Głosy ElevenLabs zostają bez zmian do odnowienia limitu 2026-12-15 (licznik okresu 55 983 z 60 tys.). Potem nowe profile Laurel i L'trand oraz chropowatsza Veta (ok. 16,7 tys. znaków, ok. 7,5 tys. kredytów).
 
 **Uzasadnienie:** QA 2026-11-20 po odsłuchu zestawienia. Zmiany w ElevenLabs nie mieszczą się w limicie bieżącego okresu.
