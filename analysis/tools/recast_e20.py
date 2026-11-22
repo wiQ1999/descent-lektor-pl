@@ -7,6 +7,8 @@ Profile w analysis/tools/voice_designs_e20.json (rodzaj, opisy OmniVoice, własn
 - clean: referencja `src` odszumiona w trzech siłach (Gilliam).
 - like (runda 3): kobiecy głos dla grupy wrogów o głosie `src`: klon `src` z opisem kobiecym (clone_instructs) i nowe
   projekty kobiece; na stronę idą klon i projekt najbliżej barwy `src`.
+Od rundy 4 profil może podać własne ziarna (`seeds`) i liczbę kandydatur na stronie (`picks`, domyślnie 3), gdy odsłuch
+prosi o więcej próbek.
 Każdy kandydat czyta też kwestię z gry (tę samą co próbka 1 w zestawieniu m4_cast), żeby było słychać głos w grze.
 Strona: portret z gry (postać albo typ wroga), opis, obecny głos i głosy zbyt podobne; wybór A–C, „bez zmian”, „żaden nie pasuje”,
 kandydat „niepoprawny” z uwagą i uwaga do postaci.
@@ -342,13 +344,13 @@ def choose():
         ranked = sorted(ok, key=score)
         if p['kind'] == 'clone':        # pierwszy kandydat to klon (prośba z odsłuchu), potem reszta
             ranked = sorted(ranked, key=lambda n: not scan[n].get('clone'))
-        picks = list(kept)              # zachowani z rundy 1 idą zawsze, obok trzech nowych
+        picks = list(kept)              # zachowani z rundy 1 idą zawsze, obok nowych (domyślnie trzech)
         for n in ranked:
-            if len(picks) == 3 + len(kept):
+            if len(picks) == p.get('picks', 3) + len(kept):
                 break
             if all(float(np.dot(scan[n]['emb'], scan[q]['emb'])) < limit for q in picks):
                 picks.append(n)
-        picks += [n for n in ranked if n not in picks][:3 + len(kept) - len(picks)]
+        picks += [n for n in ranked if n not in picks][:p.get('picks', 3) + len(kept) - len(picks)]
         chosen[voice] = [{'name': n, 'score': None if n in kept else
                           round(-score(n) if p['kind'] == 'fix' else score(n), 3)} for n in picks]
         if p['kind'] == 'new':

@@ -1,0 +1,61 @@
+{
+ "levirax": {
+  "g": "female",
+  "kind": "new",
+  "cps": 10,
+  "picks": 5,
+  "seeds": [13, 23, 41, 59, 71],
+  "instructs": [
+   "female, elderly, very low pitch",
+   "female, middle-aged, very low pitch",
+   "female, elderly, low pitch",
+   "female, middle-aged, low pitch"
+  ],
+  "text": "Hmm... śmiertelnicy. Wchodzicie do mojego leża, jakby to był wasz dom. Mój ród władał tymi górami, zanim wasi przodkowie nauczyli się krzesać ogień. Mówcie, czego chcecie. I mówcie szybko.",
+  "note": "rundy 1–3: żaden nie pasował; QA runda 4: kolejny profil i więcej próbek (nowe zdanie: spokojna, stara i pogardliwa władczyni, nowe ziarna, pięć kandydatur najdalej od odrzuconych)",
+  "near": [
+   "nv_crayleth"
+  ]
+ },
+ "nv_eurth": {
+  "g": "female",
+  "kind": "new",
+  "picks": 5,
+  "seeds": [13, 23, 41, 59],
+  "instructs": [
+   "female, middle-aged, low pitch",
+   "female, young adult, low pitch",
+   "female, middle-aged, moderate pitch",
+   "female, young adult, moderate pitch",
+   "female, elderly, moderate pitch"
+  ],
+  "text": "Kości pamiętają wszystko, wiecie? Każdy krzyk, każdą kroplę krwi. Podejdźcie bliżej, moi drodzy... Chcę usłyszeć, jak pęka wasza odwaga.",
+  "note": "rundy 1–3: żaden nie pasował; QA runda 4: kolejny profil i więcej próbek (nowe zdanie: okrutna i zmysłowa wiedźma krwi, nowe ziarna, pięć kandydatur najdalej od odrzuconych)",
+  "near": [
+   "nv_siostra_krwi"
+  ]
+ },
+ "nv_q14_stronnik": {
+  "g": "male",
+  "kind": "fix",
+  "picks": 5,
+  "seeds": [13, 23, 41, 59, 71, 83],
+  "instructs": [
+   "male, young adult, high pitch"
+  ],
+  "text": "Słuchajcie! Słuchajcie wszyscy! Baron nadciąga ze swoim wojskiem! Na mury, ludzie, trzymajcie bramę do świtu!",
+  "note": "rundy 1–3: obecny pasuje, ale ma słabą jakość; QA runda 4: obecny profil („male, young adult, high pitch”) z nowymi ziarnami, pięć kandydatur najbliżej obecnej barwy"
+ },
+ "nv_sq1_wyslannik": {
+  "g": "male",
+  "kind": "fix",
+  "cps": 11,
+  "picks": 4,
+  "seeds": [13, 23, 41, 59, 71],
+  "instructs": [
+   "male, middle-aged, high pitch"
+  ],
+  "text": "Na kolana przed wysłannikiem swojego pana! Wasze życie nic dla niego nie znaczy, a dla mnie jeszcze mniej. Odejdźcie, póki pozwalam wam oddychać.",
+  "note": "runda 3: przyjęty B (dobry profil); QA runda 4: bardziej wyniosły i wrogi, ten sam profil z wrogim zdaniem, wolniej, nowe ziarna"
+ }
+}

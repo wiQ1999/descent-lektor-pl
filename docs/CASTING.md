@@ -344,3 +344,19 @@ Runda 3 (`voice_designs_e20_r3.json`):
 - banitka i łowczyni (rodzaj `like`): klon głosu grupy po zmianie płci referencji (PSOLA i formanty, bo opis kobiecy przy klonie zostawia męskie F0) i nowy profil kobiecy najbliżej jego barwy;
 - `nv_eurth`: opis poszerzony z danych gry (Eurth Kel'yr, mini-boss typu siostra krwi);
 - po QA: `levirax` jako starsza, potężna smoczyca, `nv_a2q3_zolnierz` jako zmęczony, podpity weteran, a `nv_sq1_wyslannik` i `nv_q14_stronnik` dostają nowe głosy od zera.
+
+Wybór rundy 3 (2026-11-22), referencje w `refs.json` (kopia sprzed zmian: `r3/refs_before_adopt3.json`):
+
+| Głos | Wybór | Opis OmniVoice | Ziarno | Referencja |
+|---|---|---|---|---|
+| `nv_a2q3_zolnierz` | B | `male, middle-aged, very low pitch`, wolniej (11 znaków/s) | 11 | 13,04 s, SHA `2b589837` |
+| `nv_sq1_wyslannik` | B | `male, middle-aged, high pitch` | 37 | 10,52 s, SHA `b9f244ee` |
+
+- `nv_q12_banitka`, `nv_a2q5_lowczyni`: bez zmian.
+- `nv_a2q3_zolnierz`: w próbce kwestii z gry B przeczytał źle jedno słowo, a trzy kolejne podejścia czytają poprawnie. Fragment `8f0b82e38dee6729` dostaje wymuszone ponowne podejście, bo produkcja zaczyna od tego samego ziarna.
+- `levirax`, `nv_eurth`, `nv_q14_stronnik`: żaden kandydat nie pasował.
+
+Runda 4 (`voice_designs_e20_r4.json`, pola `seeds` i `picks`):
+- `levirax` i `nv_eurth`: nowe zdanie w stylu postaci, nowe ziarna, pięć kandydatur najdalej od obsady i od odrzuconych;
+- `nv_q14_stronnik`: obecny profil (`male, young adult, high pitch`) z sześcioma nowymi ziarnami, pięć kandydatur najbliżej obecnej barwy;
+- `nv_sq1_wyslannik`: profil B z wrogim, wyniosłym zdaniem i wolniej (bardziej wyniosły i wrogi).

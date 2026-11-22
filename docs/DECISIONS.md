@@ -1185,6 +1185,10 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
   - kobieta w grupie wrogów brzmi jak kobieca wersja głosu grupy: banitka (bandyci) i łowczyni (hybrydy), do wyboru obecny głos, klon głosu grupy z opisem kobiecym albo nowy profil kobiecy o podobnej barwie; Zerai i kowalka to osobne postacie;
   - Eurth Kel'yr z opisem z danych gry (mini-boss typu siostra krwi, chichocze, kpi);
   - Levirax: starsza, potężna smoczyca, wolniej; żołnierz z karczmy: zmęczony, podpity weteran; wysłannik nekromanty i stronnik barona: nowe głosy od zera.
+- Runda 3 (2026-11-22): przyjęci żołnierz z karczmy i wysłannik (B); banitka i łowczyni zostają przy obecnych głosach. Pomyłka żołnierza w próbce kwestii z gry była jednorazowa (trzy kolejne podejścia czytają poprawnie), ale produkcja użyje tego samego ziarna, a CER 0,025 mieści się w progu, więc ten fragment (`8f0b82e38dee6729`) dostaje wymuszone ponowne podejście w kroku 4. Runda 4 (QA 2026-11-22):
+  - Levirax i Eurth: kolejny profil (nowe zdanie w stylu postaci) i więcej próbek, pięć kandydatur najdalej od odrzuconych;
+  - stronnik barona: obecny profil z nowymi ziarnami, pięć kandydatur najbliżej obecnej barwy;
+  - wysłannik: profil B z wrogim, wyniosłym zdaniem, wolniej, nowe ziarna.
 - Głosy ElevenLabs zostają bez zmian do odnowienia limitu 2026-12-15 (licznik okresu 55 983 z 60 tys.). Potem nowe profile Laurel i L'trand oraz chropowatsza Veta (ok. 16,7 tys. znaków, ok. 7,5 tys. kredytów).
 
 **Uzasadnienie:** QA 2026-11-20 po odsłuchu zestawienia. Zmiany w ElevenLabs nie mieszczą się w limicie bieżącego okresu.

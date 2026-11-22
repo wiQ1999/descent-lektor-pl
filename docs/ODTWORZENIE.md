@@ -332,6 +332,7 @@ Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej 
 ```
 
 - Runda 3 E20: kroki `design`, `choose`, `lines`, `page`, `adopt` z `--round 3`, profile w `analysis/tools/voice_designs_e20_r3.json`, wyniki w `analysis/work/compare/e20_recast/r3/`. Rodzaj `like` daje kobiecy głos dla grupy wrogów o głosie `src`: klon referencji `src` po zmianie płci (`regender`: wysokość metodą PSOLA do mediany `f0`, potem formanty o `formant` półtonów, bez nowych pakietów) i nowe projekty kobiece, a na stronę idą klon i projekt najbliżej barwy `src`. Sam opis kobiecy przy klonie OmniVoice nie zmienia płci (F0 zostaje męskie). Pole `cps` w profilu zwalnia projekt (domyślnie 12,5 znaku na sekundę). `choose` omija kandydatów zbyt podobnych do odrzuconych we wszystkich wcześniejszych rundach.
+- Runda 4 E20: te same kroki z `--round 4`, profile w `analysis/tools/voice_designs_e20_r4.json`, wyniki w `analysis/work/compare/e20_recast/r4/`. Profil może podać własne ziarna (`seeds`) i liczbę kandydatur na stronie (`picks`, domyślnie 3).
 
 - Zmiany obsady po odsłuchu (D109): kandydaci OmniVoice (dwa opisy, dwa ziarna, wariant z obróbką) i podglądy ElevenLabs na jednej stronie `analysis/work/compare/m4_recast/index.html`. Wybór z odsłuchu przejmuje `adopt` (litera A–C, `-` bez zmian), nowe profile ElevenLabs wpisujemy do `direction.ELEVEN_RECAST`, potem `build --release m4`:
 
