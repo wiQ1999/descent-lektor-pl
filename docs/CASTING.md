@@ -375,3 +375,13 @@ Runda 5 (`voice_designs_e20_r5.json`):
   - klon referencji narratora po zmianie płci (F0 220–245 Hz, formanty +3 do +4 półtonów). Przy słabszym przesunięciu, wolnym tempie albo zdaniu od „Hmm…” klon wracał do ok. 130 Hz. W kwestii z gry wysokość zależy od ziarna (od 60 do 360 Hz), więc część kwestii brzmiałaby po męsku;
   - zwykły klon narratora, a zmiana płci na gotowym nagraniu (`post_regender`, F0 200 albo 220 Hz, formanty +3 albo +3,5): wysokość stała w każdej kwestii (198–251 Hz w trzech ziarnach), CER 0–0,026. Wybór tej odmiany wymaga efektu w `finalize` zamiast nowej referencji;
 - `nv_q14_stronnik`: pięć opisów spoza poprzednich rund, ziarna 101–677, nowe zdanie (obwieszczenie zamiast alarmu). Automat odrzuca teraz szept (mowa dźwięczna poniżej 35%).
+
+Wybór rundy 5 (2026-11-23), kopia sprzed zmian: `r5/refs_before_adopt5.json`:
+
+| Głos | Wybór | Opis OmniVoice | Ziarno | Referencja |
+|---|---|---|---|---|
+| `nv_q14_stronnik` | A | `male, middle-aged, high pitch`, zdanie-obwieszczenie | 677 | 11,64 s, SHA `b4cad90b` |
+
+- `levirax`: żaden nie pasował, brzmienie jak przez megafon w pomieszczeniu z echem. Źródło: przesunięcie formantów wokoderem fazowym (`librosa.pitch_shift`).
+
+Runda 6 (`voice_designs_e20_r6.json`): `levirax` na nowych ziarnach (131–467), zmiana płci jednym przejściem PSOLA ze ściśniętymi ziarnami (`method: grain`). Na referencji i kwestii z gry daje więcej mowy dźwięcznej, mniej szumu w widmie i CER 0–0,012 wobec 0,012–0,06 wokodera. Klony przerobionej referencji wyszły przydechowe (mowa dźwięczna 19–33%) i odpadły w filtrze szeptu. Na stronie są zwykłe klony narratora przerobione po wygenerowaniu: A–B to F0 200 Hz i formanty +3, C–D to 220 Hz i +3,5, po dwa ziarna (`per_variant`). W kwestii z gry ziarno daje fragment, więc A i B (oraz C i D) czytają ją tak samo.

@@ -1,0 +1,46 @@
+{
+ "levirax": {
+  "g": "female",
+  "kind": "like",
+  "src": "narrator",
+  "src_label": "głosu narratora",
+  "src_title": "narrator (źródło klonu)",
+  "clone_instructs": false,
+  "instructs": [],
+  "seeds": [
+   131,
+   197,
+   263,
+   331,
+   467
+  ],
+  "regender": [
+   {
+    "f0": 220,
+    "formant": 3.0,
+    "method": "grain"
+   },
+   {
+    "f0": 235,
+    "formant": 3.5,
+    "method": "grain"
+   }
+  ],
+  "text": "Tysiąc lat patrzyłam, jak wasze królestwa rosną i upadają. Wasze miecze to dla mnie igły, a wasze krzyki... muzyka. Klęknijcie, póki jeszcze macie kolana.",
+  "note": "runda 5: żaden nie pasował, brzmi jak przez megafon w pomieszczeniu z echem; runda 6: nowe ziarna, zmiana płci bez wokodera fazowego (formanty ściśniętymi ziarnami PSOLA); klony przerobionej referencji wyszły przydechowe (mowa dźwięczna 19–33%) i odpadły, więc są dwa najlepsze ziarna z każdego wariantu zwykłego klonu narratora przerobionego po wygenerowaniu (stała wysokość)",
+  "f0_min": 165,
+  "post_regender": [
+   {
+    "f0": 200,
+    "formant": 3.0,
+    "method": "grain"
+   },
+   {
+    "f0": 220,
+    "formant": 3.5,
+    "method": "grain"
+   }
+  ],
+  "per_variant": 2
+ }
+}

@@ -508,6 +508,7 @@ Cel: zmiany i poprawki 60 głosów z odsłuchu zestawienia całej gry `m4_cast` 
    - Runda 2 (2026-11-22): 21 głosów i dwie grupy wrogów przyjęte (bandyci: głos bandyty z kosturem, hybrydy: posłaniec Xenitha). Runda 3: banitka i łowczyni jako kobiece wersje głosu grupy, Eurth z poszerzonym opisem, Levirax, żołnierz z karczmy, wysłannik i stronnik.
    - Runda 3 (2026-11-22): żołnierz i wysłannik przyjęci, banitka i łowczyni bez zmian. Runda 4: Levirax i Eurth (kolejny profil, więcej próbek), stronnik (obecny profil, nowe ziarna), wysłannik bardziej wyniosły i wrogi.
    - Runda 4 (2026-11-22): Eurth i wysłannik przyjęci. Runda 5: Levirax jako kobieca wersja głosu narratora, stronnik z wyraźnie innymi profilami.
+   - Runda 5 (2026-11-23): stronnik przyjęty. Runda 6: Levirax na nowych ziarnach, zmiana płci bez wokodera fazowego.
 4. Ponowne podejścia siedmiu fragmentów: Kapitan z FoF (pauza na początku, wymowa końcówki), Więzień (wymowa końcówki), Bandyta-nekromanta (ucięta końcówka), żołnierz z karczmy (`8f0b82e38dee6729`, pomyłka w słowie przy ziarnie produkcji) i trzy fragmenty Baelziffara z „ocalić” i „najgłośniej” (błąd wymowy, którego Whisper nie wychwycił). Gdy nowe podejście dalej myli słowo, zapis fonetyczny w `normalize.PHONETIC`.
 5. Wybór z odsłuchu (`adopt`), wpis w `docs/CASTING.md`.
 6. Generowanie zmienionych głosów w całej grze, ocena, ponowne podejścia, `finalize` z efektami i tempem z kroku 1, zestawienie `m4_cast` do kontroli.
