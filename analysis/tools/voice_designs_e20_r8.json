@@ -1,0 +1,62 @@
+{
+ "levirax": {
+  "g": "female",
+  "kind": "like",
+  "src": "narrator",
+  "src_label": "głosu narratora",
+  "src_title": "narrator (źródło klonu)",
+  "clone_instructs": false,
+  "instructs": [],
+  "seeds": [
+   151,
+   223,
+   307,
+   389,
+   521,
+   613,
+   743,
+   857,
+   929
+  ],
+  "regender": [],
+  "text": "Tysiąc lat patrzyłam, jak wasze królestwa rosną i upadają. Wasze miecze to dla mnie igły, a wasze krzyki... muzyka. Klęknijcie, póki jeszcze macie kolana.",
+  "note": "runda 7: żaden nie pasował, za bardzo piskliwy, cztery próbki podobne (200–220 Hz, formanty +3 i +3,5); runda 8: sześć wyraźnie różnych wariantów, niżej i z mniejszym przesunięciem formantów (od niskiego altu 150 Hz z ciemną barwą do 195 Hz), każdy na innym ziarnie",
+  "f0_min": 120,
+  "post_regender": [
+   {
+    "f0": 150,
+    "formant": 1.5,
+    "method": "resample"
+   },
+   {
+    "f0": 160,
+    "formant": 2.5,
+    "method": "resample"
+   },
+   {
+    "f0": 170,
+    "formant": 1.0,
+    "method": "resample"
+   },
+   {
+    "f0": 175,
+    "formant": 2.0,
+    "method": "resample"
+   },
+   {
+    "f0": 185,
+    "formant": 1.5,
+    "method": "resample"
+   },
+   {
+    "f0": 195,
+    "formant": 2.5,
+    "method": "resample"
+   }
+  ],
+  "per_variant": 1,
+  "picks": 6,
+  "own_line_seed": true,
+  "keep_rejected_timbre": true
+ }
+}

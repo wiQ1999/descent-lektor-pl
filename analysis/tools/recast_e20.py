@@ -304,8 +304,12 @@ def design():
                 key = '%s|%s|post|%s' % (src['sha'], text, json.dumps(g, sort_keys=True))
                 if fresh(name, key):
                     wav = os.path.join(OUT, 'scan', name + '.wav')
-                    N.synth(model, wav, text, seed, voice_clone_prompt=prompt)
-                    y, sr = sf.read(wav, dtype='float32')
+                    # surowy klon dla ziarna jeden na wszystkie warianty (runda 8: sześć wariantów)
+                    raw = os.path.join(OUT, 'scan', '%s_raw_s%d_%s.wav' % (
+                        voice, seed, hashlib.md5(('%s|%s' % (src['sha'], text)).encode('utf-8')).hexdigest()[:8]))
+                    if not os.path.exists(raw):
+                        N.synth(model, raw, text, seed, voice_clone_prompt=prompt)
+                    y, sr = sf.read(raw, dtype='float32')
                     out, f0 = regender(y, sr, g['f0'], g['formant'], g.get('method', 'vocoder'))
                     sf.write(wav, out, sr, subtype='PCM_16')
                     add(name, voice=voice, seed=seed, instruct='klon %s, zmiana płci gotowego nagrania%s: F0 %.0f→%d Hz, formanty +%.1f st' % (
