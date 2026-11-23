@@ -1196,6 +1196,7 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - Runda 5 (2026-11-23): przyjęty stronnik barona (A). Levirax brzmiała jak przez megafon z echem, co daje wokoder fazowy przy przesunięciu formantów. Runda 6: nowe ziarna i zmiana płci jednym przejściem PSOLA ze ściśniętymi ziarnami.
 - Runda 6 (2026-11-23): Levirax za bardzo przerywała (znaczniki okresów skakały między szczytami). Runda 7: znaczniki po korelacji, formanty przez przyspieszenie nagrania, każda próbka na innym ziarnie.
 - Runda 7 (2026-11-23): Levirax za bardzo piskliwa, próbki podobne. Runda 8: sześć wariantów od 150 do 195 Hz z formantami od +1 do +2,5.
+- Runda 8 (2026-11-23): Levirax za wysoka. Runda 9: trzy profile (narrator 130–145 Hz, Brynn obniżona do 145–175 Hz, połączona referencja narratora i Brynn).
 - Głosy ElevenLabs zostają bez zmian do odnowienia limitu 2026-12-15 (licznik okresu 55 983 z 60 tys.). Potem nowe profile Laurel i L'trand oraz chropowatsza Veta (ok. 16,7 tys. znaków, ok. 7,5 tys. kredytów).
 
 **Uzasadnienie:** QA 2026-11-20 po odsłuchu zestawienia. Zmiany w ElevenLabs nie mieszczą się w limicie bieżącego okresu.

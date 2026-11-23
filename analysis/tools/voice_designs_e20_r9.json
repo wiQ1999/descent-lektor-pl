@@ -1,0 +1,165 @@
+{
+ "levirax@narrator": {
+  "g": "female",
+  "kind": "like",
+  "voice": "levirax",
+  "clone_instructs": false,
+  "instructs": [],
+  "regender": [],
+  "text": "Tysiąc lat patrzyłam, jak wasze królestwa rosną i upadają. Wasze miecze to dla mnie igły, a wasze krzyki... muzyka. Klęknijcie, póki jeszcze macie kolana.",
+  "per_variant": 1,
+  "own_line_seed": true,
+  "keep_rejected_timbre": true,
+  "title": "Levirax z głosu narratora",
+  "src": "narrator",
+  "src_label": "głosu narratora",
+  "src_title": "narrator (źródło klonu)",
+  "seeds": [
+   163,
+   241,
+   337,
+   449,
+   571,
+   683
+  ],
+  "f0_min": 110,
+  "post_regender": [
+   {
+    "f0": 130,
+    "formant": 1.0,
+    "method": "resample"
+   },
+   {
+    "f0": 138,
+    "formant": 2.0,
+    "method": "resample"
+   },
+   {
+    "f0": 145,
+    "formant": 0.5,
+    "method": "resample"
+   }
+  ],
+  "note": "runda 8: żaden nie pasował, za wysoki głos (150–195 Hz); runda 9, profil 1 z 3: zwykły klon narratora obniżony do 130–145 Hz z małym przesunięciem barwy"
+ },
+ "levirax@brynn": {
+  "g": "female",
+  "kind": "like",
+  "voice": "levirax",
+  "clone_instructs": false,
+  "instructs": [],
+  "regender": [],
+  "text": "Tysiąc lat patrzyłam, jak wasze królestwa rosną i upadają. Wasze miecze to dla mnie igły, a wasze krzyki... muzyka. Klęknijcie, póki jeszcze macie kolana.",
+  "per_variant": 1,
+  "own_line_seed": true,
+  "keep_rejected_timbre": true,
+  "title": "Levirax z głosu Brynn",
+  "src": "brynn",
+  "src_label": "głosu Brynn",
+  "src_title": "Brynn (źródło klonu)",
+  "seeds": [
+   167,
+   251,
+   347,
+   457,
+   577,
+   691
+  ],
+  "f0_min": 110,
+  "post_regender": [
+   {
+    "f0": 145,
+    "formant": -1.0,
+    "method": "resample"
+   },
+   {
+    "f0": 155,
+    "formant": -2.0,
+    "method": "resample"
+   },
+   {
+    "f0": 165,
+    "formant": -1.5,
+    "method": "resample"
+   },
+   {
+    "f0": 175,
+    "formant": -3.0,
+    "method": "resample"
+   }
+  ],
+  "note": "runda 9, profil 2 z 3: zwykły klon Brynn (ok. 227 Hz) obniżony do 145–175 Hz, barwa ciemniejsza o 1–3 półtony"
+ },
+ "levirax@mix": {
+  "g": "female",
+  "kind": "like",
+  "voice": "levirax",
+  "clone_instructs": false,
+  "instructs": [],
+  "regender": [],
+  "text": "Tysiąc lat patrzyłam, jak wasze królestwa rosną i upadają. Wasze miecze to dla mnie igły, a wasze krzyki... muzyka. Klęknijcie, póki jeszcze macie kolana.",
+  "per_variant": 1,
+  "own_line_seed": true,
+  "keep_rejected_timbre": true,
+  "title": "Levirax z połączenia narratora i Brynn",
+  "src": "narrator",
+  "near": [
+   "narrator",
+   "brynn"
+  ],
+  "src_label": "połączenia głosu narratora i Brynn",
+  "src_title": "narrator i Brynn (źródła połączonej referencji)",
+  "seeds": [
+   173,
+   257,
+   353,
+   461,
+   587,
+   701
+  ],
+  "f0_min": 110,
+  "mix": [
+   {
+    "parts": [
+     {
+      "voice": "narrator",
+      "f0": 165,
+      "formant": 1.5
+     },
+     {
+      "voice": "brynn",
+      "f0": 165,
+      "formant": -1.5
+     }
+    ]
+   },
+   {
+    "parts": [
+     {
+      "voice": "brynn",
+      "f0": 180,
+      "formant": -1.0
+     },
+     {
+      "voice": "narrator",
+      "f0": 150,
+      "formant": 1.0
+     }
+    ]
+   }
+  ],
+  "post_regender": [
+   {
+    "f0": 145,
+    "formant": 0.0,
+    "method": "resample"
+   },
+   {
+    "f0": 160,
+    "formant": 0.0,
+    "method": "resample"
+   }
+  ],
+  "note": "runda 9, profil 3 z 3: klon połączonej referencji (nagrania narratora i Brynn zbliżone wysokością i barwą, sklejone), wysokość wyrównana na gotowym nagraniu do 145 albo 160 Hz"
+ }
+}

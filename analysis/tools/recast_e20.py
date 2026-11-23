@@ -232,6 +232,34 @@ def regender(y, sr, f0_target, formant_st, method='vocoder'):
     return (out * (0.9 / (np.abs(out).max() + 1e-9))).astype(np.float32), f0
 
 
+def mix_ref(voice, j, m, r):
+    """Połączona referencja (runda 9): nagrania `m['parts']` (głos, F0, formanty) zbliżone do siebie zmianą wysokości
+    i barwy, sklejone z 0,3 s ciszy, z połączoną transkrypcją; klon z niej łączy barwy obu głosów."""
+    import librosa
+    import numpy as np
+    import soundfile as sf
+    sr, chunks, texts, keys = 24000, [], [], []
+    for part in m['parts']:
+        x = r[part['voice']]
+        y, s0 = sf.read(os.path.join(ROOT, x['wav']), dtype='float32')
+        y = librosa.resample(y, orig_sr=s0, target_sr=sr)
+        if part.get('f0'):
+            y = regender(y, sr, part['f0'], part.get('formant', 0.0), 'resample')[0]
+        chunks += [y / (np.abs(y).max() + 1e-9) * 0.9, np.zeros(int(0.3 * sr), dtype=np.float32)]
+        texts.append(x['text'].strip())
+        keys.append(x['sha'])
+    wav = os.path.join(OUT, 'scan', '%s_mix%d.wav' % (voice, j))
+    sf.write(wav, np.concatenate(chunks[:-1]), sr, subtype='PCM_16')
+    what = 'klon połączenia %s' % ' + '.join('%s (%s)' % (q['voice'], '%d Hz, formanty %+.1f st' % (q['f0'], q.get('formant', 0.0))
+                                                          if q.get('f0') else 'bez zmian') for q in m['parts'])
+    return j, wav, ' '.join(texts), '%s|%s' % ('+'.join(keys), json.dumps(m, sort_keys=True)), what
+
+
+def base(voice):
+    """Postać profilu: od rundy 9 kilka profili jednej postaci (`voice` w profilu, np. levirax@brynn → levirax)."""
+    return VOICES.get(voice, {}).get('voice', voice)
+
+
 def process(y, sr, fx):
     import librosa
     import numpy as np
@@ -296,26 +324,32 @@ def design():
                         add(name, voice=voice, seed=seed, instruct='klon %s po zmianie płci: F0 %.0f→%d Hz, formanty +%.1f st%s' % (
                             p['src'], f0, g['f0'], g['formant'], ', ' + g['instruct'] if g.get('instruct') else ''),
                             wav=os.path.relpath(wav, paths.WORK), text=text, key=key, clone=True, regender=g)
-        for i, g in enumerate(p.get('post_regender', []), 1):     # zwykły klon `src`, zmiana płci na gotowym nagraniu
+        if p.get('post_regender'):     # zwykły klon `src` (albo połączonej referencji `mix`), zmiana na gotowym nagraniu
             src = r[p['src']]
-            prompt = model.create_voice_clone_prompt(os.path.join(ROOT, src['wav']), src['text'])
-            for seed in p.get('seeds') or SEEDS[p['kind']]:
-                name = '%s_p%d_s%d' % (voice, i, seed)
-                key = '%s|%s|post|%s' % (src['sha'], text, json.dumps(g, sort_keys=True))
-                if fresh(name, key):
-                    wav = os.path.join(OUT, 'scan', name + '.wav')
-                    # surowy klon dla ziarna jeden na wszystkie warianty (runda 8: sześć wariantów)
-                    raw = os.path.join(OUT, 'scan', '%s_raw_s%d_%s.wav' % (
-                        voice, seed, hashlib.md5(('%s|%s' % (src['sha'], text)).encode('utf-8')).hexdigest()[:8]))
-                    if not os.path.exists(raw):
-                        N.synth(model, raw, text, seed, voice_clone_prompt=prompt)
-                    y, sr = sf.read(raw, dtype='float32')
-                    out, f0 = regender(y, sr, g['f0'], g['formant'], g.get('method', 'vocoder'))
-                    sf.write(wav, out, sr, subtype='PCM_16')
-                    add(name, voice=voice, seed=seed, instruct='klon %s, zmiana płci gotowego nagrania%s: F0 %.0f→%d Hz, formanty +%.1f st' % (
-                        p['src'], {'grain': ' (ziarna PSOLA)', 'resample': ' (przyspieszenie i PSOLA)'}.get(g.get('method'), ''),
-                        f0, g['f0'], g['formant']),
-                        wav=os.path.relpath(wav, paths.WORK), text=text, key=key, clone=True, post=g)
+            bases = [(0, os.path.join(ROOT, src['wav']), src['text'], src['sha'], 'klon %s' % p['src'])]
+            if p.get('mix'):
+                bases = [mix_ref(voice, j, m, r) for j, m in enumerate(p['mix'], 1)]
+            for j, ref_wav, ref_text, ref_key, what in bases:
+                prompt = model.create_voice_clone_prompt(ref_wav, ref_text)
+                for i, g in enumerate(p['post_regender'], 1):
+                    for seed in p.get('seeds') or SEEDS[p['kind']]:
+                        name = '%s%s_p%d_s%d' % (voice, '_m%d' % j if j else '', i, seed)
+                        key = '%s|%s|post|%s' % (ref_key, text, json.dumps(g, sort_keys=True))
+                        if fresh(name, key):
+                            wav = os.path.join(OUT, 'scan', name + '.wav')
+                            # surowy klon dla ziarna jeden na wszystkie warianty (runda 8: sześć wariantów)
+                            raw = os.path.join(OUT, 'scan', '%s_raw_s%d_%s.wav' % (
+                                voice, seed, hashlib.md5(('%s|%s' % (ref_key, text)).encode('utf-8')).hexdigest()[:8]))
+                            if not os.path.exists(raw):
+                                N.synth(model, raw, text, seed, voice_clone_prompt=prompt)
+                            y, sr = sf.read(raw, dtype='float32')
+                            out, f0 = regender(y, sr, g['f0'], g['formant'], g.get('method', 'vocoder'))
+                            sf.write(wav, out, sr, subtype='PCM_16')
+                            add(name, voice=voice, seed=seed, instruct='%s, zmiana gotowego nagrania%s: F0 %.0f→%d Hz, formanty %+.1f st' % (
+                                what, {'grain': ' (ziarna PSOLA)', 'resample': ' (przyspieszenie i PSOLA)'}.get(g.get('method'), ''),
+                                f0, g['f0'], g['formant']),
+                                wav=os.path.relpath(wav, paths.WORK), text=text, key=key, clone=True, post=g, mix=j,
+                                ref_wav=os.path.relpath(ref_wav, paths.WORK) if j else None, ref_text=ref_text if j else None)
         if p['kind'] in ('clone', 'like') and p.get('clone_instructs', True):
             src = r[p['src']]
             prompt = model.create_voice_clone_prompt(os.path.join(ROOT, src['wav']), src['text'])
@@ -351,8 +385,8 @@ def game_line(voices):
     out = {}
     con = db.connect(paths.DB)
     for v in voices:
-        if picked.get(v):
-            s = picked[v][0]
+        if picked.get(base(v)):
+            s = picked[base(v)][0]
             speed = con.execute('SELECT speed FROM fragments WHERE id = ?', (s['fragment'],)).fetchone()['speed']
             out[v] = {'fragment': s['fragment'], 'text': s['text'], 'key': s['key'], 'speed': speed}
     return out
@@ -444,9 +478,12 @@ def choose():
             if not p['instructs']:      # same klony: po jednym na wariant zmiany płci (najmniejszy CER, żywsza melodia)
                 picks = [min((n for n in clones if scan[n].get('regender') == g), key=lambda n: (scan[n]['cer'], -scan[n]['f0_sd']),
                              default=None) for g in p['regender']]
-                for g in p.get('post_regender', []):     # per_variant najlepszych ziaren na wariant, każde ziarno raz
+                variants = [(j, g) for j in (range(1, len(p['mix']) + 1) if p.get('mix') else [0])
+                            for g in p.get('post_regender', [])]
+                for j, g in variants:     # per_variant najlepszych ziaren na wariant, każde ziarno raz
                     used = {scan[n]['seed'] for n in picks if n}
-                    picks += sorted((n for n in ok if scan[n].get('post') == g and scan[n]['seed'] not in used),
+                    picks += sorted((n for n in ok if scan[n].get('post') == g and scan[n].get('mix', 0) == j
+                                     and scan[n]['seed'] not in used),
                                     key=lambda n: (scan[n]['cer'], -scan[n]['f0_sd']))[:p.get('per_variant', 1)]
                 picks = [n for n in picks if n]
             else:
@@ -515,7 +552,9 @@ def lines():
             key = '%s|%s|%s|%s' % (c['name'], s.get('key'), g['fragment'], seed)
             wav = os.path.join(OUT, 'linie', name + '.wav')
             if not (done.get(name) == key and os.path.exists(wav)):
-                if s.get('post'):       # zmiana płci na gotowym nagraniu: klon `src` bez zmian
+                if s.get('post') and s.get('ref_wav'):      # połączona referencja (runda 9)
+                    prompt = model.create_voice_clone_prompt(os.path.join(paths.WORK, s['ref_wav']), s['ref_text'])
+                elif s.get('post'):       # zmiana płci na gotowym nagraniu: klon `src` bez zmian
                     src = r[VOICES[voice]['src']]
                     prompt = model.create_voice_clone_prompt(os.path.join(ROOT, src['wav']), src['text'])
                 else:
@@ -679,7 +718,7 @@ def page():
                                  e(s['instruct']), s.get('cer', '–'), s.get('f0', '–'), s.get('f0_sd', '–'),
                                  line, audio('kandydaci/%s_%s.wav' % (voice, L)), L))
             near = ''.join('<div class="row"><code>%s</code> %s</div>' % (e(n), current(n))
-                           for n in ([p['src']] if p['kind'] == 'like' else p.get('near', [])))
+                           for n in ((p.get('near') or [p['src']]) if p['kind'] == 'like' else p.get('near', [])))
             quote = '<q>%s</q>' % e(g['text']) if g else ''
             picks = ''.join('<label><input type="radio" name="%s" value="%s"> %s</label>' % (voice, L, L)
                             for L in LETTERS[:len(cands)])
@@ -691,7 +730,8 @@ def page():
                          '<div class="row"><span class="muted">obecny głos, kwestia z gry:</span> %s</div>%s%s'
                          '<div class="row">%s</div><div class="pick"><b>Wybór:</b>%s</div>'
                          '<textarea class="note" placeholder="Uwaga do postaci (opcjonalnie)"></textarea></div>' % (
-                             e(voice), portrait(voice), e(voice), e(desc.get(voice, '–')), e(p['note']), current(voice),
+                             e(voice), portrait(base(voice)), e(p.get('title', voice)), e(desc.get(base(voice), '–')),
+                             e(p['note']), current(base(voice)),
                              quote, ('<div class="muted">%s</div>' % (p.get('src_title', 'wybrany głos grupy (mężczyźni)') + ', kwestia z gry:'
                                                                       if p['kind'] == 'like' else 'głosy zbyt podobne:') + near)
                              if near else '',
