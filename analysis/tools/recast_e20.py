@@ -16,6 +16,8 @@ po zmianie płci daje w kwestiach z gry od 60 do 360 Hz zależnie od ziarna). Ka
 (domyślnie 0,35) odpadają jako szept.
 Runda 6: `method: grain` w wariancie zmiany płci przesuwa formanty ściśniętymi ziarnami PSOLA zamiast wokodera fazowego
 (wokoder dawał w odsłuchu megafon i echo).
+Runda 7: `method: resample` (przyspieszenie nagrania i PSOLA ze znacznikami po korelacji, jak „Change gender” w Praat;
+ziarna PSOLA przerywały); `own_line_seed` czyta kwestię z gry na ziarnie kandydata, a kandydaci wariantów mają różne ziarna.
 Pole `f0_min` podnosi dolny próg wysokości kandydata (klon męskiej referencji po zmianie płci wraca czasem do ok. 130 Hz).
 Każdy kandydat czyta też kwestię z gry (tę samą co próbka 1 w zestawieniu m4_cast), żeby było słychać głos w grze.
 Strona: portret z gry (postać albo typ wroga), opis, obecny głos i głosy zbyt podobne; wybór A–C, „bez zmian”, „żaden nie pasuje”,
@@ -151,15 +153,78 @@ def psola(y, sr, ratio, formant_st=0.0):
     return out.astype(np.float32)
 
 
+def track_marks(y, sr):
+    """Znaczniki okresów: pierwszy w odcinku dźwięcznym na szczycie sygnału do 900 Hz, kolejne w miejscu, gdzie okres
+    najbardziej przypomina poprzedni (korelacja). Szczyty skakały między okresami, co w rundzie 6 słychać było jako
+    przerywanie; po zmianie udział ramek dźwięcznych, które zostają dźwięczne, rośnie z 0,79–0,81 do 0,84."""
+    import librosa
+    import numpy as np
+    from scipy import signal
+    hop = 256
+    f0, voiced, _ = librosa.pyin(y, fmin=60, fmax=450, sr=sr, frame_length=2048, hop_length=hop)
+    idx = np.arange(len(y))
+    f0s = np.interp(idx, np.arange(len(f0)) * hop, np.nan_to_num(f0, nan=0.0))
+    vs = np.interp(idx, np.arange(len(f0)) * hop, voiced.astype(float)) > 0.5
+    b, a = signal.butter(4, 900 / (sr / 2))
+    lp = signal.filtfilt(b, a, y)
+    marks, t, prev = [], 0, None
+    while t < len(y):
+        v = bool(vs[t] and f0s[t] > 0)
+        P = int(sr / f0s[t]) if v else int(0.01 * sr)
+        if v and prev is None:
+            lo, hi = max(0, t - P // 2), min(len(y), t + P // 2 + 1)
+            t = lo + int(np.argmax(lp[lo:hi]))
+        elif v:
+            h, r = P // 2, max(2, P // 5)
+            ref = y[prev - h:prev + h] if prev >= h else None
+            if ref is not None and len(ref) == 2 * h:
+                cands = [t + d for d in range(-r, r + 1) if t + d - h >= 0 and t + d + h <= len(y)]
+                if cands:
+                    t = max(cands, key=lambda c: float(np.dot(ref, y[c - h:c + h])))
+        prev = t if v else None
+        marks.append((t, P, v))
+        t += max(P, 1)
+    return marks
+
+
+def psola_stretch(y, sr, ratio, stretch):
+    """TD-PSOLA: wysokość × ratio i czas × stretch, ziarna pełne (formanty bez zmian)."""
+    import numpy as np
+    marks = track_marks(y, sr)
+    pos = np.array([m[0] for m in marks])
+    L = int(len(y) * stretch)
+    out = np.zeros(L + sr)
+    norm = np.zeros_like(out)
+    ts = float(marks[0][0]) * stretch
+    while ts < L:
+        c, P, v = marks[int(np.argmin(np.abs(pos - ts / stretch)))]
+        w = np.hanning(2 * P + 1)
+        a, b = c - P, c + P + 1
+        seg = np.zeros(2 * P + 1)
+        seg[max(0, a) - a:min(len(y), b) - a] = y[max(0, a):min(len(y), b)]
+        o = int(ts) - P
+        if o >= 0:
+            out[o:o + 2 * P + 1] += seg * w
+            norm[o:o + 2 * P + 1] += w
+        ts += P / ratio if v else P
+    return (out[:L] / np.maximum(norm[:L], 0.5)).astype(np.float32)
+
+
 def regender(y, sr, f0_target, formant_st, method='vocoder'):
     """Głos męski na kobiecy: wysokość do mediany f0_target i formanty o formant_st półtonów w górę.
     vocoder (runda 3): PSOLA, potem librosa.pitch_shift (wokoder fazowy: w odsłuchu rundy 5 megafon i echo);
-    grain (runda 6): jedno przejście PSOLA ze ściśniętymi ziarnami, bez wokodera."""
+    grain (runda 6): jedno przejście PSOLA ze ściśniętymi ziarnami, bez wokodera (w odsłuchu: przerywa);
+    resample (runda 7, jak „Change gender” w Praat): nagranie odtworzone szybciej o 2^(formant_st/12) (formanty
+    i wysokość w górę bez artefaktów), potem PSOLA ze znacznikami po korelacji przywraca czas i ustawia wysokość."""
     import librosa
     import numpy as np
     f0 = librosa.pyin(y, fmin=60, fmax=450, sr=sr)[0]
     f0 = float(np.nanmedian(f0))
-    if method == 'grain':
+    if method == 'resample':
+        alpha = 2 ** (formant_st / 12)
+        y2 = librosa.resample(y, orig_sr=sr, target_sr=int(round(sr / alpha)), res_type='soxr_hq')
+        out = psola_stretch(y2, sr, f0_target / (f0 * alpha), len(y) / len(y2))
+    elif method == 'grain':
         out = psola(y, sr, f0_target / f0, formant_st)
     else:
         out = psola(y, sr, f0_target / f0 / 2 ** (formant_st / 12))
@@ -244,7 +309,8 @@ def design():
                     out, f0 = regender(y, sr, g['f0'], g['formant'], g.get('method', 'vocoder'))
                     sf.write(wav, out, sr, subtype='PCM_16')
                     add(name, voice=voice, seed=seed, instruct='klon %s, zmiana płci gotowego nagrania%s: F0 %.0f→%d Hz, formanty +%.1f st' % (
-                        p['src'], ' (ziarna PSOLA)' if g.get('method') == 'grain' else '', f0, g['f0'], g['formant']),
+                        p['src'], {'grain': ' (ziarna PSOLA)', 'resample': ' (przyspieszenie i PSOLA)'}.get(g.get('method'), ''),
+                        f0, g['f0'], g['formant']),
                         wav=os.path.relpath(wav, paths.WORK), text=text, key=key, clone=True, post=g)
         if p['kind'] in ('clone', 'like') and p.get('clone_instructs', True):
             src = r[p['src']]
@@ -362,7 +428,8 @@ def choose():
         ok = [n for n in mine if scan[n]['cer'] <= MAX_CER and lo <= scan[n]['f0'] <= hi
               and scan[n]['voiced'] >= p.get('voiced_min', 0.35)] or \
             sorted(mine, key=lambda n: scan[n]['cer'])[:6]
-        ok = [n for n in ok if not any(float(np.dot(scan[n]['emb'], e)) > 0.97 for e in rejected)] or ok     # bez powtórek odrzuconych
+        if not p.get('keep_rejected_timbre'):    # odrzucenie za obróbkę (np. przerywanie), a nie za barwę: bez filtra
+            ok = [n for n in ok if not any(float(np.dot(scan[n]['emb'], e)) > 0.97 for e in rejected)] or ok     # bez powtórek odrzuconych
         if p['kind'] == 'like':     # kobiecy głos grupy: najlepszy klon i najlepszy projekt najbliżej barwy głosu grupy
             target = taken[p['src']]
 
@@ -373,8 +440,9 @@ def choose():
             if not p['instructs']:      # same klony: po jednym na wariant zmiany płci (najmniejszy CER, żywsza melodia)
                 picks = [min((n for n in clones if scan[n].get('regender') == g), key=lambda n: (scan[n]['cer'], -scan[n]['f0_sd']),
                              default=None) for g in p['regender']]
-                for g in p.get('post_regender', []):     # per_variant najlepszych ziaren na wariant
-                    picks += sorted((n for n in ok if scan[n].get('post') == g),
+                for g in p.get('post_regender', []):     # per_variant najlepszych ziaren na wariant, każde ziarno raz
+                    used = {scan[n]['seed'] for n in picks if n}
+                    picks += sorted((n for n in ok if scan[n].get('post') == g and scan[n]['seed'] not in used),
                                     key=lambda n: (scan[n]['cer'], -scan[n]['f0_sd']))[:p.get('per_variant', 1)]
                 picks = [n for n in picks if n]
             else:
@@ -437,7 +505,10 @@ def lines():
         for i, c in enumerate(cands):
             s = scan[c['name']]
             name = '%s_%s' % (voice, LETTERS[i])
-            key = '%s|%s|%s' % (c['name'], s.get('key'), g['fragment'])
+            # own_line_seed (runda 7): kwestia z gry na ziarnie kandydata, żeby każda próbka była inna; w grze ziarno
+            # i tak zależy od fragmentu
+            seed = s['seed'] if VOICES[voice].get('own_line_seed') else synth.seed_for(g['fragment'], 1)
+            key = '%s|%s|%s|%s' % (c['name'], s.get('key'), g['fragment'], seed)
             wav = os.path.join(OUT, 'linie', name + '.wav')
             if not (done.get(name) == key and os.path.exists(wav)):
                 if s.get('post'):       # zmiana płci na gotowym nagraniu: klon `src` bez zmian
@@ -445,14 +516,14 @@ def lines():
                     prompt = model.create_voice_clone_prompt(os.path.join(ROOT, src['wav']), src['text'])
                 else:
                     prompt = model.create_voice_clone_prompt(os.path.join(paths.WORK, s['wav']), s['text'])
-                todo.append((name, key, wav, g, prompt, s.get('post')))
+                todo.append((name, key, wav, g, prompt, s.get('post'), seed))
     # jak lektor.synth: referencje zakodowane, tokenizer na CPU i gałąź CFG bez dopełniania; bez tego model w fp32
     # wychodzi poza 4 GB i spada do pamięci systemowej (runda 1: ok. 210 s na kwestię zamiast kilku)
     model.audio_tokenizer.to('cpu')
     torch.cuda.empty_cache()
     model._generate_iterative = synth.generate_iterative_unpadded.__get__(model)
-    for name, key, wav, g, prompt, post in todo:
-        N.synth(model, wav, g['text'], synth.seed_for(g['fragment'], 1), voice_clone_prompt=prompt,
+    for name, key, wav, g, prompt, post, seed in todo:
+        N.synth(model, wav, g['text'], seed, voice_clone_prompt=prompt,
                 **({'speed': g['speed']} if g['speed'] else {}))
         if post:
             y, sr = sf.read(wav, dtype='float32')

@@ -1,0 +1,40 @@
+{
+ "levirax": {
+  "g": "female",
+  "kind": "like",
+  "src": "narrator",
+  "src_label": "głosu narratora",
+  "src_title": "narrator (źródło klonu)",
+  "clone_instructs": false,
+  "instructs": [],
+  "seeds": [
+   151,
+   223,
+   307,
+   389,
+   521,
+   613,
+   743,
+   857
+  ],
+  "regender": [],
+  "text": "Tysiąc lat patrzyłam, jak wasze królestwa rosną i upadają. Wasze miecze to dla mnie igły, a wasze krzyki... muzyka. Klęknijcie, póki jeszcze macie kolana.",
+  "note": "runda 6: żaden nie pasował, za bardzo przerywa (znaczniki okresów PSOLA skakały między szczytami); runda 7: zwykły klon narratora, zmiana płci gotowego nagrania przyspieszeniem i PSOLA ze znacznikami po korelacji, każda próbka i jej kwestia z gry na innym ziarnie",
+  "f0_min": 165,
+  "post_regender": [
+   {
+    "f0": 200,
+    "formant": 3.0,
+    "method": "resample"
+   },
+   {
+    "f0": 220,
+    "formant": 3.5,
+    "method": "resample"
+   }
+  ],
+  "per_variant": 2,
+  "own_line_seed": true,
+  "keep_rejected_timbre": true
+ }
+}
