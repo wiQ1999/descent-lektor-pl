@@ -436,3 +436,11 @@ Levirax w ElevenLabs (2026-11-24): to ważna postać, główna przeciwniczka akt
 2. dymna, sycząca władczyni po 50-tce: bardzo niski alt zachrypnięty jak od ognia, pomruk, długie s i sz.
 
 Każdy opis dał 3 podglądy, które czytają kwestię z gry i dwa własne zdania. Whisper odczytał wszystkie bez błędów. Strona odsłuchu: `analysis/work/elevenlabs/audio/e20_levirax/index.html`, z żmiją E z rundy 12 do porównania.
+
+Runda 2 ElevenLabs: żaden podgląd nie pasował, część głosów brzmiała po męsku, a ma to być wielka bestia, smoczyca. Podglądy z rundy 1 nie były zapisane na koncie, usunęliśmy więc tylko ich pliki. Teraz są cztery opisy, każdy wprost kobiecy („unmistakably feminine”, „clearly a woman”) i z ogromną smoczycą w personie:
+1. kolosalna smocza królowa: głęboki kontralt jak z ogromnej piersi, naturalna chrypa, wolno;
+2. wężowa smoczyca: ciemny, aksamitny, mruczący i syczący głos, okrutne rozbawienie;
+3. rozwścieczona smoczyca: potężny, rozkazujący głos z chrypą przy podniesieniu;
+4. pradawna smocza matrona: niski, suchy, trzeszczący głos, lodowata wyniosłość.
+
+Dwa z 12 podglądów mają wysokość ok. 90–96 Hz (prawdopodobnie głos męski) i strona je oznacza. Pozostałe mają 145–301 Hz. Whisper odczytał wszystkie podglądy, jeden ma drobny błąd.
