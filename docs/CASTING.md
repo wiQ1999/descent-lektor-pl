@@ -451,3 +451,7 @@ Runda 3 ElevenLabs: L (opis 4) jest dobra, ale za mało w niej basu i za wysoko.
 - G–L: dwa nowe opisy na bazie L (bardzo niski, basowy, donośny bez wysiłku, głęboki wdech przed frazą; głos jak z ogromnej jaskini).
 
 Whisper odczytał wszystkie próbki bez błędów, znaczniki nie są czytane na głos.
+
+Runda 4 ElevenLabs: E i H z rundy 3 są dobre, ale za mało mroczne i za wysokie, a H brzmi po męsku. Preferujemy oryginały ElevenLabs bez obróbki. Strona: `analysis/work/elevenlabs/audio/e20_levirax/r4/index.html`.
+- A–C: głos L w `eleven_v4` jak B z rundy 3, wolniej (0,70–0,72) i ze znacznikami ciemnego, niskiego tonu. Wychodzi 148–157 Hz bez obróbki (B miał 172 Hz).
+- D–L: trzy nowe opisy: jak H, ale wprost kobiecy; kobieta z naturalnie bardzo głębokim kontraltem z mroku leża; pradawna, zła smoczyca z rezonansem piersi. Dwa podglądy opisu 9 mają 113–121 Hz i strona oznacza je jako bliskie męskiej wysokości.
