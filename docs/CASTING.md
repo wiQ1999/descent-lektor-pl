@@ -455,3 +455,7 @@ Whisper odczytał wszystkie próbki bez błędów, znaczniki nie są czytane na 
 Runda 4 ElevenLabs: E i H z rundy 3 są dobre, ale za mało mroczne i za wysokie, a H brzmi po męsku. Preferujemy oryginały ElevenLabs bez obróbki. Strona: `analysis/work/elevenlabs/audio/e20_levirax/r4/index.html`.
 - A–C: głos L w `eleven_v4` jak B z rundy 3, wolniej (0,70–0,72) i ze znacznikami ciemnego, niskiego tonu. Wychodzi 148–157 Hz bez obróbki (B miał 172 Hz).
 - D–L: trzy nowe opisy: jak H, ale wprost kobiecy; kobieta z naturalnie bardzo głębokim kontraltem z mroku leża; pradawna, zła smoczyca z rezonansem piersi. Dwa podglądy opisu 9 mają 113–121 Hz i strona oznacza je jako bliskie męskiej wysokości.
+
+Runda 5 ElevenLabs: L z rundy 4 (opis 9) ma dobrą jakość i ton. Łączymy ją z efektem E z rundy 3. L jest zapisana na koncie jako `Lektor PL - levirax r4l` (`FwpJ2WFWAXrEiKfu40Z7`). Strona: `analysis/work/elevenlabs/audio/e20_levirax/r5/index.html`.
+- A–C: oryginały `eleven_v4` z kwestią z gry, ze znacznikami wdechu i przeciągania jak E (tempo 0,70–0,75). Mają 137–150 Hz, więc w TTS głos jest wyżej niż w podglądzie (113 Hz) i brzmi kobieco.
+- D–F: A–C z basem +6 dB jak w E, bez obniżania. G: A z pełną obróbką E (−2,5 półtonu i bas), 119 Hz.
