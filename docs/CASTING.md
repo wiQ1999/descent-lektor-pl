@@ -430,3 +430,9 @@ Runda 13 (`voice_designs_e20_r13.json`): w rundzie 12 pasuje E, ale głos ma by�
 - F: 130 Hz, formanty −3,5, chrypa 0,7.
 
 Kwestia z gry (wysokość, płaskość widma): A 135 Hz / 0,0196, B 135 / 0,0099, C 126 / 0,0121, D 121 / 0,0070, E 126 / 0,0045, F 130 / 0,0275. Część płaskości A to artefakty wokodera.
+
+Levirax w ElevenLabs (2026-11-24): to ważna postać, główna przeciwniczka aktu 2 (23 kwestie w trzech misjach, 244 wzmianki u innych postaci), więc obok OmniVoice próbujemy projektu głosu ElevenLabs. Opisy w `text_to_voice`:
+1. chrapliwa smocza matrona po 60-tce: głęboki, żwirowaty głos, vocal fry, pęknięcia głosu, przeciągany syk, wolno;
+2. dymna, sycząca władczyni po 50-tce: bardzo niski alt zachrypnięty jak od ognia, pomruk, długie s i sz.
+
+Każdy opis dał 3 podglądy, które czytają kwestię z gry i dwa własne zdania. Whisper odczytał wszystkie bez błędów. Strona odsłuchu: `analysis/work/elevenlabs/audio/e20_levirax/index.html`, z żmiją E z rundy 12 do porównania.

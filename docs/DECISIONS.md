@@ -1201,6 +1201,7 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - Runda 10 (2026-11-24): profile Levirax zbyt delikatne, mało chropowate, bez wężowej wymowy. Runda 11: pięć profili z chrypą w referencji, w dwóch wężowa wymowa (nowy efekt `serpent_a`/`serpent_b` w `lektor.effects`).
 - Runda 11 (2026-11-24): najlepsza żmija A, bez efektu syku na kwestii z gry. Runda 12: pięć wariantów tego samego projektu, bardziej chropowatych (chrypa 0,55 i 0,8) albo niższych (o 2–3 półtony, w jednym pomruk oktawę niżej).
 - Runda 12 (2026-11-24): pasuje żmija E (3 półtony niżej, ciemniej), ale za mało mroczna i gorsza jakość. Runda 13: przyciemnienie bez wokodera fazowego (`deepen`), 115–135 Hz z formantami niżej o 3–5 półtonów, przytłumiona góra albo mocniejsza chrypa.
+- Levirax to ważna postać (główna przeciwniczka aktu 2), więc obok OmniVoice próbujemy projektu głosu ElevenLabs (2026-11-24): 2 opisy × 3 podglądy, ok. 230 kr. Licznik konta (59 712 / 160 711) obejmuje też zużycie spoza projektu. Klucz projektu ma limit 60 tys., a log projektu w okresie do 2026-12-15 podaje 55 983 kr., czyli zostaje ok. 4 tys. API nie podaje zużycia samego klucza.
 - Głosy ElevenLabs zostają bez zmian do odnowienia limitu 2026-12-15 (licznik okresu 55 983 z 60 tys.). Potem nowe profile Laurel i L'trand oraz chropowatsza Veta (ok. 16,7 tys. znaków, ok. 7,5 tys. kredytów).
 
 **Uzasadnienie:** QA 2026-11-20 po odsłuchu zestawienia. Zmiany w ElevenLabs nie mieszczą się w limicie bieżącego okresu.
