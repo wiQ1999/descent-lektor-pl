@@ -21,20 +21,20 @@ def test_styled_speed():
 
 
 def test_jobs_apply_style_to_fresh_takes_and_follow_order():
-    con = fragments_db([('a', 'levirax', 1.2, 'Pierwsze zdanie.'), ('b', 'narrator', None, 'Drugie zdanie.'),
-                        ('c', 'levirax', 1.2, 'Trzecie zdanie.')])
-    refs = {'levirax': {'style': {'speed': 0.85, 'instruct': 'female'}}}
+    con = fragments_db([('a', 'navoth', 1.2, 'Pierwsze zdanie.'), ('b', 'narrator', None, 'Drugie zdanie.'),
+                        ('c', 'navoth', 1.2, 'Trzecie zdanie.')])
+    refs = {'navoth': {'style': {'speed': 0.85, 'instruct': 'female'}}}
     order = {'c': (1, 0), 'b': (1, 1), 'a': (2, 0)}
     got = list(synth.jobs(con, refs=refs, order=order))
     assert [(j[0], j[4]) for j in got] == [('c', 1.02), ('b', None), ('a', 1.02)]
     # Ponowne podejście ma tempo z zapisanego podejścia, z już uwzględnionym stylem.
-    assert list(synth.jobs(con, retake={'a': (2, 0.97)}, refs=refs)) == [('a', 2, 'Pierwsze zdanie.', 'levirax', 0.97)]
+    assert list(synth.jobs(con, retake={'a': (2, 0.97)}, refs=refs)) == [('a', 2, 'Pierwsze zdanie.', 'navoth', 0.97)]
 
 
 def test_voice_tag_includes_style_only_when_present():
-    refs = {'narrator': {'sha': 'abcdef1234'}, 'levirax': {'sha': '0123456789', 'style': {'speed': 0.85}}}
+    refs = {'narrator': {'sha': 'abcdef1234'}, 'navoth': {'sha': '0123456789', 'style': {'speed': 0.85}}}
     assert build.voice_tag('narrator', refs) == 'narrator@abcdef12'
-    assert build.voice_tag('levirax', refs) == 'levirax@01234567~{"speed": 0.85}'
+    assert build.voice_tag('navoth', refs) == 'navoth@01234567~{"speed": 0.85}'
     assert build.voice_tag('magrit', refs) == 'magrit'
 
 

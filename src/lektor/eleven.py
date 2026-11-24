@@ -13,6 +13,7 @@ do logu zużycia ElevenLabs (D73) z kosztem z historii konta; log ma tylko SHA-1
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -29,6 +30,7 @@ KEY_FILE = '.env.elevenlabs.local'
 KEY_NAME = 'ELEVENLABS_API_KEY'
 OUTPUT_FORMAT = 'pcm_24000'
 SAMPLE_RATE = 24000
+SPEED_MIN = 0.7      # najniższe tempo API (ponowne podejście wolniej o RETAKE_SLOWER nie schodzi niżej)
 SETTINGS = {'stability': 0.5, 'similarity_boost': 0.75, 'style': 0.0, 'use_speaker_boost': True, 'speed': 1.0}
 RATE = 0.44             # kredyty na znak eleven_v4 (E9, E11): szacunek przed wsadem i gdy historia konta milczy
 TIMEOUT_S = 120
@@ -72,9 +74,25 @@ def get_json(key, path, opener=urllib.request.urlopen):
         return json.load(r)
 
 
-def synthesize(key, voice_id, text, seed, speed=1.0, opener=urllib.request.urlopen, sleep=time.sleep):
+def voice_settings(voice):
+    """Ustawienia głosu z direction.ELEVEN_STYLE (E20, D114) na tle domyślnych."""
+    style = D.ELEVEN_STYLE.get(voice, {})
+    return {k: style[k] for k in SETTINGS if k in style and k != 'speed'}
+
+
+def tagged(voice, text):
+    """Tekst dla API: znaczniki audio głosu przed kwestią i po pierwszym zdaniu (E20, D114)."""
+    style = D.ELEVEN_STYLE.get(voice, {})
+    if style.get('breath'):
+        text = re.sub(r'([.!?…]+)\s+(?=\S)', lambda m: m.group(1) + ' ' + style['breath'] + ' ', text, count=1)
+    return style['lead'] + ' ' + text if style.get('lead') else text
+
+
+def synthesize(key, voice_id, text, seed, speed=1.0, opener=urllib.request.urlopen, sleep=time.sleep, settings=None):
     """(PCM 16 bit mono 24 kHz, nagłówki odpowiedzi małymi literami). Błędy 429 i 5xx ponawia."""
-    body = {'text': text, 'model_id': D.ELEVEN_MODEL, 'voice_settings': {**SETTINGS, 'speed': speed}, 'seed': seed}
+    speed = max(SPEED_MIN, speed)
+    body = {'text': text, 'model_id': D.ELEVEN_MODEL, 'voice_settings': {**SETTINGS, **(settings or {}), 'speed': speed},
+            'seed': seed}
     path = '/v1/text-to-speech/%s?output_format=%s' % (voice_id, OUTPUT_FORMAT)
     for wait in (*RETRY_WAITS, None):
         try:
@@ -170,7 +188,7 @@ def jobs(con, voices=None, retake=None):
                 take, speed = retake[r['id']]
                 yield r['id'], take, r['text'], r['voice'], speed
             continue
-        yield r['id'], D.ELEVEN_TAKE0 + 1, r['text'], r['voice'], SETTINGS['speed']
+        yield r['id'], D.ELEVEN_TAKE0 + 1, r['text'], r['voice'], D.ELEVEN_STYLE.get(r['voice'], {}).get('speed', SETTINGS['speed'])
 
 
 def inherited(con):
@@ -187,7 +205,7 @@ def generate(limit=None, voices=None, retake_file=None, dry_run=False, max_credi
         retake = {k: tuple(v) for k, v in json.load(open(retake_file, encoding='utf-8')).items()}
     state = load_state()
     done = inherited(con)
-    todo = [j for j in jobs(con, voices, retake) if (j[0], j[1]) not in state and j[0] not in done]
+    todo = [(f, t, tagged(v, x), v, s) for f, t, x, v, s in jobs(con, voices, retake) if (f, t) not in state and f not in done]
     if limit:
         todo = todo[:limit]
     chars = sum(len(j[2]) for j in todo)
@@ -209,7 +227,7 @@ def generate(limit=None, voices=None, retake_file=None, dry_run=False, max_credi
                 max_credits, spent))
         seed = seed_for(fid, take)
         t0 = time.perf_counter()
-        pcm, headers = synthesize(key, D.ELEVEN_VOICES[voice], text, seed, speed)
+        pcm, headers = synthesize(key, D.ELEVEN_VOICES[voice], text, seed, speed, settings=voice_settings(voice))
         gen_s = time.perf_counter() - t0
         path = take_path(fid, take)
         sec = write_wav(path, pcm)

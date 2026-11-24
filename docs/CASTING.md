@@ -459,3 +459,5 @@ Runda 4 ElevenLabs: E i H z rundy 3 są dobre, ale za mało mroczne i za wysokie
 Runda 5 ElevenLabs: L z rundy 4 (opis 9) ma dobrą jakość i ton. Łączymy ją z efektem E z rundy 3. L jest zapisana na koncie jako `Lektor PL - levirax r4l` (`FwpJ2WFWAXrEiKfu40Z7`). Strona: `analysis/work/elevenlabs/audio/e20_levirax/r5/index.html`.
 - A–C: oryginały `eleven_v4` z kwestią z gry, ze znacznikami wdechu i przeciągania jak E (tempo 0,70–0,75). Mają 137–150 Hz, więc w TTS głos jest wyżej niż w podglądzie (113 Hz) i brzmi kobieco.
 - D–F: A–C z basem +6 dB jak w E, bez obniżania. G: A z pełną obróbką E (−2,5 półtonu i bas), 119 Hz.
+
+**Wybór (2026-11-24): Levirax = E z rundy 3 ElevenLabs.** Głos `Lektor PL - levirax l` (`FcGRaGTdqjgS5L4Rbh1J`), model `eleven_v4`, stabilność 0,3, styl 0,3, tempo 0,75, znaczniki `[long, deep inhale] [slowly, booming]` przed kwestią i `[deep inhale]` po pierwszym zdaniu (`direction.ELEVEN_STYLE`). W `finalize` efekt `dragon_e`: 2,5 półtonu niżej razem z formantami i bas +6 dB poniżej 220 Hz (ok. 142–144 Hz). Runda 5 z głosem L z rundy 4 nie wygrała.

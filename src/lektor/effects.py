@@ -331,7 +331,83 @@ def serpent_b(y, sr):
     return _serpent(y, sr, 2.5, 1.7)
 
 
-VARIANTS = {'serpent_a': serpent_a, 'serpent_b': serpent_b,
+def _track_marks(y, sr):
+    import librosa
+    from scipy import signal
+    """Znaczniki okresów: pierwszy w odcinku dźwięcznym na szczycie sygnału do 900 Hz, kolejne w miejscu, gdzie okres
+    najbardziej przypomina poprzedni (korelacja). Szczyty skakały między okresami, co w rundzie 6 słychać było jako
+    przerywanie; po zmianie udział ramek dźwięcznych, które zostają dźwięczne, rośnie z 0,79–0,81 do 0,84."""
+    import numpy as np
+    hop = 256
+    f0, voiced, _ = librosa.pyin(y, fmin=60, fmax=450, sr=sr, frame_length=2048, hop_length=hop)
+    idx = np.arange(len(y))
+    f0s = np.interp(idx, np.arange(len(f0)) * hop, np.nan_to_num(f0, nan=0.0))
+    vs = np.interp(idx, np.arange(len(f0)) * hop, voiced.astype(float)) > 0.5
+    b, a = signal.butter(4, 900 / (sr / 2))
+    lp = signal.filtfilt(b, a, y)
+    marks, t, prev = [], 0, None
+    while t < len(y):
+        v = bool(vs[t] and f0s[t] > 0)
+        P = int(sr / f0s[t]) if v else int(0.01 * sr)
+        if v and prev is None:
+            lo, hi = max(0, t - P // 2), min(len(y), t + P // 2 + 1)
+            t = lo + int(np.argmax(lp[lo:hi]))
+        elif v:
+            h, r = P // 2, max(2, P // 5)
+            ref = y[prev - h:prev + h] if prev >= h else None
+            if ref is not None and len(ref) == 2 * h:
+                cands = [t + d for d in range(-r, r + 1) if t + d - h >= 0 and t + d + h <= len(y)]
+                if cands:
+                    t = max(cands, key=lambda c: float(np.dot(ref, y[c - h:c + h])))
+        prev = t if v else None
+        marks.append((t, P, v))
+        t += max(P, 1)
+    return marks
+
+
+def _psola_stretch(y, sr, ratio, stretch):
+    """TD-PSOLA: wysokość × ratio i czas × stretch, ziarna pełne (formanty bez zmian)."""
+    marks = _track_marks(y, sr)
+    pos = np.array([m[0] for m in marks])
+    L = int(len(y) * stretch)
+    out = np.zeros(L + sr)
+    norm = np.zeros_like(out)
+    ts = float(marks[0][0]) * stretch
+    while ts < L:
+        c, P, v = marks[int(np.argmin(np.abs(pos - ts / stretch)))]
+        w = np.hanning(2 * P + 1)
+        a, b = c - P, c + P + 1
+        seg = np.zeros(2 * P + 1)
+        seg[max(0, a) - a:min(len(y), b) - a] = y[max(0, a):min(len(y), b)]
+        o = int(ts) - P
+        if o >= 0:
+            out[o:o + 2 * P + 1] += seg * w
+            norm[o:o + 2 * P + 1] += w
+        ts += P / ratio if v else P
+    return (out[:L] / np.maximum(norm[:L], 0.5)).astype(np.float32)
+
+
+def _deepen(y, sr, steps):
+    """Niżej o `steps` półtonów razem z formantami (wolniejsze odtworzenie), czas przywrócony przez PSOLA; bez wokodera."""
+    import librosa
+    alpha = 2 ** (-steps / 12)
+    y2 = librosa.resample(y, orig_sr=sr, target_sr=int(round(sr / alpha)), res_type='soxr_hq')
+    out = _psola_stretch(y2, sr, 1.0, len(y) / len(y2))
+    return np.pad(out, (0, max(0, len(y) - len(out))))
+
+
+def _bass(y, sr, db, freq=220.0):
+    from scipy.signal import sosfiltfilt
+    return (y + (10 ** (db / 20) - 1) * sosfiltfilt(_sos('low', freq, sr), y)).astype(np.float32)
+
+
+def dragon_e(y, sr):
+    """Levirax (E20, runda 3 ElevenLabs, wybór E): głos 2,5 półtonu niżej z formantami i dół +6 dB poniżej 220 Hz."""
+    out = _bass(_deepen(y, sr, 2.5), sr, 6.0)
+    return out * np.float32(0.9 / (np.abs(out).max() + 1e-9))
+
+
+VARIANTS = {'serpent_a': serpent_a, 'serpent_b': serpent_b, 'dragon_e': dragon_e,
             'ghost_a': ghost_a, 'ghost_b': ghost_b, 'ghost_c': ghost_c,
             'ghost_b2': ghost_b2, 'ghost_b3': ghost_b3, 'ghost_c2': ghost_c2, 'ghost_c3': ghost_c3,
             'mind_a': mind_a, 'mind_b': mind_b, 'mind_c': mind_c,
