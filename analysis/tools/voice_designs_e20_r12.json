@@ -1,0 +1,28 @@
+{
+ "levirax@zmija": {
+  "g": "female",
+  "kind": "new",
+  "voice": "levirax",
+  "title": "Levirax 5: sycząca żmija (warianty kandydatki A z rundy 11)",
+  "instructs": [
+   "female, elderly, very low pitch, british accent"
+  ],
+  "seeds": [
+   563
+  ],
+  "picks": 6,
+  "fx_only": true,
+  "fx_order": true,
+  "fx": [
+   {"rasp": 0.3, "serpent": "serpent_b", "label": "wybrana w rundzie 11 (A), do porównania"},
+   {"rasp": 0.55, "serpent": "serpent_b", "label": "mocniejsza chrypa"},
+   {"rasp": 0.8, "serpent": "serpent_b", "label": "bardzo mocna chrypa"},
+   {"lower": 2, "rasp": 0.4, "serpent": "serpent_b", "label": "niżej o 2 półtony, ta sama barwa, mocniejsza chrypa"},
+   {"shift": -3, "rasp": 0.45, "serpent": "serpent_b", "label": "niżej o 3 półtony z ciemniejszą barwą, mocniejsza chrypa"},
+   {"lower": 2, "growl": 0.2, "rasp": 0.55, "serpent": "serpent_b", "label": "niżej o 2 półtony, smoczy pomruk oktawę niżej, mocna chrypa"}
+  ],
+  "cps": 10.0,
+  "text": "Czuję wasz strach. Smakuje słodko. Zostańcie, nasycę się nim, zanim was zmiażdżę.",
+  "note": "runda 11: najlepsza żmija A (projekt ziarno 563, chrypa 0,3 i syk serpent_b w referencji), bez efektu na kwestii z gry; runda 12: ten sam projekt, pięć wariantów bardziej chropowatych albo niższych"
+ }
+}

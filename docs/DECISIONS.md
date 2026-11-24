@@ -1199,6 +1199,7 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - Runda 8 (2026-11-23): Levirax za wysoka. Runda 9: trzy profile (narrator 130–145 Hz, Brynn obniżona do 145–175 Hz, połączona referencja narratora i Brynn).
 - Runda 9 (2026-11-24): wszystkie głosy Levirax zbyt piskliwe i robotyczne, klon zmieniony na kobiecy odpada. Runda 10: pięć nowych profili OmniVoice bez klonu (wiek, wysokość, akcent, tempo i zdanie w stylu postaci).
 - Runda 10 (2026-11-24): profile Levirax zbyt delikatne, mało chropowate, bez wężowej wymowy. Runda 11: pięć profili z chrypą w referencji, w dwóch wężowa wymowa (nowy efekt `serpent_a`/`serpent_b` w `lektor.effects`).
+- Runda 11 (2026-11-24): najlepsza żmija A, bez efektu syku na kwestii z gry. Runda 12: pięć wariantów tego samego projektu, bardziej chropowatych (chrypa 0,55 i 0,8) albo niższych (o 2–3 półtony, w jednym pomruk oktawę niżej).
 - Głosy ElevenLabs zostają bez zmian do odnowienia limitu 2026-12-15 (licznik okresu 55 983 z 60 tys.). Potem nowe profile Laurel i L'trand oraz chropowatsza Veta (ok. 16,7 tys. znaków, ok. 7,5 tys. kredytów).
 
 **Uzasadnienie:** QA 2026-11-20 po odsłuchu zestawienia. Zmiany w ElevenLabs nie mieszczą się w limicie bieżącego okresu.

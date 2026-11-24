@@ -412,3 +412,12 @@ Runda 11 (`voice_designs_e20_r11.json`): w rundzie 10 wszystkie głosy były zby
 - `levirax@zmija`: `female, elderly, very low pitch, british accent`, chrypa 0,3 i mocniejszy syk `serpent_b` (2,5 raza dłużej, 1,7 raza głośniej), efekt także na kwestii z gry.
 
 Wężowa wymowa to efekt `lektor.effects` (`serpent_a`, `serpent_b`). Wykrywa odcinki z przewagą energii powyżej 3,5 kHz i wydłuża je ziarnami szumu bez fazowania. Jeśli zostanie wybrana, wejdzie do gry przez `direction.FX`. Kwestie z gry z klonu chropowatej referencji mają medianę płaskości widma 0,0028–0,0102, a w rundzie 10 było 0,0013–0,0049: klon przejmuje część chrypy. Wysokość: matrona i żmija A ok. 160 Hz, pomruk 181–200 Hz, wąż i wiedźma 228–256 Hz.
+
+Runda 12 (`voice_designs_e20_r12.json`): w rundzie 11 najlepsza była żmija A (projekt na ziarnie 563, a w referencji chrypa 0,3 i syk `serpent_b`), bez efektu na kwestii z gry. Głos ma być bardziej chropowaty albo niższy. Wszystkie warianty to ten sam projekt z inną obróbką referencji (`fx_order`: kolejność z profilu). Kandydatka A to odtworzona żmija A z rundy 11 (referencja i kwestia z gry bit w bit jak w rundzie 11):
+- B: chrypa 0,55;
+- C: chrypa 0,8;
+- D: niżej o 2 półtony z tą samą barwą (`lower`, PSOLA ze znacznikami po korelacji), chrypa 0,4;
+- E: niżej o 3 półtony z ciemniejszą barwą (`shift`, wysokość razem z formantami), chrypa 0,45;
+- F: niżej o 2 półtony, pomruk oktawę niżej (`growl` 0,2), chrypa 0,55.
+
+Kwestia z gry (wysokość, płaskość widma): A 171 Hz / 0,0049, B 163 / 0,0140, C 175 / 0,0216, D 141 / 0,0061, E 135 / 0,0196, F 149 / 0,0564. Whisper czyta wszystkie zdania próbne bez błędów.

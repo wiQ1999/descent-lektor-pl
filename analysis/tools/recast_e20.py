@@ -267,6 +267,8 @@ def process(y, sr, fx):
     out = y
     if fx.get('shift'):
         out = librosa.effects.pitch_shift(out, sr=sr, n_steps=fx['shift'])
+    if fx.get('lower'):            # runda 12: niżej o `lower` półtonów, formanty bez zmian (PSOLA ze znacznikami po korelacji)
+        out = psola_stretch(out, sr, 2 ** (-fx['lower'] / 12), 1.0)
     if fx.get('growl'):
         out = growl(out, sr, fx['growl'])
     if fx.get('tremor'):
@@ -421,7 +423,7 @@ def choose():
                 sf.write(wav, process(y, sr, fx), sr, subtype='PCM_16')
                 scan[new] = {**{k: v for k, v in c.items() if k not in ('cer', 'f0', 'f0_sd', 'emb', 'rms')},
                              'wav': os.path.relpath(wav, paths.WORK), 'fx': fx, 'key': key,
-                             'instruct': c['instruct'] + ', ' + ', '.join('%s %s' % kv for kv in fx.items())}
+                             'instruct': c['instruct'] + ', ' + ', '.join('%s %s' % kv for kv in fx.items() if kv[0] != 'label')}
     asr = N.load_asr()
     ve = VoiceEncoder()
     ve.load_state_dict(torch.load(hf_hub_download('ResembleAI/chatterbox', 've.pt'), map_location='cpu', weights_only=True))
@@ -511,6 +513,12 @@ def choose():
                 return max(float(np.dot(scan[n]['emb'], e)) for e in others)
             limit = 0.93
         ranked = sorted(ok, key=score)
+        if p.get('fx_order'):           # runda 12: warianty obróbki jednego projektu w kolejności z profilu, wszystkie
+            ranked = sorted(mine, key=lambda n: (scan[n]['seed'], int(n.rsplit('_fx', 1)[1])))
+            chosen[voice] = [{'name': n, 'score': None} for n in ranked[:p.get('picks', 3)]]
+            print('%-24s %s' % (voice, '  '.join('%s CER %.2f F0 %3.0f' % (
+                c['name'].replace(voice + '_', ''), scan[c['name']]['cer'], scan[c['name']]['f0']) for c in chosen[voice])))
+            continue
         if p.get('prefer_low'):         # runda 10 (Levirax): odsłuch kilka razy „za wysoko”, więc najniższe ziarna
             ranked = sorted(ok, key=lambda n: scan[n]['f0'])
         if p['kind'] == 'clone':        # pierwszy kandydat to klon (prośba z odsłuchu), potem reszta
@@ -636,6 +644,8 @@ SECTIONS = (('like', 'Kobieca wersja innego głosu'), ('new', 'Nowe głosy'), ('
 
 
 def tag(p, s, first):
+    if (s.get('fx') or {}).get('label'):        # runda 12: opis wariantu obróbki
+        return ' (%s)' % s['fx']['label']
     if p['kind'] == 'like':
         src = p.get('src_label', 'głosu grupy')
         if s.get('post'):
