@@ -444,3 +444,10 @@ Runda 2 ElevenLabs: żaden podgląd nie pasował, część głosów brzmiała po
 4. pradawna smocza matrona: niski, suchy, trzeszczący głos, lodowata wyniosłość.
 
 Dwa z 12 podglądów mają wysokość ok. 90–96 Hz (prawdopodobnie głos męski) i strona je oznacza. Pozostałe mają 145–301 Hz. Whisper odczytał wszystkie podglądy, jeden ma drobny błąd.
+
+Runda 3 ElevenLabs: L (opis 4) jest dobra, ale za mało w niej basu i za wysoko. Głos ma się przeciągać, zaczynać słyszalnymi wdechami wielkich płuc i być donośny przy małym wysiłku. L jest zapisana na koncie jako `Lektor PL - levirax l` (`FcGRaGTdqjgS5L4Rbh1J`). Strona: `analysis/work/elevenlabs/audio/e20_levirax/r3/index.html`.
+- A–C: L czyta kwestię z gry modelem `eleven_v4` ze znacznikami wdechu i tonu, tempo 0,75–0,85, stabilność 0,3–0,5.
+- D–F: A–C po obróbce lokalnej: 2,5 półtonu niżej z ciemniejszą barwą (`regender` `resample`) i bas +6 dB poniżej 220 Hz. Wysokość spada ze 160–191 do 136–166 Hz.
+- G–L: dwa nowe opisy na bazie L (bardzo niski, basowy, donośny bez wysiłku, głęboki wdech przed frazą; głos jak z ogromnej jaskini).
+
+Whisper odczytał wszystkie próbki bez błędów, znaczniki nie są czytane na głos.
