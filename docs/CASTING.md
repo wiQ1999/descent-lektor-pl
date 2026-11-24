@@ -403,3 +403,12 @@ Runda 10 (`voice_designs_e20_r10.json`): w rundzie 9 wszystkie głosy były zbyt
 - `levirax@drapiezna`: `female, young adult, low pitch`, kusząca groźba drapieżnika.
 
 Akcent to nowa oś opisu OmniVoice: wcześniejsze rundy różniły się tylko wiekiem i wysokością. Projekty bez klonu mają 172–245 Hz (naturalna kobieca wysokość), a na stronę idą najniższe ziarna profilu (`prefer_low`): furia i arystokratka ok. 172–182 Hz, obca 180–195 Hz, królowa i drapieżniczka 214–245 Hz.
+
+Runda 11 (`voice_designs_e20_r11.json`): w rundzie 10 wszystkie głosy były zbyt delikatne i mało chropowate, a brakowało wężowej wymowy. Teraz jest pięć nowych profili bez klonu. Każdy ma obróbkę w referencji: chrypę (`rasp`, jak w D41), a klon kwestii z gry ją przejmuje. Na stronę idą tylko warianty z obróbką (`fx_only`). Zdania próbne są pełne głosek syczących:
+- `levirax@matrona`: `female, elderly, very low pitch`, chrypa 0,35;
+- `levirax@waz`: `female, middle-aged, low pitch`, chrypa 0,2 i wężowa wymowa `serpent_a` (głoski syczące 1,8 raza dłuższe, 1,4 raza głośniejsze), efekt także na kwestii z gry;
+- `levirax@pomruk`: `female, middle-aged, very low pitch, russian accent`, mocna chrypa 0,5;
+- `levirax@wiedzma`: `female, elderly, low pitch`, chrypa 0,3 i starcze drżenie 0,25;
+- `levirax@zmija`: `female, elderly, very low pitch, british accent`, chrypa 0,3 i mocniejszy syk `serpent_b` (2,5 raza dłużej, 1,7 raza głośniej), efekt także na kwestii z gry.
+
+Wężowa wymowa to efekt `lektor.effects` (`serpent_a`, `serpent_b`). Wykrywa odcinki z przewagą energii powyżej 3,5 kHz i wydłuża je ziarnami szumu bez fazowania. Jeśli zostanie wybrana, wejdzie do gry przez `direction.FX`. Kwestie z gry z klonu chropowatej referencji mają medianę płaskości widma 0,0028–0,0102, a w rundzie 10 było 0,0013–0,0049: klon przejmuje część chrypy. Wysokość: matrona i żmija A ok. 160 Hz, pomruk 181–200 Hz, wąż i wiedźma 228–256 Hz.

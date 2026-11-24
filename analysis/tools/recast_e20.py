@@ -273,6 +273,9 @@ def process(y, sr, fx):
         out = N.tremble(out, sr, fx['tremor'])
     if fx.get('rasp'):
         out = N.roughen(out, sr, fx['rasp'])
+    if fx.get('serpent'):          # runda 11: wężowa wymowa (lektor.effects serpent_a/b)
+        from lektor import effects
+        out = effects.apply(out, sr, fx['serpent'])
     return (out * (0.9 / (np.abs(out).max() + 1e-9))).astype(np.float32)
 
 
@@ -454,7 +457,8 @@ def choose():
                         json.load(open(os.path.join(d, 'choice.json'), encoding='utf-8'))))
     chosen = {}
     for voice, p in VOICES.items():
-        mine = [n for n, c in scan.items() if c['voice'] == voice and not c.get('kept')]
+        mine = [n for n, c in scan.items() if c['voice'] == voice and not c.get('kept')
+                and (c.get('fx') or not p.get('fx_only'))]      # fx_only: tylko warianty z obróbką (runda 11)
         kept = [n for n, c in scan.items() if c['voice'] == voice and c.get('kept')]
         rejected = [np.array(sc[c['name']]['emb']) for sc, ch in earlier for c in ch.get(voice, [])
                     if c['name'] in sc and 'emb' in sc[c['name']] and 'r1_' + c['name'] not in scan]

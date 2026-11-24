@@ -24,6 +24,21 @@ def test_effect_is_finite_bounded_and_deterministic(name):
     assert np.array_equal(a, b)
 
 
+def test_serpent_stretches_only_hiss():
+    rng = np.random.default_rng(0)
+    from scipy.signal import butter, sosfilt
+    hiss = sosfilt(butter(4, 4500, 'high', fs=SR, output='sos'), rng.standard_normal(int(0.15 * SR))).astype(np.float32)
+    hiss *= 0.3 / np.abs(hiss).max()
+    tone = voice_like(0.5)
+    y = np.concatenate([tone, hiss, tone])
+    spans = effects.sibilant_spans(y, SR)
+    assert len(spans) == 1 and abs(spans[0][0] - len(tone)) < 0.03 * SR
+    out = effects.apply(y, SR, 'serpent_b')
+    grown = len(out) - len(y)
+    assert 0.18 * SR < grown < 0.3 * SR       # syk 0,15 s (plus ramki brzegowe) wydłużony 2,5 raza
+    assert len(effects.apply(voice_like(), SR, 'serpent_a')) == len(voice_like())     # bez syku bez zmian
+
+
 def test_no_effect_returns_input():
     y = voice_like()
     assert effects.apply(y, SR, None) is y

@@ -13,6 +13,7 @@ Warianty:
     mind_c   telepatia: lekka modulacja kołowa, flanger i echo 140 ms
 Runda 2 (2026-11-21): ghost_b2/b3 i ghost_c2/c3 to ghost_b i ghost_c słabiej (2 mocniej, 3 najsłabiej), z ogonem
 najwyżej 0,35 s po mowie wyciszanym na końcu; mind_d–mind_g to nowe propozycje głosu w głowie (opisy przy funkcjach).
+Runda 11 (2026-11-24): serpent_a/serpent_b to wężowa wymowa: wydłużone i głośniejsze głoski syczące.
 """
 import numpy as np
 
@@ -257,7 +258,81 @@ def mind_g(y, sr):
     return _tail(out, n, sr, keep=0.5, fade=0.3)
 
 
-VARIANTS = {'ghost_a': ghost_a, 'ghost_b': ghost_b, 'ghost_c': ghost_c,
+def sibilant_spans(y, sr, hf=3500.0, ratio=0.6, floor_db=-34.0):
+    """Odcinki głosek syczących (s, sz, ś, c): ramki 20 ms co 10 ms z przewagą energii powyżej `hf` i głośnością
+    nie niższą niż `floor_db` od najgłośniejszej ramki; odcinki od 30 ms, poszerzone o ramkę z każdej strony."""
+    hop, win = int(0.01 * sr), int(0.02 * sr)
+    n = max(0, 1 + (len(y) - win) // hop)
+    if n == 0:
+        return []
+    frames = np.stack([y[i * hop:i * hop + win] * np.hanning(win) for i in range(n)])
+    spec = np.abs(np.fft.rfft(frames, axis=1)) ** 2
+    freqs = np.fft.rfftfreq(win, 1 / sr)
+    total = spec.sum(axis=1) + 1e-12
+    high = spec[:, freqs >= hf].sum(axis=1) / total
+    db = 10 * np.log10(total)
+    hit = (high > ratio) & (db > db.max() + floor_db)
+    spans, i = [], 0
+    while i < n:
+        if hit[i]:
+            j = i
+            while j + 1 < n and hit[j + 1]:
+                j += 1
+            if j - i + 1 >= 3:
+                spans.append((max(0, (i - 1) * hop), min(len(y), (j + 1) * hop + win)))
+            i = j + 1
+        else:
+            i += 1
+    return spans
+
+
+def _stretch_noise(seg, sr, factor, rng):
+    """Szum wydłużony `factor` razy: ziarna 20 ms z losowych miejsc odcinka, okno Hanna, krok 5 ms (bez fazowania)."""
+    g, hop = int(0.02 * sr), int(0.005 * sr)
+    if len(seg) <= g:
+        return seg
+    out_len = int(len(seg) * factor)
+    out = np.zeros(out_len + g, np.float32)
+    norm = np.zeros_like(out)
+    w = np.hanning(g).astype(np.float32)
+    for o in range(0, out_len, hop):
+        centre = o / factor
+        s = int(np.clip(centre + rng.uniform(-0.005, 0.005) * sr, 0, len(seg) - g))
+        out[o:o + g] += seg[s:s + g] * w
+        norm[o:o + g] += w
+    return out[:out_len] / np.maximum(norm[:out_len], 1e-3)
+
+
+def _serpent(y, sr, factor, boost):
+    """Wężowa wymowa: głoski syczące wydłużone `factor` razy i głośniejsze `boost` razy, reszta bez zmian."""
+    rng = np.random.default_rng(SEED)
+    fade = int(0.004 * sr)
+    ramp = np.linspace(0, 1, fade, dtype=np.float32)
+    parts, last = [], 0
+    for a, b in sibilant_spans(y, sr):
+        parts.append(y[last:a])
+        hiss = _stretch_noise(y[a:b].astype(np.float32), sr, factor, rng) * boost
+        if len(hiss) > 2 * fade:
+            hiss[:fade] *= ramp
+            hiss[-fade:] *= ramp[::-1]
+        parts.append(hiss)
+        last = b
+    parts.append(y[last:])
+    return np.concatenate(parts).astype(np.float32)
+
+
+def serpent_a(y, sr):
+    """Runda 11 (Levirax): syk węża, głoski syczące 1,8 raza dłuższe i 1,4 raza głośniejsze."""
+    return _serpent(y, sr, 1.8, 1.4)
+
+
+def serpent_b(y, sr):
+    """Mocniejszy syk: głoski syczące 2,5 raza dłuższe i 1,7 raza głośniejsze."""
+    return _serpent(y, sr, 2.5, 1.7)
+
+
+VARIANTS = {'serpent_a': serpent_a, 'serpent_b': serpent_b,
+            'ghost_a': ghost_a, 'ghost_b': ghost_b, 'ghost_c': ghost_c,
             'ghost_b2': ghost_b2, 'ghost_b3': ghost_b3, 'ghost_c2': ghost_c2, 'ghost_c3': ghost_c3,
             'mind_a': mind_a, 'mind_b': mind_b, 'mind_c': mind_c,
             'mind_d': mind_d, 'mind_e': mind_e, 'mind_f': mind_f, 'mind_g': mind_g}

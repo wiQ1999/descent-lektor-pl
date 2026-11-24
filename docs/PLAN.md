@@ -513,6 +513,7 @@ Cel: zmiany i poprawki 60 głosów z odsłuchu zestawienia całej gry `m4_cast` 
    - Runda 7 (2026-11-23): Levirax piskliwa, próbki podobne. Runda 8: sześć niższych, wyraźnie różnych wariantów.
    - Runda 8 (2026-11-23): Levirax za wysoka. Runda 9: profile z głosu narratora, z głosu Brynn i z połączenia obu.
    - Runda 9 (2026-11-24): klony zmienione na kobiece odpadają. Runda 10: pięć nowych profili Levirax bez klonu.
+   - Runda 10 (2026-11-24): Levirax za delikatna. Runda 11: pięć chropowatych profili, w dwóch wężowa wymowa.
 4. Ponowne podejścia siedmiu fragmentów: Kapitan z FoF (pauza na początku, wymowa końcówki), Więzień (wymowa końcówki), Bandyta-nekromanta (ucięta końcówka), żołnierz z karczmy (`8f0b82e38dee6729`, pomyłka w słowie przy ziarnie produkcji) i trzy fragmenty Baelziffara z „ocalić” i „najgłośniej” (błąd wymowy, którego Whisper nie wychwycił). Gdy nowe podejście dalej myli słowo, zapis fonetyczny w `normalize.PHONETIC`.
 5. Wybór z odsłuchu (`adopt`), wpis w `docs/CASTING.md`.
 6. Generowanie zmienionych głosów w całej grze, ocena, ponowne podejścia, `finalize` z efektami i tempem z kroku 1, zestawienie `m4_cast` do kontroli.

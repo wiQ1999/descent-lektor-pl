@@ -1,0 +1,132 @@
+{
+ "levirax@matrona": {
+  "g": "female",
+  "kind": "new",
+  "voice": "levirax",
+  "title": "Levirax 1: chrapliwa matrona",
+  "instructs": [
+   "female, elderly, very low pitch"
+  ],
+  "seeds": [
+   311,
+   523,
+   739
+  ],
+  "picks": 2,
+  "prefer_low": true,
+  "fx_only": true,
+  "fx": [
+   {
+    "rasp": 0.35
+   }
+  ],
+  "cps": 10.5,
+  "text": "Słyszę wasze serca, śmiertelnicy. Szybkie, przestraszone, żałosne. Zaraz ucichną, jak wszystkie przed nimi.",
+  "note": "runda 10: wszystkie zbyt delikatne, mało chropowate, brak wężowej wymowy; runda 11: stara, zachrypnięta: chrypa w referencji (klon ją przejmuje), wolno"
+ },
+ "levirax@waz": {
+  "g": "female",
+  "kind": "new",
+  "voice": "levirax",
+  "title": "Levirax 2: wężowa władczyni",
+  "instructs": [
+   "female, middle-aged, low pitch"
+  ],
+  "seeds": [
+   313,
+   541,
+   743
+  ],
+  "picks": 2,
+  "prefer_low": true,
+  "fx_only": true,
+  "fx": [
+   {
+    "rasp": 0.2,
+    "serpent": "serpent_a"
+   }
+  ],
+  "cps": 10.0,
+  "text": "Słuchajcie uważnie. Każdy z was zasyczy w moim uścisku, zanim zgaśnie jego ostatnia iskra.",
+  "note": "runda 10: wszystkie zbyt delikatne, mało chropowate, brak wężowej wymowy; runda 11: wężowa wymowa: wydłużone, głośniejsze s, sz, ś (efekt serpent_a w referencji i na kwestii z gry), lekka chrypa",
+  "fx_final": "serpent_a"
+ },
+ "levirax@pomruk": {
+  "g": "female",
+  "kind": "new",
+  "voice": "levirax",
+  "title": "Levirax 3: smoczy pomruk",
+  "instructs": [
+   "female, middle-aged, very low pitch, russian accent"
+  ],
+  "seeds": [
+   317,
+   547,
+   751
+  ],
+  "picks": 2,
+  "prefer_low": true,
+  "fx_only": true,
+  "fx": [
+   {
+    "rasp": 0.5
+   }
+  ],
+  "cps": 12.5,
+  "text": "Przestańcie się szarpać! Wasze miecze są śmieszne, a wasza odwaga jeszcze śmieszniejsza. Spłoniecie!",
+  "note": "runda 10: wszystkie zbyt delikatne, mało chropowate, brak wężowej wymowy; runda 11: mocna chrypa i gniew, ciężki wschodni akcent"
+ },
+ "levirax@wiedzma": {
+  "g": "female",
+  "kind": "new",
+  "voice": "levirax",
+  "title": "Levirax 4: pradawna, drżąca groza",
+  "instructs": [
+   "female, elderly, low pitch"
+  ],
+  "seeds": [
+   331,
+   557,
+   757
+  ],
+  "picks": 2,
+  "prefer_low": true,
+  "fx_only": true,
+  "fx": [
+   {
+    "rasp": 0.3,
+    "tremor": 0.25
+   }
+  ],
+  "cps": 10.5,
+  "text": "Ze szczytów tej góry widziałam narodziny i śmierć waszych bogów. Sądzicie, że zostaniecie zapamiętani?",
+  "note": "runda 10: wszystkie zbyt delikatne, mało chropowate, brak wężowej wymowy; runda 11: bardzo stara: chrypa i starcze drżenie w referencji"
+ },
+ "levirax@zmija": {
+  "g": "female",
+  "kind": "new",
+  "voice": "levirax",
+  "title": "Levirax 5: sycząca żmija",
+  "instructs": [
+   "female, elderly, very low pitch, british accent"
+  ],
+  "seeds": [
+   337,
+   563,
+   761
+  ],
+  "picks": 2,
+  "prefer_low": true,
+  "fx_only": true,
+  "fx": [
+   {
+    "rasp": 0.3,
+    "serpent": "serpent_b"
+   }
+  ],
+  "cps": 10.0,
+  "text": "Czuję wasz strach. Smakuje słodko. Zostańcie, nasycę się nim, zanim was zmiażdżę.",
+  "note": "runda 10: wszystkie zbyt delikatne, mało chropowate, brak wężowej wymowy; runda 11: najmocniejszy syk (serpent_b w referencji i na kwestii z gry), chrypa, chłodny obcy akcent",
+  "fx_final": "serpent_b"
+ }
+}
