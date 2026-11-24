@@ -32,7 +32,7 @@ class Response(io.BytesIO):
 def test_engine_mapping():
     assert D.engine('adelynn') == 'elevenlabs' and D.engine('narrator') == 'omnivoice' and D.engine('brynn') == 'omnivoice'
     assert D.take_engine(1) == 'omnivoice' and D.take_engine(D.ELEVEN_TAKE0 + 1) == 'elevenlabs'
-    assert len(D.ELEVEN_VOICES) == 29 and len(D.ELEVEN_VOICES_E14) == 17     # E13: 11, E14: 17 nowych (D95)
+    assert len(D.ELEVEN_VOICES) == 28 and len(D.ELEVEN_VOICES_E14) == 17     # E13: 11, E14: 17 nowych (D95)
 
 
 def test_jobs_split_between_engines(tmp_path):
@@ -134,11 +134,14 @@ def test_select_prefers_engine_of_voice(tmp_path, monkeypatch):
     assert choice['n1']['take'] == 1 and choice['n1']['takes'] == 1
 
 
-def test_levirax_style_tags_and_settings(tmp_path):
+def test_levirax_style_tags_and_settings(tmp_path, monkeypatch):
     # E20 (D114): Levirax czyta głos ze znacznikami wdechu, wolniej i z własnymi ustawieniami
     t = eleven.tagged('levirax', 'Dość. Idźcie stąd… teraz. Już.')
     assert t == '[long, deep inhale] [slowly, booming] Dość. [deep inhale] Idźcie stąd… teraz. Już.'
     assert eleven.tagged('ronan', TEXT) == TEXT
+    vid, tag, fx = D.RECAST_LATER['levirax']
+    assert 'levirax' not in D.ELEVEN_VOICES and 'levirax' not in D.FX and tag == 'D114' and fx == 'dragon_e'
+    monkeypatch.setitem(D.ELEVEN_VOICES, 'levirax', vid)     # po włączeniu przy kolejnym generowaniu
     con = fragments_db(tmp_path / 'f.sqlite', [('l1', 'levirax')])
     assert [j[4] for j in eleven.jobs(con)] == [0.75]
     assert eleven.voice_settings('levirax') == {'stability': 0.3, 'style': 0.3} and eleven.voice_settings('ronan') == {}
@@ -151,4 +154,3 @@ def test_levirax_style_tags_and_settings(tmp_path):
     eleven.synthesize('K', 'v', TEXT, 1, 0.65, opener=opener, settings=eleven.voice_settings('levirax'))
     vs = calls[0]['voice_settings']
     assert vs['speed'] == 0.7 and vs['stability'] == 0.3 and vs['style'] == 0.3 and vs['similarity_boost'] == 0.75
-    assert D.FX['levirax'] == 'dragon_e' and D.ELEVEN_RECAST['levirax'][1] == 'D114'
