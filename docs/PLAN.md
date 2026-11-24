@@ -515,6 +515,7 @@ Cel: zmiany i poprawki 60 głosów z odsłuchu zestawienia całej gry `m4_cast` 
    - Runda 9 (2026-11-24): klony zmienione na kobiece odpadają. Runda 10: pięć nowych profili Levirax bez klonu.
    - Runda 10 (2026-11-24): Levirax za delikatna. Runda 11: pięć chropowatych profili, w dwóch wężowa wymowa.
    - Runda 11 (2026-11-24): najlepsza żmija A, bez efektu na kwestii z gry. Runda 12: pięć wariantów żmii A, chropowatszych albo niższych.
+   - Runda 12 (2026-11-24): pasuje żmija E, ale za mało mroczna i gorszej jakości. Runda 13: pięć ciemniejszych wariantów E bez wokodera fazowego.
 4. Ponowne podejścia siedmiu fragmentów: Kapitan z FoF (pauza na początku, wymowa końcówki), Więzień (wymowa końcówki), Bandyta-nekromanta (ucięta końcówka), żołnierz z karczmy (`8f0b82e38dee6729`, pomyłka w słowie przy ziarnie produkcji) i trzy fragmenty Baelziffara z „ocalić” i „najgłośniej” (błąd wymowy, którego Whisper nie wychwycił). Gdy nowe podejście dalej myli słowo, zapis fonetyczny w `normalize.PHONETIC`.
 5. Wybór z odsłuchu (`adopt`), wpis w `docs/CASTING.md`.
 6. Generowanie zmienionych głosów w całej grze, ocena, ponowne podejścia, `finalize` z efektami i tempem z kroku 1, zestawienie `m4_cast` do kontroli.

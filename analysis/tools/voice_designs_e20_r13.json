@@ -1,0 +1,28 @@
+{
+ "levirax@zmija": {
+  "g": "female",
+  "kind": "new",
+  "voice": "levirax",
+  "title": "Levirax 5: sycząca żmija (warianty kandydatki E z rundy 12)",
+  "instructs": [
+   "female, elderly, very low pitch, british accent"
+  ],
+  "seeds": [
+   563
+  ],
+  "picks": 6,
+  "fx_only": true,
+  "fx_order": true,
+  "fx": [
+   {"shift": -3, "rasp": 0.45, "serpent": "serpent_b", "label": "wybrana w rundzie 12 (E), do porównania"},
+   {"deepen": {"f0": 135, "formant": -3}, "rasp": 0.45, "serpent": "serpent_b", "label": "jak E, czystsza zmiana wysokości i barwy (bez wokodera)"},
+   {"deepen": {"f0": 125, "formant": -4}, "rasp": 0.5, "serpent": "serpent_b", "label": "niżej i ciemniej"},
+   {"deepen": {"f0": 115, "formant": -5}, "rasp": 0.5, "serpent": "serpent_b", "label": "najniżej i najciemniej"},
+   {"deepen": {"f0": 125, "formant": -4}, "dark": 0.5, "rasp": 0.5, "serpent": "serpent_b", "label": "niżej, ciemniej, przytłumiona góra i mocniejszy dół"},
+   {"deepen": {"f0": 130, "formant": -3.5}, "rasp": 0.7, "serpent": "serpent_b", "label": "trochę niżej, mocniejsza chrypa i urywanie"}
+  ],
+  "cps": 10.0,
+  "text": "Czuję wasz strach. Smakuje słodko. Zostańcie, nasycę się nim, zanim was zmiażdżę.",
+  "note": "runda 12: pasuje E (3 półtony niżej z ciemniejszą barwą, chrypa 0,45), ale za mało mroczna i gorsza jakość (wokoder fazowy); runda 13: przyciemnienie bez wokodera (przyspieszenie i PSOLA), niżej i ciemniej, w jednym wariancie mocniejsza chrypa"
+ }
+}

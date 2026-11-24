@@ -269,6 +269,14 @@ def process(y, sr, fx):
         out = librosa.effects.pitch_shift(out, sr=sr, n_steps=fx['shift'])
     if fx.get('lower'):            # runda 12: niżej o `lower` półtonów, formanty bez zmian (PSOLA ze znacznikami po korelacji)
         out = psola_stretch(out, sr, 2 ** (-fx['lower'] / 12), 1.0)
+    if fx.get('deepen'):           # runda 13: niżej i ciemniej bez wokodera fazowego (shift z rundy 12 psuł jakość):
+        d = fx['deepen']           # przyspieszenie nagrania (formanty) i PSOLA (wysokość, czas), jak regender resample
+        out = regender(out, sr, d['f0'], d['formant'], 'resample')[0]
+    if fx.get('dark'):             # runda 13: ciemniejsza barwa: mniej góry powyżej ok. 2,5 kHz, więcej dołu poniżej 350 Hz
+        from scipy import signal
+        lp = signal.sosfiltfilt(signal.butter(2, 2500, 'low', fs=sr, output='sos'), out)
+        low = signal.sosfiltfilt(signal.butter(2, 350, 'low', fs=sr, output='sos'), out)
+        out = ((1 - fx['dark']) * out + fx['dark'] * lp + 0.5 * fx['dark'] * low).astype(np.float32)
     if fx.get('growl'):
         out = growl(out, sr, fx['growl'])
     if fx.get('tremor'):

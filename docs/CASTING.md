@@ -421,3 +421,12 @@ Runda 12 (`voice_designs_e20_r12.json`): w rundzie 11 najlepsza była żmija A (
 - F: niżej o 2 półtony, pomruk oktawę niżej (`growl` 0,2), chrypa 0,55.
 
 Kwestia z gry (wysokość, płaskość widma): A 171 Hz / 0,0049, B 163 / 0,0140, C 175 / 0,0216, D 141 / 0,0061, E 135 / 0,0196, F 149 / 0,0564. Whisper czyta wszystkie zdania próbne bez błędów.
+
+Runda 13 (`voice_designs_e20_r13.json`): w rundzie 12 pasuje E, ale głos ma być jeszcze mroczniejszy. E ma przy tym gorszą jakość, bo `shift` to wokoder fazowy, a w dobrej jakości ma być słychać urywanie głosu i niską, chrypliwą barwę. Teraz przyciemnienie robi `deepen` (jak `regender` `resample`: przyspieszone nagranie obniża formanty, PSOLA ustawia wysokość i czas), bez wokodera. Kandydatka A to E z rundy 12 (bit w bit):
+- B: jak E, czystsza metoda (135 Hz, formanty −3);
+- C: 125 Hz, formanty −4, chrypa 0,5;
+- D: 115 Hz, formanty −5, chrypa 0,5;
+- E: jak C, a do tego `dark` 0,5 (mniej góry powyżej 2,5 kHz, więcej dołu poniżej 350 Hz);
+- F: 130 Hz, formanty −3,5, chrypa 0,7.
+
+Kwestia z gry (wysokość, płaskość widma): A 135 Hz / 0,0196, B 135 / 0,0099, C 126 / 0,0121, D 121 / 0,0070, E 126 / 0,0045, F 130 / 0,0275. Część płaskości A to artefakty wokodera.
