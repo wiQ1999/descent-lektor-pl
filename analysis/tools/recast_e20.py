@@ -507,6 +507,8 @@ def choose():
                 return max(float(np.dot(scan[n]['emb'], e)) for e in others)
             limit = 0.93
         ranked = sorted(ok, key=score)
+        if p.get('prefer_low'):         # runda 10 (Levirax): odsłuch kilka razy „za wysoko”, więc najniższe ziarna
+            ranked = sorted(ok, key=lambda n: scan[n]['f0'])
         if p['kind'] == 'clone':        # pierwszy kandydat to klon (prośba z odsłuchu), potem reszta
             ranked = sorted(ranked, key=lambda n: not scan[n].get('clone'))
         picks = list(kept)              # zachowani z rundy 1 idą zawsze, obok nowych (domyślnie trzech)

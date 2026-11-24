@@ -394,3 +394,12 @@ Runda 9 (`voice_designs_e20_r9.json`): w rundzie 8 głos był za wysoki. Na pro�
 - `levirax@narrator`: zwykły klon narratora obniżony do 130–145 Hz z formantami od +0,5 do +2;
 - `levirax@brynn`: zwykły klon Brynn (ok. 227 Hz) obniżony do 145–175 Hz z barwą ciemniejszą o 1–3 półtony;
 - `levirax@mix`: klon połączonej referencji. Nagrania narratora i Brynn są zbliżone wysokością i barwą, a potem sklejone w jedną referencję z połączoną transkrypcją. Są dwa takie połączenia z odwrotną kolejnością i różnym punktem spotkania. Wysokość gotowego nagrania jest wyrównana do 145 albo 160 Hz.
+
+Runda 10 (`voice_designs_e20_r10.json`): w rundzie 9 wszystkie głosy były zbyt piskliwe i robotyczne, więc klon zmieniony na kobiecy odpada. Teraz jest pięć nowych profili OmniVoice bez klonu i bez obróbki, każdy z własnym opisem, zdaniem w stylu postaci i tempem. Na stronie są po dwa ziarna z każdego profilu:
+- `levirax@krolowa`: `female, elderly, low pitch`, wolno (10,5 zn./s), dostojna władczyni;
+- `levirax@furia`: `female, middle-aged, very low pitch`, szybciej (13,5 zn./s), gniew i krzyk;
+- `levirax@arystokratka`: `female, middle-aged, low pitch, british accent`, chłodna pogarda;
+- `levirax@obca`: `female, elderly, very low pitch, russian accent`, obca, prastara istota;
+- `levirax@drapiezna`: `female, young adult, low pitch`, kusząca groźba drapieżnika.
+
+Akcent to nowa oś opisu OmniVoice: wcześniejsze rundy różniły się tylko wiekiem i wysokością. Projekty bez klonu mają 172–245 Hz (naturalna kobieca wysokość), a na stronę idą najniższe ziarna profilu (`prefer_low`): furia i arystokratka ok. 172–182 Hz, obca 180–195 Hz, królowa i drapieżniczka 214–245 Hz.

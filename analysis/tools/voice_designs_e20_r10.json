@@ -1,0 +1,102 @@
+{
+ "levirax@krolowa": {
+  "g": "female",
+  "kind": "new",
+  "voice": "levirax",
+  "title": "Levirax 1: prastara królowa",
+  "instructs": [
+   "female, elderly, low pitch"
+  ],
+  "seeds": [
+   211,
+   433,
+   617,
+   829
+  ],
+  "picks": 2,
+  "prefer_low": true,
+  "cps": 10.5,
+  "text": "Tysiąc lat patrzyłam, jak wasze królestwa rosną i upadają. Wasze miecze to dla mnie igły, a wasze krzyki... muzyka. Klęknijcie, póki jeszcze macie kolana.",
+  "note": "runda 9: wszystkie głosy zbyt piskliwe i robotyczne (klony po zmianie płci); runda 10: pięć nowych profili bez klonu, stara, dostojna władczyni: wolno, z namaszczeniem"
+ },
+ "levirax@furia": {
+  "g": "female",
+  "kind": "new",
+  "voice": "levirax",
+  "title": "Levirax 2: wściekła smoczyca",
+  "instructs": [
+   "female, middle-aged, very low pitch"
+  ],
+  "seeds": [
+   223,
+   449,
+   631,
+   839
+  ],
+  "picks": 2,
+  "prefer_low": true,
+  "cps": 13.5,
+  "text": "Dość! Śmiecie wkraczać do mojego leża?! Spalę was na popiół, a wasze kości rozrzucę po górach!",
+  "note": "runda 9: wszystkie głosy zbyt piskliwe i robotyczne (klony po zmianie płci); runda 10: pięć nowych profili bez klonu, gniew i krzyk, szybciej, najniższy głos kobiecy"
+ },
+ "levirax@arystokratka": {
+  "g": "female",
+  "kind": "new",
+  "voice": "levirax",
+  "title": "Levirax 3: wyniosła arystokratka",
+  "instructs": [
+   "female, middle-aged, low pitch, british accent"
+  ],
+  "seeds": [
+   227,
+   457,
+   641,
+   853
+  ],
+  "picks": 2,
+  "prefer_low": true,
+  "cps": 12.0,
+  "text": "Doprawdy, cóż za żałosne przedstawienie. Przybyliście tu po chwałę, a znajdziecie jedynie moją obojętność.",
+  "note": "runda 9: wszystkie głosy zbyt piskliwe i robotyczne (klony po zmianie płci); runda 10: pięć nowych profili bez klonu, chłodna pogarda, spokojnie, obcy (brytyjski) akcent"
+ },
+ "levirax@obca": {
+  "g": "female",
+  "kind": "new",
+  "voice": "levirax",
+  "title": "Levirax 4: obca, prastara istota",
+  "instructs": [
+   "female, elderly, very low pitch, russian accent"
+  ],
+  "seeds": [
+   229,
+   461,
+   643,
+   857
+  ],
+  "picks": 2,
+  "prefer_low": true,
+  "cps": 11.0,
+  "text": "Pamiętam czasy, gdy wasi przodkowie kryli się w jaskiniach przed moim cieniem. Nic się nie zmieniło.",
+  "note": "runda 9: wszystkie głosy zbyt piskliwe i robotyczne (klony po zmianie płci); runda 10: pięć nowych profili bez klonu, niepokojąca obcość: bardzo nisko, ciężki wschodni akcent"
+ },
+ "levirax@drapiezna": {
+  "g": "female",
+  "kind": "new",
+  "voice": "levirax",
+  "title": "Levirax 5: drapieżniczka w sile wieku",
+  "instructs": [
+   "female, young adult, low pitch"
+  ],
+  "seeds": [
+   233,
+   463,
+   647,
+   859
+  ],
+  "picks": 2,
+  "prefer_low": true,
+  "cps": 12.5,
+  "text": "Śmiało, podejdźcie bliżej. Lubię, gdy ofiara myśli, że ma jakąkolwiek szansę.",
+  "note": "runda 9: wszystkie głosy zbyt piskliwe i robotyczne (klony po zmianie płci); runda 10: pięć nowych profili bez klonu, młodsza, kusząca groźba: drapieżnik bawiący się ofiarą"
+ }
+}
