@@ -289,6 +289,13 @@ def problems(e, sim_median):
     return out
 
 
+def load_rejected():
+    """E21 (D115): podejścia odrzucone w odsłuchu, {fragment: [podejścia]} z rejected.json wydania. Select daje im
+    uwagę 'odsluch', więc wybiera inne podejście i zleca ponowne, jak przy uwadze automatu."""
+    p = os.path.join(paths.AUDIO, 'rejected.json')
+    return json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
+
+
 def own_engine(e):
     """Podejście pochodzi z silnika, który czyta ten głos (D80)."""
     return D.take_engine(e['take']) == D.engine(e['voice'])
@@ -317,9 +324,10 @@ def select():
                 sims.setdefault(ref_key(e['voice'], D.take_engine(e['take'])), []).append(e['sim'])
     sim_median = {v: statistics.median(s) for v, s in sims.items()}
     choice, retake = {}, {}
+    rejected = load_rejected()
     for fid, es in by_frag.items():
         for e in es:
-            e['problems'] = problems(e, sim_median)
+            e['problems'] = problems(e, sim_median) + (['odsluch'] if e['take'] in rejected.get(fid, ()) else [])
         # Przy tych samych uwagach wygrywa podejście sprawdzone Whisperem (D96).
         best = min(es, key=lambda e: (len(e['problems']) > 0, e.get('asr') is None, round(e['cer'] / 0.02),
                                       -(e['sim'] or 0), e['take']))

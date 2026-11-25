@@ -32,7 +32,17 @@ class Response(io.BytesIO):
 def test_engine_mapping():
     assert D.engine('adelynn') == 'elevenlabs' and D.engine('narrator') == 'omnivoice' and D.engine('brynn') == 'omnivoice'
     assert D.take_engine(1) == 'omnivoice' and D.take_engine(D.ELEVEN_TAKE0 + 1) == 'elevenlabs'
-    assert len(D.ELEVEN_VOICES) == 28 and len(D.ELEVEN_VOICES_E14) == 17     # E13: 11, E14: 17 nowych (D95)
+    # E13: 11, E14: 17 nowych (D95), D116: głos zastępczy Levirax w akcie 1
+    assert len(D.ELEVEN_VOICES) == 29 and len(D.ELEVEN_VOICES_E14) == 17
+
+
+def test_part_voice_only_in_prefixed_groups_of_release():
+    """D116: Levirax w akcie 1 m4 czyta głos zastępczy ElevenLabs ze stylem i efektem; akt 2 i inne wydania bez zmian."""
+    assert D.part_voice('levirax', 'a1_q10', 'm4') == 'levirax_e'
+    assert D.part_voice('levirax', 'a2_q7', 'm4') == 'levirax' and D.part_voice('levirax', 'a1_q10', 'm3') == 'levirax'
+    assert D.part_voice('narrator', 'a1_q10', 'm4') == 'narrator'
+    assert D.engine('levirax_e') == 'elevenlabs' and D.engine('levirax') == 'omnivoice'
+    assert D.FX['levirax_e'] == 'dragon_e' and D.ELEVEN_STYLE['levirax_e']['speed'] == 0.75
 
 
 def test_jobs_split_between_engines(tmp_path):
@@ -132,6 +142,20 @@ def test_select_prefers_engine_of_voice(tmp_path, monkeypatch):
     assert choice['a3']['take'] == 101 and 'koncowka' in choice['a3']['problems']
     assert retake == {'a3': [102, 0.9], 'n1': [2, 1.1]}
     assert choice['n1']['take'] == 1 and choice['n1']['takes'] == 1
+
+
+def test_select_rejected_takes_get_retake(tmp_path, monkeypatch):
+    """E21 (D115): podejście odrzucone w odsłuchu (rejected.json) przegrywa i dostaje ponowne podejście."""
+    fragments_db(tmp_path / 'm4.sqlite', [('w1', 'narrator'), ('w2', 'narrator')]).close()
+    monkeypatch.setattr(paths, 'DB', str(tmp_path / 'm4.sqlite'))
+    monkeypatch.setattr(paths, 'AUDIO', str(tmp_path))
+    rows = [ev('w1', 1, 'narrator', sim=0.95), ev('w2', 1, 'narrator'), ev('w2', 2, 'narrator', sim=0.89)]
+    with open(tmp_path / 'evals.jsonl', 'w', encoding='utf-8') as fh:
+        fh.writelines(json.dumps(r, ensure_ascii=False) + '\n' for r in rows)
+    (tmp_path / 'rejected.json').write_text(json.dumps({'w1': [1], 'w2': [1]}), encoding='utf-8')
+    choice, retake = evaluate.select()
+    assert choice['w1']['problems'] == ['odsluch'] and retake['w1'] == [2, 1.2]
+    assert choice['w2']['take'] == 2 and not choice['w2']['problems'] and 'w2' not in retake
 
 
 def test_levirax_style_tags_and_settings(tmp_path, monkeypatch):

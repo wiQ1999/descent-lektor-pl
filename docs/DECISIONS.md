@@ -1238,6 +1238,16 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** QA 2026-11-20 po odsłuchu zestawienia. Zmiany w ElevenLabs nie mieszczą się w limicie bieżącego okresu.
 
+### D116 · 2026-11-25 · E21: generowanie całej gry po zmianach obsady
+**Decyzja:**
+- Kompletny akt 1, w tym Levirax w nowym głosie ElevenLabs (6 fragmentów Q10). Głos zastępczy `levirax_e` w grupach `a1_` (`direction.RECAST_PART`, `part_voice`) ma silnik, styl i efekt wyboru z `RECAST_LATER`.
+- W akcie 2 Levirax i pozostałe głosy ElevenLabs zostają bez zmian. Uzupełniamy tylko braki, czyli ponowne podejścia po ocenie, w limicie klucza API (ok. 2,2 tys. kredytów). Nowe profile ElevenLabs wybrane do poprawy (Levirax, Laurel, L'trand, Veta) generujemy w akcie 2 po odnowieniu limitu 2026-12-15.
+- Tempo z D115 jest w budowie bazy m4: narracja scen narratora `SCENE_SPEED` 1,4, Vaerix `VOICE_SPEED` 1,2× (`direction.TEMPO_E21`). Zmiana daje 2143 nowe fragmenty (ok. 309 tys. znaków podejść).
+- Fragmenty z błędem w odsłuchu (krok 4) mają podejścia w `audio/m4/rejected.json`. `select` daje im uwagę `odsluch`, więc wybiera inne podejście i zleca ponowne w zwykłych rundach.
+- Przebieg: generowanie, ocena Whisperem fp32 całej gry, trzy rundy i rundy dodatkowe ponownych podejść, `finalize`. Po komplecie bez uwag automatu scalenie z `main` i wydanie.
+
+**Uzasadnienie:** Polecenie użytkownika 2026-11-25. Kontrola przed generowaniem: przebudowa bazy nie zmieniła liczby kwestii (13 939) ani segmentów, a poza nowymi fragmentami E21 każdy fragment ma podejście.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

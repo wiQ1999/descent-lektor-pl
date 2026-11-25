@@ -39,6 +39,23 @@ ELEVEN_TAKE0 = 100      # podejścia ElevenLabs mają numery od 101; podejścia 
 # E21 (D115): efekt na audio głosu (lektor.effects), wypalany przez finalize w pliku końcowym; wybór z odsłuchu.
 FX = {'kathryn': 'ghost_c2', 'nv_q13_smok': 'ghost_c2', 'nv_baelziffar': 'ghost_b2', 'nv_q12_duch': 'ghost_c2'}
 
+# E21 (D116): wybór z RECAST_LATER włączony już teraz w części gry. Kwestie grup o przedrostku czyta głos zastępczy
+# (silnik ElevenLabs, styl i efekt wybranego głosu); reszta zostaje przy obecnym głosie do kolejnego generowania.
+RECAST_PART = {'levirax': ('a1_', 'levirax_e')}     # akt 1 (Q10); akt 2 po odnowieniu limitu ElevenLabs
+RECAST_PART_RELEASES = ('m4',)
+for _voice, (_prefix, _alias) in RECAST_PART.items():
+    ELEVEN_VOICES[_alias] = RECAST_LATER[_voice][0]
+    ELEVEN_STYLE[_alias] = ELEVEN_STYLE[_voice]
+    FX[_alias] = RECAST_LATER[_voice][2]
+
+
+def part_voice(voice, group, release):
+    """Głos kwestii w grupie: zastępczy z RECAST_PART, gdy grupa ma jego przedrostek (tylko RECAST_PART_RELEASES)."""
+    part = RECAST_PART.get(voice)
+    if part and release in RECAST_PART_RELEASES and (group or '').startswith(part[0]):
+        return part[1]
+    return voice
+
 
 def engine(voice):
     if paths.RELEASE in paths.LOCAL_ONLY:
@@ -56,6 +73,18 @@ PAUSE = 0.25
 SPEED_MIN, SPEED_MAX = 1.2, 1.4
 SPEED_FROM, SPEED_TO = 80, 300          # znaki: do 80 tempo bazowe, od 300 maksymalne (wstępnie, D34)
 ONE_TEMPO = ('t1', 'm4')   # E16 (D101): narrator w zakresie reguł t1 zawsze SPEED_MAX (poza narracją scen), także luki; m4: cała gra (D107)
+# E21 (D115): w m4 narracja scen narratora ma tempo okien (1,4), a Vaerix 1,2× tempa fragmentu (naturalne liczy się jako 1,0).
+TEMPO_E21 = ('m4',)
+SCENE_SPEED = 1.4
+VOICE_SPEED = {'vaerix': 1.2}
+
+
+def voice_speed(voice, speed, release):
+    """Tempo fragmentu z mnożnikiem głosu (VOICE_SPEED) w wydaniach TEMPO_E21."""
+    factor = VOICE_SPEED.get(voice)
+    if not factor or release not in TEMPO_E21:
+        return speed
+    return round((1.0 if speed is None else speed) * factor, 2)
 
 TOGGLES = {
     'dialog': 'dialogi',

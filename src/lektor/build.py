@@ -224,7 +224,9 @@ def split_voices(records, release):
 
 def piece_speed(r, voice, text, release):
     """Tempo kawałka. E16 (D101): narrator ma jedno tempo (SPEED_MAX) poza narracją scen, a wypowiedź postaci
-    w oknie narratora dostaje tempo od długości samej wypowiedzi."""
+    w oknie narratora dostaje tempo od długości samej wypowiedzi. E21 (D115): narracja scen w m4 w tempie okien."""
+    if voice == 'narrator' and release in D.TEMPO_E21 and r['category'] in D.SCENE_CATEGORIES:
+        return D.SCENE_SPEED
     if r['speed'] is None or release not in D.ONE_TEMPO or not scope.t1_rules(release, r['group']):
         return r['speed']
     if voice == 'narrator':
@@ -249,6 +251,7 @@ def build(path=None, release='m1', only=None):
 
     def frag(voice, text, speed, kind):
         text = text if release == 'm1' else pronounce(text)
+        speed = D.voice_speed(voice, speed, release)    # E21 (D115): Vaerix szybciej
         fid = D.fragment_id(voice_tag(voice, refs), text, speed)
         fragments.setdefault(fid, {'id': fid, 'voice': voice, 'speed': speed, 'text': text, 'kind': kind})
         return fid
@@ -264,6 +267,7 @@ def build(path=None, release='m1', only=None):
         value_speed = None if r['speed'] is None else D.SPEED_MIN
         parts = line_parts(r, base)
         for idx, (kind, voice, data) in enumerate(parts):
+            voice = D.part_voice(voice, r['group'], release)     # D116: głos zastępczy w części gry
             nxt = parts[idx + 1][0] if idx + 1 < len(parts) else None
             gap = None if nxt is None else QUOTE_GAP if kind == 'quote' else \
                 PIECE_GAP if 'slot' in (kind, nxt) else r['pause']

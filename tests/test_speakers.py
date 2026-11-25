@@ -138,6 +138,15 @@ def test_narrator_one_tempo_in_test_release():
     assert B.piece_speed(dict(r, split=[('brynn', 'x')]), 'brynn', 'x' * 40, 't1') == D.tempo('zdarzenie', 40)[0]
 
 
+def test_e21_scene_tempo_and_vaerix_factor_only_in_m4():
+    """E21 (D115): narracja scen narratora w m4 w tempie okien, Vaerix 1,2× tempa fragmentu; t1 i m3 bez zmian."""
+    scene = {'speed': None, 'group': 'a1_q1', 'category': 'narracja_fabularna'}
+    assert B.piece_speed(scene, 'narrator', 'x', 'm4') == D.SCENE_SPEED == 1.4
+    assert B.piece_speed(scene, 'narrator', 'x', 't1') is None and B.piece_speed(scene, 'kehli', 'x', 'm4') is None
+    assert D.voice_speed('vaerix', 1.25, 'm4') == 1.5 and D.voice_speed('vaerix', None, 'm4') == 1.2
+    assert D.voice_speed('vaerix', 1.25, 'm3') == 1.25 and D.voice_speed('brynn', 1.25, 'm4') == 1.25
+
+
 def test_ability_records_from_weapon_and_trinket_models():
     """E16 (D101): nazwy i opisy zdolności broni i talizmanów jako kwestie z przełącznikiem 'zdolnosci'."""
     from lektor import abilities as A
