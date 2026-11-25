@@ -135,12 +135,12 @@ def test_select_prefers_engine_of_voice(tmp_path, monkeypatch):
 
 
 def test_levirax_style_tags_and_settings(tmp_path, monkeypatch):
-    # E20 (D114): Levirax czyta głos ze znacznikami wdechu, wolniej i z własnymi ustawieniami
+    # E21 (D115): Levirax czyta głos ze znacznikami wdechu, wolniej i z własnymi ustawieniami
     t = eleven.tagged('levirax', 'Dość. Idźcie stąd… teraz. Już.')
     assert t == '[long, deep inhale] [slowly, booming] Dość. [deep inhale] Idźcie stąd… teraz. Już.'
     assert eleven.tagged('ronan', TEXT) == TEXT
     vid, tag, fx = D.RECAST_LATER['levirax']
-    assert 'levirax' not in D.ELEVEN_VOICES and 'levirax' not in D.FX and tag == 'D114' and fx == 'dragon_e'
+    assert 'levirax' not in D.ELEVEN_VOICES and 'levirax' not in D.FX and tag == 'D115' and fx == 'dragon_e'
     monkeypatch.setitem(D.ELEVEN_VOICES, 'levirax', vid)     # po włączeniu przy kolejnym generowaniu
     con = fragments_db(tmp_path / 'f.sqlite', [('l1', 'levirax')])
     assert [j[4] for j in eleven.jobs(con)] == [0.75]

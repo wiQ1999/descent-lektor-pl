@@ -75,13 +75,13 @@ def get_json(key, path, opener=urllib.request.urlopen):
 
 
 def voice_settings(voice):
-    """Ustawienia głosu z direction.ELEVEN_STYLE (E20, D114) na tle domyślnych."""
+    """Ustawienia głosu z direction.ELEVEN_STYLE (E21, D115) na tle domyślnych."""
     style = D.ELEVEN_STYLE.get(voice, {})
     return {k: style[k] for k in SETTINGS if k in style and k != 'speed'}
 
 
 def tagged(voice, text):
-    """Tekst dla API: znaczniki audio głosu przed kwestią i po pierwszym zdaniu (E20, D114)."""
+    """Tekst dla API: znaczniki audio głosu przed kwestią i po pierwszym zdaniu (E21, D115)."""
     style = D.ELEVEN_STYLE.get(voice, {})
     if style.get('breath'):
         text = re.sub(r'([.!?…]+)\s+(?=\S)', lambda m: m.group(1) + ' ' + style['breath'] + ' ', text, count=1)

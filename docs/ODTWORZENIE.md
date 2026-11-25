@@ -273,75 +273,75 @@ Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej 
 ```
 
 - Domyślnie zestawienie obejmuje całą grę. Fragmenty spoza paczki (akt 2) mają próbki z podejść o bieżącym id, przycięte i wyrównane jak w `finalize`.
-- Próbki E20 (D114): tempo narracji scen i Vaerixa w dwóch wariantach (nowe generowanie OmniVoice i WSOLA) oraz efekty z `lektor.effects` (duch, głos w głowie). Wynik w `analysis/work/compare/e20_probki/index.html`:
+- Próbki E21 (D115): tempo narracji scen i Vaerixa w dwóch wariantach (nowe generowanie OmniVoice i WSOLA) oraz efekty z `lektor.effects` (duch, głos w głowie). Wynik w `analysis/work/compare/e21_probki/index.html`:
 
 ```bash
-.venv/Scripts/python -I analysis/tools/e20_samples.py pick
+.venv/Scripts/python -I analysis/tools/e21_samples.py pick
 ```
 
 ```bash
-"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/e20_samples.py gen
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/e21_samples.py gen
 ```
 
 ```bash
-.venv/Scripts/python -I analysis/tools/e20_samples.py check
+.venv/Scripts/python -I analysis/tools/e21_samples.py check
 ```
 
 ```bash
-.venv/Scripts/python -I analysis/tools/e20_samples.py page
+.venv/Scripts/python -I analysis/tools/e21_samples.py page
 ```
 
-- Kandydaci głosów E20 (D114): profile w `analysis/tools/voice_designs_e20.json` (nowe głosy, poprawki jakości, klony Ne'Krul i Levirax, odszumiona referencja Gilliama). Każdy kandydat czyta też kwestię z gry. Strona `analysis/work/compare/e20_recast/index.html`, wybór przejmuje `adopt` (litera A–C, `-` bez zmian):
+- Kandydaci głosów E21 (D115): profile w `analysis/tools/voice_designs_e21.json` (nowe głosy, poprawki jakości, klony Ne'Krul i Levirax, odszumiona referencja Gilliama). Każdy kandydat czyta też kwestię z gry. Strona `analysis/work/compare/e21_recast/index.html`, wybór przejmuje `adopt` (litera A–C, `-` bez zmian):
 
 ```bash
-"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/recast_e20.py design
-```
-
-```bash
-.venv/Scripts/python -I analysis/tools/recast_e20.py choose
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/recast_e21.py design
 ```
 
 ```bash
-"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/recast_e20.py lines
+.venv/Scripts/python -I analysis/tools/recast_e21.py choose
 ```
 
 ```bash
-.venv/Scripts/python -I analysis/tools/recast_e20.py page
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/recast_e21.py lines
 ```
 
 ```bash
-.venv/Scripts/python -I analysis/tools/recast_e20.py adopt nv_x=B gilliam=A nv_y=-
-```
-
-- Runda 2 E20: te same kroki z `--round 2`, profile w `analysis/tools/voice_designs_e20_r2.json` (czyste projekty bez obróbki referencji, `keep` z rundy 1, klon z opisem w `clone_instructs`), wyniki w `analysis/work/compare/e20_recast/r2/`. Grupy wrogów o tej samej nazwie (`_groups`: jeden głos dla członków) mają własną stronę `r2/grupy.html`, a wybór numeru opcji przejmuje `group-adopt`:
-
-```bash
-.venv/Scripts/python -I analysis/tools/recast_e20.py group-plan --round 2
+.venv/Scripts/python -I analysis/tools/recast_e21.py page
 ```
 
 ```bash
-"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/recast_e20.py group-lines --round 2
+.venv/Scripts/python -I analysis/tools/recast_e21.py adopt nv_x=B gilliam=A nv_y=-
+```
+
+- Runda 2 E21: te same kroki z `--round 2`, profile w `analysis/tools/voice_designs_e21_r2.json` (czyste projekty bez obróbki referencji, `keep` z rundy 1, klon z opisem w `clone_instructs`), wyniki w `analysis/work/compare/e21_recast/r2/`. Grupy wrogów o tej samej nazwie (`_groups`: jeden głos dla członków) mają własną stronę `r2/grupy.html`, a wybór numeru opcji przejmuje `group-adopt`:
+
+```bash
+.venv/Scripts/python -I analysis/tools/recast_e21.py group-plan --round 2
 ```
 
 ```bash
-.venv/Scripts/python -I analysis/tools/recast_e20.py group-page --round 2
+"$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe" -I analysis/tools/recast_e21.py group-lines --round 2
 ```
 
 ```bash
-.venv/Scripts/python -I analysis/tools/recast_e20.py group-adopt --round 2 bandyta=3 hybryda=1
+.venv/Scripts/python -I analysis/tools/recast_e21.py group-page --round 2
 ```
 
-- Runda 3 E20: kroki `design`, `choose`, `lines`, `page`, `adopt` z `--round 3`, profile w `analysis/tools/voice_designs_e20_r3.json`, wyniki w `analysis/work/compare/e20_recast/r3/`. Rodzaj `like` daje kobiecy głos dla grupy wrogów o głosie `src`: klon referencji `src` po zmianie płci (`regender`: wysokość metodą PSOLA do mediany `f0`, potem formanty o `formant` półtonów, bez nowych pakietów) i nowe projekty kobiece, a na stronę idą klon i projekt najbliżej barwy `src`. Sam opis kobiecy przy klonie OmniVoice nie zmienia płci (F0 zostaje męskie). Pole `cps` w profilu zwalnia projekt (domyślnie 12,5 znaku na sekundę). `choose` omija kandydatów zbyt podobnych do odrzuconych we wszystkich wcześniejszych rundach.
-- Runda 4 E20: te same kroki z `--round 4`, profile w `analysis/tools/voice_designs_e20_r4.json`, wyniki w `analysis/work/compare/e20_recast/r4/`. Profil może podać własne ziarna (`seeds`) i liczbę kandydatur na stronie (`picks`, domyślnie 3).
-- Runda 5 E20: `--round 5`, profile w `analysis/tools/voice_designs_e20_r5.json`, wyniki w `analysis/work/compare/e20_recast/r5/`. Rodzaj `like` z pustym `instructs` daje same klony `src` po zmianie płci, po jednej kandydaturze na wariant `regender` (wariant może mieć `instruct`, `cps` profilu zwalnia klon). `post_regender` daje zwykły klon `src` ze zmianą płci na gotowym nagraniu (także w kwestii z gry w `lines`), `f0_min` podnosi dolny próg wysokości, a `voiced_min` (domyślnie 0,35) odrzuca szept.
-- Runda 6 E20: `--round 6`, profil w `analysis/tools/voice_designs_e20_r6.json`, wyniki w `analysis/work/compare/e20_recast/r6/`. Wariant zmiany płci z `method: grain` przesuwa formanty ściśniętymi ziarnami PSOLA (bez `librosa.pitch_shift`). `per_variant` ustala liczbę ziaren na wariant `post_regender` na stronie.
-- Runda 7 E20: `--round 7`, profil w `analysis/tools/voice_designs_e20_r7.json`, wyniki w `analysis/work/compare/e20_recast/r7/`. `method: resample` przyspiesza nagranie o 2^(formant/12) i wraca do czasu przez PSOLA ze znacznikami po korelacji. `own_line_seed` czyta kwestię z gry na ziarnie kandydata, a kandydaci kolejnych wariantów nie powtarzają ziaren. `keep_rejected_timbre` wyłącza filtr barwy odrzuconych kandydatów, gdy odrzucenie dotyczyło obróbki, a nie barwy.
-- Runda 8 E20: `--round 8`, profil w `analysis/tools/voice_designs_e20_r8.json`, wyniki w `analysis/work/compare/e20_recast/r8/`. Surowy klon `post_regender` dla ziarna zapisuje się raz (`*_raw_s<ziarno>_<skrót>.wav`) i służy wszystkim wariantom.
-- Runda 9 E20: `--round 9`, profile w `analysis/tools/voice_designs_e20_r9.json`, wyniki w `analysis/work/compare/e20_recast/r9/`. Kilka profili jednej postaci ma klucze `postać@profil` z polem `voice` (portret, opis, obecny głos i kwestia z gry są postaci) oraz `title` na stronie. `mix` skleja referencje kilku głosów (`parts`: głos, F0, formanty) w jedną (`*_mix<n>.wav`), a `near` podaje głosy źródłowe na stronie. Ujemne `formant` przy `method: resample` przyciemnia barwę.
-- Runda 10 E20: `--round 10`, profile w `analysis/tools/voice_designs_e20_r10.json`, wyniki w `analysis/work/compare/e20_recast/r10/`. Pięć profili `new` jednej postaci (`levirax@…`), opis OmniVoice może zawierać akcent (np. `british accent`). `prefer_low` wybiera na stronę najniższe ziarna profilu zamiast najdalszych od obsady.
-- Runda 11 E20: `--round 11`, profile w `analysis/tools/voice_designs_e20_r11.json`, wyniki w `analysis/work/compare/e20_recast/r11/`. Obróbka `fx` może mieć `serpent` (nazwa efektu z `lektor.effects`). `fx_only` daje na stronę tylko warianty z obróbką, a `fx_final` pokazuje kwestię z gry z efektem.
-- Runda 12 E20: `--round 12`, profil w `analysis/tools/voice_designs_e20_r12.json`, wyniki w `analysis/work/compare/e20_recast/r12/`. `fx_order` daje na stronę wszystkie warianty obróbki w kolejności z profilu, `label` wariantu opisuje go na stronie, a `lower` obniża referencję o podaną liczbę półtonów bez zmiany formantów.
-- Runda 13 E20: `--round 13`, profil w `analysis/tools/voice_designs_e20_r13.json`, wyniki w `analysis/work/compare/e20_recast/r13/`. `deepen` (`f0`, `formant`) obniża wysokość i formanty referencji bez wokodera fazowego (`regender` `resample`), a `dark` przytłumia górę i wzmacnia dół.
+```bash
+.venv/Scripts/python -I analysis/tools/recast_e21.py group-adopt --round 2 bandyta=3 hybryda=1
+```
+
+- Runda 3 E21: kroki `design`, `choose`, `lines`, `page`, `adopt` z `--round 3`, profile w `analysis/tools/voice_designs_e21_r3.json`, wyniki w `analysis/work/compare/e21_recast/r3/`. Rodzaj `like` daje kobiecy głos dla grupy wrogów o głosie `src`: klon referencji `src` po zmianie płci (`regender`: wysokość metodą PSOLA do mediany `f0`, potem formanty o `formant` półtonów, bez nowych pakietów) i nowe projekty kobiece, a na stronę idą klon i projekt najbliżej barwy `src`. Sam opis kobiecy przy klonie OmniVoice nie zmienia płci (F0 zostaje męskie). Pole `cps` w profilu zwalnia projekt (domyślnie 12,5 znaku na sekundę). `choose` omija kandydatów zbyt podobnych do odrzuconych we wszystkich wcześniejszych rundach.
+- Runda 4 E21: te same kroki z `--round 4`, profile w `analysis/tools/voice_designs_e21_r4.json`, wyniki w `analysis/work/compare/e21_recast/r4/`. Profil może podać własne ziarna (`seeds`) i liczbę kandydatur na stronie (`picks`, domyślnie 3).
+- Runda 5 E21: `--round 5`, profile w `analysis/tools/voice_designs_e21_r5.json`, wyniki w `analysis/work/compare/e21_recast/r5/`. Rodzaj `like` z pustym `instructs` daje same klony `src` po zmianie płci, po jednej kandydaturze na wariant `regender` (wariant może mieć `instruct`, `cps` profilu zwalnia klon). `post_regender` daje zwykły klon `src` ze zmianą płci na gotowym nagraniu (także w kwestii z gry w `lines`), `f0_min` podnosi dolny próg wysokości, a `voiced_min` (domyślnie 0,35) odrzuca szept.
+- Runda 6 E21: `--round 6`, profil w `analysis/tools/voice_designs_e21_r6.json`, wyniki w `analysis/work/compare/e21_recast/r6/`. Wariant zmiany płci z `method: grain` przesuwa formanty ściśniętymi ziarnami PSOLA (bez `librosa.pitch_shift`). `per_variant` ustala liczbę ziaren na wariant `post_regender` na stronie.
+- Runda 7 E21: `--round 7`, profil w `analysis/tools/voice_designs_e21_r7.json`, wyniki w `analysis/work/compare/e21_recast/r7/`. `method: resample` przyspiesza nagranie o 2^(formant/12) i wraca do czasu przez PSOLA ze znacznikami po korelacji. `own_line_seed` czyta kwestię z gry na ziarnie kandydata, a kandydaci kolejnych wariantów nie powtarzają ziaren. `keep_rejected_timbre` wyłącza filtr barwy odrzuconych kandydatów, gdy odrzucenie dotyczyło obróbki, a nie barwy.
+- Runda 8 E21: `--round 8`, profil w `analysis/tools/voice_designs_e21_r8.json`, wyniki w `analysis/work/compare/e21_recast/r8/`. Surowy klon `post_regender` dla ziarna zapisuje się raz (`*_raw_s<ziarno>_<skrót>.wav`) i służy wszystkim wariantom.
+- Runda 9 E21: `--round 9`, profile w `analysis/tools/voice_designs_e21_r9.json`, wyniki w `analysis/work/compare/e21_recast/r9/`. Kilka profili jednej postaci ma klucze `postać@profil` z polem `voice` (portret, opis, obecny głos i kwestia z gry są postaci) oraz `title` na stronie. `mix` skleja referencje kilku głosów (`parts`: głos, F0, formanty) w jedną (`*_mix<n>.wav`), a `near` podaje głosy źródłowe na stronie. Ujemne `formant` przy `method: resample` przyciemnia barwę.
+- Runda 10 E21: `--round 10`, profile w `analysis/tools/voice_designs_e21_r10.json`, wyniki w `analysis/work/compare/e21_recast/r10/`. Pięć profili `new` jednej postaci (`levirax@…`), opis OmniVoice może zawierać akcent (np. `british accent`). `prefer_low` wybiera na stronę najniższe ziarna profilu zamiast najdalszych od obsady.
+- Runda 11 E21: `--round 11`, profile w `analysis/tools/voice_designs_e21_r11.json`, wyniki w `analysis/work/compare/e21_recast/r11/`. Obróbka `fx` może mieć `serpent` (nazwa efektu z `lektor.effects`). `fx_only` daje na stronę tylko warianty z obróbką, a `fx_final` pokazuje kwestię z gry z efektem.
+- Runda 12 E21: `--round 12`, profil w `analysis/tools/voice_designs_e21_r12.json`, wyniki w `analysis/work/compare/e21_recast/r12/`. `fx_order` daje na stronę wszystkie warianty obróbki w kolejności z profilu, `label` wariantu opisuje go na stronie, a `lower` obniża referencję o podaną liczbę półtonów bez zmiany formantów.
+- Runda 13 E21: `--round 13`, profil w `analysis/tools/voice_designs_e21_r13.json`, wyniki w `analysis/work/compare/e21_recast/r13/`. `deepen` (`f0`, `formant`) obniża wysokość i formanty referencji bez wokodera fazowego (`regender` `resample`), a `dark` przytłumia górę i wzmacnia dół.
 
 - Zmiany obsady po odsłuchu (D109): kandydaci OmniVoice (dwa opisy, dwa ziarna, wariant z obróbką) i podglądy ElevenLabs na jednej stronie `analysis/work/compare/m4_recast/index.html`. Wybór z odsłuchu przejmuje `adopt` (litera A–C, `-` bez zmian), nowe profile ElevenLabs wpisujemy do `direction.ELEVEN_RECAST`, potem `build --release m4`:
 

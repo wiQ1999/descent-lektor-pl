@@ -496,11 +496,11 @@ Skróty klawiszowe, przycisk „PL” z menu lektora na dolnym pasku, tempo 0,8�
 
 Starter `instaluj-win.ps1` i instalator `instalator-win.ps1` (`src/bundle/online/`), części paczki z manifestem (`lektor bundle --parts`). Próba lokalna na Windows zrobiona 2026-11-19. 2026-11-20: sprawdzenie innej instalacji przed pobraniem, instrukcja, zasady wydania (zwykłe, z kompletem części), test użytkownika z lokalnego serwera (`docs/E19_WIN_TEST.md`) przeszedł. Instalator Maca (`curl … | bash`) zrobiony i sprawdzony z atrapami; części obu systemów we wspólnym `dist/online/`. Po przeglądzie paczki Windows (D112): bez skryptów `Ustawienia` i `Wyłącz/Włącz lektora`, instrukcja przycięta do systemu, części wspólne paczek w `dist/wspolne/`. Dalej: test na Macu, pierwsze wydanie z instalatorem (lista kontrolna w `docs/ODTWORZENIE.md`).
 
-## E20 · Poprawki obsady po drugim odsłuchu (D114)
+## E21 · Poprawki obsady po drugim odsłuchu (D115)
 
 Cel: zmiany i poprawki 60 głosów z odsłuchu zestawienia całej gry `m4_cast` (2026-11-20) w akcie 1, akcie 2 i częściach wspólnych. Pełna lista uwag leży w `analysis/work/compare/m4_cast/uwagi_2026-11-20.txt` w worktree `.claude/worktrees/game-character-voice-analysis-0ff4e5` (poza Git, początki kwestii z gry).
-1. Tempo (zrobione, D114): narracja scen narratora z tempem 1,4 i Vaerix z tempem fragmentu × 1,2 przez nowe generowanie OmniVoice (próbki obu wariantów w `analysis/tools/e20_samples.py`).
-2. Efekty na audio (zrobione, D114): `lektor.effects` wypalany w `finalize` według `direction.FX`. Kathryn i smok-duch z Q13: widmo słabiej (`ghost_c2`), Baelziffar: z zaświatów słabiej (`ghost_b2`).
+1. Tempo (zrobione, D115): narracja scen narratora z tempem 1,4 i Vaerix z tempem fragmentu × 1,2 przez nowe generowanie OmniVoice (próbki obu wariantów w `analysis/tools/e21_samples.py`).
+2. Efekty na audio (zrobione, D115): `lektor.effects` wypalany w `finalize` według `direction.FX`. Kathryn i smok-duch z Q13: widmo słabiej (`ghost_c2`), Baelziffar: z zaświatów słabiej (`ghost_b2`).
 3. Kandydaci OmniVoice jak w D109: dla każdego głosu trzy wyraźnie różne kandydatury i obecny głos na stronie odsłuchu.
    - Nowy głos (31): Levirax (za podobny do narratora), smok-duch z Q13 (bez opisu ducha), Siostra krwi (klon Ne'Krul z obróbką) i mówcy bez imienia oznaczeni jako generyczni albo niepasujący do postaci (bossowie, smoki, ork, kobieta zamiast szeptu).
    - Ten sam profil, lepsza jakość (19): nowe ziarna i oczyszczona referencja dla szeptu, robotycznego brzmienia, echa, nosowego brzmienia, szelestu (Gilliam), słabej jakości oraz okrzyków za mało dynamicznych.
@@ -522,7 +522,7 @@ Cel: zmiany i poprawki 60 głosów z odsłuchu zestawienia całej gry `m4_cast` 
 6. Generowanie zmienionych głosów w całej grze, ocena, ponowne podejścia, `finalize` z efektami i tempem z kroku 1, zestawienie `m4_cast` do kontroli.
 7. Paczka z aktem 1 i częściami wspólnymi jako aktualizacja (instalator pobiera tylko zmienione części), wydanie po Twojej akceptacji.
 
-Poza E20 (po odnowieniu limitu ElevenLabs 2026-12-15): nowe profile Laurel (mniej dziecięcy) i L'trand (kobieta czarnoskóra) oraz chropowatsza Veta (jak u orka).
+Poza E21 (po odnowieniu limitu ElevenLabs 2026-12-15): nowe profile Laurel (mniej dziecięcy) i L'trand (kobieta czarnoskóra) oraz chropowatsza Veta (jak u orka).
 
 **Kryteria ukończenia:** wybrane głosy w `refs.json` i `docs/CASTING.md`, wszystkie kwestie aktu 1 i części wspólnych z pełnym audio (`release_coverage.py`), testy przechodzą, zestawienie po zmianach, paczki zbudowane, commit.
 

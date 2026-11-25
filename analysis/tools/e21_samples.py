@@ -1,4 +1,4 @@
-"""Próbki E20 (D114) do odsłuchu: tempo narracji scen i Vaerixa oraz warianty efektów (lektor.effects).
+"""Próbki E21 (D115) do odsłuchu: tempo narracji scen i Vaerixa oraz warianty efektów (lektor.effects).
 
 Tempo w dwóch wariantach obok obecnego nagrania:
 - model: OmniVoice czyta od nowa; narracja scen z tempem 1,4 jak okna narratora, Vaerix z tempem fragmentu × 1,2;
@@ -6,11 +6,11 @@ Tempo w dwóch wariantach obok obecnego nagrania:
   do scen w akcie 1, Vaerix × 1,2.
 Efekty: duch (Kathryn, smok z Q13) i głos w głowie (Baelziffar) na gotowych plikach aktu 1.
 
-    .venv/Scripts/python -I analysis/tools/e20_samples.py pick
-    <omni> -I analysis/tools/e20_samples.py gen        # <omni> = "$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe"
-    .venv/Scripts/python -I analysis/tools/e20_samples.py page [--effects]     # --effects: tylko efekty (runda 2)
+    .venv/Scripts/python -I analysis/tools/e21_samples.py pick
+    <omni> -I analysis/tools/e21_samples.py gen        # <omni> = "$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe"
+    .venv/Scripts/python -I analysis/tools/e21_samples.py page [--effects]     # --effects: tylko efekty (runda 2)
 
-Wyniki w analysis/work/compare/e20_probki/ (poza Git). Na konsolę idą tylko liczby.
+Wyniki w analysis/work/compare/e21_probki/ (poza Git). Na konsolę idą tylko liczby.
 """
 import collections
 import html
@@ -24,7 +24,7 @@ from lektor import db, paths, progress  # noqa: E402
 if os.environ.get('LEKTOR_WORK'):      # uruchomienie z worktree: referencje i audio leżą w głównej kopii
     paths.ROOT = os.path.dirname(os.path.dirname(os.path.abspath(paths.WORK)))
 paths.use('m4')
-OUT = os.path.join(paths.WORK, 'compare', 'e20_probki')
+OUT = os.path.join(paths.WORK, 'compare', 'e21_probki')
 PICKS = os.path.join(OUT, 'picks.json')
 VAERIX_FACTOR = 1.2
 SCENE_SPEED = 1.4
@@ -125,7 +125,7 @@ def check():
 
 PAGE = '''<!doctype html>
 <html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Próbki E20</title>
+<title>Próbki E21</title>
 <style>
 :root {{ --bg:#fafaf8; --card:#fff; --fg:#1d1d1b; --muted:#6b6b66; --line:#e4e2dc; --accent:#8a3b12; }}
 @media (prefers-color-scheme: dark) {{ :root {{ --bg:#18181a; --card:#222225; --fg:#ececea; --muted:#a3a39d; --line:#34343a; --accent:#f0a46c; }} }}
@@ -141,7 +141,7 @@ p.lead, .meta {{ color:var(--muted); font-size:13px; }}
 audio {{ width:100%; max-width:440px; height:32px; }}
 @media (max-width:600px) {{ .row {{ grid-template-columns:1fr; gap:2px; }} }}
 </style></head><body><main>
-<h1>Próbki E20: tempo i efekty</h1>
+<h1>Próbki E21: tempo i efekty</h1>
 <p class="lead">{lead}</p>
 {body}
 </main><script>

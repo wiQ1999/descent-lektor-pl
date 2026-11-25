@@ -1,6 +1,6 @@
-"""Kandydaci głosów E20 (D114) po odsłuchu całej gry: nowe głosy, poprawki jakości, klony i oczyszczona referencja.
+"""Kandydaci głosów E21 (D115) po odsłuchu całej gry: nowe głosy, poprawki jakości, klony i oczyszczona referencja.
 
-Profile w analysis/tools/voice_designs_e20.json (rodzaj, opisy OmniVoice, własne zdanie w stylu postaci jak w D41: profil leży w publicznym repo, więc bez tekstu gry; obróbka).
+Profile w analysis/tools/voice_designs_e21.json (rodzaj, opisy OmniVoice, własne zdanie w stylu postaci jak w D41: profil leży w publicznym repo, więc bez tekstu gry; obróbka).
 - new: kilka opisów × dwa ziarna i wariant z obróbką; na stronę idą trzy kandydatury najdalej od całej obsady.
 - fix: ten sam profil bez szeptu, trzy ziarna; kandydatury najbliżej obecnej barwy, z żywszą intonacją.
 - clone: klon referencji `src` (Ne'Krul, Levirax) z obróbką, przy Levirax także projekty.
@@ -23,13 +23,13 @@ Każdy kandydat czyta też kwestię z gry (tę samą co próbka 1 w zestawieniu 
 Strona: portret z gry (postać albo typ wroga), opis, obecny głos i głosy zbyt podobne; wybór A–C, „bez zmian”, „żaden nie pasuje”,
 kandydat „niepoprawny” z uwagą i uwaga do postaci.
 
-    <omni> -I analysis/tools/recast_e20.py design     # <omni> = "$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe"
-    .venv/Scripts/python -I analysis/tools/recast_e20.py choose
-    <omni> -I analysis/tools/recast_e20.py lines
-    .venv/Scripts/python -I analysis/tools/recast_e20.py page
-    .venv/Scripts/python -I analysis/tools/recast_e20.py adopt nv_x=B gilliam=A nv_y=-
+    <omni> -I analysis/tools/recast_e21.py design     # <omni> = "$LOCALAPPDATA/LektorPL/envs/omnivoice/Scripts/python.exe"
+    .venv/Scripts/python -I analysis/tools/recast_e21.py choose
+    <omni> -I analysis/tools/recast_e21.py lines
+    .venv/Scripts/python -I analysis/tools/recast_e21.py page
+    .venv/Scripts/python -I analysis/tools/recast_e21.py adopt nv_x=B gilliam=A nv_y=-
 
-Wyniki w analysis/work/compare/e20_recast/ (poza Git).
+Wyniki w analysis/work/compare/e21_recast/ (poza Git).
 """
 import hashlib
 import html
@@ -48,9 +48,9 @@ if os.environ.get('LEKTOR_WORK'):      # uruchomienie z worktree: referencje i a
 paths.use('m4')
 ROOT = paths.ROOT
 ROUND = int(sys.argv[sys.argv.index('--round') + 1]) if '--round' in sys.argv else 1
-R1 = os.path.join(paths.WORK, 'compare', 'e20_recast')
+R1 = os.path.join(paths.WORK, 'compare', 'e21_recast')
 OUT = R1 if ROUND == 1 else os.path.join(R1, 'r%d' % ROUND)
-_DESIGNS = json.load(open(os.path.join(TOOLS, 'voice_designs_e20%s.json' % ('' if ROUND == 1 else '_r%d' % ROUND)),
+_DESIGNS = json.load(open(os.path.join(TOOLS, 'voice_designs_e21%s.json' % ('' if ROUND == 1 else '_r%d' % ROUND)),
                           encoding='utf-8'))
 VOICES = {k: v for k, v in _DESIGNS.items() if not k.startswith('_')}
 GROUPS = _DESIGNS.get('_groups', {})       # wrogowie o tej samej nazwie: jeden głos wybrany z istniejących
@@ -765,7 +765,7 @@ def page():
             n_cards += len(cards)
     script = """
 <script>
-const KEY='recast-e20';
+const KEY='recast-e21';
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return {}}}
 function store(s){try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}}
 const st=load();
@@ -792,16 +792,16 @@ function copyList(){const lines=[];
   if((s.note||'').trim())t+=' — '+s.note.trim().replace(/\\s+/g,' ');
   lines.push(t);
   Object.entries(s.bad||{}).sort().forEach(([L,b])=>lines.push('  '+L+' niepoprawny'+((b.note||'').trim()?': '+b.note.trim().replace(/\\s+/g,' '):'')))});
- const t='Wybór głosów E20:\\n'+lines.join('\\n');document.getElementById('out').textContent=t;
+ const t='Wybór głosów E21:\\n'+lines.join('\\n');document.getElementById('out').textContent=t;
  try{navigator.clipboard.writeText(t)}catch(e){}}
 count();
 </script>"""
     if ROUND > 1:
-        script = script.replace("KEY='recast-e20'", "KEY='recast-e20-r%d'" % ROUND).replace(
-            'Wybór głosów E20:', 'Wybór głosów E20, runda %d:' % ROUND)
+        script = script.replace("KEY='recast-e21'", "KEY='recast-e21-r%d'" % ROUND).replace(
+            'Wybór głosów E21:', 'Wybór głosów E21, runda %d:' % ROUND)
     rnd = '' if ROUND == 1 else ', runda %d' % ROUND
     doc = ('<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
-           '<title>Głosy E20%s</title><style>%s</style></head><body><h1>Głosy E20: kandydaci%s</h1>'
+           '<title>Głosy E21%s</title><style>%s</style></head><body><h1>Głosy E21: kandydaci%s</h1>'
            '<p class="muted">Postać z portretem z gry i opisem. Każdy kandydat czyta tę samą kwestię z gry co obecny głos '
            '(wyrównaną do −20 LUFS jak w paczce), a pod nią jest zdanie, z którego model zaprojektował głos. Kandydat z dopiskiem „propozycja automatu” to '
            'propozycja automatu: przy nowych głosach najdalej od całej obsady (od rundy 2 także od odrzuconych), przy '
@@ -831,7 +831,7 @@ def adopt(args):
         shutil.copyfile(os.path.join(paths.WORK, c['wav']), wav)
         old = r.get(voice) or {}
         entry = {'wav': paths.rel(wav), 'text': c['text'], 'seconds': round(sf.info(wav).duration, 2),
-                 'source': 'E20 (D114): %s „%s”, ziarno %d, wybór z odsłuchu %s' % (
+                 'source': 'E21 (D115): %s „%s”, ziarno %d, wybór z odsłuchu %s' % (
                      'odszumiona referencja' if VOICES[voice]['kind'] == 'clean' else 'projekt OmniVoice',
                      c['instruct'], c['seed'], letter),
                  'sha': hashlib.sha1(open(wav, 'rb').read()).hexdigest()}
@@ -921,7 +921,7 @@ def group_page():
                  '<textarea class="note" placeholder="Uwaga do grupy (opcjonalnie)"></textarea></div>') % (
             e(g), e(spec['title']), who, quotes, opts, e(g))
     doc = ('<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,'
-           'initial-scale=1"><title>Grupy wrogów E20</title><style>%s</style></head><body><h1>Grupy wrogów E20: jeden głos '
+           'initial-scale=1"><title>Grupy wrogów E21</title><style>%s</style></head><body><h1>Grupy wrogów E21: jeden głos '
            'na typ wroga</h1><p class="muted">Opcje to obecne głosy członków grupy i kandydaci z rundy 1 bez obróbki. Każda '
            'opcja czyta te same kwestie z gry (wyrównane do −20 LUFS). Wybierz numer opcji, możesz oznaczyć opcję jako '
            'niepoprawną z uwagą. Na końcu „Kopiuj wybór” i wklej do czatu.</p><p class="muted" id="cnt"></p>%s'
@@ -933,7 +933,7 @@ def group_page():
 
 GROUP_SCRIPT = r"""
 <script>
-const KEY='recast-e20-grupy';
+const KEY='recast-e21-grupy';
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return {}}}
 const st=load();function put(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){};count()}
 function get(v){return st[v]=st[v]||{pick:'',bad:{},note:''}}
@@ -951,7 +951,7 @@ document.querySelectorAll('audio').forEach(a=>a.addEventListener('play',()=>docu
 function copyList(){const lines=[];document.querySelectorAll('.card').forEach(c=>{const v=c.dataset.voice,s=get(v);
  let t=v+'='+(s.pick||'?')+(s.pick==='0'?' (żadna nie pasuje)':'');if((s.note||'').trim())t+=' — '+s.note.trim().replace(/\s+/g,' ');lines.push(t);
  Object.entries(s.bad||{}).sort().forEach(([L,b])=>lines.push('  '+L+' niepoprawna'+((b.note||'').trim()?': '+b.note.trim().replace(/\s+/g,' '):'')))});
- const t='Grupy wrogów E20:\n'+lines.join('\n');document.getElementById('out').textContent=t;try{navigator.clipboard.writeText(t)}catch(e){}}
+ const t='Grupy wrogów E21:\n'+lines.join('\n');document.getElementById('out').textContent=t;try{navigator.clipboard.writeText(t)}catch(e){}}
 count();
 </script>"""
 
@@ -974,7 +974,7 @@ def group_adopt(args):
             wav = os.path.join(paths.REFS, m + '.wav')
             shutil.copyfile(src, wav)
             entry = {'wav': paths.rel(wav), 'text': o['text'], 'seconds': round(sf.info(wav).duration, 2),
-                     'source': 'E20 (D114): wspólny głos grupy %s, opcja %s: %s' % (g, k, o['label']),
+                     'source': 'E21 (D115): wspólny głos grupy %s, opcja %s: %s' % (g, k, o['label']),
                      'sha': hashlib.sha1(open(wav, 'rb').read()).hexdigest()}
             if style:
                 entry['style'] = style

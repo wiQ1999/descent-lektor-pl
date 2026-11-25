@@ -26,17 +26,17 @@ ELEVEN_VOICES.update(ELEVEN_VOICES_E14)
 # głosów dostają nowe id i ElevenLabs czyta je od nowa; podgląd projektu leży w elevenlabs/audio/m4_recast/<głos>.
 ELEVEN_RECAST = {'laurel': ('mNYK3E8hLlawETLY1i23', 'D109'), 'ltrand': ('mlfNLSkD2rRJuAjOiqyV', 'D109'),
                  'ducard': ('HHaHDYNatBEDVYdzrvGp', 'D109')}
-# E20 (D114): wybrane, ale włączane przy kolejnym generowaniu (akt 2): głos -> (voice_id, znacznik, efekt finalize).
+# E21 (D115): wybrane, ale włączane przy kolejnym generowaniu (akt 2): głos -> (voice_id, znacznik, efekt finalize).
 # Włączenie: wpis do ELEVEN_RECAST i FX. Do tego czasu kwestie zostają przy obecnym głosie (6 fragmentów aktu 1).
-RECAST_LATER = {'levirax': ('FcGRaGTdqjgS5L4Rbh1J', 'D114', 'dragon_e')}     # głos L z rundy 2 ElevenLabs, wybór E z rundy 3
+RECAST_LATER = {'levirax': ('FcGRaGTdqjgS5L4Rbh1J', 'D115', 'dragon_e')}     # głos L z rundy 2 ElevenLabs, wybór E z rundy 3
 ELEVEN_VOICES.update({v: vid for v, (vid, _) in ELEVEN_RECAST.items()})
-# E20 (D114): sposób czytania głosu w ElevenLabs: ustawienia głosu, tempo i znaczniki audio eleven_v4 przed kwestią
+# E21 (D115): sposób czytania głosu w ElevenLabs: ustawienia głosu, tempo i znaczniki audio eleven_v4 przed kwestią
 # (lead) i po pierwszym zdaniu (breath). Znaczniki idą tylko do API; ocena porównuje mowę z tekstem fragmentu.
 ELEVEN_STYLE = {'levirax': {'stability': 0.3, 'style': 0.3, 'speed': 0.75,
                             'lead': '[long, deep inhale] [slowly, booming]', 'breath': '[deep inhale]'}}
 ELEVEN_TAKE0 = 100      # podejścia ElevenLabs mają numery od 101; podejścia OmniVoice tych głosów zostają jako zapas
 
-# E20 (D114): efekt na audio głosu (lektor.effects), wypalany przez finalize w pliku końcowym; wybór z odsłuchu.
+# E21 (D115): efekt na audio głosu (lektor.effects), wypalany przez finalize w pliku końcowym; wybór z odsłuchu.
 FX = {'kathryn': 'ghost_c2', 'nv_q13_smok': 'ghost_c2', 'nv_baelziffar': 'ghost_b2', 'nv_q12_duch': 'ghost_c2'}
 
 

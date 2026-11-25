@@ -267,9 +267,9 @@ OmniVoice (`nv_*`, nowe referencje; bez zmian zostały `nv_q11_pacjentka`, `nv_q
 | `nv_wiesniak` | C | `male, middle-aged, moderate pitch` | 5 | 8,28 s, SHA `d1996431` |
 | `nv_wiezien` | A | `male, middle-aged, high pitch, tremor 0.3` | 41 | 7,96 s, SHA `2ca64846` |
 
-## E20: zmiany po odsłuchu całej gry (D114)
+## E21: zmiany po odsłuchu całej gry (D115)
 
-Kandydaci OmniVoice: `analysis/tools/recast_e20.py`, profile w `analysis/tools/voice_designs_e20.json` (50 głosów: 31 nowych, 19 poprawek jakości). Strona odsłuchu ma portret z gry (postać albo typ wroga), opis postaci, obecny głos i tę samą kwestię z gry u każdego kandydata.
+Kandydaci OmniVoice: `analysis/tools/recast_e21.py`, profile w `analysis/tools/voice_designs_e21.json` (50 głosów: 31 nowych, 19 poprawek jakości). Strona odsłuchu ma portret z gry (postać albo typ wroga), opis postaci, obecny głos i tę samą kwestię z gry u każdego kandydata.
 
 Runda 1 (2026-11-21), 17 głosów przyjętych. Smok-duch z Q13 dostaje w `finalize` efekt `ghost_c2`.
 
@@ -302,7 +302,7 @@ Pozostałe 33 głosy idą do rundy 2. W 30 żaden kandydat nie pasował, a przy 
 - `nv_bandyta` i `nv_q3_herszt`: najlepsze były czyste projekty C. Bandyta ma brzmieć przebiegle i mówić szybciej, herszt kpiąco i złowieszczo.
 - `nv_ta2_04_kobieta`: C, ale czystszy. `nv_q11_zbir` brzmiał robotycznie, a `nv_q11_tlum` za mało wykrzykuje.
 
-Runda 2 (2026-11-22, `voice_designs_e20_r2.json`): czyste projekty bez obróbki referencji, przy głosach chwalonych mimo trzasków także ich wersja z rundy 1 sprzed obróbki. 21 głosów przyjętych, `nv_widmo` bez zmian. `nv_q12_duch` dostaje w `finalize` efekt `ghost_c2`.
+Runda 2 (2026-11-22, `voice_designs_e21_r2.json`): czyste projekty bez obróbki referencji, przy głosach chwalonych mimo trzasków także ich wersja z rundy 1 sprzed obróbki. 21 głosów przyjętych, `nv_widmo` bez zmian. `nv_q12_duch` dostaje w `finalize` efekt `ghost_c2`.
 
 | Głos | Wybór | Opis OmniVoice | Ziarno | Referencja |
 |---|---|---|---:|---|
@@ -331,7 +331,7 @@ Runda 2 (2026-11-22, `voice_designs_e20_r2.json`): czyste projekty bez obróbki 
 - `gilliam`: próbka kwestii z gry urywa się 0,1 s przed końcem pliku. Referencja kończy się czysto, a ocena w generowaniu (`end_rms`, `end_gap`) daje takiej kwestii wolniejsze ponowne podejście.
 - `nv_fae`: dorosły, skrzeczący chochlik. `nv_denavel`: klon Galadena, młodszy i jaśniejszy.
 
-Grupy wrogów o tej samej nazwie (`recast_e20.py group-*`, strona `r2/grupy.html`): każda opcja czyta dwie najdłuższe kwestie członków grupy, a wybrany głos dostaje każdy członek.
+Grupy wrogów o tej samej nazwie (`recast_e21.py group-*`, strona `r2/grupy.html`): każda opcja czyta dwie najdłuższe kwestie członków grupy, a wybrany głos dostaje każdy członek.
 
 | Grupa | Członkowie | Wybór | Referencja |
 |---|---|---|---|
@@ -340,7 +340,7 @@ Grupy wrogów o tej samej nazwie (`recast_e20.py group-*`, strona `r2/grupy.html
 
 Wartownicy hybryd (`nv_lisb_wartownik_a`, `_b`) mają osobne głosy. Kobiety w grupach z dwiema płciami: `nv_q12_banitka` wśród bandytów i `nv_a2q5_lowczyni` wśród hybryd idą do rundy 3. Porucznik Zerai i kowalka to osobne postacie z własnym głosem.
 
-Runda 3 (`voice_designs_e20_r3.json`):
+Runda 3 (`voice_designs_e21_r3.json`):
 - banitka i łowczyni (rodzaj `like`): klon głosu grupy po zmianie płci referencji (PSOLA i formanty, bo opis kobiecy przy klonie zostawia męskie F0) i nowy profil kobiecy najbliżej jego barwy;
 - `nv_eurth`: opis poszerzony z danych gry (Eurth Kel'yr, mini-boss typu siostra krwi);
 - po QA: `levirax` jako starsza, potężna smoczyca, `nv_a2q3_zolnierz` jako zmęczony, podpity weteran, a `nv_sq1_wyslannik` i `nv_q14_stronnik` dostają nowe głosy od zera.
@@ -356,7 +356,7 @@ Wybór rundy 3 (2026-11-22), referencje w `refs.json` (kopia sprzed zmian: `r3/r
 - `nv_a2q3_zolnierz`: w próbce kwestii z gry B przeczytał źle jedno słowo, a trzy kolejne podejścia czytają poprawnie. Fragment `8f0b82e38dee6729` dostaje wymuszone ponowne podejście, bo produkcja zaczyna od tego samego ziarna.
 - `levirax`, `nv_eurth`, `nv_q14_stronnik`: żaden kandydat nie pasował.
 
-Runda 4 (`voice_designs_e20_r4.json`, pola `seeds` i `picks`):
+Runda 4 (`voice_designs_e21_r4.json`, pola `seeds` i `picks`):
 - `levirax` i `nv_eurth`: nowe zdanie w stylu postaci, nowe ziarna, pięć kandydatur najdalej od obsady i od odrzuconych;
 - `nv_q14_stronnik`: obecny profil (`male, young adult, high pitch`) z sześcioma nowymi ziarnami, pięć kandydatur najbliżej obecnej barwy;
 - `nv_sq1_wyslannik`: profil B z wrogim, wyniosłym zdaniem i wolniej (bardziej wyniosły i wrogi).
@@ -370,7 +370,7 @@ Wybór rundy 4 (2026-11-22), kopia sprzed zmian: `r4/refs_before_adopt4.json`:
 
 - `levirax`, `nv_q14_stronnik`: żaden nie pasował.
 
-Runda 5 (`voice_designs_e20_r5.json`):
+Runda 5 (`voice_designs_e21_r5.json`):
 - `levirax` (rodzaj `like` bez opisów): kobieca wersja głosu narratora w dwóch odmianach:
   - klon referencji narratora po zmianie płci (F0 220–245 Hz, formanty +3 do +4 półtonów). Przy słabszym przesunięciu, wolnym tempie albo zdaniu od „Hmm…” klon wracał do ok. 130 Hz. W kwestii z gry wysokość zależy od ziarna (od 60 do 360 Hz), więc część kwestii brzmiałaby po męsku;
   - zwykły klon narratora, a zmiana płci na gotowym nagraniu (`post_regender`, F0 200 albo 220 Hz, formanty +3 albo +3,5): wysokość stała w każdej kwestii (198–251 Hz w trzech ziarnach), CER 0–0,026. Wybór tej odmiany wymaga efektu w `finalize` zamiast nowej referencji;
@@ -384,18 +384,18 @@ Wybór rundy 5 (2026-11-23), kopia sprzed zmian: `r5/refs_before_adopt5.json`:
 
 - `levirax`: żaden nie pasował, brzmienie jak przez megafon w pomieszczeniu z echem. Źródło: przesunięcie formantów wokoderem fazowym (`librosa.pitch_shift`).
 
-Runda 6 (`voice_designs_e20_r6.json`): `levirax` na nowych ziarnach (131–467), zmiana płci jednym przejściem PSOLA ze ściśniętymi ziarnami (`method: grain`). Na referencji i kwestii z gry daje więcej mowy dźwięcznej, mniej szumu w widmie i CER 0–0,012 wobec 0,012–0,06 wokodera. Klony przerobionej referencji wyszły przydechowe (mowa dźwięczna 19–33%) i odpadły w filtrze szeptu. Na stronie są zwykłe klony narratora przerobione po wygenerowaniu: A–B to F0 200 Hz i formanty +3, C–D to 220 Hz i +3,5, po dwa ziarna (`per_variant`). W kwestii z gry ziarno daje fragment, więc A i B (oraz C i D) czytają ją tak samo.
+Runda 6 (`voice_designs_e21_r6.json`): `levirax` na nowych ziarnach (131–467), zmiana płci jednym przejściem PSOLA ze ściśniętymi ziarnami (`method: grain`). Na referencji i kwestii z gry daje więcej mowy dźwięcznej, mniej szumu w widmie i CER 0–0,012 wobec 0,012–0,06 wokodera. Klony przerobionej referencji wyszły przydechowe (mowa dźwięczna 19–33%) i odpadły w filtrze szeptu. Na stronie są zwykłe klony narratora przerobione po wygenerowaniu: A–B to F0 200 Hz i formanty +3, C–D to 220 Hz i +3,5, po dwa ziarna (`per_variant`). W kwestii z gry ziarno daje fragment, więc A i B (oraz C i D) czytają ją tak samo.
 
-Runda 7 (`voice_designs_e20_r7.json`): w rundzie 6 Levirax za bardzo przerywała. Znaczniki okresów PSOLA brały szczyt sygnału w każdym okresie i skakały między szczytami, a niespójne okresy słychać jako przerwy. Teraz kolejny znacznik leży tam, gdzie okres najbardziej przypomina poprzedni (korelacja). Formanty przesuwa przyspieszenie całego nagrania, a PSOLA przywraca czas i ustawia wysokość (`method: resample`, jak „Change gender” w Praat). Na nagraniu narratora dźwięczne zostaje 84% ramek dźwięcznych (ziarna PSOLA 81%, wokoder 66%). Każda próbka i jej kwestia z gry ma inne ziarno (`own_line_seed`). Mowa dźwięczna w zdaniu próbnym wynosi 49–70% (w rundzie 6 było 40–45%), CER 0–0,014. Na stronie A–B to 200 Hz i +3, C–D to 220 Hz i +3,5.
+Runda 7 (`voice_designs_e21_r7.json`): w rundzie 6 Levirax za bardzo przerywała. Znaczniki okresów PSOLA brały szczyt sygnału w każdym okresie i skakały między szczytami, a niespójne okresy słychać jako przerwy. Teraz kolejny znacznik leży tam, gdzie okres najbardziej przypomina poprzedni (korelacja). Formanty przesuwa przyspieszenie całego nagrania, a PSOLA przywraca czas i ustawia wysokość (`method: resample`, jak „Change gender” w Praat). Na nagraniu narratora dźwięczne zostaje 84% ramek dźwięcznych (ziarna PSOLA 81%, wokoder 66%). Każda próbka i jej kwestia z gry ma inne ziarno (`own_line_seed`). Mowa dźwięczna w zdaniu próbnym wynosi 49–70% (w rundzie 6 było 40–45%), CER 0–0,014. Na stronie A–B to 200 Hz i +3, C–D to 220 Hz i +3,5.
 
-Runda 8 (`voice_designs_e20_r8.json`): w rundzie 7 Levirax była za bardzo piskliwa, a cztery próbki brzmiały podobnie. Teraz jest sześć wariantów, niżej i z mniejszym przesunięciem formantów: 150 Hz i +1,5, 160 Hz i +2,5, 170 Hz i +1, 175 Hz i +2, 185 Hz i +1,5 oraz 195 Hz i +2,5. Każdy wariant ma inne ziarno. Surowy klon narratora dla danego ziarna powstaje raz i służy wszystkim wariantom.
+Runda 8 (`voice_designs_e21_r8.json`): w rundzie 7 Levirax była za bardzo piskliwa, a cztery próbki brzmiały podobnie. Teraz jest sześć wariantów, niżej i z mniejszym przesunięciem formantów: 150 Hz i +1,5, 160 Hz i +2,5, 170 Hz i +1, 175 Hz i +2, 185 Hz i +1,5 oraz 195 Hz i +2,5. Każdy wariant ma inne ziarno. Surowy klon narratora dla danego ziarna powstaje raz i służy wszystkim wariantom.
 
-Runda 9 (`voice_designs_e20_r9.json`): w rundzie 8 głos był za wysoki. Na prośbę z odsłuchu są trzy osobne profile Levirax, każdy z kilkoma wariantami na różnych ziarnach:
+Runda 9 (`voice_designs_e21_r9.json`): w rundzie 8 głos był za wysoki. Na prośbę z odsłuchu są trzy osobne profile Levirax, każdy z kilkoma wariantami na różnych ziarnach:
 - `levirax@narrator`: zwykły klon narratora obniżony do 130–145 Hz z formantami od +0,5 do +2;
 - `levirax@brynn`: zwykły klon Brynn (ok. 227 Hz) obniżony do 145–175 Hz z barwą ciemniejszą o 1–3 półtony;
 - `levirax@mix`: klon połączonej referencji. Nagrania narratora i Brynn są zbliżone wysokością i barwą, a potem sklejone w jedną referencję z połączoną transkrypcją. Są dwa takie połączenia z odwrotną kolejnością i różnym punktem spotkania. Wysokość gotowego nagrania jest wyrównana do 145 albo 160 Hz.
 
-Runda 10 (`voice_designs_e20_r10.json`): w rundzie 9 wszystkie głosy były zbyt piskliwe i robotyczne, więc klon zmieniony na kobiecy odpada. Teraz jest pięć nowych profili OmniVoice bez klonu i bez obróbki, każdy z własnym opisem, zdaniem w stylu postaci i tempem. Na stronie są po dwa ziarna z każdego profilu:
+Runda 10 (`voice_designs_e21_r10.json`): w rundzie 9 wszystkie głosy były zbyt piskliwe i robotyczne, więc klon zmieniony na kobiecy odpada. Teraz jest pięć nowych profili OmniVoice bez klonu i bez obróbki, każdy z własnym opisem, zdaniem w stylu postaci i tempem. Na stronie są po dwa ziarna z każdego profilu:
 - `levirax@krolowa`: `female, elderly, low pitch`, wolno (10,5 zn./s), dostojna władczyni;
 - `levirax@furia`: `female, middle-aged, very low pitch`, szybciej (13,5 zn./s), gniew i krzyk;
 - `levirax@arystokratka`: `female, middle-aged, low pitch, british accent`, chłodna pogarda;
@@ -404,7 +404,7 @@ Runda 10 (`voice_designs_e20_r10.json`): w rundzie 9 wszystkie głosy były zbyt
 
 Akcent to nowa oś opisu OmniVoice: wcześniejsze rundy różniły się tylko wiekiem i wysokością. Projekty bez klonu mają 172–245 Hz (naturalna kobieca wysokość), a na stronę idą najniższe ziarna profilu (`prefer_low`): furia i arystokratka ok. 172–182 Hz, obca 180–195 Hz, królowa i drapieżniczka 214–245 Hz.
 
-Runda 11 (`voice_designs_e20_r11.json`): w rundzie 10 wszystkie głosy były zbyt delikatne i mało chropowate, a brakowało wężowej wymowy. Teraz jest pięć nowych profili bez klonu. Każdy ma obróbkę w referencji: chrypę (`rasp`, jak w D41), a klon kwestii z gry ją przejmuje. Na stronę idą tylko warianty z obróbką (`fx_only`). Zdania próbne są pełne głosek syczących:
+Runda 11 (`voice_designs_e21_r11.json`): w rundzie 10 wszystkie głosy były zbyt delikatne i mało chropowate, a brakowało wężowej wymowy. Teraz jest pięć nowych profili bez klonu. Każdy ma obróbkę w referencji: chrypę (`rasp`, jak w D41), a klon kwestii z gry ją przejmuje. Na stronę idą tylko warianty z obróbką (`fx_only`). Zdania próbne są pełne głosek syczących:
 - `levirax@matrona`: `female, elderly, very low pitch`, chrypa 0,35;
 - `levirax@waz`: `female, middle-aged, low pitch`, chrypa 0,2 i wężowa wymowa `serpent_a` (głoski syczące 1,8 raza dłuższe, 1,4 raza głośniejsze), efekt także na kwestii z gry;
 - `levirax@pomruk`: `female, middle-aged, very low pitch, russian accent`, mocna chrypa 0,5;
@@ -413,7 +413,7 @@ Runda 11 (`voice_designs_e20_r11.json`): w rundzie 10 wszystkie głosy były zby
 
 Wężowa wymowa to efekt `lektor.effects` (`serpent_a`, `serpent_b`). Wykrywa odcinki z przewagą energii powyżej 3,5 kHz i wydłuża je ziarnami szumu bez fazowania. Jeśli zostanie wybrana, wejdzie do gry przez `direction.FX`. Kwestie z gry z klonu chropowatej referencji mają medianę płaskości widma 0,0028–0,0102, a w rundzie 10 było 0,0013–0,0049: klon przejmuje część chrypy. Wysokość: matrona i żmija A ok. 160 Hz, pomruk 181–200 Hz, wąż i wiedźma 228–256 Hz.
 
-Runda 12 (`voice_designs_e20_r12.json`): w rundzie 11 najlepsza była żmija A (projekt na ziarnie 563, a w referencji chrypa 0,3 i syk `serpent_b`), bez efektu na kwestii z gry. Głos ma być bardziej chropowaty albo niższy. Wszystkie warianty to ten sam projekt z inną obróbką referencji (`fx_order`: kolejność z profilu). Kandydatka A to odtworzona żmija A z rundy 11 (referencja i kwestia z gry bit w bit jak w rundzie 11):
+Runda 12 (`voice_designs_e21_r12.json`): w rundzie 11 najlepsza była żmija A (projekt na ziarnie 563, a w referencji chrypa 0,3 i syk `serpent_b`), bez efektu na kwestii z gry. Głos ma być bardziej chropowaty albo niższy. Wszystkie warianty to ten sam projekt z inną obróbką referencji (`fx_order`: kolejność z profilu). Kandydatka A to odtworzona żmija A z rundy 11 (referencja i kwestia z gry bit w bit jak w rundzie 11):
 - B: chrypa 0,55;
 - C: chrypa 0,8;
 - D: niżej o 2 półtony z tą samą barwą (`lower`, PSOLA ze znacznikami po korelacji), chrypa 0,4;
@@ -422,7 +422,7 @@ Runda 12 (`voice_designs_e20_r12.json`): w rundzie 11 najlepsza była żmija A (
 
 Kwestia z gry (wysokość, płaskość widma): A 171 Hz / 0,0049, B 163 / 0,0140, C 175 / 0,0216, D 141 / 0,0061, E 135 / 0,0196, F 149 / 0,0564. Whisper czyta wszystkie zdania próbne bez błędów.
 
-Runda 13 (`voice_designs_e20_r13.json`): w rundzie 12 pasuje E, ale głos ma być jeszcze mroczniejszy. E ma przy tym gorszą jakość, bo `shift` to wokoder fazowy, a w dobrej jakości ma być słychać urywanie głosu i niską, chrypliwą barwę. Teraz przyciemnienie robi `deepen` (jak `regender` `resample`: przyspieszone nagranie obniża formanty, PSOLA ustawia wysokość i czas), bez wokodera. Kandydatka A to E z rundy 12 (bit w bit):
+Runda 13 (`voice_designs_e21_r13.json`): w rundzie 12 pasuje E, ale głos ma być jeszcze mroczniejszy. E ma przy tym gorszą jakość, bo `shift` to wokoder fazowy, a w dobrej jakości ma być słychać urywanie głosu i niską, chrypliwą barwę. Teraz przyciemnienie robi `deepen` (jak `regender` `resample`: przyspieszone nagranie obniża formanty, PSOLA ustawia wysokość i czas), bez wokodera. Kandydatka A to E z rundy 12 (bit w bit):
 - B: jak E, czystsza metoda (135 Hz, formanty −3);
 - C: 125 Hz, formanty −4, chrypa 0,5;
 - D: 115 Hz, formanty −5, chrypa 0,5;
@@ -435,7 +435,7 @@ Levirax w ElevenLabs (2026-11-24): to ważna postać, główna przeciwniczka akt
 1. chrapliwa smocza matrona po 60-tce: głęboki, żwirowaty głos, vocal fry, pęknięcia głosu, przeciągany syk, wolno;
 2. dymna, sycząca władczyni po 50-tce: bardzo niski alt zachrypnięty jak od ognia, pomruk, długie s i sz.
 
-Każdy opis dał 3 podglądy, które czytają kwestię z gry i dwa własne zdania. Whisper odczytał wszystkie bez błędów. Strona odsłuchu: `analysis/work/elevenlabs/audio/e20_levirax/index.html`, z żmiją E z rundy 12 do porównania.
+Każdy opis dał 3 podglądy, które czytają kwestię z gry i dwa własne zdania. Whisper odczytał wszystkie bez błędów. Strona odsłuchu: `analysis/work/elevenlabs/audio/e21_levirax/index.html`, z żmiją E z rundy 12 do porównania.
 
 Runda 2 ElevenLabs: żaden podgląd nie pasował, część głosów brzmiała po męsku, a ma to być wielka bestia, smoczyca. Podglądy z rundy 1 nie były zapisane na koncie, usunęliśmy więc tylko ich pliki. Teraz są cztery opisy, każdy wprost kobiecy („unmistakably feminine”, „clearly a woman”) i z ogromną smoczycą w personie:
 1. kolosalna smocza królowa: głęboki kontralt jak z ogromnej piersi, naturalna chrypa, wolno;
@@ -445,18 +445,18 @@ Runda 2 ElevenLabs: żaden podgląd nie pasował, część głosów brzmiała po
 
 Dwa z 12 podglądów mają wysokość ok. 90–96 Hz (prawdopodobnie głos męski) i strona je oznacza. Pozostałe mają 145–301 Hz. Whisper odczytał wszystkie podglądy, jeden ma drobny błąd.
 
-Runda 3 ElevenLabs: L (opis 4) jest dobra, ale za mało w niej basu i za wysoko. Głos ma się przeciągać, zaczynać słyszalnymi wdechami wielkich płuc i być donośny przy małym wysiłku. L jest zapisana na koncie jako `Lektor PL - levirax l` (`FcGRaGTdqjgS5L4Rbh1J`). Strona: `analysis/work/elevenlabs/audio/e20_levirax/r3/index.html`.
+Runda 3 ElevenLabs: L (opis 4) jest dobra, ale za mało w niej basu i za wysoko. Głos ma się przeciągać, zaczynać słyszalnymi wdechami wielkich płuc i być donośny przy małym wysiłku. L jest zapisana na koncie jako `Lektor PL - levirax l` (`FcGRaGTdqjgS5L4Rbh1J`). Strona: `analysis/work/elevenlabs/audio/e21_levirax/r3/index.html`.
 - A–C: L czyta kwestię z gry modelem `eleven_v4` ze znacznikami wdechu i tonu, tempo 0,75–0,85, stabilność 0,3–0,5.
 - D–F: A–C po obróbce lokalnej: 2,5 półtonu niżej z ciemniejszą barwą (`regender` `resample`) i bas +6 dB poniżej 220 Hz. Wysokość spada ze 160–191 do 136–166 Hz.
 - G–L: dwa nowe opisy na bazie L (bardzo niski, basowy, donośny bez wysiłku, głęboki wdech przed frazą; głos jak z ogromnej jaskini).
 
 Whisper odczytał wszystkie próbki bez błędów, znaczniki nie są czytane na głos.
 
-Runda 4 ElevenLabs: E i H z rundy 3 są dobre, ale za mało mroczne i za wysokie, a H brzmi po męsku. Preferujemy oryginały ElevenLabs bez obróbki. Strona: `analysis/work/elevenlabs/audio/e20_levirax/r4/index.html`.
+Runda 4 ElevenLabs: E i H z rundy 3 są dobre, ale za mało mroczne i za wysokie, a H brzmi po męsku. Preferujemy oryginały ElevenLabs bez obróbki. Strona: `analysis/work/elevenlabs/audio/e21_levirax/r4/index.html`.
 - A–C: głos L w `eleven_v4` jak B z rundy 3, wolniej (0,70–0,72) i ze znacznikami ciemnego, niskiego tonu. Wychodzi 148–157 Hz bez obróbki (B miał 172 Hz).
 - D–L: trzy nowe opisy: jak H, ale wprost kobiecy; kobieta z naturalnie bardzo głębokim kontraltem z mroku leża; pradawna, zła smoczyca z rezonansem piersi. Dwa podglądy opisu 9 mają 113–121 Hz i strona oznacza je jako bliskie męskiej wysokości.
 
-Runda 5 ElevenLabs: L z rundy 4 (opis 9) ma dobrą jakość i ton. Łączymy ją z efektem E z rundy 3. L jest zapisana na koncie jako `Lektor PL - levirax r4l` (`FwpJ2WFWAXrEiKfu40Z7`). Strona: `analysis/work/elevenlabs/audio/e20_levirax/r5/index.html`.
+Runda 5 ElevenLabs: L z rundy 4 (opis 9) ma dobrą jakość i ton. Łączymy ją z efektem E z rundy 3. L jest zapisana na koncie jako `Lektor PL - levirax r4l` (`FwpJ2WFWAXrEiKfu40Z7`). Strona: `analysis/work/elevenlabs/audio/e21_levirax/r5/index.html`.
 - A–C: oryginały `eleven_v4` z kwestią z gry, ze znacznikami wdechu i przeciągania jak E (tempo 0,70–0,75). Mają 137–150 Hz, więc w TTS głos jest wyżej niż w podglądzie (113 Hz) i brzmi kobieco.
 - D–F: A–C z basem +6 dB jak w E, bez obniżania. G: A z pełną obróbką E (−2,5 półtonu i bas), 119 Hz.
 

@@ -59,7 +59,7 @@ def finalize():
             continue
         y, sr = sf.read(take_path(fid, c['take']), dtype='float32')
         rates.add(sr)
-        y, loud = level(effects.apply(trim(y, sr), sr, fx), sr)     # efekt głosu przed wyrównaniem (E20, D114)
+        y, loud = level(effects.apply(trim(y, sr), sr, fx), sr)     # efekt głosu przed wyrównaniem (E21, D115)
         sf.write(os.path.join(out_dir, fid + '.wav'), y, sr, subtype='PCM_16')
         frags[fid] = {'file': 'final/%s.wav' % fid, 'seconds': round(len(y) / sr, 3), 'take': c['take'],
                       'voice': c['voice'], 'speed': c['speed'], 'source_lufs': loud, 'problems': c['problems'],

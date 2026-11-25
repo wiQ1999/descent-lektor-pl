@@ -1,4 +1,4 @@
-"""Efekty na audio głosu (E20, D114): łańcuch per głos, wypalany w pliku końcowym przez finalize.
+"""Efekty na audio głosu (E21, D115): łańcuch per głos, wypalany w pliku końcowym przez finalize.
 
 Tylko numpy, scipy i librosa z .venv; paczka gracza ich nie potrzebuje, bo dostaje gotowe pliki. Efekt działa
 na przyciętym podejściu przed wyrównaniem głośności. Każdy wariant jest deterministyczny (stałe ziarno szumu
@@ -402,7 +402,7 @@ def _bass(y, sr, db, freq=220.0):
 
 
 def dragon_e(y, sr):
-    """Levirax (E20, runda 3 ElevenLabs, wybór E): głos 2,5 półtonu niżej z formantami i dół +6 dB poniżej 220 Hz."""
+    """Levirax (E21, runda 3 ElevenLabs, wybór E): głos 2,5 półtonu niżej z formantami i dół +6 dB poniżej 220 Hz."""
     out = _bass(_deepen(y, sr, 2.5), sr, 6.0)
     return out * np.float32(0.9 / (np.abs(out).max() + 1e-9))
 
