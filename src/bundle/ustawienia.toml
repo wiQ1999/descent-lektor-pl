@@ -44,6 +44,10 @@ utnij = "Ctrl+S"                        # ucina bieżącą kwestię
 zglos = "Ctrl+B"                        # zgłoszenie błędu: zrzut ekranu, potem cyfra 1–6 (kategoria)
 menu = "Ctrl+L"                         # otwiera albo zamyka menu lektora
 
+# Statystyki misji: panele po bokach okna podsumowania misji. Można też zmienić w grze (menu lektora, Ustawienia).
+[podsumowanie]
+statystyki = true           # false: okno podsumowania gry bez paneli lektora
+
 # Start lektora razem z grą.
 [plugin]
 autostart = true            # false: lektor nie startuje sam (tylko do testów)

@@ -1170,6 +1170,33 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** prośba użytkownika z 2026-11-20. Wcześniejsze wydania v0.2.0–v0.4.0 były testowe (prerelease), a to wydanie jest pierwszym docelowym dla graczy.
 
+### D114 · 2026-11-20 · E20: podsumowanie misji w oknie gry
+**Decyzja:**
+- Podsumowanie pokazujemy jako panel dodatku w oknie podsumowania misji gry (`UIQuestSummary`). Gra przechodzi dalej dopiero po jej przycisku „Dalej”; przycisku nie przechwytujemy.
+- Pierwsza wersja ma tylko statystyki bieżącej misji z `SerializedQuestSummary`, których okno gry nie pokazuje: rundy, użycie klas broni (także broń unikatowa bohatera) i akcje według typu. Działa także wtedy, gdy dodatek doszedł w trakcie misji.
+- Bez statystyk walki z `MessageCache`, bez danych kampanii z zapisu i bez własnej księgi sum od instalacji (możliwe później).
+- Po ostatniej misji aktu (przejście do napisów, `OnEndGame`) nic nie dodajemy poza tym samym panelem w oknie gry.
+- Narrator nie czyta podsumowania.
+- Tylko dane, które gra zapisuje sama; plugin nie zbiera nic dodatkowo. Podział na bohaterów wynika z klas ich broni w zapisie.
+- Elementy panelu (QA 2026-11-20):
+  - kafelki: rundy, średni czas rundy, ataki, interakcje, złoto na rundę, poziom trudności;
+  - ataki według broni: poziome słupki klas z atakami, malejąco, w kolorze bohatera, który tę broń nosi (runa osobno dla bohatera);
+  - charakter misji: pasek proporcji walka / interakcje (akcji „ogólnych” gra nie liczy);
+  - drużyna: tabela bohaterów (stan zdrowia, ataki z jego broni, ulubiona broń, ukończone wyzwania, przyrost postępu wyzwań). Każda z 12 zwykłych klas broni należy na stałe do jednego bohatera (`WeaponPartsModel.GetHero`), a bohater jest w drużynie raz, więc klasa wskazuje bohatera bez względu na ekwipunek. Runę może nosić każdy, ale gra liczy ją osobno dla bohatera (`UniqueWeaponClassUsage[indeks gracza]`). Wspólnej klasy więc nie ma (sprawdzone w kodzie gry 2026-11-21);
+  - łup według rodzaju: przedmioty, materiały, przepisy, mikstury (mikstur okno gry nie pokazuje).
+- Styl gry: tło, ramki i czcionki skopiowane z okien gry, jak przy menu „PL”.
+  - Po podglądzie z 2026-11-21: panele boczne mają półprzezroczyste przyciemnione tło (plansza prześwituje) i ramkę panelu wroga, nagłówki ze złotym ornamentem, ikony walki i interakcji z HUD (z odwróconymi kolorami: białe z ciemną poświatą), ikony łupu i okrągłe portrety jak w oknie podsumowania. Nazwa broni stoi nad paskiem, łup jest listą z ikonami (z sumą złota), a teksty najpierw zmniejszają czcionkę, zamiast się urywać.
+- Panel jest zawsze widoczny. Układ wynika z prefabu okna (`Panel_QuestSummary`): okno ma stały rozmiar 1250×920 jednostek, a łup przewija się w nim, więc wysokość nie zależy od łupu. Pod oknem zostaje ok. 50 jednostek, w prawym dolnym rogu ekranu jest „Dalej”. Dlatego:
+  - po lewej stronie okna wykresy bohaterów (QA 2026-11-21): ataki (suma klas bohatera i runy; do 2026-11-21 „Ataki bohaterów”), wyzwania (przyrost postępu w misji, jak pasek w oknie gry, z liczbą ukończonych) i na końcu postawy. Ataki i wyzwania mają mały okrągły portret i imię nad paskiem, posortowane malejąco. Wykres ataków broni usunięty po teście z 2026-11-21 (dane zostają w dzienniku);
+  - postawy (QA 2026-11-21): bieżące wartości dwóch postaw bohatera z zapisu (`SerializedPlayer.VirtueOneValue`/`VirtueTwoValue`, nazwy z `HeroModel.VirtueOneKey`/`VirtueTwoKey`, jak w oknie bohatera) na jednym pasku: portret, nazwa postawy 1 po lewej i postawy 2 po prawej (bez punktów), pasek rośnie od środka (50/50) w stronę przeważającej postawy o nadwyżkę jej udziału ponad połowę, znacznik równowagi na środku. Wybór w oknie postawy dodaje wagę do jednej z nich (`StoryVirtueChoiceNode`). Gra nie zapisuje, które wybory zapadły w misji, a plugin ich nie śledzi, więc panel pokazuje sam stan;
+  - teksty wierszy mają jedną wielkość w całej sekcji: najmniejszą, jaką dobrało dopasowanie któregokolwiek z nich (`Section`). W postawach nazwy dzielą szerokość nad paskiem według swojej długości (QA 2026-11-21), żeby długa nazwa nie zmniejszała całej sekcji;
+  - ustawienia (QA 2026-11-21): własna sekcja `[podsumowanie]` w `ustawienia.toml` z `statystyki = true` (i deweloperskim `podglad`), bo `[plugin]` opisuje start lektora. W grze checkbox „Statystyki na koniec misji” w menu lektora, ostatni na liście „Co czyta lektor” (po teście 2026-11-21; wcześniej w „Ustawieniach”): plugin wysyła `control` `statystyki`, companion zapisuje plik i odsyła `stats` w stanie, a panel zmienia się od razu. Wartość z pliku działa na start gry, zanim companion się połączy;
+  - interakcji ani walki poszczególnych bohaterów w całej misji gra nie przechowuje: `ActionsPerformed` liczy całą drużynę, a ikony akcji nad portretami (`SavedActionIcons`, z bohaterem) gra czyści co rundę; dziennik misji (`.qlog`) nie notuje interakcji. Sekcji „Interakcje” i proporcji walki do interakcji na bohatera nie ma (sprawdzone 2026-11-21);
+  - po prawej (kolejność z 2026-11-21): balans gry, przebieg misji (rundy, średni czas rundy, ataki, interakcje, złoto na rundę, jedna wartość pod drugą, bez tabliczek gry, każda z ikoną z atlasu UI gry: strzałki ruchu, wskaźnik czekania, walka, interakcja, monety; trudność usunięta po teście z 2026-11-21) i łup; balans gry ma legendę z ikonami i procentami nad paskiem walka/interakcje, nad „Dalej”. Wartości zerowe mają ten sam kolor co pozostałe; Sekcji „Drużyna” nie ma: stan zdrowia pokazuje okno gry na portretach;
+  - wcześniejsze układy (kafelki w oknie pod „Czasem”, potem w lewym panelu, drużyna po prawej) zmieniły testy w grze z 2026-11-21;
+  - zabitych wrogów gra nie zapisuje (ani łącznie, ani na bohatera), więc wykresu zabójstw nie ma; zamiast niego są ataki bohaterów;
+  - płótno gry ma wysokość 1080 i szerokość zależną od proporcji ekranu (16:9: 1920, 16:10: 1728, MacBook Air: ok. 1660). Gdy na panele boczne zostaje mniej niż ok. 300 jednostek, plugin zmniejsza okno gry skalą (na MacBooku ok. 0,82).
+
 ### D115 · 2026-11-20 · E21: poprawki obsady po odsłuchu całej gry
 **Decyzja:**
 - Zestawienie `m4_cast` obejmuje całą grę: 144 głosy, akt 2 z podejść poza paczką, przyciętych i wyrównanych do −20 LUFS jak w `finalize`. Pierwsza wersja strony dawała próbki aktu 2 bez wyrównania (−24 do −28 LUFS), więc Ogrodniczka z A2Q8 i Czerwona Gwiazda, które miały tylko uwagę „za cichy”, wypadają z E21. Żołnierz z A2Q11 i Gorzae zostają z powodu jakości i robotycznego brzmienia.

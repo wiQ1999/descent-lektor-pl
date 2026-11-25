@@ -37,6 +37,12 @@ namespace LektorPL.Core
         /// <summary>Nakładka w grze (próba): skróty, komunikaty, menu lektora, przycisk na dolnym pasku, zgłoszenia.</summary>
         public bool Overlay = true;
 
+        /// <summary>Statystyki przy oknie podsumowania misji (E20, D114): wartość na start; w grze zmienia ją menu lektora.</summary>
+        public bool QuestSummary = true;
+
+        /// <summary>Podgląd panelu statystyk w trakcie misji skrótem Ctrl+P (tylko do testów).</summary>
+        public bool QuestSummaryPreview = false;
+
         /// <summary>Komunikaty diagnostyczne dla loadera (np. log BepInEx).</summary>
         public Action<string> Info;
     }
@@ -44,7 +50,7 @@ namespace LektorPL.Core
     /// <summary>Punkt wejścia rdzenia, niezależny od loadera.</summary>
     public static class Bootstrap
     {
-        public const string Version = "1.0.0";
+        public const string Version = "1.1.0";
         private static GameObject s_host;
 
         /// <summary>Tworzy ukryty obiekt z <see cref="Runner"/>; zwraca ścieżkę dziennika. Kolejne wywołania nic nie robią.</summary>
@@ -91,7 +97,10 @@ namespace LektorPL.Core
                 try { overlay = new Overlay(log, sender, options.LogDirectory); }
                 catch (Exception e) { log.Error("overlay_init", e); }
             }
-            runner.Init(tracker, log, sender, overlay);
+            SummaryPanel summary = null;
+            if (tracker != null)                    // także wyłączony: menu lektora może go włączyć w trakcie gry
+                summary = new SummaryPanel(log, options.QuestSummary, options.QuestSummaryPreview);
+            runner.Init(tracker, log, sender, overlay, summary);
             options.Info?.Invoke(prefix + ": dziennik " + log.FilePath);
             return log.FilePath;
         }
@@ -103,16 +112,18 @@ namespace LektorPL.Core
         private EventLog _log;
         private Sender _sender;
         private Overlay _overlay;
+        private SummaryPanel _summary;
         private bool _stopped;
 
         public string LogPath => _log?.FilePath;
 
-        internal void Init(Tracker tracker, EventLog log, Sender sender, Overlay overlay = null)
+        internal void Init(Tracker tracker, EventLog log, Sender sender, Overlay overlay = null, SummaryPanel summary = null)
         {
             _tracker = tracker;
             _log = log;
             _sender = sender;
             _overlay = overlay;
+            _summary = summary;
         }
 
         private void Update()
@@ -128,6 +139,12 @@ namespace LektorPL.Core
         private void LateUpdate()
         {
             _tracker?.LateUpdate();
+            if (!_stopped && _summary != null)
+            {
+                if (_overlay != null && _overlay.Connected && Json.Get(_overlay.State, "stats") is bool stats)
+                    _summary.Enabled = stats;           // przełącznik z menu lektora (companion zapisuje go w ustawieniach)
+                _summary.Update(_tracker);
+            }
             if (_sender == null || _tracker == null) return;
             try
             {

@@ -14,6 +14,7 @@ $kopia = Join-Path $paczka 'stan\nakladka-kopia'
 
 $pliki = @(
     @{ Z = 'build\plugin\LektorPL.Core\bin\Release\LektorPL.Core.dll'; Do = 'plugin\LektorPL.Core.dll' },
+    @{ Z = 'build\plugin\LektorPL.Loader\bin\Release\LektorPL.Loader.dll'; Do = 'plugin\LektorPL.Loader.dll' },
     @{ Z = 'src\lektor\companion\app.py'; Do = 'lektor\companion\app.py' },
     @{ Z = 'src\lektor\companion\config.py'; Do = 'lektor\companion\config.py' },
     @{ Z = 'src\lektor\companion\control.py'; Do = 'lektor\companion\control.py' },
@@ -37,15 +38,15 @@ foreach ($p in $pliki) {
     $src = Join-Path $repo $p.Z
     if (-not (Test-Path $src)) { throw "Brak pliku $src (zbuduj plugin: dotnet build src/plugin/Loader -c Release)" }
 }
-if (-not (Test-Path $kopia)) {
-    foreach ($p in $pliki) {
-        $cel = Join-Path $paczka $p.Do
-        if (Test-Path $cel) {
-            $dst = Join-Path $kopia $p.Do
-            New-Item -ItemType Directory -Force -Path (Split-Path $dst) | Out-Null
-            Copy-Item -LiteralPath $cel -Destination $dst
-        }
+# Kopia każdego pliku osobno: plik dopisany do listy po wcześniejszej próbie też dostaje oryginał (inaczej -Przywroc by go usunął).
+foreach ($p in $pliki) {
+    $cel = Join-Path $paczka $p.Do
+    $dst = Join-Path $kopia $p.Do
+    if ((Test-Path $cel) -and -not (Test-Path $dst)) {
+        New-Item -ItemType Directory -Force -Path (Split-Path $dst) | Out-Null
+        Copy-Item -LiteralPath $cel -Destination $dst
     }
 }
 foreach ($p in $pliki) { Copy-Item -LiteralPath (Join-Path $repo $p.Z) -Destination (Join-Path $paczka $p.Do) -Force }
-Write-Host "Nakładka wgrana do $paczka. Oryginały: $kopia (powrót: -Przywroc)."
+$core = [System.Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $paczka 'plugin\LektorPL.Core.dll')).FileVersion
+Write-Host "Nakładka wgrana do $paczka z $repo (rdzeń $core). Oryginały: $kopia (powrót: -Przywroc)."

@@ -105,6 +105,7 @@ Wersja produkcyjna (E17, D107): `--release m4`, baza `m4.sqlite`, audio `audio/m
 - `generate` przejmuje wybory z t1 i m3 (tylko silnik głosu w m4) i nieocenione podejścia OmniVoice z m3 (`paths.ADOPT`, `synth.adopt`).
 - Pierwsza paczka m4 obejmuje akt 1 i części wspólne (D108, `ACTS="1 3" ASR_FP32=1`). Test w grze: `docs/E17_M4_TEST1.md`. Zestawienie głosów do odsłuchu: `analysis/tools/cast_sheet.py` (`analysis/work/compare/m4_cast/index.html`, domyślnie cała gra; akt 2 z podejść bez oceny automatu, znacznik głosów zmienionych w D109).
 - Zmiany obsady po odsłuchu (D109): `analysis/tools/recast_m4.py design|choose|page|adopt` (kandydaci OmniVoice i podglądy ElevenLabs w `analysis/work/compare/m4_recast/`). Nowe profile ElevenLabs wpisujemy do `direction.ELEVEN_RECAST` (znacznik w kluczu fragmentu). „Warrick” model czyta „Łorik” (`normalize.PHONETIC`).
+- Poprawki obsady po drugim odsłuchu (E21, D115): kandydaci `analysis/tools/recast_e21.py --round N design|choose|lines|page|adopt` (profile `voice_designs_e21*.json`, wyniki w `analysis/work/compare/e21_recast/`), próbki tempa i efektów `e21_samples.py`. Efekty głosu (`lektor.effects`) wypala `finalize` według `direction.FX`. Sposób czytania ElevenLabs per głos (ustawienia, tempo, znaczniki audio tylko w tekście dla API) jest w `direction.ELEVEN_STYLE`. Wybory na kolejne generowanie czekają w `direction.RECAST_LATER` (Levirax).
 
 - `build --release m2 --only event_e5b map` buduje tylko wybrane grupy spoza M1.
 - Fazę B E14 prowadzi `bash analysis/tools/e14_run.sh` (D95). Skrypt jest wznawialny i działa w aplikacji Claude:
@@ -167,6 +168,7 @@ Companion (E4). Konfiguracja w `%LOCALAPPDATA%\LektorPL\companion.toml` (tworzon
 ```
 
 - Nakładka w grze (E18, D110): skróty, przycisk „PL” z menu (kopia podmenu drużyny, `src/plugin/Core/PlMenu.cs`, `Overlay.cs`) i zgłoszenia w `zgloszenia/`. Plugin wysyła `control` i `report`, companion odsyła `state` (`companion/control.py`: tempo WSOLA, zapis `ustawienia.toml`, zgłoszenie). Lista kontrolna w grze: `docs/NAKLADKA_TEST.md`.
+- Statystyki misji (E20, D114): panele po bokach okna podsumowania misji (`src/plugin/Core/SummaryPanel.cs`, dane `QuestStats.cs`, tylko standardowy zapis gry). Włącznik `[podsumowanie] statystyki` i checkbox w menu lektora (`control` `statystyki`, w stanie `stats`); podgląd w misji Ctrl+P przy `[podsumowanie] podglad = true` (`docs/E20_PODGLAD.md`). Wzorzec liczb z `.sav`: `analysis/tools/quest_summary_preview.py`.
 - Replay z `--speed 0 --no-audio` sprawdza samo pokrycie. Opóźnienia mierzymy w czasie rzeczywistym (`--tcp`, wyjście audio wyciszone w configu `volume = 0.0`).
 
 ElevenLabs (E9, D73). Serwer MCP tylko w zakresie projektu (`.mcp.json`), klucz w nieśledzonym `.env.elevenlabs.local`, audio i logi w `analysis/work/elevenlabs/`. Instrukcja: `analysis/tools/elevenlabs/README.md`.
@@ -223,3 +225,4 @@ uv run --no-project --python 3.13 analysis/tools/elevenlabs/usage_report.py [--p
 | [analysis/E16_PLAYTEST.md](analysis/E16_PLAYTEST.md) | testy t1 w grze (Q1–Q2, 2026-11-13/14): zrzuty, przyczyny, przegląd mowy w oknach narratora, poprawki D102, D103, D105 i D106 (okno i zapowiedź wyzwania, przeczenie, wtrącenia) |
 | [analysis/E17_PREP.md](analysis/E17_PREP.md) | przygotowanie wersji produkcyjnej m4: przegląd mówców w oknach, nowe głosy mówców bez imienia, szacunek GPU i kredytów, kontrola tekstów |
 | [analysis/E17_DATA.md](analysis/E17_DATA.md) | baza kwestii m4: liczności według grupy, kategorii i głosu, szacunek generowania |
+| [analysis/E20_SUMMARY.md](analysis/E20_SUMMARY.md) | statystyki misji w oknie podsumowania (E20): sekcje i dane gry, czego gra nie zapisuje, testy w grze, ustawienia |

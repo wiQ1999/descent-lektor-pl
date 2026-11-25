@@ -190,7 +190,7 @@ class Remote:
 
     def _store(self, key, section):
         d = self.director
-        value = d.toggles[key] if section == 'toggles' else {'tempo': d.tempo, 'volume': d.volume}[key]
+        value = d.toggles[key] if section == 'toggles' else {'tempo': d.tempo, 'volume': d.volume, 'statystyki': d.stats}[key]
         try:
             K.set_setting(self.cfg['file'], key, value, section)
             self.log({'ev': 'setting', 'key': key, 'section': section, 'value': value})
@@ -251,7 +251,8 @@ def run(cfg, replay=None, audio=True, speed=1.0, max_gap=None, tcp=False, drain=
     lib.warm()
     player = Player(lib.sample_rate, cfg.get('device')) if audio else NullPlayer(lib.sample_rate)
     log = Log(os.path.join(logs or log_dir(), 'companion-%s.jsonl' % time.strftime('%Y%m%d-%H%M%S')))
-    director = Director(lib, player, cfg['toggles'], cfg.get('volume', 1.0), log, tempo=cfg.get('tempo', 1.0))
+    director = Director(lib, player, cfg['toggles'], cfg.get('volume', 1.0), log, tempo=cfg.get('tempo', 1.0),
+                        stats=cfg.get('podsumowanie', {}).get('statystyki', True))
     log({'ev': 'start', 'mode': 'replay' if replay else 'serve', 'model': lib.model, 'audio': audio,
          'output_latency': player.output_latency, 'speed': speed, 'max_gap': max_gap, 'tcp': tcp,
          'toggles': cfg['toggles'], 'replay': [os.path.basename(f) for f in replay or []],

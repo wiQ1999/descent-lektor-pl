@@ -134,11 +134,11 @@ Aktualizacja w Steam przywraca oryginalny podpis gry. Gra wtedy uruchomi się be
 Na dolnym pasku, obok zębatki i drużyny, jest przycisk **PL**. Otwiera menu lektora:
 - bieżąca kwestia oraz przyciski Powtórz, Utnij i Wycisz;
 - tempo (0,8–1,6×) i głośność lektora;
-- „Co czyta lektor”: kategorie do włączenia i wyłączenia;
+- „Co czyta lektor”: kategorie do włączenia i wyłączenia, a na końcu listy „Statystyki na koniec misji”: panele po bokach okna podsumowania misji (ataki, wyzwania i postawy bohaterów, balans gry, przebieg misji i łup);
 - 3 ostatnie kwestie: „Graj” odtwarza kwestię jeszcze raz, „Zgłoś” zgłasza błąd w tej kwestii;
 - „Zgłoś błąd” i lista skrótów.
 
-Zmiany tempa, głośności i kategorii zapisują się od razu w `ustawienia.toml`. Wyciszenie działa do końca sesji.
+Zmiany tempa, głośności, statystyk i kategorii zapisują się od razu w `ustawienia.toml`. Wyciszenie działa do końca sesji.
 
 | Skrót | Działanie |
 |---|---|
@@ -170,9 +170,10 @@ Wartości:
 - `tempo`: tempo lektora od `0.8` do `1.6`, `1.0` to tempo nagrań;
 - `device`: głośnik albo słuchawki. Puste `""` oznacza urządzenie domyślne systemu. Możesz wpisać fragment nazwy urządzenia, np. `"Headphones"`;
 - sekcja `[toggles]`: `false` wycisza daną kategorię, np. `ui = false` wyłącza komunikaty interfejsu, `opis_misji = false` wyłącza odczyt nazwy i opisu misji na mapie, a `zdolnosci = false` wyłącza w oknie ataku odczyt obrony wroga i zdolności broni oraz talizmanów;
-- sekcja `[skroty]`: skróty klawiszowe w grze.
+- sekcja `[skroty]`: skróty klawiszowe w grze;
+- sekcja `[podsumowanie]`: `statystyki = false` wyłącza panele ze statystykami przy oknie podsumowania misji.
 
-Zmiany działają od następnego uruchomienia gry. Głośność, tempo i kategorie zmienisz też w grze, w menu **PL**. Po zmianie uruchom `Test dźwięku`: sprawdza też, czy w pliku nie ma błędu.
+Zmiany działają od następnego uruchomienia gry. Głośność, tempo, statystyki i kategorie zmienisz też w grze, w menu **PL**. Po zmianie uruchom `Test dźwięku`: sprawdza też, czy w pliku nie ma błędu.
 <!-- win -->
 
 Głośność lektora zmienisz też w mikserze głośności Windows, gdzie lektor widnieje jako `python`.

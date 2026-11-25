@@ -58,6 +58,7 @@ def test_set_setting_keeps_comments_and_adds_missing(tmp_path):
 def test_config_has_tempo_and_keys(tmp_path):
     cfg = C.load(str(tmp_path / 'c.toml'))
     assert cfg['tempo'] == 1.0 and cfg['skroty']['zglos'] == 'Ctrl+B'
+    assert cfg['podsumowanie'] == {'statystyki': True}
 
 
 def test_tempo_shortens_next_line_and_notice(run):
@@ -125,8 +126,10 @@ def test_remote_saves_settings_and_writes_report(run, tmp_path):
     r = A.Remote({'file': str(f), 'skroty': K.KEYS}, d, A.Link(), log, str(tmp_path / 'logs'))
     assert r.handle({'ev': 'control', 'cmd': 'szybciej'}, 1.0)
     assert r.handle({'ev': 'control', 'cmd': 'przelacznik', 'value': {'name': 'narracja', 'on': False}}, 1.0)
+    assert r.handle({'ev': 'control', 'cmd': 'statystyki', 'value': False}, 1.0)
     cfg = tomllib.loads(f.read_text(encoding='utf-8'))
     assert cfg['tempo'] == 1.1 and cfg['toggles']['narracja'] is False
+    assert cfg['podsumowanie'] == {'statystyki': False} and d.state()['stats'] is False
     d.toggles['narracja'] = True
     assert not r.handle(msg(1, 'HELLO'), run.clock())
     d.handle(msg(1, 'HELLO'))

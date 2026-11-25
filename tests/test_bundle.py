@@ -89,6 +89,7 @@ def test_settings_template_is_valid_toml_with_relative_paths(tmp_path):
     text = B.settings_text(dev=False)
     cfg = tomllib.loads(text)
     assert cfg['db'] == 'dane/m1.sqlite' and cfg['plugin'] == {'autostart': True}
+    assert cfg['podsumowanie'] == {'statystyki': True}
     assert set(cfg['toggles']) == set(C.TOGGLES) and '@' not in text
     f = tmp_path / 'paczka' / 'ustawienia.toml'
     f.parent.mkdir()

@@ -465,7 +465,7 @@ namespace LektorPL.Core
         {
             if (!connected || state == null) return "x";
             var sb = new StringBuilder();
-            sb.Append(Json.Bool(state, "muted")).Append('|').Append(Json.Obj(state, "now") != null);
+            sb.Append(Json.Bool(state, "muted")).Append('|').Append(Json.Obj(state, "now") != null).Append('|').Append(Json.Bool(state, "stats"));
             var toggles = Json.Obj(state, "toggles");
             if (toggles != null) foreach (var kv in toggles) sb.Append('|').Append(kv.Key).Append(kv.Value is bool b && b);
             var history = Json.List(state, "history");
@@ -565,6 +565,9 @@ namespace LektorPL.Core
                     _host.Send(_host.Log.New("control").Str("cmd", "przelacznik")
                         .Raw("value", new JsonLine().Str("name", key).Bool("on", on).ToString())));
             }
+            if (Json.Get(state, "stats") is bool stats)         // na końcu listy: panele przy oknie podsumowania misji (E20)
+                Check("Statystyki na koniec misji", stats, on =>
+                    _host.Send(_host.Log.New("control").Str("cmd", "statystyki").Bool("value", on)));
         }
 
         /// <summary>Checkbox gry w osobnym wierszu.</summary>
