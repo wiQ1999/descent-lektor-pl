@@ -1265,6 +1265,18 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** Z audio całej gry każdy zip ma ok. 3,4 GB, a GitHub przyjmuje plik wydania do 2 GiB (D111). Największa część online ma ok. 1,07 GB. Instalator nie zmienił się od v1.0.0. Gracze v1.0.0 pobierają nowe warstwy audio i program, a warstwy audio z v1.0.0 mają te same nazwy i sumy. Ręczna paczka podzielona na pliki do 2 GiB czeka na decyzję użytkownika.
 
+### D118 · 2026-11-27 · Audio paczki w Opus 96 kb/s, wydanie v1.1.1
+**Decyzja:**
+- Audio paczki przechodzi z FLAC na Ogg Opus 96 kb/s (libsndfile `compression_level` 0,645, mono 24 kHz).
+- Audio całej gry zajmie ok. 1,46 GB zamiast 3,38 GB, a zip na system ok. 1,55 GB. Wraca jeden zip do ręcznej instalacji na system, obok części dla komendy.
+- Zmiana idzie w osobnym wydaniu v1.1.1. Wydanie robimy dopiero po zatwierdzeniu przez użytkownika.
+
+**Uzasadnienie:**
+- Odsłuch 2026-11-27 (`analysis/tools/opus_samples.py`, 25 fragmentów z różnych głosów): w rundzie 1 użytkownik nie usłyszał różnicy między FLAC a Opus 24, 32 i 48 kb/s.
+- Wybraliśmy najwyższą przepływność, przy której zip mieści się w limicie GitHub 2 GiB z zapasem na nowe głosy aktu 2.
+- soundfile 0.14.0 w paczkach Windows i Maca (libsndfile 1.2.2) dekoduje Opus.
+- Najdłuższy fragment (31 s) dekoduje się w ok. 40 ms.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
