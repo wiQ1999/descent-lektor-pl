@@ -292,6 +292,12 @@ Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej 
 .venv/Scripts/python -I analysis/tools/e21_samples.py page
 ```
 
+- Próbki audio paczki w Opus (po D117): 25 fragmentów m4 z różnych głosów jako FLAC i Opus 24/32/48 kb/s, zdekodowane przez soundfile jak w companionie, z szacunkiem rozmiaru całej gry. Strona `analysis/work/compare/opus/index.html`:
+
+```bash
+.venv/Scripts/python -I analysis/tools/opus_samples.py
+```
+
 - Kandydaci głosów E21 (D115): profile w `analysis/tools/voice_designs_e21.json` (nowe głosy, poprawki jakości, klony Ne'Krul i Levirax, odszumiona referencja Gilliama). Każdy kandydat czyta też kwestię z gry. Strona `analysis/work/compare/e21_recast/index.html`, wybór przejmuje `adopt` (litera A–C, `-` bez zmian):
 
 ```bash
