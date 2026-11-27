@@ -25,7 +25,8 @@ if os.environ.get('LEKTOR_WORK'):
 paths.use('m4')
 OUT = os.path.join(paths.WORK, 'compare', 'opus')
 # compression_level libsndfile dla Opus -> przepływność (zmierzone na mowie 24 kHz mono, 2026-11-27)
-VARIANTS = (('opus24', 'Opus 24 kb/s', 0.935), ('opus32', 'Opus 32 kb/s', 0.90), ('opus48', 'Opus 48 kb/s', 0.838))
+VARIANTS = (('opus96', 'Opus 96 kb/s', 0.645), ('opus48', 'Opus 48 kb/s', 0.833), ('opus24', 'Opus 24 kb/s', 0.935))
+# runda 1 (2026-11-27): 24/32/48 kb/s bez słyszalnej różnicy; runda 2: najwyższa jakość, przy której zip mieści się w 2 GiB z zapasem
 GROUPS = (
     ('Narrator', [('narrator', 'long'), ('narrator', 'long'), ('narrator', 'mid'), ('narrator', 'short')]),
     ('Bohaterowie (klony dubbingu)', [('brynn', 'mid'), ('syrus', 'mid'), ('kehli', 'mid'), ('galaden', 'shout'),

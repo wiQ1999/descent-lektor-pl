@@ -292,7 +292,7 @@ Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej 
 .venv/Scripts/python -I analysis/tools/e21_samples.py page
 ```
 
-- Próbki audio paczki w Opus (po D117): 25 fragmentów m4 z różnych głosów jako FLAC i Opus 24/32/48 kb/s, zdekodowane przez soundfile jak w companionie, z szacunkiem rozmiaru całej gry. Strona `analysis/work/compare/opus/index.html`:
+- Próbki audio paczki w Opus (po D117): 25 fragmentów m4 z różnych głosów jako FLAC i Opus 96/48/24 kb/s, zdekodowane przez soundfile jak w companionie, z szacunkiem rozmiaru całej gry. Strona `analysis/work/compare/opus/index.html`:
 
 ```bash
 .venv/Scripts/python -I analysis/tools/opus_samples.py
