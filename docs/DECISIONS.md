@@ -1260,6 +1260,11 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 
 **Uzasadnienie:** Polecenie użytkownika 2026-11-25. Kontrola przed generowaniem: przebudowa bazy nie zmieniła liczby kwestii (13 939) ani segmentów, a poza nowymi fragmentami E21 każdy fragment ma podejście.
 
+### D117 · 2026-11-27 · Wydanie v1.1.0 bez zipów do ręcznej instalacji
+**Decyzja:** Wydanie v1.1.0 (cała gra, plugin 1.1.0, commit `9878e3e`) ma tylko instalację komendą: skrypty instalacji, manifesty i wszystkie części z `dist/online/`. Zipy `Descent-Lektor-PL-win.zip` i `-mac.zip` nie wchodzą do wydania.
+
+**Uzasadnienie:** Z audio całej gry każdy zip ma ok. 3,4 GB, a GitHub przyjmuje plik wydania do 2 GiB (D111). Największa część online ma ok. 1,07 GB. Instalator nie zmienił się od v1.0.0. Gracze v1.0.0 pobierają nowe warstwy audio i program, a warstwy audio z v1.0.0 mają te same nazwy i sumy. Ręczna paczka podzielona na pliki do 2 GiB czeka na decyzję użytkownika.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.

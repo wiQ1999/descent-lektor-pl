@@ -561,7 +561,7 @@ Cel: zmiany i poprawki 60 głosów z odsłuchu zestawienia całej gry `m4_cast` 
 4. (zrobione, D116) Ponowne podejścia siedmiu fragmentów: Kapitan z FoF (pauza na początku, wymowa końcówki), Więzień (wymowa końcówki), Bandyta-nekromanta (ucięta końcówka), żołnierz z karczmy (`8f0b82e38dee6729`, pomyłka w słowie przy ziarnie produkcji) i trzy fragmenty Baelziffara z „ocalić” i „najgłośniej” (błąd wymowy, którego Whisper nie wychwycił). Gdy nowe podejście dalej myli słowo, zapis fonetyczny w `normalize.PHONETIC`.
 5. Wybór z odsłuchu (`adopt`), wpis w `docs/CASTING.md`.
 6. (zrobione 2026-11-27, D116) Generowanie zmienionych głosów w całej grze, ocena, ponowne podejścia, `finalize` z efektami i tempem z kroku 1, zestawienie `m4_cast` do kontroli.
-7. Paczka z całą grą (akt 1, akt 2 i części wspólne) jako aktualizacja (instalator pobiera tylko zmienione części), wydanie v1.1.0 (polecenie użytkownika 2026-11-25, D116).
+7. Paczka z całą grą (akt 1, akt 2 i części wspólne) jako aktualizacja (instalator pobiera tylko zmienione części), wydanie v1.1.0 (polecenie użytkownika 2026-11-25, D116). Zrobione 2026-11-27: wydanie z instalacją komendą, bez zipów ponad 2 GiB (D117).
 
 Poza E21 (po odnowieniu limitu ElevenLabs 2026-12-15): nowe profile Laurel (mniej dziecięcy) i L'trand (kobieta czarnoskóra) oraz chropowatsza Veta (jak u orka).
 
