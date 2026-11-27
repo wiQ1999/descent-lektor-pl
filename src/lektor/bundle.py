@@ -195,6 +195,7 @@ def copy_data(dest):
     w GitHub Releases, a w odsłuchu nie słychać różnicy wobec FLAC (wcześniej FLAC, D96). Companion czyta Opus przez
     soundfile (libsndfile 1.2) tak samo jak WAV. Kopie leżą w audio/<wydanie>/opus96 i powstają od nowa tylko po zmianie
     pliku końcowego."""
+    import numpy as np
     import soundfile as sf
     out = os.path.join(dest, 'dane')
     os.makedirs(out, exist_ok=True)
@@ -209,6 +210,8 @@ def copy_data(dest):
         enc = os.path.join(cache, name)
         if not os.path.exists(enc) or os.path.getmtime(enc) < os.path.getmtime(src):
             y, sr = sf.read(src, dtype='int16')
+            if not len(y):          # Opus bez próbek jest nieczytelny (FLAC go przyjmował): jedna próbka ciszy
+                y = np.zeros(1, dtype='int16')
             sf.write(enc + '.tmp', y, sr, format='OGG', subtype='OPUS', compression_level=OPUS_LEVEL)
             os.replace(enc + '.tmp', enc)
         m['file'] = 'final/' + name

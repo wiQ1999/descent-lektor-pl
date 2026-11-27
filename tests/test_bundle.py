@@ -217,6 +217,25 @@ def test_copy_data_writes_opus_and_manifest(tmp_path, monkeypatch):
     assert np.corrcoef(back.astype(float), y.astype(float))[0, 1] > 0.99
 
 
+def test_copy_data_empty_fragment_stays_readable(tmp_path, monkeypatch):
+    """Fragment bez próbek (cisza po przycięciu) daje czytelny plik Opus z jedną próbką ciszy."""
+    import json as _json
+    import numpy as np
+    import soundfile as sf
+    audio, dest = tmp_path / 'audio', tmp_path / 'paczka'
+    (audio / 'final').mkdir(parents=True)
+    sf.write(audio / 'final' / 'pusty.wav', np.zeros(0, dtype='int16'), 24000, subtype='PCM_16')
+    (audio / 'manifest.json').write_text(_json.dumps({'fragments': {'pusty': {'file': 'final/pusty.wav'}}}), encoding='utf-8')
+    db = tmp_path / 'm4.sqlite'
+    db.write_bytes(b'')
+    monkeypatch.setattr(B.paths, 'AUDIO', str(audio))
+    monkeypatch.setattr(B.paths, 'DB', str(db))
+    monkeypatch.setattr(B.paths, 'RELEASE', 'm4')
+    B.copy_data(str(dest))
+    back, sr = sf.read(dest / 'dane' / 'final' / 'pusty.opus')
+    assert sr == 24000 and len(back) <= 1 and abs(back).max() < 1e-4
+
+
 def test_platform_bundles_share_common_files_by_hard_links(fake, monkeypatch):
     monkeypatch.setattr(B, 'copy_python', lambda platform, dest: None)
     monkeypatch.setattr(B, 'copy_data', lambda dest: 0)
