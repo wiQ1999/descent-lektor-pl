@@ -120,7 +120,7 @@ Wersja produkcyjna (E17, D107): `--release m4`, baza `m4.sqlite`, audio `audio/m
   - `evaluate --no-asr` robi szybką ocenę bez Whispera do `evals_quick.jsonl`.
   - `evaluate --fp32 --until HH:MM` liczy Whispera w fp32 do podanej godziny.
   - Pokrycie kwestii sprawdza `analysis/tools/release_coverage.py`.
-- Paczka ma audio w FLAC (D96).
+- Paczka ma audio w Ogg Opus 96 kb/s (D118, wcześniej FLAC, D96). Kopie leżą w `audio/<wydanie>/opus96/`.
 - Styl klonu w `refs.json` (`style.speed`, `style.instruct`) wchodzi do klucza fragmentu i do `synth`.
 - Postacie bez dubbingu (D80, E13) czyta ElevenLabs `eleven_v4`: `eleven --release m1|m2 [--dry-run] [--retake] [--max-credits N]` w `.venv` (płatne, wznawialne). Głosy i `voice_id` są w `direction.ELEVEN_VOICES`. Podejścia mają numery od 101 obok podejść OmniVoice, `select` bierze dla głosu tylko jego silnik. M1 generujemy przed M2, bo M2 przejmuje z M1 fragmenty o tym samym id.
 - `generate --release m2` przejmuje z `audio/m1` fragmenty o tym samym id i liczy resztę.

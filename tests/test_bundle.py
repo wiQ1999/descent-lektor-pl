@@ -193,8 +193,8 @@ def test_dev_settings_follow_release(tmp_path):
         paths.use(old)
 
 
-def test_copy_data_writes_flac_and_manifest(tmp_path, monkeypatch):
-    """Audio paczki w FLAC (D96): te same próbki, manifest wskazuje pliki .flac."""
+def test_copy_data_writes_opus_and_manifest(tmp_path, monkeypatch):
+    """Audio paczki w Ogg Opus 96 kb/s (D118): ta sama długość i częstotliwość, sygnał bliski oryginałowi, manifest wskazuje .opus."""
     import json as _json
     import numpy as np
     import soundfile as sf
@@ -211,9 +211,10 @@ def test_copy_data_writes_flac_and_manifest(tmp_path, monkeypatch):
     monkeypatch.setattr(B.paths, 'RELEASE', 'm3')
     assert B.copy_data(str(dest)) == 1
     m = _json.loads((dest / 'dane' / 'manifest.json').read_text(encoding='utf-8'))
-    assert m['fragments']['abc']['file'] == 'final/abc.flac'
-    back, sr = sf.read(dest / 'dane' / 'final' / 'abc.flac', dtype='int16')
-    assert sr == 24000 and (back == y).all()
+    assert m['fragments']['abc']['file'] == 'final/abc.opus'
+    back, sr = sf.read(dest / 'dane' / 'final' / 'abc.opus', dtype='int16')
+    assert sr == 24000 and len(back) == len(y)
+    assert np.corrcoef(back.astype(float), y.astype(float))[0, 1] > 0.99
 
 
 def test_platform_bundles_share_common_files_by_hard_links(fake, monkeypatch):

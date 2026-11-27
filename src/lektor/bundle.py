@@ -64,7 +64,9 @@ TRIM_WIN = ('tcl', 'include', 'libs', 'Scripts', 'Lib/idlelib', 'Lib/tkinter', '
 CRLF = ('.cmd', '.ps1')        # skrypty Windows
 BOM = ('.ps1',)                # PowerShell 5.1 bez BOM czyta plik jako ANSI
 EXEC = ('.command', '.sh')     # prawa wykonywania na Macu
-STORED = ('.wav', '.gz')       # bez kompresji w zipie (i tak nie zyskują)
+STORED = ('.wav', '.gz', '.flac', '.opus')       # bez kompresji w zipie (i tak nie zyskują)
+AUDIO_EXT, AUDIO_CACHE = '.opus', 'opus96'
+OPUS_LEVEL = 0.645     # compression_level libsndfile: ok. 96 kb/s dla mowy mono 24 kHz (D118, analysis/tools/opus_samples.py)
 LOCAL = ('logs', 'stan')       # dzienniki i stan instalacji: tylko na komputerze gracza, poza zipem i częściami
 
 
@@ -189,29 +191,30 @@ def copy_lektor(dest):
 def copy_data(dest):
     """Baza wydania i audio z manifestu (tylko pliki, które manifest wskazuje).
 
-    Audio idzie w FLAC: bezstratnie i ok. połowy rozmiaru WAV, bo paczka M3 w WAV przekroczyłaby limit 2 GiB na plik
-    w GitHub Releases (D96). Companion czyta FLAC przez soundfile tak samo jak WAV. Kopie FLAC leżą w audio/<wydanie>/flac
-    i powstają od nowa tylko po zmianie pliku końcowego."""
+    Audio idzie w Ogg Opus 96 kb/s (D118): ok. 43% rozmiaru FLAC, więc zip paczki mieści się w limicie 2 GiB na plik
+    w GitHub Releases, a w odsłuchu nie słychać różnicy wobec FLAC (wcześniej FLAC, D96). Companion czyta Opus przez
+    soundfile (libsndfile 1.2) tak samo jak WAV. Kopie leżą w audio/<wydanie>/opus96 i powstają od nowa tylko po zmianie
+    pliku końcowego."""
     import soundfile as sf
     out = os.path.join(dest, 'dane')
     os.makedirs(out, exist_ok=True)
     shutil.copy2(paths.DB, os.path.join(out, paths.RELEASE + '.sqlite'))
     with open(os.path.join(paths.AUDIO, 'manifest.json'), encoding='utf-8') as fh:
         manifest = json.load(fh)
-    cache = os.path.join(paths.AUDIO, 'flac')
+    cache = os.path.join(paths.AUDIO, AUDIO_CACHE)
     os.makedirs(cache, exist_ok=True)
     for m in manifest['fragments'].values():
         src = os.path.join(paths.AUDIO, m['file'])
-        name = os.path.splitext(os.path.basename(m['file']))[0] + '.flac'
-        flac = os.path.join(cache, name)
-        if not os.path.exists(flac) or os.path.getmtime(flac) < os.path.getmtime(src):
+        name = os.path.splitext(os.path.basename(m['file']))[0] + AUDIO_EXT
+        enc = os.path.join(cache, name)
+        if not os.path.exists(enc) or os.path.getmtime(enc) < os.path.getmtime(src):
             y, sr = sf.read(src, dtype='int16')
-            sf.write(flac + '.tmp', y, sr, format='FLAC', subtype='PCM_16')
-            os.replace(flac + '.tmp', flac)
+            sf.write(enc + '.tmp', y, sr, format='OGG', subtype='OPUS', compression_level=OPUS_LEVEL)
+            os.replace(enc + '.tmp', enc)
         m['file'] = 'final/' + name
         dst = os.path.join(out, m['file'])
         os.makedirs(os.path.dirname(dst), exist_ok=True)
-        link(flac, dst)
+        link(enc, dst)
     with open(os.path.join(out, 'manifest.json'), 'w', encoding='utf-8') as fh:
         json.dump(manifest, fh, indent=1)
     return len(manifest['fragments'])

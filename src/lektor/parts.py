@@ -34,7 +34,7 @@ DEFAULTS = 'skrypty/ustawienia.domyslne.toml'     # ustawienia.toml instalator t
 # Mac: jeden skrypt do `curl ... | bash` (UTF-8, końce linii LF)
 INSTALLER = {'win': ('instaluj-win.ps1', 'instalator-win.ps1'), 'mac': ('instaluj-mac.sh',)}
 SKIP = set(B.LOCAL) | {'zgloszenia'}
-STORED = set(B.STORED) | {'.flac', '.zip'}
+STORED = set(B.STORED) | {'.zip'}
 DATE = (2020, 1, 1, 0, 0, 0)
 ONLINE = os.path.join(B.DIST, 'online')    # wspólny dla Windows i Maca: warstwy audio są te same
 CHUNK = 1 << 30                 # warstwa audio w zipach do 1 GiB (limit pliku w GitHub Releases to 2 GiB)

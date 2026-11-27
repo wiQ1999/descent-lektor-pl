@@ -38,7 +38,7 @@ Pliki do dwukliku mają na Windows końcówkę `.cmd`.
 
 - Windows 10 albo 11 (64-bit).
 - Gra kupiona i zainstalowana w Steam.
-- Ok. 3 GB wolnego miejsca na dysku C: przy pierwszej instalacji (lektor zajmuje ok. 1,8 GB). Aktualizacja pobiera tylko zmienione części.
+- Ok. 3 GB wolnego miejsca na dysku C: przy pierwszej instalacji (lektor zajmuje ok. 1,6 GB). Aktualizacja pobiera tylko zmienione części.
 
 ### Instalacja
 
@@ -86,7 +86,7 @@ Pliki do dwukliku mają na Macu końcówkę `.command`.
 
 - Mac z procesorem Apple (M1 lub nowszym) i aktualnym macOS.
 - Gra kupiona i zainstalowana w Steam.
-- Ok. 4 GB wolnego miejsca przy pierwszej instalacji (lektor zajmuje ok. 1,8 GB). Aktualizacja pobiera tylko zmienione części.
+- Ok. 4 GB wolnego miejsca przy pierwszej instalacji (lektor zajmuje ok. 1,6 GB). Aktualizacja pobiera tylko zmienione części.
 
 ### Instalacja
 
