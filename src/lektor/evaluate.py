@@ -329,7 +329,8 @@ def select():
         for e in es:
             e['problems'] = problems(e, sim_median) + (['odsluch'] if e['take'] in rejected.get(fid, ()) else [])
         # Przy tych samych uwagach wygrywa podejście sprawdzone Whisperem (D96).
-        best = min(es, key=lambda e: (len(e['problems']) > 0, e.get('asr') is None, round(e['cer'] / 0.02),
+        # Podejście odrzucone w odsłuchu przegrywa z każdym innym (D116).
+        best = min(es, key=lambda e: ('odsluch' in e['problems'], len(e['problems']) > 0, e.get('asr') is None, round(e['cer'] / 0.02),
                                       -(e['sim'] or 0), e['take']))
         choice[fid] = {'take': best['take'], 'voice': best['voice'], 'speed': best['speed'], 'problems': best['problems'],
                        'cer': best['cer'], 'sim': best['sim'], 'cps': best['cps'], 'takes': len(es),

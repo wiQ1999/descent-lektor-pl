@@ -1246,6 +1246,18 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - Fragmenty z błędem w odsłuchu (krok 4) mają podejścia w `audio/m4/rejected.json`. `select` daje im uwagę `odsluch`, więc wybiera inne podejście i zleca ponowne w zwykłych rundach.
 - Przebieg: generowanie, ocena Whisperem fp32 całej gry, trzy rundy i rundy dodatkowe ponownych podejść, `finalize`. Po komplecie bez uwag automatu scalenie z `main` i wydanie.
 
+**Wynik (2026-11-27):**
+- Pokrycie całej gry: 13 925 z 13 925 kwestii z pełnym audio (`release_coverage.py --acts 1 2 3`).
+- Generowanie: 3915 podejść OmniVoice (ok. 15,5 h GPU) i 6 podejść ElevenLabs Levirax (341 kr.). Ocena Whisperem fp32: 15 214 podejść (ok. 12 h).
+- Trzy rundy (306, 135, 88 fragmentów) i dwie rundy dodatkowe (126, 114). ElevenLabs wydał na ponowne podejścia ok. 1,65 tys. kredytów, a budżet (2 tys.) zatrzymał ostatnie podejście.
+- Siedem fragmentów z kroku 4 i sześć kwestii Levirax ma podejścia bez uwag automatu.
+- Automat odrzuca 152 fragmenty: 46 przejętych z t1 i m3 (wydanych w v1.0.0) i 106 z m4. Prawie wszystkie to imiona i nazwy zapisane przez Whisper inaczej (Navoth, Fuks, Kathryn, Rhynn, Xenith) albo wtrącenia („Hrm”, „Hmm”), które Whisper pomija. Uwaga „koncowka” wynika wtedy z innego ostatniego słowa, a mowa jest pełna.
+- Cztery fragmenty gubiły słowo we wszystkich podejściach. Wolniejsze tempo naprawiło trzy z nich: „Mówi Laurel.”, „go złapie!” i „(Postęp”.
+- Zostają drobne wady, których kolejne podejścia nie usuwają:
+  - Vaerix w jednej kwestii aktu 2 bez okrzyku „Zaraz!” (wybrane podejście z imieniem);
+  - jednoliterowy fragment „z” w akcie 2 bez dźwięku;
+  - trzy liczniki „(0/N żołnierzy)” w akcie 2 czytane bez „zero na”.
+
 **Uzasadnienie:** Polecenie użytkownika 2026-11-25. Kontrola przed generowaniem: przebudowa bazy nie zmieniła liczby kwestii (13 939) ani segmentów, a poza nowymi fragmentami E21 każdy fragment ma podejście.
 
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)

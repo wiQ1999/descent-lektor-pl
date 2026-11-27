@@ -156,6 +156,15 @@ def test_select_rejected_takes_get_retake(tmp_path, monkeypatch):
     choice, retake = evaluate.select()
     assert choice['w1']['problems'] == ['odsluch'] and retake['w1'] == [2, 1.2]
     assert choice['w2']['take'] == 2 and not choice['w2']['problems'] and 'w2' not in retake
+    # Gorsze podejście automatu wygrywa z odrzuconym w odsłuchu.
+    rows = [ev('w3', 1, 'narrator'), ev('w3', 2, 'narrator', asr='Rycerz otwiera')]
+    fragments_db(tmp_path / 'm4b.sqlite', [('w3', 'narrator')]).close()
+    monkeypatch.setattr(paths, 'DB', str(tmp_path / 'm4b.sqlite'))
+    with open(tmp_path / 'evals.jsonl', 'w', encoding='utf-8') as fh:
+        fh.writelines(json.dumps(r, ensure_ascii=False) + '\n' for r in rows)
+    (tmp_path / 'rejected.json').write_text(json.dumps({'w3': [1]}), encoding='utf-8')
+    choice, _ = evaluate.select()
+    assert choice['w3']['take'] == 2 and 'odsluch' not in choice['w3']['problems']
 
 
 def test_levirax_style_tags_and_settings(tmp_path, monkeypatch):

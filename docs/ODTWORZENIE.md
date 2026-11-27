@@ -266,6 +266,7 @@ Wersja produkcyjna (E17, D107): wydanie `m4` na bazie `m3`, reguły t1 w całej 
 ```
 - Generowanie jak w E14 (`REL=m4 bash analysis/tools/e14_run.sh`). `generate` przejmuje wybory z t1 i m3 oraz nieocenione podejścia OmniVoice z m3 (`synth.adopt`). Dodatkowe rundy: `extra_retakes.py --release m4`.
 - Paczka z aktem 1 (D108): `REL=m4 ELEVEN=1 ACTS="1 3" ASR_FP32=1 bash analysis/tools/e14_run.sh`, potem `extra_retakes.py --release m4` z `generate --retake --acts 1 3`, `evaluate --acts 1 3 --fp32`, `select`, `finalize` i `bundle --platform win|mac --release m4`.
+- Cała gra po E21 (D116): `build --release m4` (tempo E21 i głos zastępczy Levirax w akcie 1), `audio/m4/rejected.json` z podejściami odrzuconymi w odsłuchu, potem `REL=m4 ASR_FP32=1 MAX_CREDITS=<wydane + budżet> bash analysis/tools/e14_run.sh` i dwie rundy `extra_retakes.py --release m4`. Fragment, który we wszystkich podejściach gubi słowo, dostaje podejście wolniejsze (`retake.json` z tempem o 0,25 niższym, potem 1,0) i `evaluate`, `select`, `finalize`.
 - Zestawienie głosów do odsłuchu (opis, portret z gry, dwie próbki z gotowego audio), wynik w `analysis/work/compare/m4_cast/`. Strona czyta portrety i nagrania z plików obok, więc otwieramy ją w przeglądarce bezpośrednio albo przez `python -m http.server` (konfiguracja `cast-sheet` w `.claude/launch.json`):
 
 ```bash
