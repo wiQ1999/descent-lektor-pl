@@ -562,6 +562,7 @@ Cel: zmiany i poprawki 60 głosów z odsłuchu zestawienia całej gry `m4_cast` 
 5. Wybór z odsłuchu (`adopt`), wpis w `docs/CASTING.md`.
 6. (zrobione 2026-11-27, D116) Generowanie zmienionych głosów w całej grze, ocena, ponowne podejścia, `finalize` z efektami i tempem z kroku 1, zestawienie `m4_cast` do kontroli.
 7. Paczka z całą grą (akt 1, akt 2 i części wspólne) jako aktualizacja (instalator pobiera tylko zmienione części), wydanie v1.1.0 (polecenie użytkownika 2026-11-25, D116). Zrobione 2026-11-27: wydanie z instalacją komendą, bez zipów ponad 2 GiB (D117).
+8. Wydanie v1.1.1: audio paczki w Opus 96 kb/s i z powrotem zipy do ręcznej instalacji (D118). Paczki gotowe i sprawdzone 2026-11-27, wydanie po zatwierdzeniu użytkownika.
 
 Poza E21 (po odnowieniu limitu ElevenLabs 2026-12-15): nowe profile Laurel (mniej dziecięcy) i L'trand (kobieta czarnoskóra) oraz chropowatsza Veta (jak u orka).
 

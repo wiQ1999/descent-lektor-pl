@@ -1277,6 +1277,14 @@ Wycięcie teraz oszczędza ponowne generowanie 263 kwestii w E15.
 - soundfile 0.14.0 w paczkach Windows i Maca (libsndfile 1.2.2) dekoduje Opus.
 - Najdłuższy fragment (31 s) dekoduje się w ok. 40 ms.
 
+**Wynik (2026-11-27):**
+- Zip Windows ma 1,39 GB, zip Mac 1,41 GB. Audio dla komendy to dwie części (1,08 GB i 0,28 GB), Python i program się nie zmieniły.
+- Dwa fragmenty ciszy (`cisza`, zero próbek) dawały nieczytelny plik Opus. `copy_data` zapisuje w nich jedną próbkę ciszy.
+- Python z paczki odczytuje wszystkie 19 428 nagrań, najdłuższy odczyt trwa 83 ms.
+- Companion odtworzył zapis sesji t1 (36 okien, pełne audio) przez kartę dźwiękową z opóźnieniem wyjścia ok. 0,11 s.
+- Na Windows aktualizacja z v1.1.0 (z GitHub) i świeża instalacja dają pliki identyczne z paczką. Aktualizacja pobiera 1,3 GB i usuwa nagrania FLAC.
+- Instalatora Maca nie zmienialiśmy, a jego libsndfile ma dekoder Opus. Testu na Macu nie było.
+
 ## Ustalenia z analiz (fakty, na których opierają się decyzje)
 
 - Unity Audio jest wyłączone w obu buildach (`globalgamemanagers` → `AudioManager.m_DisableAudio = true`). Dźwięk gra obsługuje przez Wwise.
